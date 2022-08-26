@@ -24,21 +24,17 @@ public class Graphics {
 
     test = new BatchSystem();
 
-    for(int i=0; i<1; i++){
-      for(int j=0;j<1;j++){
+    for (int i = 0; i < 1; i++) {
+      for (int j = 0; j < 1; j++) {
         test.addSprite(new Sprite("Farm21", 50, 50, 50, 0));
       }
     }
-
-    //testBatch = new Batch("Farm21", 1, "basic", 1);
-    //testBatch.addSprite(new Sprite("Farm21", 50, 50, 50, 1));
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 
   public void redraw(double dt) {
-    System.out.println(1/dt);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //camera.move(0, 0, -.05f);
     test.useCamera(camera);

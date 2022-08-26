@@ -1,20 +1,20 @@
 package windowStuff;
 
-import java.util.Arrays;
 import org.joml.Vector2f;
 
 public class Sprite {
+
   protected float[] vertices;
   protected boolean hasChanged;
   protected String textureName;
-  private float rotation;
+  private final float rotation;
   protected int layer;
   protected Batch batch;
 
-  public Sprite(String textureName, float x, float y, float size, int layer){
+  public Sprite(String textureName, float x, float y, float size, int layer) {
     batch = null;
-    Vector2f BL = new Vector2f(x-size, y-size);
-    Vector2f TR = new Vector2f(x+size, y+size);
+    Vector2f BL = new Vector2f(x - size, y - size);
+    Vector2f TR = new Vector2f(x + size, y + size);
     vertices = new float[]{
         // x y z r g b a u v
         TR.x, BL.y, 1, 1, 1, 1, 1, 1, 0,// +-
@@ -28,7 +28,7 @@ public class Sprite {
     hasChanged = true;
   }
 
-  public void setPosition(Vector2f pos){
+  public void setPosition(Vector2f pos) {
 
   }
 }

@@ -1,6 +1,5 @@
 package windowStuff;
 
-import general.Data;
 import org.lwjgl.Version;
 
 public final class Main {

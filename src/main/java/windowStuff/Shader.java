@@ -31,7 +31,7 @@ import org.lwjgl.BufferUtils;
 
 public class Shader {
 
-  private int shaderID;
+  private final int shaderID;
 
   public Shader(String path) {
 
@@ -59,7 +59,7 @@ public class Shader {
     glShaderSource(vertexID, vertexSource);
     glCompileShader(vertexID);
 
-    if(glGetShaderi(vertexID, GL_COMPILE_STATUS) == GL_FALSE){
+    if (glGetShaderi(vertexID, GL_COMPILE_STATUS) == GL_FALSE) {
       int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
       System.out.println("V shader compile failed.");
       System.out.println(glGetShaderInfoLog(vertexID, len));
@@ -70,7 +70,7 @@ public class Shader {
     glShaderSource(fragmentID, fragmentSource);
     glCompileShader(fragmentID);
 
-    if(glGetShaderi(fragmentID, GL_COMPILE_STATUS) == GL_FALSE){
+    if (glGetShaderi(fragmentID, GL_COMPILE_STATUS) == GL_FALSE) {
       int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
       System.out.println("F shader compile failed.");
       System.out.println(glGetShaderInfoLog(fragmentID, len));
@@ -82,7 +82,7 @@ public class Shader {
     glAttachShader(shaderID, fragmentID);
     glLinkProgram(shaderID);
 
-    if(glGetProgrami(shaderID, GL_LINK_STATUS) == GL_FALSE){
+    if (glGetProgrami(shaderID, GL_LINK_STATUS) == GL_FALSE) {
       int len = glGetProgrami(shaderID, GL_INFO_LOG_LENGTH);
       System.out.println("Shader link failed.");
       System.out.println(glGetProgramInfoLog(shaderID, len));
@@ -90,15 +90,15 @@ public class Shader {
     }
   }
 
-  public void use(){
+  public void use() {
     glUseProgram(shaderID);
   }
 
-  public void detach(){
+  public void detach() {
     glUseProgram(0);
   }
 
-  private void uploadUniform(String name, Matrix4f inMatrix){
+  private void uploadUniform(String name, Matrix4f inMatrix) {
     int varLocation = glGetUniformLocation(shaderID, name);
     use();
     FloatBuffer inMatrixBuffer = BufferUtils.createFloatBuffer(16);
@@ -106,25 +106,25 @@ public class Shader {
     glUniformMatrix4fv(varLocation, false, inMatrixBuffer);
   }
 
-  public void uploadUniform(String name, int value){
+  public void uploadUniform(String name, int value) {
     int varLocation = glGetUniformLocation(shaderID, name);
     use();
     glUniform1i(varLocation, value);
   }
 
-  public void uploadUniform(String name, float value){
+  public void uploadUniform(String name, float value) {
     int varLocation = glGetUniformLocation(shaderID, name);
     use();
     glUniform1f(varLocation, value);
   }
 
-  public void uploadTexture(String name, int slot){
+  public void uploadTexture(String name, int slot) {
     int varLocation = glGetUniformLocation(shaderID, name);
     use();
     glUniform1f(varLocation, slot);
   }
 
-  public void useCamera(Camera cam){
+  public void useCamera(Camera cam) {
     uploadUniform("projection", cam.getProjectionMatrix());
     uploadUniform("view", cam.getViewMatrix());
   }

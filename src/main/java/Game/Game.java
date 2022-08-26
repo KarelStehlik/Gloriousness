@@ -1,7 +1,5 @@
 package Game;
 
-import static java.lang.Math.random;
-
 import windowStuff.Graphics;
 import windowStuff.UserInputListener;
 
@@ -16,7 +14,7 @@ public class Game {
     graphics = new Graphics();
   }
 
-  public void init(){
+  public void init() {
     graphics.init();
   }
 
@@ -24,7 +22,7 @@ public class Game {
     userInput.endFrame();
   }
 
-  public void graphicsUpdate(double dt){
+  public void graphicsUpdate(double dt) {
     graphics.redraw(dt);
   }
 

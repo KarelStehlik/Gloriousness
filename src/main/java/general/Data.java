@@ -48,7 +48,8 @@ public final class Data {
     if (textures.containsKey(name)) {
       return;
     }
-    textures.put(name, new Texture("assets/final_images/" + name + (name.endsWith(".png") ? "" : ".png")));
+    textures.put(name,
+        new Texture("assets/final_images/" + name + (name.endsWith(".png") ? "" : ".png")));
   }
 
   /**

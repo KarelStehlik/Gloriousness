@@ -2,17 +2,16 @@ package windowStuff;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_REPEAT;
 import static org.lwjgl.opengl.GL11C.GL_RGB;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.glBindTexture;
 import static org.lwjgl.opengl.GL11C.glGenTextures;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11C.glTexImage2D;
 import static org.lwjgl.opengl.GL11C.glTexParameteri;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
@@ -23,9 +22,10 @@ import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 
 public class Texture {
+
   private final int id;
 
-  public Texture(String path){
+  public Texture(String path) {
     id = glGenTextures();
     glBindTexture(GL_TEXTURE_2D, id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -39,9 +39,9 @@ public class Texture {
 
     ByteBuffer image = stbi_load(path, width, height, channels, 0);
 
-    assert image != null : "image load failed: "+path;
+    assert image != null : "image load failed: " + path;
 
-    int format = channels.get(0) == 4? GL_RGBA : GL_RGB;
+    int format = channels.get(0) == 4 ? GL_RGBA : GL_RGB;
 
     glTexImage2D(GL_TEXTURE_2D, 0, format, width.get(0),
         height.get(0), 0, format, GL_UNSIGNED_BYTE, image);
@@ -49,7 +49,7 @@ public class Texture {
     stbi_image_free(image);
   }
 
-  public void bind(){
+  public void bind() {
     glBindTexture(GL_TEXTURE_2D, id);
   }
 }

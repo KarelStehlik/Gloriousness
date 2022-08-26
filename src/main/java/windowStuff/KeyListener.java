@@ -6,14 +6,15 @@ public class KeyListener {
 
   private final boolean[] keysPressed = new boolean[350];
 
-  public void keyCallback(long window, int key, int scancode, int action, int mods){
+  public void keyCallback(long window, int key, int scancode, int action, int mods) {
     keysPressed[key] = action == GLFW_PRESS;
     onKeyPress(key, scancode, action, mods);
   }
 
-  private void onKeyPress(int key, int scancode, int action, int mods){}
+  private void onKeyPress(int key, int scancode, int action, int mods) {
+  }
 
-  public boolean isPressed(int key){
+  public boolean isPressed(int key) {
     return keysPressed[key];
   }
 

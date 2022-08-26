@@ -40,19 +40,19 @@ public class MouseListener {
     return (float) dy;
   }
 
-  public float getScrollX(){
-    return (float)scrollX;
+  public float getScrollX() {
+    return (float) scrollX;
   }
 
-  public float getScrollY(){
-    return (float)scrollY;
+  public float getScrollY() {
+    return (float) scrollY;
   }
 
-  public boolean isDragging(){
+  public boolean isDragging() {
     return dragging;
   }
 
-  public boolean isPressed(int button){
+  public boolean isPressed(int button) {
     return buttonsPressed[button];
   }
 
