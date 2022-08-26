@@ -24,8 +24,8 @@ public class Game {
     userInput.endFrame();
   }
 
-  public void graphicsUpdate(){
-    graphics.redraw();
+  public void graphicsUpdate(double dt){
+    graphics.redraw(dt);
   }
 
   public void onMouseMove(long window, double newX, double newY) {

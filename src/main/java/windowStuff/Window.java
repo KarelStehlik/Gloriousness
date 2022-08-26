@@ -116,7 +116,7 @@ public final class Window {
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    game.graphicsUpdate();
+    game.graphicsUpdate(dt / 1000000000);
 
     glfwSwapBuffers(window);
   }
