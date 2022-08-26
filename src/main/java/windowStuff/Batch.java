@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Batch {
 
-  protected static final int MAX_BATCH_SIZE = 1000;
+  protected static final int MAX_BATCH_SIZE = 100;
   private final Texture texture;
   protected final String textureName;
   private final int maxSize;

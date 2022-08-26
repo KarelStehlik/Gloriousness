@@ -24,9 +24,9 @@ public class Graphics {
 
     test = new BatchSystem();
 
-    for(int i=0; i<1000; i++){
-      for(int j=0;j<1000;j++){
-        test.addSprite(new Sprite("Farm21", i*2, j*2, 2, 0));
+    for(int i=0; i<1; i++){
+      for(int j=0;j<1;j++){
+        test.addSprite(new Sprite("Farm21", 50, 50, 50, 0));
       }
     }
 
