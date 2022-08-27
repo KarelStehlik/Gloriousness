@@ -1,6 +1,7 @@
 package general;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import windowStuff.Shader;
@@ -66,6 +67,14 @@ public final class Data {
     var result = textures.get(name + (name.endsWith(".png") ? "" : ".png"));
     assert result != null : "Texture " + name + " was not loaded at load time";
     return result;
+  }
+
+  public static Collection<Shader> getAllShaders() {
+    return shaders.values();
+  }
+
+  public static void updateShaders() {
+    getShader("colorCycle").uploadUniform("time", (int) (System.nanoTime() / 10000));
   }
 
   private Data() {

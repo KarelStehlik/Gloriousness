@@ -107,8 +107,8 @@ public class Shader {
   }
 
   public void uploadUniform(String name, int value) {
-    int varLocation = glGetUniformLocation(shaderID, name);
     use();
+    int varLocation = glGetUniformLocation(shaderID, name);
     glUniform1i(varLocation, value);
   }
 

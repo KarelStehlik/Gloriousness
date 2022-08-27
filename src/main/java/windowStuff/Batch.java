@@ -1,6 +1,7 @@
 package windowStuff;
 
 import static org.lwjgl.opengl.ARBVertexArrayObject.glBindVertexArray;
+import static org.lwjgl.opengl.ARBVertexArrayObject.glDeleteVertexArrays;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -12,6 +13,7 @@ import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
@@ -33,15 +35,16 @@ public class Batch {
   private final Texture texture;
   protected final String textureName;
   private final int maxSize;
-  private final int vbo;
-  private final int vao;
+  private final int vao, vbo, ebo;
   private final Shader shader;
   private final Sprite[] sprites;
   protected final List<Integer> freeSpriteSlots;
   protected final int layer;
+  protected boolean isEmpty;
+  protected final BatchSystem group;
 
 
-  public Batch(String textureName, int size, String shader, int layer) {
+  public Batch(String textureName, int size, String shader, int layer, BatchSystem system) {
     texture = Data.getTexture(textureName);
     this.textureName = textureName;
     maxSize = size;
@@ -49,6 +52,8 @@ public class Batch {
     sprites = new Sprite[size];
     freeSpriteSlots = new ArrayList<>(size);
     this.layer = layer;
+    isEmpty = true;
+    group = system;
 
     for (int i = 0; i < size; i++) {
       freeSpriteSlots.add(i);
@@ -67,7 +72,7 @@ public class Batch {
     vao = glGenVertexArrays();  // seems unnecessary for now
     glBindVertexArray(vao);
 
-    int ebo = glGenBuffers();
+    ebo = glGenBuffers();
     IntBuffer elementBuffer = Util.buffer(elements).flip();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
@@ -98,18 +103,36 @@ public class Batch {
   }
 
   public void addSprite(Sprite sprite) {
-    if (freeSpriteSlots.isEmpty() || sprite.batch != null) {
-      return;
-    }
+    assert !freeSpriteSlots.isEmpty()
+        && sprite.batch == null : "Attempt to add sprite to a full batch.";
     int slot = freeSpriteSlots.remove(0);
     sprites[slot] = sprite;
-    sprite.batch = this;
+    sprite.getBatched(this, slot);
+    isEmpty = false;
+  }
+
+  public void removeSprite(Sprite sprite) {
+    sprites[sprite.slotInBatch] = null;
+    freeSpriteSlots.add(sprite.slotInBatch);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferSubData(GL_ARRAY_BUFFER,
+        (long) Constants.SpriteSizeFloats * Float.BYTES * sprite.slotInBatch,
+        new float[Constants.SpriteSizeFloats]);
+    if (freeSpriteSlots.size() == maxSize) {
+      isEmpty = true;
+    }
+  }
+
+  protected void delete() {
+    glDeleteBuffers(vbo);
+    glDeleteBuffers(ebo);
+    glDeleteVertexArrays(vao);
   }
 
   public void draw() {
     glBindVertexArray(vao);
-    shader.use();
-    shader.uploadTexture("sampler", 0);
+    // shader.use();
+    // shader.uploadTexture("sampler", 0);
     glActiveTexture(GL_TEXTURE0);
     texture.bind();
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -117,6 +140,7 @@ public class Batch {
 
     for (Sprite sprite : sprites) {
       if (sprite != null && sprite.hasChanged) {
+        sprite.updateVertices();
         glBufferSubData(GL_ARRAY_BUFFER, offset, sprite.vertices);
         sprite.hasChanged = false;
       }
