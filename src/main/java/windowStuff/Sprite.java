@@ -1,6 +1,5 @@
 package windowStuff;
 
-import static org.lwjgl.opengl.GL11C.glGetIntegerv;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.glBufferSubData;
 
@@ -13,7 +12,7 @@ public class Sprite {
 
   public float x, y;
   protected float[] vertices;
-  protected boolean hasChanged;
+  protected boolean hasUnsavedChanges = true;
   protected String textureName;
   protected int layer;
   protected Batch batch = null;
@@ -42,39 +41,40 @@ public class Sprite {
     };
     this.textureName = textureName;
     this.layer = layer;
-    hasChanged = true;
   }
 
-  protected void getBatched(Batch newBatch, int slot) {
+  protected synchronized void getBatched(Batch newBatch, int slot) {
     batch = newBatch;
     slotInBatch = slot;
   }
 
-  protected void unBatch() {
+  protected synchronized void unBatch() {
     batch.removeSprite(this);
-    batch.group.removeSprite(this);
   }
 
-  public void setPosition(float X, float Y) {
+  public synchronized void setPosition(float X, float Y) {
     x = X;
     y = Y;
-    hasChanged = true;
+    hasUnsavedChanges = true;
   }
 
-  public void setRotation(float r) {
+  public synchronized void setRotation(float r) {
     rotation = r;
     rotationSin = Util.sin(r);
     rotationCos = Util.cos(r);
-    hasChanged = true;
+    hasUnsavedChanges = true;
   }
 
-  public void scale(float multiplier) {
+  public synchronized void scale(float multiplier) {
     width *= multiplier;
     height *= multiplier;
-    hasChanged = true;
+    hasUnsavedChanges = true;
   }
 
   public synchronized void updateVertices() {
+    if (!hasUnsavedChanges) {
+      return;
+    }
     float XC = width * rotationCos, YC = height * rotationCos,
         XS = width * rotationSin, YS = height * rotationSin;
     //+-
@@ -89,24 +89,25 @@ public class Sprite {
     //--
     vertices[3 * Constants.VertexSizeFloats] = x - XC - YS;
     vertices[1 + 3 * Constants.VertexSizeFloats] = y - XS + YC;
+    hasUnsavedChanges = false;
   }
 
   protected synchronized void bufferVertices(long offset) {
     glBufferSubData(GL_ARRAY_BUFFER, offset, vertices);
   }
 
-  public void setColors(float[] colors) {
+  public synchronized void setColors(float[] colors) {
     assert colors.length == 16 : "expected 16 colors for sprite.";
     for (int i = 0; i < 16; i++) {
       vertices[3 + i + (int) ((float) i / 4.0) * 5] = colors[i];
     }
   }
 
-  protected void _delete() {
+  protected synchronized void _delete() {
     unBatch();
   }
 
-  public void delete() {
+  public synchronized void delete() {
     deleteThis = true;
   }
 }

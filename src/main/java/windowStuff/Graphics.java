@@ -23,7 +23,7 @@ public class Graphics {
 
   public void init() {
     Data.init("assets/shady shit", "assets/final_images");
-    System.out.println(Constants.screenSize);
+    System.out.println(Constants.screenSize); // this is needed to load Constants
     //test = new BatchSystem();
     //sTest = new Sprite("Farm21", 50, 50, 100, 100, 0, "colorCycle");
     //test.addSprite(sTest);
@@ -48,6 +48,9 @@ public class Graphics {
     //test.useCamera(camera);
     Data.updateShaders();
     //test.draw();
+
+    //Sprite.updateAll();
+
     for (BatchSystem bs : batchSystems) {
       if (cameraChanged) {
         bs.useCamera(camera);

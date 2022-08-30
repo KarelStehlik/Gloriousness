@@ -112,6 +112,11 @@ public final class Window {
 
   private void gameLoop() {
     while (running) {
+      try {
+        Thread.sleep(0, 1); // prevents synchronized game.tick from hogging the lock
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
       game.tick();
     }
   }

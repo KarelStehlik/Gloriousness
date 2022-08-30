@@ -14,7 +14,7 @@ public class BatchSystem {
 
   //private final List<Batch> batches;
 
-  private final Map<Shader, List<Batch>> batches;
+  protected final Map<Shader, List<Batch>> batches;
 
   public BatchSystem() {
     //batches = new LinkedList<>(); // is sorted
@@ -49,26 +49,22 @@ public class BatchSystem {
     batchList.add(index, batch); // keep the list sorted
   }
 
-  /**
-   * should only be called from Sprite.unBatch
-   **/
-  protected void removeSprite(Sprite sprite) {
-    var batch = sprite.batch;
-    if (batch.isEmpty) {
-      batches.get(sprite.shader).remove(batch);
-      batch.delete();
-    }
-  }
 
   public void draw() {
     for (Entry<Shader, List<Batch>> entry : batches.entrySet()) {
       entry.getKey().use();
       entry.getKey().uploadTexture("sampler", 0);
-      for (Batch batch : entry.getValue()) {
+      var iter = entry.getValue().iterator();
+      while (iter.hasNext()) {
+        Batch batch = iter.next();
         batch.draw();
+        if (batch.isEmpty) {
+          iter.remove();
+        }
       }
     }
   }
+
 
   public void useCamera(Camera camera) {
     for (Shader shader : batches.keySet()) {

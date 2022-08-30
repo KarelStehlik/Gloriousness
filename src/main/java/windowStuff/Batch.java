@@ -31,16 +31,16 @@ import java.util.List;
 
 public class Batch {
 
-  protected static final int MAX_BATCH_SIZE = 100;
+  protected static final int MAX_BATCH_SIZE = 10000;
   protected final String textureName;
   protected final List<Integer> freeSpriteSlots;
   protected final int layer;
   protected final BatchSystem group;
+  protected final Sprite[] sprites;
   private final Texture texture;
   private final int maxSize;
   private final int vao, vbo, ebo;
   private final Shader shader;
-  private final Sprite[] sprites;
   protected boolean isEmpty;
 
 
@@ -106,13 +106,17 @@ public class Batch {
     assert !freeSpriteSlots.isEmpty()
         && sprite.batch == null : "Attempt to add sprite to a full batch.";
     int slot = freeSpriteSlots.remove(0);
-    sprites[slot] = sprite;
+    synchronized (sprites) {
+      sprites[slot] = sprite;
+    }
     sprite.getBatched(this, slot);
     isEmpty = false;
   }
 
   public void removeSprite(Sprite sprite) {
-    sprites[sprite.slotInBatch] = null;
+    synchronized (sprites) {
+      sprites[sprite.slotInBatch] = null;
+    }
     freeSpriteSlots.add(sprite.slotInBatch);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferSubData(GL_ARRAY_BUFFER,
@@ -140,16 +144,19 @@ public class Batch {
 
     for (int i = 0; i < maxSize; i++) {
       Sprite sprite = sprites[i];
-      if (sprite != null && sprite.deleteThis) {
-        sprite._delete();
-      } else if (sprite != null && sprite.hasChanged) {
-        sprite.updateVertices();
-        sprite.bufferVertices(offset);
-        sprite.hasChanged = false;
+      if (sprite != null) {
+        if (sprite.deleteThis) {
+          sprite._delete();
+        } else if (sprite.hasUnsavedChanges) {
+          sprite.updateVertices();
+          sprite.bufferVertices(offset);
+        }
       }
       offset += Constants.SpriteSizeFloats * Float.BYTES;
     }
-
+    if (isEmpty) {
+      return;
+    }
     glDrawElements(GL_TRIANGLES, 6 * maxSize, GL_UNSIGNED_INT, 0);
   }
 
