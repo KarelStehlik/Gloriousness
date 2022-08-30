@@ -12,10 +12,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -38,14 +34,7 @@ public final class Window {
 
   private final Game game;
 
-  private static final class SingletonHolder {
-
-    private static final Window singleton = new Window();
-  }
-
-  public static Window get() {
-    return SingletonHolder.singleton;
-  }
+  private volatile boolean running = false;
 
   private Window() {
     System.out.println("Running LWJGL ver.. " + Version.getVersion());
@@ -68,24 +57,30 @@ public final class Window {
       throw new IllegalStateException("No win?");
     }
 
+    glfwMakeContextCurrent(window);
+
     game = new Game();
 
-    glfwSetCursorPosCallback(window, game::onMouseMove);
-    glfwSetScrollCallback(window, game::onScroll);
-    glfwSetMouseButtonCallback(window, game::onMouseButton);
-    glfwSetKeyCallback(window, game::onKeyPress);
-
-    glfwMakeContextCurrent(window);
+    game.setInputCallback(window);
 
     glfwSwapInterval(1);
   }
 
+  public static Window get() {
+    return SingletonHolder.singleton;
+  }
+
   public void run() {
+    running = true;
     glfwShowWindow(window);
 
     GL.createCapabilities();
 
     game.init();
+
+    Thread gameThread = new Thread(this::gameLoop);
+
+    gameThread.start();
 
     float dt = 0;
     float frameStartTime = System.nanoTime();
@@ -96,6 +91,8 @@ public final class Window {
       frameStartTime = frameEndTime;
     }
 
+    running = false;
+
     glfwFreeCallbacks(window);
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -105,8 +102,6 @@ public final class Window {
   private void loop(float dt) {
     glfwPollEvents();
 
-    game.tick();
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -115,10 +110,21 @@ public final class Window {
     glfwSwapBuffers(window);
   }
 
+  private void gameLoop() {
+    while (running) {
+      game.tick();
+    }
+  }
+
   @Override
   public String toString() {
     return "Window{"
         + "glfwWindow=" + window
         + '}';
+  }
+
+  private static final class SingletonHolder {
+
+    private static final Window singleton = new Window();
   }
 }

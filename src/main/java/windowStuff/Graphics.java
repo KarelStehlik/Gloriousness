@@ -6,54 +6,54 @@ import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 
+import general.Constants;
 import general.Data;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedList;
 import org.joml.Vector3f;
 
 public class Graphics {
 
-  public Camera camera;
+  private final Collection<BatchSystem> batchSystems = new LinkedList<BatchSystem>();
+  private Camera camera;
+  private boolean cameraChanged = true;
 
-  private BatchSystem test;
-
-  private List<Sprite> sprites;
-
-  private float testNum = 0;
+  //private BatchSystem test;
+  //private Sprite sTest;
 
   public void init() {
     Data.init("assets/shady shit", "assets/final_images");
+    System.out.println(Constants.screenSize);
+    //test = new BatchSystem();
+    //sTest = new Sprite("Farm21", 50, 50, 100, 100, 0, "colorCycle");
+    //test.addSprite(sTest);
 
     camera = new Camera(new Vector3f(0, 0, 20));
-
-    test = new BatchSystem();
-
-    sprites = new ArrayList<>(1000000);
-
-    Sprite s = new Sprite("Farm21", 50, 50, 100, 100, 0, "colorCycle");
-    test.addSprite(s);
-    sprites.add(s);
-    //s.setColors(
-    //    new float[]{
-    //        1, 1, 0, 1,
-    //        0, 1, 1, 1,
-    //        1, 0, 1, 1,
-    //        0, 0, 2, 1,}
-    //);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 
+  public void moveCamera(float x, float y) {
+    camera.move(x, y, 20);
+    cameraChanged = true;
+  }
+
+  public void addBatchSystem(BatchSystem bs) {
+    batchSystems.add(bs);
+    bs.useCamera(camera);
+  }
+
   public void redraw(double dt) {
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //camera.move(0, 0, -.05f);
-    test.useCamera(camera);
+    //test.useCamera(camera);
     Data.updateShaders();
-    test.draw();
-    // sprites.get(0).setRotation(testNum);
-    testNum += dt * 200;
-    //sprites.get(0).scale(1.001f);
-    sprites.get(0).setPosition(testNum * .2f, testNum * .2f);
+    //test.draw();
+    for (BatchSystem bs : batchSystems) {
+      if (cameraChanged) {
+        bs.useCamera(camera);
+      }
+      bs.draw();
+    }
+    cameraChanged = false;
   }
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import windowStuff.Shader;
 import windowStuff.Texture;
 
@@ -11,6 +12,11 @@ public final class Data {
 
   private static Map<String, Shader> shaders;
   private static Map<String, Texture> textures;
+  public static final Random gameMechanicsRng = new Random();
+  public static final Random unstableRng = new Random();
+
+  private Data() {
+  }
 
   public static void init(String shaderDirectory, String imageDirectory) {
     shaders = new HashMap<>(1);
@@ -75,8 +81,5 @@ public final class Data {
 
   public static void updateShaders() {
     getShader("colorCycle").uploadUniform("time", (int) (System.nanoTime() / 10000));
-  }
-
-  private Data() {
   }
 }

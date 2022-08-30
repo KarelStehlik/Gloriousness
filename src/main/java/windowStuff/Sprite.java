@@ -1,5 +1,9 @@
 package windowStuff;
 
+import static org.lwjgl.opengl.GL11C.glGetIntegerv;
+import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15C.glBufferSubData;
+
 import general.Constants;
 import general.Data;
 import general.Util;
@@ -7,15 +11,16 @@ import org.joml.Vector2f;
 
 public class Sprite {
 
+  public float x, y;
   protected float[] vertices;
   protected boolean hasChanged;
   protected String textureName;
-  private float rotation = 0;
   protected int layer;
   protected Batch batch = null;
   protected Shader shader;
   protected int slotInBatch;
-  public float x, y;
+  protected boolean deleteThis = false;
+  private float rotation = 0;
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
 
@@ -69,7 +74,7 @@ public class Sprite {
     hasChanged = true;
   }
 
-  public void updateVertices() {
+  public synchronized void updateVertices() {
     float XC = width * rotationCos, YC = height * rotationCos,
         XS = width * rotationSin, YS = height * rotationSin;
     //+-
@@ -86,6 +91,10 @@ public class Sprite {
     vertices[1 + 3 * Constants.VertexSizeFloats] = y - XS + YC;
   }
 
+  protected synchronized void bufferVertices(long offset) {
+    glBufferSubData(GL_ARRAY_BUFFER, offset, vertices);
+  }
+
   public void setColors(float[] colors) {
     assert colors.length == 16 : "expected 16 colors for sprite.";
     for (int i = 0; i < 16; i++) {
@@ -93,7 +102,11 @@ public class Sprite {
     }
   }
 
-  public void delete() {
+  protected void _delete() {
     unBatch();
+  }
+
+  public void delete() {
+    deleteThis = true;
   }
 }

@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glCompileShader;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
 import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
@@ -88,6 +89,9 @@ public class Shader {
       System.out.println(glGetProgramInfoLog(shaderID, len));
       assert false : "";
     }
+
+    glDeleteShader(vertexID);
+    glDeleteShader(fragmentID);
   }
 
   public void use() {

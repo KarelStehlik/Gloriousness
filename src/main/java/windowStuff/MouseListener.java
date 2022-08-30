@@ -7,8 +7,8 @@ import java.util.Arrays;
 
 public class MouseListener {
 
-  private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private final boolean[] buttonsPressed;
+  private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private boolean dragging;
 
   public MouseListener() {

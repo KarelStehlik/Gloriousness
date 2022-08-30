@@ -32,16 +32,16 @@ import java.util.List;
 public class Batch {
 
   protected static final int MAX_BATCH_SIZE = 100;
-  private final Texture texture;
   protected final String textureName;
+  protected final List<Integer> freeSpriteSlots;
+  protected final int layer;
+  protected final BatchSystem group;
+  private final Texture texture;
   private final int maxSize;
   private final int vao, vbo, ebo;
   private final Shader shader;
   private final Sprite[] sprites;
-  protected final List<Integer> freeSpriteSlots;
-  protected final int layer;
   protected boolean isEmpty;
-  protected final BatchSystem group;
 
 
   public Batch(String textureName, int size, String shader, int layer, BatchSystem system) {
@@ -138,10 +138,13 @@ public class Batch {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     long offset = 0;
 
-    for (Sprite sprite : sprites) {
-      if (sprite != null && sprite.hasChanged) {
+    for (int i = 0; i < maxSize; i++) {
+      Sprite sprite = sprites[i];
+      if (sprite != null && sprite.deleteThis) {
+        sprite._delete();
+      } else if (sprite != null && sprite.hasChanged) {
         sprite.updateVertices();
-        glBufferSubData(GL_ARRAY_BUFFER, offset, sprite.vertices);
+        sprite.bufferVertices(offset);
         sprite.hasChanged = false;
       }
       offset += Constants.SpriteSizeFloats * Float.BYTES;

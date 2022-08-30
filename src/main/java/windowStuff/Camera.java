@@ -15,7 +15,7 @@ public class Camera {
   }
 
   public void adjustProjection() {
-    projection.setOrtho(0f, 32f * 40f, 0f, 32f * 21f, 0f, 100f);
+    projection.setOrtho(0f, 1920, 0f, 1080, 0f, 100f);
     // projection.setPerspective(3f, 1.4f, 1, 100);
   }
 

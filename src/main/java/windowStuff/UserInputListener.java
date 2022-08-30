@@ -8,11 +8,12 @@ import java.util.Arrays;
 public class UserInputListener {
 
   private final boolean[] keysPressed;
-  private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private final boolean[] buttonsPressed;
+  private final UserInputHandler game;
+  private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private boolean dragging;
 
-  public UserInputListener() {
+  public UserInputListener(UserInputHandler g) {
     x = 0;
     y = 0;
     dx = 0;
@@ -24,6 +25,7 @@ public class UserInputListener {
     dragging = false;
     keysPressed = new boolean[350];
     buttonsPressed = new boolean[5];
+    game = g;
   }
 
   public float getX() {
@@ -66,6 +68,9 @@ public class UserInputListener {
     dx = newX - lastX;
     dy = newY - lastY;
     dragging = Arrays.asList(buttonsPressed, 5).contains(true);
+    if (game != null) {
+      game.onMouseMove(newX, newY);
+    }
   }
 
   public void mouseButtonCallback(long window, int button, int action, int mods) {
@@ -78,11 +83,17 @@ public class UserInputListener {
       buttonsPressed[button] = false;
       dragging = false;
     }
+    if (game != null) {
+      game.onMouseButton(button, action, mods);
+    }
   }
 
   public void scrollCallback(long window, double xOffset, double yOffset) {
     scrollX = xOffset;
     scrollY = yOffset;
+    if (game != null) {
+      game.onScroll(xOffset, yOffset);
+    }
   }
 
   public void endFrame() {
@@ -94,6 +105,9 @@ public class UserInputListener {
 
   public void keyCallback(long window, int key, int scancode, int action, int mods) {
     keysPressed[key] = action == GLFW_PRESS;
+    if (game != null) {
+      game.onKeyPress(key, action, mods);
+    }
   }
 
   public boolean isMousePressed(int key) {

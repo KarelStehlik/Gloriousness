@@ -6,16 +6,6 @@ import org.lwjgl.BufferUtils;
 
 public final class Util {
 
-  public static FloatBuffer buffer(float[] input) {
-    FloatBuffer out = BufferUtils.createFloatBuffer(input.length);
-    return out.put(input);
-  }
-
-  public static IntBuffer buffer(int[] input) {
-    IntBuffer out = BufferUtils.createIntBuffer(input.length);
-    return out.put(input);
-  }
-
   // number of table entries per degree
   private static final int sinScale = 100;
   // float array that will store the sine values
@@ -33,6 +23,16 @@ public final class Util {
     for (int i = 0; i < sin.length; i++) {
       sin[i] = (float) Math.sin(i * toRadian);
     }
+  }
+
+  public static FloatBuffer buffer(float[] input) {
+    FloatBuffer out = BufferUtils.createFloatBuffer(input.length);
+    return out.put(input);
+  }
+
+  public static IntBuffer buffer(int[] input) {
+    IntBuffer out = BufferUtils.createIntBuffer(input.length);
+    return out.put(input);
   }
 
   public static float sin(float a) {
