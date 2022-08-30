@@ -16,7 +16,7 @@ public class Test implements TickDetect {
     vx = Data.gameMechanicsRng.nextFloat(30);
     vy = Data.gameMechanicsRng.nextFloat(30);
     rot = Data.gameMechanicsRng.nextFloat(5);
-    sprite = new Sprite("Farm21", 150, 150, 5, 5, 0, "basic");
+    sprite = new Sprite("Farm21", 150, 150, 50, 50, 0, "basic");
     game.getBatchSystem("main").addSprite(sprite);
   }
 

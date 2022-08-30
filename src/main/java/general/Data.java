@@ -10,10 +10,10 @@ import windowStuff.Texture;
 
 public final class Data {
 
-  private static Map<String, Shader> shaders;
-  private static Map<String, Texture> textures;
   public static final Random gameMechanicsRng = new Random();
   public static final Random unstableRng = new Random();
+  private static Map<String, Shader> shaders;
+  private static Map<String, Texture> textures;
 
   private Data() {
   }
