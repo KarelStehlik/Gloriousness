@@ -104,7 +104,7 @@ public class Batch {
 
   public void addSprite(Sprite sprite) {
     assert !freeSpriteSlots.isEmpty()
-        && sprite.batch == null : "Attempt to add sprite to a full batch.";
+        && (sprite.batch == null) : "Attempt to add sprite to a full batch.";
     int slot = freeSpriteSlots.remove(0);
     synchronized (sprites) {
       sprites[slot] = sprite;

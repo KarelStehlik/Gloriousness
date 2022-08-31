@@ -48,7 +48,7 @@ public class Game implements UserInputHandler {
     if (ticks % 60 == 0) {
       System.out.println(ticks);
     }
-    var iter = tickables.iterator();
+    var iter = new LinkedList<>(tickables).iterator();
     while (iter.hasNext()) {
       TickDetect t = iter.next();
       if (t.ShouldDeleteThis()) {

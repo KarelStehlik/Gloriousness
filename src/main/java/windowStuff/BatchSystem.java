@@ -16,6 +16,8 @@ public class BatchSystem {
 
   protected final Map<Shader, List<Batch>> batches;
 
+  private final List<Sprite> spritesToAdd = new LinkedList<>();
+
   public BatchSystem() {
     //batches = new LinkedList<>(); // is sorted
     Collection<Shader> shaders = Data.getAllShaders();
@@ -26,6 +28,12 @@ public class BatchSystem {
   }
 
   public void addSprite(Sprite sprite) {
+    synchronized (spritesToAdd) {
+      spritesToAdd.add(sprite);
+    }
+  }
+
+  private void _addSprite(Sprite sprite) {
     // find an available batch, if it exists
     List<Batch> batchList = batches.get(sprite.shader);
     int index = 0; // at which index do the batches have the correct layer?
@@ -51,6 +59,12 @@ public class BatchSystem {
 
 
   public void draw() {
+    synchronized (spritesToAdd) {
+      while (!spritesToAdd.isEmpty()) {
+        _addSprite(
+            spritesToAdd.remove(0)); // do this in the graphics thread so that context is current
+      }
+    }
     for (Entry<Shader, List<Batch>> entry : batches.entrySet()) {
       entry.getKey().use();
       entry.getKey().uploadTexture("sampler", 0);
