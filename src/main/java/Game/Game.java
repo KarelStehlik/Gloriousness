@@ -21,6 +21,7 @@ public final class Game implements UserInputHandler {
   private final Graphics graphics;
   private final List<TickDetect> tickables = new LinkedList<>();
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
+  private final List<TickDetect> newTickables = new LinkedList<>();
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
 
@@ -36,7 +37,7 @@ public final class Game implements UserInputHandler {
   }
 
   public void addTickable(TickDetect t) {
-    tickables.add(t);
+    newTickables.add(t);
   }
 
   public void tick() {
@@ -49,16 +50,18 @@ public final class Game implements UserInputHandler {
       System.out.println(ticks);
       //System.out.println(tickables.size());
     }
-    var iter = new LinkedList<>(tickables).iterator();
+    var iter = tickables.iterator();
     while (iter.hasNext()) {
       TickDetect t = iter.next();
       if (t.ShouldDeleteThis()) {
-        tickables.remove(t);
+        iter.remove();
       } else {
         t.onGameTick(ticks);
       }
     }
     userInput.handleEvents();
+    tickables.addAll(newTickables);
+    newTickables.clear();
   }
 
   public void graphicsUpdate(double dt) {
@@ -91,7 +94,7 @@ public final class Game implements UserInputHandler {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-   // System.out.println(key);
+    // System.out.println(key);
   }
 
   @SuppressWarnings("resource")

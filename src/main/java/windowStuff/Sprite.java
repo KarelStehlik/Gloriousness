@@ -19,15 +19,9 @@ public class Sprite {
   protected Shader shader;
   protected int slotInBatch;
   protected boolean deleteThis = false;
-
-  public float getRotation() {
-    return rotation;
-  }
-
   private float rotation = 0;
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
-
   public Sprite(String textureName, float x, float y, float sizeX, float sizeY, int layer,
       String shader) {
     this.x = x;
@@ -48,6 +42,17 @@ public class Sprite {
     this.layer = layer;
   }
 
+  public float getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(float r) {
+    rotation = r;
+    rotationSin = Util.sin(r);
+    rotationCos = Util.cos(r);
+    hasUnsavedChanges = true;
+  }
+
   protected synchronized void getBatched(Batch newBatch, int slot) {
     batch = newBatch;
     slotInBatch = slot;
@@ -60,13 +65,6 @@ public class Sprite {
   public void setPosition(float X, float Y) {
     x = X;
     y = Y;
-    hasUnsavedChanges = true;
-  }
-
-  public void setRotation(float r) {
-    rotation = r;
-    rotationSin = Util.sin(r);
-    rotationCos = Util.cos(r);
     hasUnsavedChanges = true;
   }
 
@@ -109,7 +107,8 @@ public class Sprite {
   }
 
   protected synchronized void _delete() {
-    unBatch(); vertices=null;
+    unBatch();
+    vertices = null;
   }
 
   public void delete() {
