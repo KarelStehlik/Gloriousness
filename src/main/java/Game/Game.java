@@ -5,8 +5,8 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import windowStuff.BatchSystem;
@@ -19,7 +19,7 @@ public class Game implements UserInputHandler {
   private static final int tickInterval = 1000 / 60;
   private final UserInputListener userInput;
   private final Graphics graphics;
-  private final List<TickDetect> tickables = new ArrayList<TickDetect>(1000);
+  private final List<TickDetect> tickables = new LinkedList<TickDetect>();
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
@@ -32,9 +32,7 @@ public class Game implements UserInputHandler {
   public void init() {
     graphics.init();
     startTime = System.currentTimeMillis();
-    for (int i = 0; i < 1000000; i++) {
-      new Test(this);
-    }
+    new Test(this);
   }
 
   public void addTickable(TickDetect t) {
@@ -50,13 +48,13 @@ public class Game implements UserInputHandler {
     if (ticks % 60 == 0) {
       System.out.println(ticks);
     }
-    for (TickDetect t : tickables) {
-      t.onGameTick();
-    }
-
-    if (ticks % 200 == 0) {
-      while (!tickables.isEmpty()) {
-        tickables.remove(tickables.size() - 1).delete();
+    var iter = tickables.iterator();
+    while (iter.hasNext()) {
+      TickDetect t = iter.next();
+      if (t.ShouldDeleteThis()) {
+        iter.remove();
+      } else {
+        t.onGameTick(ticks);
       }
     }
   }

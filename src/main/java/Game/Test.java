@@ -1,50 +1,37 @@
 package Game;
 
-import general.Constants;
-import general.Data;
-import windowStuff.Sprite;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Test implements TickDetect {
 
-  private final Sprite sprite;
-  private float vx, vy, x, y;
-  private final float rot;
-  private float currentAngle = 0;
+  private static final int SIZE = 1000000;
+
+  private final List<TestObject> objects = new ArrayList<TestObject>(SIZE);
 
   public Test(Game game) {
     game.addTickable(this);
-    vx = Data.gameMechanicsRng.nextFloat(30);
-    vy = Data.gameMechanicsRng.nextFloat(30);
-    rot = Data.gameMechanicsRng.nextFloat(5);
-    sprite = new Sprite("Farm21", 150, 150, 50, 50, 0, "basic");
-    game.getBatchSystem("main").addSprite(sprite);
+    for (int i = 0; i < SIZE; i++) {
+      objects.add(new TestObject(game));
+    }
   }
 
   @Override
-  public void onGameTick() {
-    x += vx;
-    y += vy;
-    if (x < 0) {
-      x *= -1;
-      vx *= -1;
-    } else if (x > Constants.screenSize.x) {
-      x = 2 * Constants.screenSize.x - x;
-      vx *= -1;
+  public void onGameTick(int tick) {
+    if (tick % 200 == 0) {
+      delete();
     }
-    if (y < 0) {
-      y *= -1;
-      vy *= -1;
-    } else if (y > Constants.screenSize.y) {
-      y = 2 * Constants.screenSize.y - y;
-      vy *= -1;
-    }
-    sprite.setPosition(x, y);
-    currentAngle += rot;
-    sprite.setRotation(currentAngle);
   }
 
   @Override
   public void delete() {
-    sprite.delete();
+    while (!objects.isEmpty()) {
+      objects.remove(objects.size() - 1).delete();
+    }
+  }
+
+  @Override
+  public boolean ShouldDeleteThis() {
+    return objects.isEmpty();
   }
 }

@@ -2,7 +2,9 @@ package Game;
 
 public interface TickDetect {
 
-  void onGameTick();
+  void onGameTick(int tick);
 
   void delete();
+
+  boolean ShouldDeleteThis();
 }
