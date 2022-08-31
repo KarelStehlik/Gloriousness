@@ -29,22 +29,22 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Batch {
+final class Batch {
 
-  protected static final int MAX_BATCH_SIZE = 10000;
-  protected final String textureName;
-  protected final List<Integer> freeSpriteSlots;
-  protected final int layer;
-  protected final BatchSystem group;
-  protected final Sprite[] sprites;
+  static final int MAX_BATCH_SIZE = 10000;
+  final String textureName;
+  final List<Integer> freeSpriteSlots;
+  final int layer;
+  private final BatchSystem group;
+  private final Sprite[] sprites;
   private final Texture texture;
   private final int maxSize;
   private final int vao, vbo, ebo;
   private final Shader shader;
-  protected boolean isEmpty;
+  boolean isEmpty;
 
 
-  public Batch(String textureName, int size, String shader, int layer, BatchSystem system) {
+  Batch(String textureName, int size, String shader, int layer, BatchSystem system) {
     texture = Data.getTexture(textureName);
     this.textureName = textureName;
     maxSize = size;

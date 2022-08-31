@@ -4,6 +4,10 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import java.util.Arrays;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 public class UserInputListener {
 
@@ -12,6 +16,7 @@ public class UserInputListener {
   private final UserInputHandler game;
   private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private boolean dragging;
+  private BlockingQueue<Event> events = new LinkedBlockingQueue<>();
 
   public UserInputListener(UserInputHandler g) {
     x = 0;
@@ -26,6 +31,12 @@ public class UserInputListener {
     keysPressed = new boolean[350];
     buttonsPressed = new boolean[5];
     game = g;
+  }
+
+  public void handleEvents(){
+    while(!events.isEmpty()){
+      events.remove().run();
+    }
   }
 
   public float getX() {
@@ -84,7 +95,7 @@ public class UserInputListener {
       dragging = false;
     }
     if (game != null) {
-      game.onMouseButton(button, action, mods);
+      events.add(()-> game.onMouseButton(button, action, mods));
     }
   }
 
@@ -92,7 +103,8 @@ public class UserInputListener {
     scrollX = xOffset;
     scrollY = yOffset;
     if (game != null) {
-      game.onScroll(xOffset, yOffset);
+
+      events.add(()-> game.onScroll(xOffset, yOffset));
     }
   }
 
@@ -106,7 +118,7 @@ public class UserInputListener {
   public void keyCallback(long window, int key, int scancode, int action, int mods) {
     keysPressed[key] = action == GLFW_PRESS;
     if (game != null) {
-      game.onKeyPress(key, action, mods);
+      events.add(()-> game.onKeyPress(key, action, mods));
     }
   }
 
@@ -119,5 +131,10 @@ public class UserInputListener {
     return "UserInputListener{"
         + "buttonsPressed=" + Arrays.toString(buttonsPressed)
         + '}';
+  }
+
+  @FunctionalInterface
+  private interface Event{
+    void run();
   }
 }

@@ -14,12 +14,12 @@ import windowStuff.Graphics;
 import windowStuff.UserInputHandler;
 import windowStuff.UserInputListener;
 
-public class Game implements UserInputHandler {
+public final class Game implements UserInputHandler {
 
   private static final int tickInterval = 1000 / 60;
   private final UserInputListener userInput;
   private final Graphics graphics;
-  private final List<TickDetect> tickables = new LinkedList<TickDetect>();
+  private final List<TickDetect> tickables = new LinkedList<>();
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
@@ -39,7 +39,7 @@ public class Game implements UserInputHandler {
     tickables.add(t);
   }
 
-  public synchronized void tick() {
+  public void tick() {
     long timeTillTick = startTime + (long) tickInterval * ticks - System.currentTimeMillis();
     if (timeTillTick > 0) {
       return;
@@ -47,16 +47,18 @@ public class Game implements UserInputHandler {
     ticks++;
     if (ticks % 60 == 0) {
       System.out.println(ticks);
+      //System.out.println(tickables.size());
     }
     var iter = new LinkedList<>(tickables).iterator();
     while (iter.hasNext()) {
       TickDetect t = iter.next();
       if (t.ShouldDeleteThis()) {
-        iter.remove();
+        tickables.remove(t);
       } else {
         t.onGameTick(ticks);
       }
     }
+    userInput.handleEvents();
   }
 
   public void graphicsUpdate(double dt) {
@@ -76,19 +78,20 @@ public class Game implements UserInputHandler {
   }
 
   @Override
-  public synchronized void onMouseMove(double newX, double newY) {
+  public void onMouseMove(double newX, double newY) {
   }
 
   @Override
-  public synchronized void onMouseButton(int button, int action, int mods) {
+  public void onMouseButton(int button, int action, int mods) {
   }
 
   @Override
-  public synchronized void onScroll(double xOffset, double yOffset) {
+  public void onScroll(double xOffset, double yOffset) {
   }
 
   @Override
-  public synchronized void onKeyPress(int key, int action, int mods) {
+  public void onKeyPress(int key, int action, int mods) {
+   // System.out.println(key);
   }
 
   @SuppressWarnings("resource")

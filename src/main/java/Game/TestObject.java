@@ -4,11 +4,11 @@ import general.Constants;
 import general.Data;
 import windowStuff.Sprite;
 
-public class TestObject implements TickDetect {
+public final class TestObject implements TickDetect {
 
   private final Sprite sprite;
   private final float rot;
-  protected boolean exists;
+  private boolean exists;
   private float vx, vy, x, y;
   private float currentAngle = 0;
 

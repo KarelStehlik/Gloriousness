@@ -73,6 +73,7 @@ public class BatchSystem {
         Batch batch = iter.next();
         batch.draw();
         if (batch.isEmpty) {
+          batch.delete();
           iter.remove();
         }
       }

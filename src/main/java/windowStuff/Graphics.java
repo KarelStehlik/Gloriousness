@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import org.joml.Vector3f;
 
-public class Graphics {
+public final class Graphics {
 
   private final Collection<BatchSystem> batchSystems = new LinkedList<BatchSystem>();
   private Camera camera;

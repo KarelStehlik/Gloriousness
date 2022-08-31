@@ -3,11 +3,11 @@ package Game;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Test implements TickDetect {
+public final class Test implements TickDetect {
 
   private static final int SIZE = 100000;
 
-  private final List<TestObject> objects = new ArrayList<TestObject>(SIZE);
+  private final List<TestObject> objects = new ArrayList<>(SIZE);
 
   private final Game game;
 

@@ -19,6 +19,11 @@ public class Sprite {
   protected Shader shader;
   protected int slotInBatch;
   protected boolean deleteThis = false;
+
+  public float getRotation() {
+    return rotation;
+  }
+
   private float rotation = 0;
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
@@ -52,20 +57,20 @@ public class Sprite {
     batch.removeSprite(this);
   }
 
-  public synchronized void setPosition(float X, float Y) {
+  public void setPosition(float X, float Y) {
     x = X;
     y = Y;
     hasUnsavedChanges = true;
   }
 
-  public synchronized void setRotation(float r) {
+  public void setRotation(float r) {
     rotation = r;
     rotationSin = Util.sin(r);
     rotationCos = Util.cos(r);
     hasUnsavedChanges = true;
   }
 
-  public synchronized void scale(float multiplier) {
+  public void scale(float multiplier) {
     width *= multiplier;
     height *= multiplier;
     hasUnsavedChanges = true;
@@ -96,7 +101,7 @@ public class Sprite {
     glBufferSubData(GL_ARRAY_BUFFER, offset, vertices);
   }
 
-  public synchronized void setColors(float[] colors) {
+  public void setColors(float[] colors) {
     assert colors.length == 16 : "expected 16 colors for sprite.";
     for (int i = 0; i < 16; i++) {
       vertices[3 + i + (int) ((float) i / 4.0) * 5] = colors[i];
@@ -104,10 +109,10 @@ public class Sprite {
   }
 
   protected synchronized void _delete() {
-    unBatch();
+    unBatch(); vertices=null;
   }
 
-  public synchronized void delete() {
+  public void delete() {
     deleteThis = true;
   }
 }
