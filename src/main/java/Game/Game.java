@@ -5,9 +5,9 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import windowStuff.BatchSystem;
 import windowStuff.Graphics;
@@ -19,9 +19,9 @@ public final class Game implements UserInputHandler {
   private static final int tickInterval = 1000 / 60;
   private final UserInputListener userInput;
   private final Graphics graphics;
-  private final List<TickDetect> tickables = new LinkedList<>();
+  private final Collection<TickDetect> tickables = new LinkedList<>();
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
-  private final List<TickDetect> newTickables = new LinkedList<>();
+  private final Collection<TickDetect> newTickables = new LinkedList<>();
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
 
@@ -74,10 +74,11 @@ public final class Game implements UserInputHandler {
     if (r != null) {
       return r;
     }
-    r = new BatchSystem();
-    graphics.addBatchSystem(r);
-    bs.put(name, r);
-    return r;
+    BatchSystem newBS = new BatchSystem();
+    System.out.println("creating new batch system: "+name);
+    graphics.addBatchSystem(newBS);
+    bs.put(name, newBS);
+    return newBS;
   }
 
   @Override

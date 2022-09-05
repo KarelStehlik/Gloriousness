@@ -6,6 +6,8 @@ import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import general.Constants;
 import general.Data;
 import general.Util;
+import java.util.List;
+import java.util.stream.Stream;
 import org.joml.Vector2f;
 
 public class Sprite {
@@ -22,7 +24,8 @@ public class Sprite {
   private float rotation = 0;
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
-  public Sprite(String textureName, float x, float y, float sizeX, float sizeY, int layer,
+  private String imageName;
+  public Sprite(String imageName, float x, float y, float sizeX, float sizeY, int layer,
       String shader) {
     this.x = x;
     this.y = y;
@@ -33,17 +36,30 @@ public class Sprite {
     Vector2f TR = new Vector2f(x + width, y + height);
     vertices = new float[]{
         // x     y     z  r  g  b  a  u  v
-        TR.x, BL.y, 1, 0, 0, 0, 1, 1, 0,// +-
-        BL.x, TR.y, 1, 0, 0, 0, 1, 0, 1,// -+
-        TR.x, TR.y, 1, 0, 0, 0, 1, 1, 1,// ++
-        BL.x, BL.y, 1, 0, 0, 0, 1, 0, 0// --
+        TR.x, BL.y,    1, 0, 0, 0, 1, 1, 0,// +-
+        BL.x, TR.y,    1, 0, 0, 0, 1, 0, 1,// -+
+        TR.x, TR.y,    1, 0, 0, 0, 1, 1, 1,// ++
+        BL.x, BL.y,    1, 0, 0, 0, 1, 0, 0// --
     };
-    this.textureName = textureName;
+    setImage(imageName);
     this.layer = layer;
   }
 
   public float getRotation() {
     return rotation;
+  }
+
+  public void setImage(String name){
+    this.textureName = Data.getImageTexture(name);
+    imageName = name;
+    setUV();
+  }
+
+  private void setUV(){
+    List<Float> uv = Data.getImageCoordinates(this.imageName);
+    for(int i=0;i<8;i++){
+      vertices[i + (int)(i/2) * 7 + 7] = uv.get(i);
+    }
   }
 
   public void setRotation(float r) {

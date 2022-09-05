@@ -22,7 +22,7 @@ public final class Graphics {
   //private Sprite sTest;
 
   public void init() {
-    Data.init("assets/shady shit", "assets/final_images");
+    Data.init();
     System.out.println(Constants.screenSize); // this is needed to load Constants
     //test = new BatchSystem();
     //sTest = new Sprite("Farm21", 50, 50, 100, 100, 0, "colorCycle");
