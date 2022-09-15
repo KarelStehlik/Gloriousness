@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class Test implements TickDetect {
 
-  private static final int SIZE = 10;
+  private static final int SIZE = 100;
 
   private final List<TestObject> objects = new ArrayList<>(SIZE);
 

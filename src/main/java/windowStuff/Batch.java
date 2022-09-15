@@ -35,7 +35,7 @@ final class Batch {
   final String textureName;
   final List<Integer> freeSpriteSlots;
   final int layer;
-  private final BatchSystem group;
+  final BatchSystem group;
   private final Sprite[] sprites;
   private final Texture texture;
   private final int maxSize;

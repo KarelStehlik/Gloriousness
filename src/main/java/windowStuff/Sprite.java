@@ -7,6 +7,7 @@ import general.Constants;
 import general.Data;
 import general.Util;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.joml.Vector2f;
 
@@ -25,6 +26,7 @@ public class Sprite {
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
   private String imageName;
+
   public Sprite(String imageName, float x, float y, float sizeX, float sizeY, int layer,
       String shader) {
     this.x = x;
@@ -50,7 +52,14 @@ public class Sprite {
   }
 
   public void setImage(String name){
-    this.textureName = Data.getImageTexture(name);
+    if(!Objects.equals(this.textureName, Data.getImageTexture(name))){
+      this.textureName = Data.getImageTexture(name);
+      if(batch!=null) {
+        BatchSystem bs = batch.group;
+        unBatch();
+        bs.addSprite(this);
+      }
+    }
     imageName = name;
     setUV();
   }
