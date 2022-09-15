@@ -1,10 +1,13 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
+import general.Util;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,9 +22,13 @@ public final class Game implements UserInputHandler {
   private static final int tickInterval = 1000 / 60;
   private final UserInputListener userInput;
   private final Graphics graphics;
-  private final Collection<TickDetect> tickables = new LinkedList<>();
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
+  private final Collection<TickDetect> tickables = new LinkedList<>();
   private final Collection<TickDetect> newTickables = new LinkedList<>();
+  private final Collection<KeyboardDetect> keyDetects = new LinkedList<>();
+  private final Collection<KeyboardDetect> newKeyDetects = new LinkedList<>();
+  private final Collection<MouseDetect> mouseDetects = new LinkedList<>();
+  private final Collection<MouseDetect> newMouseDetects = new LinkedList<>();
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
 
@@ -39,6 +46,7 @@ public final class Game implements UserInputHandler {
   public void addTickable(TickDetect t) {
     newTickables.add(t);
   }
+  public void addKeyDetect(KeyboardDetect t){newKeyDetects.add(t);}
 
   public void tick() {
     long timeTillTick = startTime + (long) tickInterval * ticks - System.currentTimeMillis();
@@ -62,6 +70,10 @@ public final class Game implements UserInputHandler {
     userInput.handleEvents();
     tickables.addAll(newTickables);
     newTickables.clear();
+    keyDetects.addAll(newKeyDetects);
+    newKeyDetects.clear();
+    mouseDetects.addAll(newMouseDetects);
+    newMouseDetects.clear();
   }
 
   public void graphicsUpdate(double dt) {
@@ -83,19 +95,59 @@ public final class Game implements UserInputHandler {
 
   @Override
   public void onMouseMove(double newX, double newY) {
+    var iter = mouseDetects.iterator();
+    while (iter.hasNext()) {
+      MouseDetect t = iter.next();
+      if (t.ShouldDeleteThis()) {
+        iter.remove();
+      } else {
+        t.onMouseMove(newX, newY);
+      }
+    }
   }
 
   @Override
   public void onMouseButton(int button, int action, int mods) {
+    var iter = mouseDetects.iterator();
+    while (iter.hasNext()) {
+      MouseDetect t = iter.next();
+      if (t.ShouldDeleteThis()) {
+        iter.remove();
+      } else {
+        t.onMouseButton(button, userInput.getX(), userInput.getY(), action, mods);
+      }
+    }
   }
 
   @Override
   public void onScroll(double xOffset, double yOffset) {
+    var iter = mouseDetects.iterator();
+    while (iter.hasNext()) {
+      MouseDetect t = iter.next();
+      if (t.ShouldDeleteThis()) {
+        iter.remove();
+      } else {
+        t.onScroll(xOffset);
+      }
+    }
   }
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-    // System.out.println(key);
+    if (!Util.testBit(mods, GLFW_MOD_SHIFT)) {
+      System.out.println("y");
+    } else {
+      System.out.println("n");
+    }
+    var iter = keyDetects.iterator();
+    while (iter.hasNext()) {
+       KeyboardDetect t = iter.next();
+      if (t.ShouldDeleteThis()) {
+        iter.remove();
+      } else {
+        t.onKeyPress(key, action, mods);
+      }
+    }
   }
 
   @SuppressWarnings("resource")

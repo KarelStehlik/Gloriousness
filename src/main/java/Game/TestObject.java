@@ -21,7 +21,7 @@ public final class TestObject implements TickDetect {
     game.addTickable(this);
     vx = Data.gameMechanicsRng.nextFloat(10);
     vy = Data.gameMechanicsRng.nextFloat(10);
-    rot = Data.gameMechanicsRng.nextFloat(5);
+    rot = 0;
     String imageName = images[(int) (Data.unstableRng.nextFloat() * images.length)];
     sprite = new Sprite(imageName, 150, 150, 200, 200, 0, "colorCycle");
     sprite.setColors(new float[]{
