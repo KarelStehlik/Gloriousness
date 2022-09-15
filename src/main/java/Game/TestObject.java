@@ -11,7 +11,8 @@ public final class TestObject implements TickDetect {
   private boolean exists;
   private float vx, vy, x, y;
   private float currentAngle = 0;
-  private static final String[] images = new String[]{"magic_tree", "Cancelbutton", "Intro", "Freeze",
+  private static final String[] images = new String[]{"magic_tree", "Cancelbutton", "Intro",
+      "Freeze",
       "fire", "farm", "Farm1", "Farm2", "Mancatcher", "Button", "Golem", "crab", "Defender",
       "Farm11", "Farm21", "Meteor", "mine", "Chestplates", "Boulder", "crater", "faura", "Egg",
       "Bowman", "Bullet"};
@@ -21,8 +22,14 @@ public final class TestObject implements TickDetect {
     vx = Data.gameMechanicsRng.nextFloat(10);
     vy = Data.gameMechanicsRng.nextFloat(10);
     rot = Data.gameMechanicsRng.nextFloat(5);
-    String imageName = images[(int)(Data.unstableRng.nextFloat()*images.length)];
-    sprite = new Sprite(imageName, 150, 150, 50, 50, 0, "basic");
+    String imageName = images[(int) (Data.unstableRng.nextFloat() * images.length)];
+    sprite = new Sprite(imageName, 150, 150, 200, 200, 0, "colorCycle");
+    sprite.setColors(new float[]{
+        0, 1, 1, 1,
+        1, 0, 1, 1,
+        1, 1, 0, 1,
+        0, 1, 0, 1
+    });
     game.getBatchSystem("main").addSprite(sprite);
     exists = true;
   }
@@ -46,8 +53,8 @@ public final class TestObject implements TickDetect {
       vy = -vy;
     }
     sprite.setPosition(x, y);
-    if(Data.unstableRng.nextFloat()<0.5) {
-      sprite.setImage(images[(int) (Data.unstableRng.nextFloat() * images.length)]);
+    if (Data.unstableRng.nextFloat() < 0.5) {
+      //sprite.setImage(images[(int) (Data.unstableRng.nextFloat() * images.length)]);
     }
     currentAngle += rot;
     sprite.setRotation(currentAngle);

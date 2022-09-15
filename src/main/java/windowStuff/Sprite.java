@@ -28,6 +28,15 @@ public class Sprite {
   private String imageName;
   protected boolean mustBeRebatched = false;
 
+  public Sprite(String imageName, float sizeX, float sizeY, int layer,
+      String shader) {
+    this(imageName, 0, 0, sizeX, sizeY, layer, shader);
+  }
+
+  public Sprite(String imageName, float sizeX, float sizeY, int layer) {
+    this(imageName, 0, 0, sizeX, sizeY, layer, "basic");
+  }
+
   public Sprite(String imageName, float x, float y, float sizeX, float sizeY, int layer,
       String shader) {
     this.x = x;

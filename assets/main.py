@@ -90,7 +90,10 @@ class TestSetup:
         file.write(text[1::])
 
 animations = {}
-
+for e in os.listdir("final images"):
+    os.remove(f"final images/{e}")
+for e in os.listdir("image coordinates"):
+    os.remove(f"image coordinates/{e}")
 files = []
 for e in os.listdir("rawImages"):
     if e.startswith("ANIM_"):
