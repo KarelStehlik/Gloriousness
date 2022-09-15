@@ -46,7 +46,7 @@ public final class TestObject implements TickDetect {
       vy = -vy;
     }
     sprite.setPosition(x, y);
-    if(Data.unstableRng.nextFloat()<0.02) {
+    if(Data.unstableRng.nextFloat()<0.5) {
       sprite.setImage(images[(int) (Data.unstableRng.nextFloat() * images.length)]);
     }
     currentAngle += rot;

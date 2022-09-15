@@ -147,6 +147,10 @@ final class Batch {
       if (sprite != null) {
         if (sprite.deleteThis) {
           sprite._delete();
+        }else if(sprite.mustBeRebatched){
+          sprite.unBatch();
+          group.addSprite(sprite);
+          sprite.mustBeRebatched = false;
         } else if (sprite.hasUnsavedChanges) {
           sprite.updateVertices();
           sprite.bufferVertices(offset);

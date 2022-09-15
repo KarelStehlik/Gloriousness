@@ -26,6 +26,7 @@ public class Sprite {
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
   private String imageName;
+  protected boolean mustBeRebatched = false;
 
   public Sprite(String imageName, float x, float y, float sizeX, float sizeY, int layer,
       String shader) {
@@ -55,9 +56,7 @@ public class Sprite {
     if(!Objects.equals(this.textureName, Data.getImageTexture(name))){
       this.textureName = Data.getImageTexture(name);
       if(batch!=null) {
-        BatchSystem bs = batch.group;
-        unBatch();
-        bs.addSprite(this);
+        mustBeRebatched = true;
       }
     }
     imageName = name;
