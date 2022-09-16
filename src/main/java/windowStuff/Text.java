@@ -1,6 +1,7 @@
 package windowStuff;
 
 import general.Data;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,14 +9,19 @@ public class Text {
 
   private static final double textureHeight =
       64d / 4096d; //the height of a glyph sub-texture, in uv coordinates
+  float scale;
 
-  private final List<Symbol> symbols;
+  private List<Symbol> symbols;
   private final int layer;
   public int x, y;
   private final float fontSize;
   private final String fontName;
   private final int maxWidth;
   private final String text;
+  private final String shader;
+  private final BatchSystem bs;
+  private float[] colors = {0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,};
+  private boolean deleted = false;
 
   public Text(String value, String font, int width, int x, int y, int layer, float size,
       BatchSystem bs) {
@@ -26,12 +32,15 @@ public class Text {
       BatchSystem bs, String shader) {
     fontSize = size;
     this.x = x;
+    this.bs = bs;
     this.y = y;
     text = value;
     this.maxWidth = width;
     fontName = font;
     this.layer = layer;
+    this.shader = shader;
     symbols = new LinkedList<>();
+    scale = (float) (fontSize / textureHeight);
     for (char c : value.toCharArray()) {
       Symbol s = new Symbol(c, x, y, shader);
       symbols.add(s);
@@ -40,10 +49,38 @@ public class Text {
     arrange();
   }
 
+  public void setText(String value){
+    if(deleted){return;}
+    List<Symbol> newSymbols = new LinkedList<>();
+    Iterator<Symbol> existing = symbols.listIterator();
+    for(char c : value.toCharArray()){
+      if(existing.hasNext()){
+        Symbol s = existing.next();
+        newSymbols.add(s);
+        if(s.character != c){
+          s.setCharacter(c);
+        }
+      }else{
+        Symbol s=new Symbol(c, x, y, shader);
+        bs.addSprite(s.sprite);
+        newSymbols.add(s);
+      }
+    }
+    while(existing.hasNext()){
+      Symbol s = existing.next();
+      s.delete();
+      existing.remove();
+    }
+    symbols.clear();
+    symbols = newSymbols;
+    arrange();
+  }
+
   public void setColors(float[] colors) {
     for (var s : symbols) {
       s.sprite.setColors(colors);
     }
+    this.colors = colors;
   }
 
   public void move(int newX, int newY) {
@@ -73,6 +110,7 @@ public class Text {
       symbol.delete();
     }
     symbols.clear();
+    deleted = true;
   }
 
   private class Symbol {
@@ -84,12 +122,12 @@ public class Text {
     Symbol(char c, float x, float y, String shader) {
       List<Float> uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
       float w = uv.get(0) - uv.get(2);
-      float scale = (float) (fontSize / textureHeight);
       width = w * scale;
       sprite = new Sprite(fontName + '-' + Character.getName(c), width, fontSize, layer, shader);
       sprite.x = x + width / 2;
       sprite.y = y;
       character = c;
+      sprite.setColors(colors);
     }
 
     void move(float x, float y) {
@@ -98,6 +136,14 @@ public class Text {
 
     void delete() {
       sprite.delete();
+    }
+
+    void setCharacter(char c){
+      List<Float> uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
+      float w = uv.get(0) - uv.get(2);
+      width = w * scale;
+      sprite.setImage(fontName + '-' + Character.getName(c));
+      sprite.setSize(width, fontSize);
     }
   }
 }

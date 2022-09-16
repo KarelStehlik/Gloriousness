@@ -1,5 +1,6 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
@@ -17,6 +18,11 @@ import windowStuff.UserInputListener;
 public final class Game implements UserInputHandler {
 
   private static final int tickInterval = 1000 / 60;
+
+  public UserInputListener getInputListener() {
+    return userInput;
+  }
+
   private final UserInputListener userInput;
   private final Graphics graphics;
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
@@ -38,6 +44,7 @@ public final class Game implements UserInputHandler {
     graphics.init();
     startTime = System.currentTimeMillis();
     new Test(this);
+    new CameraMover(this);
   }
 
   public void addTickable(TickDetect t) {
@@ -48,6 +55,10 @@ public final class Game implements UserInputHandler {
     newKeyDetects.add(t);
   }
 
+  public void addMouseDetect(MouseDetect t) {
+    newMouseDetects.add(t);
+  }
+
   public void tick() {
     long timeTillTick = startTime + (long) tickInterval * ticks - System.currentTimeMillis();
     if (timeTillTick > 0) {
@@ -56,7 +67,6 @@ public final class Game implements UserInputHandler {
     ticks++;
     if (ticks % 60 == 0) {
       System.out.println(ticks);
-      //System.out.println(tickables.size());
     }
     var iter = tickables.iterator();
     while (iter.hasNext()) {
@@ -134,6 +144,7 @@ public final class Game implements UserInputHandler {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
+    if(action == GLFW_REPEAT){return;}
     //Util.testBit(mods, GLFW_MOD_SHIFT)
     var iter = keyDetects.iterator();
     while (iter.hasNext()) {

@@ -18,6 +18,8 @@ public class BatchSystem {
 
   private final List<Sprite> spritesToAdd = new LinkedList<>();
 
+  private Camera camera;
+
   public BatchSystem() {
     //batches = new LinkedList<>(); // is sorted
     Collection<Shader> shaders = Data.getAllShaders();
@@ -59,6 +61,7 @@ public class BatchSystem {
 
 
   public void draw() {
+    _useCamera();
     synchronized (spritesToAdd) {
       while (!spritesToAdd.isEmpty()) {
         _addSprite(
@@ -81,9 +84,17 @@ public class BatchSystem {
   }
 
 
-  public void useCamera(Camera camera) {
+  private void _useCamera(){
     for (Shader shader : batches.keySet()) {
       shader.useCamera(camera);
     }
+  }
+
+  public void useCamera(Camera camera) {
+    this.camera = camera;
+  }
+
+  public Camera getCamera(){
+    return camera;
   }
 }

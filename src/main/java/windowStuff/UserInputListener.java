@@ -66,7 +66,7 @@ public class UserInputListener {
   }
 
   public boolean isKeyPressed(int button) {
-    return buttonsPressed[button];
+    return keysPressed[button];
   }
 
   public void mousePosCallback(long window, double newX, double newY) {
@@ -114,14 +114,14 @@ public class UserInputListener {
   }
 
   public void keyCallback(long window, int key, int scancode, int action, int mods) {
-    keysPressed[key] = action == GLFW_PRESS;
+    keysPressed[key] = action >= GLFW_PRESS;
     if (game != null) {
       events.add(() -> game.onKeyPress(key, action, mods));
     }
   }
 
   public boolean isMousePressed(int key) {
-    return keysPressed[key];
+    return buttonsPressed[key];
   }
 
   @Override

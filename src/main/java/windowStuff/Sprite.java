@@ -106,6 +106,12 @@ public class Sprite {
     hasUnsavedChanges = true;
   }
 
+  public void setSize(float w, float h){
+    width = w/2;
+    height = h/2;
+    hasUnsavedChanges=true;
+  }
+
   public synchronized void updateVertices() {
     if (!hasUnsavedChanges) {
       return;

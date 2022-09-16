@@ -38,6 +38,7 @@ public final class Test implements TickDetect {
       new Test(game);
     }
     label.move(label.x+10, label.y);
+    label.setText(String.valueOf(tick*tick*tick));
   }
 
   @Override
