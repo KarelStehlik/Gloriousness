@@ -12,9 +12,9 @@ public class UserInputListener {
   private final boolean[] keysPressed;
   private final boolean[] buttonsPressed;
   private final UserInputHandler game;
+  private final BlockingQueue<Event> events = new LinkedBlockingQueue<>();
   private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private boolean dragging;
-  private final BlockingQueue<Event> events = new LinkedBlockingQueue<>();
 
   public UserInputListener(UserInputHandler g) {
     x = 0;

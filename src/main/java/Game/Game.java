@@ -1,13 +1,10 @@
 package Game;
 
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
-import general.Util;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,7 +43,10 @@ public final class Game implements UserInputHandler {
   public void addTickable(TickDetect t) {
     newTickables.add(t);
   }
-  public void addKeyDetect(KeyboardDetect t){newKeyDetects.add(t);}
+
+  public void addKeyDetect(KeyboardDetect t) {
+    newKeyDetects.add(t);
+  }
 
   public void tick() {
     long timeTillTick = startTime + (long) tickInterval * ticks - System.currentTimeMillis();
@@ -87,7 +87,7 @@ public final class Game implements UserInputHandler {
       return r;
     }
     BatchSystem newBS = new BatchSystem();
-    System.out.println("creating new batch system: "+name);
+    System.out.println("creating new batch system: " + name);
     graphics.addBatchSystem(newBS);
     bs.put(name, newBS);
     return newBS;
@@ -134,14 +134,10 @@ public final class Game implements UserInputHandler {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-    if (!Util.testBit(mods, GLFW_MOD_SHIFT)) {
-      System.out.println("y");
-    } else {
-      System.out.println("n");
-    }
+    //Util.testBit(mods, GLFW_MOD_SHIFT)
     var iter = keyDetects.iterator();
     while (iter.hasNext()) {
-       KeyboardDetect t = iter.next();
+      KeyboardDetect t = iter.next();
       if (t.ShouldDeleteThis()) {
         iter.remove();
       } else {

@@ -1,7 +1,5 @@
 package general;
 
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
@@ -32,8 +30,8 @@ public final class Util {
     return out.put(input);
   }
 
-  public static boolean testBit(int input, int bit){
-    return (input & (1 << (bit-1))) != 0;
+  public static boolean testBit(int input, int bit) {
+    return (input & (1 << (bit - 1))) != 0;
   }
 
   public static IntBuffer buffer(int[] input) {

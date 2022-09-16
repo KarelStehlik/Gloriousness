@@ -6,16 +6,16 @@ import windowStuff.Sprite;
 
 public final class TestObject implements TickDetect {
 
-  private final Sprite sprite;
-  private final float rot;
-  private boolean exists;
-  private float vx, vy, x, y;
-  private float currentAngle = 0;
   private static final String[] images = new String[]{"magic_tree", "Cancelbutton", "Intro",
       "Freeze",
       "fire", "farm", "Farm1", "Farm2", "Mancatcher", "Button", "Golem", "crab", "Defender",
       "Farm11", "Farm21", "Meteor", "mine", "Chestplates", "Boulder", "crater", "faura", "Egg",
       "Bowman", "Bullet"};
+  private final Sprite sprite;
+  private final float rot;
+  private boolean exists;
+  private float vx, vy, x, y;
+  private float currentAngle = 0;
 
   public TestObject(Game game) {
     game.addTickable(this);

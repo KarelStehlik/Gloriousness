@@ -8,7 +8,6 @@ import general.Data;
 import general.Util;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 import org.joml.Vector2f;
 
 public class Sprite {
@@ -22,11 +21,11 @@ public class Sprite {
   protected Shader shader;
   protected int slotInBatch;
   protected boolean deleteThis = false;
+  protected boolean mustBeRebatched = false;
   private float rotation = 0;
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
   private String imageName;
-  protected boolean mustBeRebatched = false;
 
   public Sprite(String imageName, float sizeX, float sizeY, int layer,
       String shader) {
@@ -48,10 +47,10 @@ public class Sprite {
     Vector2f TR = new Vector2f(x + width, y + height);
     vertices = new float[]{
         // x     y     z  r  g  b  a  u  v
-        TR.x, BL.y,    1, 0, 0, 0, 1, 1, 0,// +-
-        BL.x, TR.y,    1, 0, 0, 0, 1, 0, 1,// -+
-        TR.x, TR.y,    1, 0, 0, 0, 1, 1, 1,// ++
-        BL.x, BL.y,    1, 0, 0, 0, 1, 0, 0// --
+        TR.x, BL.y, 1, 0, 0, 0, 1, 1, 0,// +-
+        BL.x, TR.y, 1, 0, 0, 0, 1, 0, 1,// -+
+        TR.x, TR.y, 1, 0, 0, 0, 1, 1, 1,// ++
+        BL.x, BL.y, 1, 0, 0, 0, 1, 0, 0// --
     };
     setImage(imageName);
     this.layer = layer;
@@ -61,10 +60,17 @@ public class Sprite {
     return rotation;
   }
 
-  public void setImage(String name){
-    if(!Objects.equals(this.textureName, Data.getImageTexture(name))){
+  public void setRotation(float r) {
+    rotation = r;
+    rotationSin = Util.sin(r);
+    rotationCos = Util.cos(r);
+    hasUnsavedChanges = true;
+  }
+
+  public void setImage(String name) {
+    if (!Objects.equals(this.textureName, Data.getImageTexture(name))) {
       this.textureName = Data.getImageTexture(name);
-      if(batch!=null) {
+      if (batch != null) {
         mustBeRebatched = true;
       }
     }
@@ -72,18 +78,11 @@ public class Sprite {
     setUV();
   }
 
-  private void setUV(){
+  private void setUV() {
     List<Float> uv = Data.getImageCoordinates(this.imageName);
-    for(int i=0;i<8;i++){
-      vertices[i + (int)(i/2) * 7 + 7] = uv.get(i);
+    for (int i = 0; i < 8; i++) {
+      vertices[i + (i / 2) * 7 + 7] = uv.get(i);
     }
-  }
-
-  public void setRotation(float r) {
-    rotation = r;
-    rotationSin = Util.sin(r);
-    rotationCos = Util.cos(r);
-    hasUnsavedChanges = true;
   }
 
   protected synchronized void getBatched(Batch newBatch, int slot) {

@@ -23,6 +23,7 @@ import org.lwjgl.BufferUtils;
 
 public class Texture {
 
+  protected final int width, height;
   private final int id;
 
   public Texture(String path) {
@@ -43,8 +44,11 @@ public class Texture {
 
     int format = channels.get(0) == 4 ? GL_RGBA : GL_RGB;
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width.get(0),
-        height.get(0), 0, format, GL_UNSIGNED_BYTE, image);
+    this.width = width.get(0);
+    this.height = height.get(0);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, this.width,
+        this.height, 0, format, GL_UNSIGNED_BYTE, image);
 
     stbi_image_free(image);
   }

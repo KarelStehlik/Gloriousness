@@ -46,8 +46,8 @@ class TestSetup:
         return True
 
     def add(self, e, poi):
-        self.POIs.append((poi[0] + e.size[0], poi[1]))
         self.POIs.append((poi[0], poi[1] + e.size[1]))
+        self.POIs.append((poi[0] + e.size[0], poi[1]))
         self.POIs.remove(poi)
         self.covered.append((*poi, *e.size))
         self.images.append(e)
@@ -64,12 +64,12 @@ class TestSetup:
                 if new.can_add(*poi, *img.size):
                     new.add(img, poi)
                     break
-                else:
-                    if not new.images:
-                        print("Error: could not fit these images on a single texture.")
-                        print([f"{e.name}, size {e.size}" for e in anim.images])
-                        os._exit(0)
-                    return False
+            else:
+                if not self.images:
+                    print("Error: could not fit these images on a single texture.")
+                    print([f"{e.name}, size {e.size}" for e in anim.images])
+                    os._exit(0)
+                return False
         self.become_copy(new)
         return True
 
@@ -83,7 +83,11 @@ class TestSetup:
             new.paste(e, poi)
             b, l, t, r = poi[1] / TEXSIZE, poi[0] / TEXSIZE, (poi[1] + e.size[1]) / TEXSIZE, (
                     poi[0] + e.size[0]) / TEXSIZE
-            text += f"\n{e.name} {r} {b} {l} {t} {r} {t} {l} {b}"
+            b+=1/TEXSIZE
+            l+=1/TEXSIZE
+            t-=1/TEXSIZE
+            r-=1/TEXSIZE
+            text += f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"
 
         new.save("final images/T" + str(n_textures) + ".png")
         file = open(f"image coordinates/T{n_textures}.txt", "w")
@@ -104,6 +108,13 @@ for e in os.listdir("rawImages"):
         if animName not in animations.keys():
             animations[animName] = Animation()
         animations[animName].add(img)
+    elif os.path.isdir("rawImages/"+e):
+        animations[e] = Animation()
+        for f in os.listdir("rawImages/"+e):
+            img = Image.open("rawImages/" + e+"/"+f)
+            img.name = f.split(".")[0]
+            img.pixelCount = img.size[0] * img.size[1]
+            animations[e].add(img)
     else:
         img = Image.open("rawImages/" + e)
         img.name = e.split(".")[0]
@@ -117,12 +128,8 @@ print(str([e.name for e in files]).replace("\'", "\""))
 while files or animations:
     # create a new image
     setup = TestSetup()
-    i = 0
-    # loop through all animations, see if they fit on the image
-    for key, value in list(animations.items()):
-        if setup.try_add_animation(value):
-            animations.pop(key)
     # loop through all standalone textures, see if they fit on the image
+    i = 0
     while i < len(files):
         e = files[i]
         for poi in setup.POIs:
@@ -133,5 +140,9 @@ while files or animations:
                 i -= 1
                 break
         i += 1
+    # loop through all animations, see if they fit on the image
+    for key, value in list(animations.items()):
+        if setup.try_add_animation(value):
+            animations.pop(key)
     setup.save()
     n_textures += 1
