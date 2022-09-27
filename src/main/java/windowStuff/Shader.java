@@ -33,14 +33,17 @@ import org.lwjgl.BufferUtils;
 public class Shader {
 
   private final int shaderID;
+  final String name;
 
   public Shader(String path) {
 
-    String[] sources;
-    String vertexSource = null, fragmentSource = null;
+    String[] split = path.split("/");
+    name = split[split.length-1].split("\\.")[0];
 
+    String vertexSource = null;
+    String fragmentSource = null;
     try {
-      sources = Files.readString(Paths.get(path)).split("#type ");
+      String[] sources = Files.readString(Paths.get(path)).split("#type ");
       for (String source : sources) {
         if (source.startsWith("fragment")) {
           fragmentSource = source.substring(10);

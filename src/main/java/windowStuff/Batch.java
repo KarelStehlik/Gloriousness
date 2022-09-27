@@ -40,7 +40,7 @@ final class Batch {
   private final Texture texture;
   private final int maxSize;
   private final int vao, vbo, ebo;
-  private final Shader shader;
+  final Shader shader;
   boolean isEmpty;
 
 
@@ -133,15 +133,7 @@ final class Batch {
     glDeleteVertexArrays(vao);
   }
 
-  public void draw() {
-    glBindVertexArray(vao);
-    // shader.use();
-    // shader.uploadTexture("sampler", 0);
-    glActiveTexture(GL_TEXTURE0);
-    texture.bind();
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    long offset = 0;
-
+  public void update(){
     for (int i = 0; i < maxSize; i++) {
       Sprite sprite = sprites[i];
       if (sprite != null) {
@@ -153,13 +145,29 @@ final class Batch {
           sprite.mustBeRebatched = false;
         } else if (sprite.hasUnsavedChanges) {
           sprite.updateVertices();
+          sprite.rebuffer = true;
+        }
+      }
+    }
+  }
+
+  public void draw() {
+    glBindVertexArray(vao);
+    shader.use();
+    shader.uploadTexture("sampler", 0);
+    glActiveTexture(GL_TEXTURE0);
+    texture.bind();
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    long offset = 0;
+
+    for (int i = 0; i < maxSize; i++) {
+      Sprite sprite = sprites[i];
+      if (sprite != null) {
+        if (sprite.rebuffer) {
           sprite.bufferVertices(offset);
         }
       }
       offset += Constants.SpriteSizeFloats * Float.BYTES;
-    }
-    if (isEmpty) {
-      return;
     }
     glDrawElements(GL_TRIANGLES, 6 * maxSize, GL_UNSIGNED_INT, 0);
   }

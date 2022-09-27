@@ -7,42 +7,25 @@ import org.lwjgl.BufferUtils;
 public final class Util {
 
   // number of table entries per degree
-  private static final int sinScale = 100;
+  private static final int sinScale = 32;
   // float array that will store the sine values
   private static final float[] sin = new float[(90 * sinScale) + 1];
 
   // static initializer block
   // fill the sine look-up table
   static {
-    // since this table is in degrees but the Math.sin() wants
-    // radians must have a convert coefficient in the loop
-    // also, this coefficient scales the angle down
-    // as per the "entries per degree"
-    // A table could be build to accept radians similarly
     double toRadian = Math.PI / (180.0 * sinScale);
     for (int i = 0; i < sin.length; i++) {
       sin[i] = (float) Math.sin(i * toRadian);
     }
   }
 
-  public static FloatBuffer buffer(float[] input) {
-    FloatBuffer out = BufferUtils.createFloatBuffer(input.length);
-    return out.put(input);
-  }
-
-  public static boolean testBit(int input, int bit) {
-    return (input & (1 << (bit - 1))) != 0;
-  }
-
-  public static IntBuffer buffer(int[] input) {
-    IntBuffer out = BufferUtils.createIntBuffer(input.length);
-    return out.put(input);
-  }
-
   public static float sin(float a) {
     // Limit range if needed.
     if (a > 360) {
       a %= 360;
+    }else if(a<0){
+      a+=360 * ((int)(Math.abs(a)/360)+1);
     }
     // compute the index
     int angleIndex = (int) (a * sinScale);
@@ -60,6 +43,109 @@ public final class Util {
 
   public static float cos(float a) {
     return sin(a + 90);
+  }
+
+  // number of table entries
+  private static final int arcSinScale = 2048;
+  // float array that will store the sine values
+  private static final float[] arcSin = new float[arcSinScale + 1];
+
+  // static initializer block
+  // fill the sine look-up table
+  static {
+    double toDeg = 180 / Math.PI;
+    double step = 1.0 / arcSinScale;
+    for (int i = 0; i < arcSin.length; i++) {
+      arcSin[i] = (float) (Math.asin(i * step) * toDeg);
+    }
+  }
+
+  public static float arcSin(float a) {
+    if (a >= 0) {
+      int index = (int) (a * arcSinScale);
+      return arcSin[index];
+    } else {
+      int index = (int) (-a * arcSinScale);
+      return -arcSin[index];
+    }
+  }
+
+  public static float arcCos(float a) {
+    return arcSin(a - 90);
+  }
+
+  public static FloatBuffer buffer(float[] input) {
+    FloatBuffer out = BufferUtils.createFloatBuffer(input.length);
+    return out.put(input);
+  }
+
+  public static boolean testBit(int input, int bit) {
+    return (input & (1 << (bit - 1))) != 0;
+  }
+
+  public static IntBuffer buffer(int[] input) {
+    IntBuffer out = BufferUtils.createIntBuffer(input.length);
+    return out.put(input);
+  }
+
+  public static float get_rotation(float x, float y) {
+    float inv_hypot = 1/(float) Math.sqrt(x * x + y * y);
+    float asin = arcSin(Math.max(Math.min(y * inv_hypot, 1), -1));
+    if (x >= 0) {
+      return asin;
+    }
+    return  180 - asin;
+  }
+
+  public static float[] getRandomColors() {
+    return new float[]{
+        Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), 1,
+        Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), 1,
+        Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), 1,
+        Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), Data.unstableRng.nextFloat(), 1,
+    };
+  }
+
+  private static final float[] cycleColors = new float[]{
+      3f, 0, 0, 1,
+      0, 3f, 0, 1,
+      1.5f, 1.5f, 0, 1,
+      0, 0, 3f, 1,
+  };
+
+  public static float[] getCycleColors() {
+    return cycleColors;
+  }
+
+  private static final float[] weakCycleColors = new float[]{
+      1.5f, 0, 0, 1,
+      0, 1.5f, 0, 1,
+      .75f, .75f, 0, 1,
+      0, 0, 1.5f, 1,
+  };
+
+  public static float[] getWeakCycleColors() {
+    return weakCycleColors;
+  }
+
+  private static final float[] cycle2colors = new float[]{
+      0, 1, .5f, 1,
+      1, 0, .5f, 1,
+      0, 0, .5f, 1,
+      1, 1, .5f, 1,
+  };
+
+  public static float[] getCycle2colors() {
+    return cycle2colors;
+  }
+
+  public static float[] getCycle2colors(float strength) {
+    return new float[]{
+        0, 10, strength, 1,
+        10, 0, strength, 1,
+        0, 0, strength, 1,
+        10, 10, strength, 1,
+    };
   }
 }
 

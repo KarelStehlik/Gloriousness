@@ -6,6 +6,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
+import java.awt.Rectangle;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,6 +35,7 @@ public final class Game implements UserInputHandler {
   private final Collection<MouseDetect> newMouseDetects = new LinkedList<>();
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
+  private double last60TicksTime = 0;
 
   public Game() {
     userInput = new UserInputListener(this);
@@ -43,8 +45,7 @@ public final class Game implements UserInputHandler {
   public void init() {
     graphics.init();
     startTime = System.currentTimeMillis();
-    new Test(this);
-    new CameraMover(this);
+    new World(this);
   }
 
   public void addTickable(TickDetect t) {
@@ -64,9 +65,11 @@ public final class Game implements UserInputHandler {
     if (timeTillTick > 0) {
       return;
     }
+    double t0 = System.nanoTime();
     ticks++;
     if (ticks % 60 == 0) {
-      System.out.println(ticks);
+      System.out.println(ticks + " in "+last60TicksTime / 1000000000+" seconds");
+      last60TicksTime = 0;
     }
     var iter = tickables.iterator();
     while (iter.hasNext()) {
@@ -84,6 +87,7 @@ public final class Game implements UserInputHandler {
     newKeyDetects.clear();
     mouseDetects.addAll(newMouseDetects);
     newMouseDetects.clear();
+    last60TicksTime += System.nanoTime()-t0;
   }
 
   public void graphicsUpdate(double dt) {
@@ -111,7 +115,7 @@ public final class Game implements UserInputHandler {
       if (t.ShouldDeleteThis()) {
         iter.remove();
       } else {
-        t.onMouseMove(newX, newY);
+        t.onMouseMove((float)newX, 1080f-(float)newY);
       }
     }
   }

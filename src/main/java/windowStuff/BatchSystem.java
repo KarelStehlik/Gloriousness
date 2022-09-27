@@ -9,12 +9,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 public class BatchSystem {
 
   //private final List<Batch> batches;
 
-  protected final Map<Shader, List<Batch>> batches;
+  protected final List<Batch> batches;
 
   private final List<Sprite> spritesToAdd = new LinkedList<>();
 
@@ -23,10 +24,7 @@ public class BatchSystem {
   public BatchSystem() {
     //batches = new LinkedList<>(); // is sorted
     Collection<Shader> shaders = Data.getAllShaders();
-    batches = new HashMap<Shader, List<Batch>>(shaders.size());
-    for (Shader shader : shaders) {
-      batches.put(shader, new LinkedList<Batch>());
-    }
+    batches = new LinkedList<>();
   }
 
   public void addSprite(Sprite sprite) {
@@ -37,9 +35,8 @@ public class BatchSystem {
 
   private void _addSprite(Sprite sprite) {
     // find an available batch, if it exists
-    List<Batch> batchList = batches.get(sprite.shader);
     int index = 0; // at which index do the batches have the correct layer?
-    for (Batch batch : batchList) {
+    for (Batch batch : batches) {
       if (batch.layer < sprite.layer) {
         index++;
         continue;
@@ -47,48 +44,48 @@ public class BatchSystem {
       if (batch.layer > sprite.layer) {
         break;
       }
-      if (batch.textureName.equals(sprite.textureName) && !batch.freeSpriteSlots.isEmpty()) {
+      if (batch.textureName.equals(sprite.textureName) && !batch.freeSpriteSlots.isEmpty() && Objects.equals(
+          batch.shader, sprite.shader)) {
         batch.addSprite(sprite);
         return;
       }
     }
 
     // available batch does not exist, create one
-    Batch batch = new Batch(sprite.textureName, MAX_BATCH_SIZE, "basic", sprite.layer, this);
+    Batch batch = new Batch(sprite.textureName, MAX_BATCH_SIZE, sprite.shader.name, sprite.layer, this);
     batch.addSprite(sprite);
-    batchList.add(index, batch); // keep the list sorted
+    batches.add(index, batch); // keep the list sorted
   }
 
 
   public void draw() {
-    _useCamera();
     synchronized (spritesToAdd) {
       while (!spritesToAdd.isEmpty()) {
         _addSprite(
             spritesToAdd.remove(0)); // do this in the graphics thread so that context is current
       }
     }
-    for (Entry<Shader, List<Batch>> entry : batches.entrySet()) {
-      entry.getKey().use();
-      entry.getKey().uploadTexture("sampler", 0);
-      var iter = entry.getValue().iterator();
-      while (iter.hasNext()) {
-        Batch batch = iter.next();
-        batch.draw();
-        if (batch.isEmpty) {
-          batch.delete();
-          iter.remove();
-        }
+
+    var iter = batches.iterator();
+    while (iter.hasNext()) {
+      Batch batch = iter.next();
+      batch.update();
+      if (batch.isEmpty) {
+        batch.delete();
+        iter.remove();
       }
     }
-  }
 
 
-  private void _useCamera(){
-    for (Shader shader : batches.keySet()) {
-      shader.useCamera(camera);
+    for(Shader s : Data.getAllShaders()){
+      s.useCamera(camera);
     }
+    for (Batch batch : batches) {
+      batch.draw();
+    }
+
   }
+
 
   public void useCamera(Camera camera) {
     this.camera = camera;

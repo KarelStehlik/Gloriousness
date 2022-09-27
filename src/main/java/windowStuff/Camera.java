@@ -5,13 +5,20 @@ import org.joml.Vector3f;
 
 public class Camera {
 
+  static final Vector3f forward = new Vector3f(0f, 0f, -100f);
+  static final Vector3f up = new Vector3f(0f, 1f, 0f);
+
   private final Matrix4f projection;
   private final Vector3f position;
+  private final Matrix4f view;
 
   public Camera(Vector3f position) {
     projection = new Matrix4f();
+    view = new Matrix4f();
     this.position = position;
     adjustProjection();
+    view.setLookAt(position, new Vector3f(0f, 0f, -100f).add(position),
+        up); // position.add(forward) is different from video
   }
 
   public void adjustProjection() {
@@ -20,11 +27,6 @@ public class Camera {
   }
 
   public Matrix4f getViewMatrix() {
-    Vector3f forward = new Vector3f(0f, 0f, -100f);
-    Vector3f up = new Vector3f(0f, 1f, 0f);
-    Matrix4f view = new Matrix4f();
-    view.setLookAt(position, forward.add(position),
-        up); // position.add(forward) is different from video
     return view;
   }
 
@@ -36,11 +38,15 @@ public class Camera {
     position.x += x;
     position.y += y;
     position.z += z;
+    view.setLookAt(position, new Vector3f(0f, 0f, -100f).add(position),
+        up); // position.add(forward) is different from video
   }
 
   public void moveTo(float x, float y, float z) {
     position.x = x;
     position.y = y;
     position.z = z;
+    view.setLookAt(position, new Vector3f(0f, 0f, -100f).add(position),
+        up); // position.add(forward) is different from video
   }
 }

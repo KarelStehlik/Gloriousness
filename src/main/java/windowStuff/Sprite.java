@@ -26,6 +26,7 @@ public class Sprite {
   private float rotationSin = 0, rotationCos = 1;
   private float width, height;
   private String imageName;
+  protected boolean rebuffer = false;
 
   public Sprite(String imageName, float sizeX, float sizeY, int layer,
       String shader) {
@@ -56,14 +57,17 @@ public class Sprite {
     this.layer = layer;
   }
 
+  public void setShader(String shader) {
+    this.shader = Data.getShader(shader);
+    this.mustBeRebatched = true;
+  }
+
   public float getRotation() {
     return rotation;
   }
 
   public void setRotation(float r) {
     rotation = r;
-    rotationSin = Util.sin(r);
-    rotationCos = Util.cos(r);
     hasUnsavedChanges = true;
   }
 
@@ -116,6 +120,8 @@ public class Sprite {
     if (!hasUnsavedChanges) {
       return;
     }
+    rotationSin = Util.sin(rotation);
+    rotationCos = Util.cos(rotation);
     float XC = width * rotationCos, YC = height * rotationCos,
         XS = width * rotationSin, YS = height * rotationSin;
     //+-
@@ -135,6 +141,7 @@ public class Sprite {
 
   protected synchronized void bufferVertices(long offset) {
     glBufferSubData(GL_ARRAY_BUFFER, offset, vertices);
+    rebuffer = false;
   }
 
   public void setColors(float[] colors) {

@@ -24,6 +24,7 @@ public final class Data {
   private static Map<String, Shader> shaders;
   private static Map<String, Texture> textures;
   private static Map<String, ImageData> images;
+  private static final long startTime = System.nanoTime();
 
   private Data() {
   }
@@ -118,7 +119,8 @@ public final class Data {
   }
 
   public static void updateShaders() {
-    getShader("colorCycle").uploadUniform("time", (int) (System.nanoTime() / 10000));
+    getShader("colorCycle").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
+    getShader("colorCycle2").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
   }
 
   /**

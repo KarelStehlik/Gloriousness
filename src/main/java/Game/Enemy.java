@@ -6,8 +6,7 @@ import general.Util;
 import java.awt.Rectangle;
 import windowStuff.Sprite;
 
-public final class TestObject extends GameObject implements TickDetect {
-
+public class Enemy extends GameObject implements TickDetect{
   private static final String[] images = new String[]{"magic_tree", "Cancelbutton", "Intro",
       "Freeze",
       "fire", "farm", "Farm1", "Farm2", "Mancatcher", "Button", "Golem", "crab", "Defender",
@@ -18,23 +17,23 @@ public final class TestObject extends GameObject implements TickDetect {
   private boolean exists;
   private float vx, vy;
   private float currentAngle = 0;
-  private final SquareGrid<TestObject> grid;
-  private final int radius = 75;
+  private final SquareGrid<Enemy> grid;
+  private final int radius = 10;
 
-  public TestObject(Game game, SquareGrid<TestObject> g) {
+  public Enemy(World world) {
     super(150,150,150,150);
     width = 2*radius;
     height = 2*radius;
-    grid = g;
-    g.add(this);
-    game.addTickable(this);
-    vx = Data.gameMechanicsRng.nextFloat(5);
-    vy = Data.gameMechanicsRng.nextFloat(5);
+    grid = world.mobs;
+    grid.add(this);
+    world.addTickable(this);
+    vx = Data.gameMechanicsRng.nextFloat(20);
+    vy = Data.gameMechanicsRng.nextFloat(20);
     rot = Data.gameMechanicsRng.nextFloat(20)-10;
     String imageName = images[(int) (Data.unstableRng.nextFloat() * images.length)];
-    sprite = new Sprite(imageName, x, y, width, height, 0, "colorCycle2");
-    sprite.setColors(Util.getCycle2colors(1f));
-    game.getBatchSystem("main").addSprite(sprite);
+    sprite = new Sprite(imageName, x, y, width, height, 0, "basic");
+    //sprite.setColors(Util.getCycle2colors(1f));
+    world.bs.addSprite(sprite);
     exists = true;
   }
 
@@ -60,22 +59,27 @@ public final class TestObject extends GameObject implements TickDetect {
       sprite.setImage(images[(int) (Data.unstableRng.nextFloat() * images.length)]);
     }
     currentAngle += rot;
-    for(TestObject t : grid.get(this)){
-      float distanceSq = (x - t.x) * (x - t.x) + (y - t.y) * (y - t.y);
-      int minDistance = (radius + t.radius) * (radius + t.radius);
-      if(distanceSq < minDistance) {
-        float dir = Util.get_rotation(x - t.x, y - t.y);
-        float overlap = ((radius + t.radius) - (float)Math.sqrt(distanceSq))/2;
-        float s = Util.sin(dir), c = Util.cos(dir);
-        x+=overlap * c;
-        y+=overlap * s;
-        t.x-=overlap * c;
-        t.y-=overlap * s;
-      }
-    }
+   //for(Enemy other : grid.get(this)){
+   //  collide(other);
+   //}
+    grid.callForEach(this.getHitbox(), this::collide);
     sprite.setRotation(currentAngle);
     sprite.setPosition(x, y);
     grid.add(this);
+  }
+
+  private void collide(Enemy other){
+    float distanceSq = (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
+    int minDistance = (radius + other.radius) * (radius + other.radius);
+    if(distanceSq < minDistance) {
+      float dir = Util.get_rotation(x - other.x, y - other.y);
+      float overlap = ((radius + other.radius) - (float)Math.sqrt(distanceSq))/2;
+      float sin = Util.sin(dir), cos = Util.cos(dir);
+      x+=overlap * cos;
+      y+=overlap * sin;
+      other.x-=overlap * cos;
+      other.y-=overlap * sin;
+    }
   }
 
   @Override

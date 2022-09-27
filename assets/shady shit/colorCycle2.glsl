@@ -8,20 +8,15 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform int time;
 
-out float glowOpacity;
-
 out vec4 fColor;
 out vec2 texCoords;
+out float glowOpacity;
 
 void main(){
-    float t = float(time) / 524288f;
-    float tf = t - int(t);
-    int ti = int(t);
-    fColor = vec4(0,0,0,color[3]);
-    for(int i=0;i<3;i++){
-        fColor[i] = color[(i+ti+1)%3] * tf + color[(i+ti)%3] * (1-tf);
-    }
-    glowOpacity = (color[0] + color[1] +color[2])*.3333;
+    float t = float(time) / (1<<17);
+    glowOpacity = color[2];
+    vec3 col = 0.5 + 0.5*cos(t+color.xyx+vec3(0,2,4));
+    fColor = vec4(col,color[3]);
     texCoords = inTexCoords;
     gl_Position = projection * view * vec4(pos.x, pos.y, pos.z, 1);
 }
@@ -39,5 +34,5 @@ out vec4 color;
 
 void main(){
     vec4 tex = texture(sampler, texCoords);
-    color = (fColor * glowOpacity * tex[3] + tex * (1-glowOpacity)) * fColor[3];
+    color = fColor * glowOpacity * tex[3] + tex * (1-glowOpacity);
 }

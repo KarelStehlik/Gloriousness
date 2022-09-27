@@ -15,8 +15,6 @@ import org.joml.Vector3f;
 public final class Graphics {
 
   private final Collection<BatchSystem> batchSystems = new LinkedList<BatchSystem>();
-  private Camera camera;
-  private boolean cameraChanged = true;
 
   //private BatchSystem test;
   //private Sprite sTest;
@@ -28,20 +26,13 @@ public final class Graphics {
     //sTest = new Sprite("Farm21", 50, 50, 100, 100, 0, "colorCycle");
     //test.addSprite(sTest);
 
-    camera = new Camera(new Vector3f(0, 0, 20));
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 
-  public void moveCamera(float x, float y) {
-    camera.move(x, y, 20);
-    cameraChanged = true;
-  }
-
   public void addBatchSystem(BatchSystem bs) {
     batchSystems.add(bs);
-    bs.useCamera(camera);
+    bs.useCamera(new Camera(new Vector3f(0, 0, 20)));
   }
 
   public void redraw(double dt) {
@@ -52,11 +43,7 @@ public final class Graphics {
     //Sprite.updateAll();
 
     for (BatchSystem bs : batchSystems) {
-      if (cameraChanged) {
-        bs.useCamera(camera);
-      }
       bs.draw();
     }
-    cameraChanged = false;
   }
 }

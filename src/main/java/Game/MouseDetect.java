@@ -6,7 +6,7 @@ public interface MouseDetect {
 
   void onScroll(double scroll);
 
-  void onMouseMove(double newX, double newY);
+  void onMouseMove(float newX, float newY);
 
   void delete();
 
