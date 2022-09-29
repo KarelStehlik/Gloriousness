@@ -6,7 +6,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
-import java.awt.Rectangle;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,7 +36,16 @@ public final class Game implements UserInputHandler {
   private int ticks = 0;
   private double last60TicksTime = 0;
 
-  public Game() {
+  private static final class SingletonHolder {
+
+    private static final Game singleton = new Game();
+  }
+
+  public static Game get(){
+    return SingletonHolder.singleton;
+  }
+
+  private Game() {
     userInput = new UserInputListener(this);
     graphics = new Graphics();
   }
@@ -45,7 +53,7 @@ public final class Game implements UserInputHandler {
   public void init() {
     graphics.init();
     startTime = System.currentTimeMillis();
-    new World(this);
+    new World();
   }
 
   public void addTickable(TickDetect t) {
@@ -74,7 +82,7 @@ public final class Game implements UserInputHandler {
     var iter = tickables.iterator();
     while (iter.hasNext()) {
       TickDetect t = iter.next();
-      if (t.ShouldDeleteThis()) {
+      if (t.WasDeleted()) {
         iter.remove();
       } else {
         t.onGameTick(ticks);
@@ -112,7 +120,7 @@ public final class Game implements UserInputHandler {
     var iter = mouseDetects.iterator();
     while (iter.hasNext()) {
       MouseDetect t = iter.next();
-      if (t.ShouldDeleteThis()) {
+      if (t.WasDeleted()) {
         iter.remove();
       } else {
         t.onMouseMove((float)newX, 1080f-(float)newY);
@@ -125,7 +133,7 @@ public final class Game implements UserInputHandler {
     var iter = mouseDetects.iterator();
     while (iter.hasNext()) {
       MouseDetect t = iter.next();
-      if (t.ShouldDeleteThis()) {
+      if (t.WasDeleted()) {
         iter.remove();
       } else {
         t.onMouseButton(button, userInput.getX(), userInput.getY(), action, mods);
@@ -138,7 +146,7 @@ public final class Game implements UserInputHandler {
     var iter = mouseDetects.iterator();
     while (iter.hasNext()) {
       MouseDetect t = iter.next();
-      if (t.ShouldDeleteThis()) {
+      if (t.WasDeleted()) {
         iter.remove();
       } else {
         t.onScroll(xOffset);
@@ -153,7 +161,7 @@ public final class Game implements UserInputHandler {
     var iter = keyDetects.iterator();
     while (iter.hasNext()) {
       KeyboardDetect t = iter.next();
-      if (t.ShouldDeleteThis()) {
+      if (t.WasDeleted()) {
         iter.remove();
       } else {
         t.onKeyPress(key, action, mods);

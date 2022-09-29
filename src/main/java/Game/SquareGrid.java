@@ -61,10 +61,20 @@ public class SquareGrid<T extends GameObject> {
     }
   }
 
+  /**
+   * @param in search area
+   * @return all objects in the SG that intersect the area, and some that do not
+   * if you wish to call a function on each of these objects, use SquareGrid::callForEach instead.
+   */
   public List<T> get(T in) {
     return get(in.getHitbox());
   }
 
+  /**
+   * @param hb search area
+   * @return all objects in the SG that intersect the area, and some that do not
+   * if you wish to call a function on each of these objects, use SquareGrid::callForEach instead.
+   */
   public List<T> get(Rectangle hb) {
     idOfSearch++;
 
@@ -88,6 +98,11 @@ public class SquareGrid<T extends GameObject> {
     return detected;
   }
 
+  /**
+   * @param area search area
+   * @return all objects in the SG that intersect the area, and some that do not
+   * if you wish to call a function on each of these objects, use SquareGrid::callForEach instead.
+   */
   public List<T> get(Iterable<? extends Point> area) {
     idOfSearch++;
     List<T> detected = new LinkedList<>();
@@ -132,6 +147,22 @@ public class SquareGrid<T extends GameObject> {
    * @param F the collide function to call on each object in area
    */
   public void callForEach(GameObject in, collideFuncion<T> F){callForEach(in.getHitbox(), F);}
+
+  /**
+   * @param area the area from which to choose objects
+   * @param F the collide function to call on each object in area
+   */
+  public void callForEach(Iterable<? extends Point> area, collideFuncion<T> F) {
+    idOfSearch++;
+    for (Point p : area) {
+      for (Member box : data.get(p.x).get(p.y)) {
+        if (box.lastChecked != idOfSearch) {
+          F.collide(box.hitbox);
+          box.lastChecked = idOfSearch;
+        }
+      }
+    }
+  }
 
   @FunctionalInterface
   interface collideFuncion<T>{

@@ -8,7 +8,6 @@ public final class Main {
   }
 
   public static void main(String[] args) {
-    System.out.println(4>>1+1);
     System.out.println(Version.getVersion());
     var win = Window.get();
     win.run();

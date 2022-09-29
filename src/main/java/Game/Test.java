@@ -51,7 +51,7 @@ public final class Test implements TickDetect {
   }
 
   @Override
-  public boolean ShouldDeleteThis() {
+  public boolean WasDeleted() {
     return objects.isEmpty();
   }
 }

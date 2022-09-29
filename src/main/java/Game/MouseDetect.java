@@ -10,5 +10,5 @@ public interface MouseDetect {
 
   void delete();
 
-  boolean ShouldDeleteThis();
+  boolean WasDeleted();
 }

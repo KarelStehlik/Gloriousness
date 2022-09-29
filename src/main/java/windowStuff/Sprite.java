@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import general.Constants;
 import general.Data;
 import general.Util;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import org.joml.Vector2f;
@@ -84,9 +85,15 @@ public class Sprite {
 
   private void setUV() {
     List<Float> uv = Data.getImageCoordinates(this.imageName);
-    for (int i = 0; i < 8; i++) {
-      vertices[i + (i / 2) * 7 + 7] = uv.get(i);
-    }
+    Iterator<Float> iter = uv.iterator();
+    vertices[7] = iter.next();
+    vertices[8] = iter.next();
+    vertices[16] = iter.next();
+    vertices[17] = iter.next();
+    vertices[25] = iter.next();
+    vertices[26] = iter.next();
+    vertices[34] = iter.next();
+    vertices[35] = iter.next();
   }
 
   protected synchronized void getBatched(Batch newBatch, int slot) {

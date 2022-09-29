@@ -40,7 +40,7 @@ public class CameraMover implements KeyboardDetect, TickDetect{
   }
 
   @Override
-  public boolean ShouldDeleteThis() {
+  public boolean WasDeleted() {
     return false;
   }
 }

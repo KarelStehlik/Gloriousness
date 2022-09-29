@@ -1,39 +1,41 @@
 package Game;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import windowStuff.BatchSystem;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect{
 
   private static final int WIDTH = 16384;
   private static final int HEIGHT = 16384;
-  final Game game;
   final BatchSystem bs;
-  SquareGrid<Enemy> mobs;
+  final SquareGrid<Mob> mobsGrid;
+  private final List<Mob> mobsList;
+  final SquareGrid<Projectile> projectilesGrid;
+  private final List<Projectile> projectilesList;
+  private int tick =0;
+  private final Player player;
 
-  public World(Game g) {
-    game = g;
+  public World() {
+    Game game = Game.get();
     game.addMouseDetect(this);
     game.addKeyDetect(this);
     game.addTickable(this);
-    mobs = new SquareGrid<Enemy>(-500, -500, WIDTH+1000, HEIGHT+1000);
+    mobsGrid = new SquareGrid<Mob>(-500, -500, WIDTH+1000, HEIGHT+1000);
+    mobsList = new LinkedList<>();
+    projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH+1000, HEIGHT+1000);
+    projectilesList = new LinkedList<>();
     bs = game.getBatchSystem("main");
     bs.getCamera().moveTo(0,-0, 20);
-    Player player = new Player(this);
+    player = new Player(this);
     for(int i=0;i<10000;i++){
-      mobs.add(new Enemy(this));
+      addEnemy(new Mob(this));
     }
   }
 
-  public void addTickable(TickDetect t) {
-    game.addTickable(t);
-  }
-
-  public void addKeyDetect(KeyboardDetect t) {
-    game.addKeyDetect(t);
-  }
-
-  public void addMouseDetect(MouseDetect t) {
-    game.addMouseDetect(t);
+  public void addEnemy(Mob e){
+    mobsList.add(e);
   }
 
   @Override
@@ -58,7 +60,21 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect{
 
   @Override
   public void onGameTick(int tick) {
-    mobs.clear();
+    this.tick=tick;
+    tickEntities(mobsGrid, mobsList);
+    tickEntities(projectilesGrid, projectilesList);
+    player.onGameTick(tick);
+  }
+
+  private <T extends GameObject & TickDetect> void tickEntities(SquareGrid<T> grid, List<T> list){
+    grid.clear();
+    for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
+      T e = iterator.next();
+      e.onGameTick(tick);
+      if(e.WasDeleted()){
+        iterator.remove();
+      }
+    }
   }
 
   @Override
@@ -67,7 +83,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect{
   }
 
   @Override
-  public boolean ShouldDeleteThis() {
+  public boolean WasDeleted() {
     return false;
   }
 }

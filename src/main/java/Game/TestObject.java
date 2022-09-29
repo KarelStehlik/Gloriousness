@@ -85,7 +85,7 @@ public final class TestObject extends GameObject implements TickDetect {
   }
 
   @Override
-  public boolean ShouldDeleteThis() {
+  public boolean WasDeleted() {
     return !exists;
   }
 

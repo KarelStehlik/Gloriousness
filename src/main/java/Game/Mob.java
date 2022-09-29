@@ -6,7 +6,7 @@ import general.Util;
 import java.awt.Rectangle;
 import windowStuff.Sprite;
 
-public class Enemy extends GameObject implements TickDetect{
+public class Mob extends GameObject implements TickDetect{
   private static final String[] images = new String[]{"magic_tree", "Cancelbutton", "Intro",
       "Freeze",
       "fire", "farm", "Farm1", "Farm2", "Mancatcher", "Button", "Golem", "crab", "Defender",
@@ -17,28 +17,44 @@ public class Enemy extends GameObject implements TickDetect{
   private boolean exists;
   private float vx, vy;
   private float currentAngle = 0;
-  private final SquareGrid<Enemy> grid;
-  private final int radius = 10;
+  private final SquareGrid<Mob> grid;
+  static final int radius = 5;
 
-  public Enemy(World world) {
+  public Mob(World world) {
     super(150,150,150,150);
-    width = 2*radius;
-    height = 2*radius;
-    grid = world.mobs;
-    grid.add(this);
-    world.addTickable(this);
-    vx = Data.gameMechanicsRng.nextFloat(20);
-    vy = Data.gameMechanicsRng.nextFloat(20);
+    setSize(2*radius, 2*radius);
+    grid = world.mobsGrid;
+    vx = Data.gameMechanicsRng.nextFloat(5);
+    vy = Data.gameMechanicsRng.nextFloat(5);
     rot = Data.gameMechanicsRng.nextFloat(20)-10;
     String imageName = images[(int) (Data.unstableRng.nextFloat() * images.length)];
-    sprite = new Sprite(imageName, x, y, width, height, 0, "basic");
-    //sprite.setColors(Util.getCycle2colors(1f));
+    sprite = new Sprite("Bowman", x, y, width, height, 0, "colorCycle2");
+    sprite.setColors(Util.getCycle2colors(.66f));
     world.bs.addSprite(sprite);
     exists = true;
   }
 
   @Override
   public void onGameTick(int tick) {
+    runAI();
+    handleCollisions();
+    grid.add(this);
+    miscTickActions();
+  }
+
+  private void miscTickActions(){
+    if (Data.unstableRng.nextFloat() < 0.5) {
+      sprite.setImage(images[(int) (Data.unstableRng.nextFloat() * images.length)]);
+    }
+    sprite.setRotation(currentAngle);
+    sprite.setPosition(x, y);
+  }
+
+  private void handleCollisions(){
+    grid.callForEach(this.getHitbox(), this::collide);
+  }
+
+  private void runAI(){
     x = x + vx;
     y = y + vy;
     if (x < 0) {
@@ -55,25 +71,18 @@ public class Enemy extends GameObject implements TickDetect{
       y = 2 * Constants.screenSize.y - y;
       vy = -vy;
     }
-    if (Data.unstableRng.nextFloat() < 0.5) {
-      sprite.setImage(images[(int) (Data.unstableRng.nextFloat() * images.length)]);
-    }
     currentAngle += rot;
-   //for(Enemy other : grid.get(this)){
-   //  collide(other);
-   //}
-    grid.callForEach(this.getHitbox(), this::collide);
-    sprite.setRotation(currentAngle);
-    sprite.setPosition(x, y);
-    grid.add(this);
   }
 
-  private void collide(Enemy other){
+  private void collide(Mob other){
+    if(!other.canCollide){
+      return;
+    }
     float distanceSq = (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
-    int minDistance = (radius + other.radius) * (radius + other.radius);
+    int minDistance = radius * radius * 4;
     if(distanceSq < minDistance) {
       float dir = Util.get_rotation(x - other.x, y - other.y);
-      float overlap = ((radius + other.radius) - (float)Math.sqrt(distanceSq))/2;
+      float overlap = ((radius *2) - (float)Math.sqrt(distanceSq))/2;
       float sin = Util.sin(dir), cos = Util.cos(dir);
       x+=overlap * cos;
       y+=overlap * sin;
@@ -89,7 +98,7 @@ public class Enemy extends GameObject implements TickDetect{
   }
 
   @Override
-  public boolean ShouldDeleteThis() {
+  public boolean WasDeleted() {
     return !exists;
   }
 

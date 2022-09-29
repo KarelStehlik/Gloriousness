@@ -1,5 +1,6 @@
 package general;
 
+import java.awt.Rectangle;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
@@ -107,25 +108,22 @@ public final class Util {
   }
 
   private static final float[] cycleColors = new float[]{
-      3f, 0, 0, 1,
-      0, 3f, 0, 1,
-      1.5f, 1.5f, 0, 1,
-      0, 0, 3f, 1,
+      0, 0, 3, 1,
+      0, 1.5f, 1.5f, 1,
+      3, 0, 0, 1,
+      3, 0, 0, 1,
   };
 
   public static float[] getCycleColors() {
     return cycleColors;
   }
 
-  private static final float[] weakCycleColors = new float[]{
-      1.5f, 0, 0, 1,
-      0, 1.5f, 0, 1,
-      .75f, .75f, 0, 1,
-      0, 0, 1.5f, 1,
-  };
-
-  public static float[] getWeakCycleColors() {
-    return weakCycleColors;
+  public static float[] getCycleColors(float strength) {
+    float[] result = cycleColors.clone();
+    for(int i=0; i<12; i++){
+      result[i + i/3] *= strength;
+    }
+    return result;
   }
 
   private static final float[] cycle2colors = new float[]{
@@ -146,6 +144,11 @@ public final class Util {
         0, 0, strength, 1,
         10, 10, strength, 1,
     };
+  }
+
+  public static boolean rectIntersect(Rectangle a, Rectangle b){
+    return ((a.x > b.x + b.width) != (a.x + a.width > b.y)) &&
+        ((a.y > b.y + b.height) != (a.y + a.height > b.y));
   }
 }
 

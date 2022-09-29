@@ -59,7 +59,7 @@ public final class Window {
 
     glfwMakeContextCurrent(window);
 
-    game = new Game();
+    game = Game.get();
 
     game.setInputCallback(window);
 

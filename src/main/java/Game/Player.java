@@ -19,15 +19,14 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   public Player(World world){
     super(0, 0, WIDTH, HEIGHT);
-    input = world.game.getInputListener();
+    input = Game.get().getInputListener();
     sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 10);
     sprite.setPosition(960, 540);
     sprite.setShader("colorCycle");
     sprite.setColors(Util.getCycleColors());
     world.bs.addSprite(sprite);
-    world.addKeyDetect(this);
-    world.addMouseDetect(this);
-    world.addTickable(this);
+    Game.get().addKeyDetect(this);
+    Game.get().addMouseDetect(this);
   }
 
   @Override
@@ -55,8 +54,8 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   @Override
   public void onGameTick(int tick) {
-    x = x + vx;
-    y = y + vy;
+    x = Math.max(width/2f, Math.min(1920 - width/2f, x + vx));
+    y = Math.max(height/2f, Math.min(1080 - height/2f, y + vy));
     sprite.setPosition(x, y);
   }
 
@@ -66,7 +65,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   }
 
   @Override
-  public boolean ShouldDeleteThis() {
+  public boolean WasDeleted() {
     return false;
   }
 

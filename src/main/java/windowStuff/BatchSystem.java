@@ -21,6 +21,13 @@ public class BatchSystem {
 
   private Camera camera;
 
+  private boolean paused = false, visible = true;
+
+  public void pause(){paused = true;}
+  public void unpause(){paused = false;}
+  public void show(){visible = true;}
+  public void hide(){visible = false;}
+
   public BatchSystem() {
     //batches = new LinkedList<>(); // is sorted
     Collection<Shader> shaders = Data.getAllShaders();
@@ -66,13 +73,19 @@ public class BatchSystem {
       }
     }
 
-    var iter = batches.iterator();
-    while (iter.hasNext()) {
-      Batch batch = iter.next();
-      batch.update();
-      if (batch.isEmpty) {
-        batch.delete();
-        iter.remove();
+    if(!visible){
+      return;
+    }
+
+    if(!paused) {
+      var iter = batches.iterator();
+      while (iter.hasNext()) {
+        Batch batch = iter.next();
+        batch.update();
+        if (batch.isEmpty) {
+          batch.delete();
+          iter.remove();
+        }
       }
     }
 
