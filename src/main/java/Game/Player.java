@@ -18,13 +18,13 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   private final UserInputListener input;
 
   public Player(World world){
-    super(0, 0, WIDTH, HEIGHT);
+    super(0, 0, WIDTH, HEIGHT, world);
     input = Game.get().getInputListener();
     sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 10);
     sprite.setPosition(960, 540);
     sprite.setShader("colorCycle");
     sprite.setColors(Util.getCycleColors());
-    world.bs.addSprite(sprite);
+    world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
   }

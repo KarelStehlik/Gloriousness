@@ -6,9 +6,11 @@ public class GameObject {
   protected float x, y;
   protected int width, height;
   protected boolean canCollide = true;
+  protected World world;
 
-  protected GameObject(float X, float Y, int W, int H){
+  protected GameObject(float X, float Y, int W, int H, World w){
     x=X;y=Y;width=W;height=H;
+    world=w;
   }
 
   Rectangle getHitbox(){

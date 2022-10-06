@@ -3,18 +3,19 @@ package windowStuff;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.glBufferSubData;
 
-import general.Constants;
 import general.Data;
 import general.Util;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import org.joml.Vector2f;
 
 public class Sprite {
 
-  public float x, y;
-  protected float[] vertices;
+  private float x;
+  private float y;
+  private final float[] vertices = new float[36];
+  private final float[] positions = new float[12];
+  private float[] colors = new float[16];
+  private float[] texCoords = new float[8];
   protected boolean hasUnsavedChanges = true;
   protected String textureName;
   protected int layer;
@@ -24,7 +25,6 @@ public class Sprite {
   protected boolean deleteThis = false;
   protected boolean mustBeRebatched = false;
   private float rotation = 0;
-  private float rotationSin = 0, rotationCos = 1;
   private float width, height;
   private String imageName;
   protected boolean rebuffer = false;
@@ -40,20 +40,20 @@ public class Sprite {
 
   public Sprite(String imageName, float x, float y, float sizeX, float sizeY, int layer,
       String shader) {
-    this.x = x;
-    this.y = y;
+    this.setX(x);
+    this.setY(y);
     width = sizeX / 2;
     height = sizeY / 2;
     this.shader = Data.getShader(shader);
     Vector2f BL = new Vector2f(x - width, y - height);
     Vector2f TR = new Vector2f(x + width, y + height);
-    vertices = new float[]{
-        // x     y     z  r  g  b  a  u  v
-        TR.x, BL.y, 1, 0, 0, 0, 1, 1, 0,// +-
-        BL.x, TR.y, 1, 0, 0, 0, 1, 0, 1,// -+
-        TR.x, TR.y, 1, 0, 0, 0, 1, 1, 1,// ++
-        BL.x, BL.y, 1, 0, 0, 0, 1, 0, 0// --
-    };
+    //vertices = new float[]{
+    //    // x     y     z  r  g  b  a  u  v
+    //    TR.x, BL.y, 1, 0, 0, 0, 1, 1, 0,// +-
+    //    BL.x, TR.y, 1, 0, 0, 0, 1, 0, 1,// -+
+    //    TR.x, TR.y, 1, 0, 0, 0, 1, 1, 1,// ++
+    //    BL.x, BL.y, 1, 0, 0, 0, 1, 0, 0// --
+    //};
     setImage(imageName);
     this.layer = layer;
   }
@@ -84,16 +84,7 @@ public class Sprite {
   }
 
   private void setUV() {
-    List<Float> uv = Data.getImageCoordinates(this.imageName);
-    Iterator<Float> iter = uv.iterator();
-    vertices[7] = iter.next();
-    vertices[8] = iter.next();
-    vertices[16] = iter.next();
-    vertices[17] = iter.next();
-    vertices[25] = iter.next();
-    vertices[26] = iter.next();
-    vertices[34] = iter.next();
-    vertices[35] = iter.next();
+    texCoords = Data.getImageCoordinates(this.imageName);
   }
 
   protected synchronized void getBatched(Batch newBatch, int slot) {
@@ -106,8 +97,8 @@ public class Sprite {
   }
 
   public void setPosition(float X, float Y) {
-    x = X;
-    y = Y;
+    setX(X);
+    setY(Y);
     hasUnsavedChanges = true;
   }
 
@@ -127,43 +118,85 @@ public class Sprite {
     if (!hasUnsavedChanges) {
       return;
     }
-    rotationSin = Util.sin(rotation);
-    rotationCos = Util.cos(rotation);
+    float rotationSin = Util.sin(rotation);
+    float rotationCos = Util.cos(rotation);
     float XC = width * rotationCos, YC = height * rotationCos,
         XS = width * rotationSin, YS = height * rotationSin;
+   ////+-
+   //vertices[0] = x + XC - YS;
+   //vertices[1] = y + XS + YC;
+   ////-+
+   //vertices[Constants.VertexSizeFloats] = x - XC + YS;
+   //vertices[1 + Constants.VertexSizeFloats] = y - XS - YC;
+   ////++
+   //vertices[2 * Constants.VertexSizeFloats] = x + XC + YS;
+   //vertices[1 + 2 * Constants.VertexSizeFloats] = y + XS - YC;
+   ////--
+   //vertices[3 * Constants.VertexSizeFloats] = x - XC - YS;
+   //vertices[1 + 3 * Constants.VertexSizeFloats] = y - XS + YC;
+
     //+-
-    vertices[0] = x + XC - YS;
-    vertices[1] = y + XS + YC;
+    positions[0] = getX() + XC - YS;
+    positions[1] = getY() + XS + YC;
     //-+
-    vertices[Constants.VertexSizeFloats] = x - XC + YS;
-    vertices[1 + Constants.VertexSizeFloats] = y - XS - YC;
+    positions[3] = getX() - XC + YS;
+    positions[4] = getY() - XS - YC;
     //++
-    vertices[2 * Constants.VertexSizeFloats] = x + XC + YS;
-    vertices[1 + 2 * Constants.VertexSizeFloats] = y + XS - YC;
+    positions[6] = getX() + XC + YS;
+    positions[7] = getY() + XS - YC;
     //--
-    vertices[3 * Constants.VertexSizeFloats] = x - XC - YS;
-    vertices[1 + 3 * Constants.VertexSizeFloats] = y - XS + YC;
+    positions[9] = getX() - XC - YS;
+    positions[10] = getY() - XS + YC;
+
     hasUnsavedChanges = false;
   }
 
   protected synchronized void bufferVertices(long offset) {
+    for(int i=0; i<4; i++){
+      vertices[9*i] = positions[3*i];
+      vertices[9*i+1] = positions[3*i+1];
+      vertices[9*i+2] = positions[3*i+2];
+
+      vertices[9*i+3] = colors[4*i];
+      vertices[9*i+4] = colors[4*i+1];
+      vertices[9*i+5] = colors[4*i+2];
+      vertices[9*i+6] = colors[4*i+3];
+
+      vertices[9*i+7] = texCoords[2*i];
+      vertices[9*i+8] = texCoords[2*i+1];
+    }
+
     glBufferSubData(GL_ARRAY_BUFFER, offset, vertices);
     rebuffer = false;
   }
 
   public void setColors(float[] colors) {
     assert colors.length == 16 : "expected 16 colors for sprite.";
-    for (int i = 0; i < 16; i++) {
-      vertices[3 + i + (int) ((float) i / 4.0) * 5] = colors[i];
-    }
+    this.colors = colors;
   }
 
   protected synchronized void _delete() {
     unBatch();
-    vertices = null;
+    //vertices = null;
   }
 
   public void delete() {
     deleteThis = true;
+  }
+
+  public float getX() {
+    return x;
+  }
+
+  public void setX(float x) {
+    this.x = x;
+  }
+
+  public float getY() {
+    return y;
+  }
+
+  public void setY(float y) {
+    this.y = y;
   }
 }

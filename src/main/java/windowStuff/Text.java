@@ -86,7 +86,7 @@ public class Text {
   public void move(int newX, int newY) {
     int dx = newX - x, dy = newY - y;
     for (var symbol : symbols) {
-      symbol.move(symbol.sprite.x + dx, symbol.sprite.y + dy);
+      symbol.move(symbol.sprite.getX() + dx, symbol.sprite.getY() + dy);
     }
     x = newX;
     y = newY;
@@ -120,12 +120,12 @@ public class Text {
     char character;
 
     Symbol(char c, float x, float y, String shader) {
-      List<Float> uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
-      float w = uv.get(0) - uv.get(2);
+      float[] uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
+      float w = uv[0] - uv[2];
       width = w * scale;
       sprite = new Sprite(fontName + '-' + Character.getName(c), width, fontSize, layer, shader);
-      sprite.x = x + width / 2;
-      sprite.y = y;
+      sprite.setX(x + width / 2);
+      sprite.setY(y);
       character = c;
       sprite.setColors(colors);
     }
@@ -139,8 +139,8 @@ public class Text {
     }
 
     void setCharacter(char c){
-      List<Float> uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
-      float w = uv.get(0) - uv.get(2);
+      float[] uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
+      float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setImage(fontName + '-' + Character.getName(c));
       sprite.setSize(width, fontSize);

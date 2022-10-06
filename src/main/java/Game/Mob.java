@@ -4,33 +4,37 @@ import general.Constants;
 import general.Data;
 import general.Util;
 import java.awt.Rectangle;
+import java.util.Map;
 import windowStuff.Sprite;
 
-public class Mob extends GameObject implements TickDetect{
+public abstract class Mob extends GameObject implements TickDetect{
   private static final String[] images = new String[]{"magic_tree", "Cancelbutton", "Intro",
       "Freeze",
       "fire", "farm", "Farm1", "Farm2", "Mancatcher", "Button", "Golem", "crab", "Defender",
       "Farm11", "Farm21", "Meteor", "mine", "Chestplates", "Boulder", "crater", "faura", "Egg",
       "Bowman", "Bullet"};
-  private final Sprite sprite;
-  private final float rot;
-  private boolean exists;
-  private float vx, vy;
-  private float currentAngle = 0;
-  private final SquareGrid<Mob> grid;
-  static final int radius = 5;
+  final Map<String, Float> stats;
+  final String name;
+  protected final Sprite sprite;
+  protected final float rotation;
+  protected boolean exists;
+  protected float vx, vy;
+  protected float currentAngle = 0;
+  protected final SquareGrid<Mob> grid;
 
-  public Mob(World world) {
-    super(150,150,150,150);
-    setSize(2*radius, 2*radius);
-    grid = world.mobsGrid;
-    vx = Data.gameMechanicsRng.nextFloat(5);
-    vy = Data.gameMechanicsRng.nextFloat(5);
-    rot = Data.gameMechanicsRng.nextFloat(20)-10;
+  public Mob(World world, String name) {
+    super(150,150,150,150, world);
+    stats = Data.getEntityStats("mob", name);
+    this.name = name;
+    setSize((int) (2*stats.get("size")), (int) (2*stats.get("size")));
+    grid = world.getMobsGrid();
+    vx = Data.gameMechanicsRng.nextFloat(stats.get("speed"));
+    vy = Data.gameMechanicsRng.nextFloat(stats.get("speed"));
+    rotation = Data.gameMechanicsRng.nextFloat(20)-10;
     String imageName = images[(int) (Data.unstableRng.nextFloat() * images.length)];
     sprite = new Sprite("Bowman", x, y, width, height, 0, "colorCycle2");
     sprite.setColors(Util.getCycle2colors(.66f));
-    world.bs.addSprite(sprite);
+    world.getBs().addSprite(sprite);
     exists = true;
   }
 
@@ -71,7 +75,7 @@ public class Mob extends GameObject implements TickDetect{
       y = 2 * Constants.screenSize.y - y;
       vy = -vy;
     }
-    currentAngle += rot;
+    currentAngle += rotation;
   }
 
   private void collide(Mob other){
@@ -79,10 +83,10 @@ public class Mob extends GameObject implements TickDetect{
       return;
     }
     float distanceSq = (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
-    int minDistance = radius * radius * 4;
+    int minDistance = (int) Util.square(stats.get("size") + other.stats.get("size"));
     if(distanceSq < minDistance) {
       float dir = Util.get_rotation(x - other.x, y - other.y);
-      float overlap = ((radius *2) - (float)Math.sqrt(distanceSq))/2;
+      float overlap = ((stats.get("size") + other.stats.get("size")) - (float)Math.sqrt(distanceSq))/2;
       float sin = Util.sin(dir), cos = Util.cos(dir);
       x+=overlap * cos;
       y+=overlap * sin;

@@ -12,10 +12,10 @@ public class Projectile extends GameObject implements TickDetect{
   private final World world;
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation, int W, int H, int pierce, float size) {
-    super(X, Y, W, H);
+    super(X, Y, W, H, world);
     sprite = new Sprite(image, X, Y, W, H, 1, "basic");
     sprite.setRotation(rotation);
-    world.bs.addSprite(sprite);
+    world.getBs().addSprite(sprite);
     this.pierce = pierce;
     this.speed = speed;
     vx = Util.cos(rotation) * speed;
@@ -28,7 +28,7 @@ public class Projectile extends GameObject implements TickDetect{
   public void onGameTick(int tick) {
     fly();
     handleCollisions();
-    world.projectilesGrid.add(this);
+    world.getProjectilesGrid().add(this);
   }
 
   private void fly(){

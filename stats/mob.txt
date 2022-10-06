@@ -1,0 +1,2 @@
+None|size=10.0|speed=10|health=100
+Basic|size=30.0|speed=10|health=100

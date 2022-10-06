@@ -150,5 +150,8 @@ public final class Util {
     return ((a.x > b.x + b.width) != (a.x + a.width > b.y)) &&
         ((a.y > b.y + b.height) != (a.y + a.height > b.y));
   }
+  public static float square(float x){
+    return x*x;
+  }
 }
 

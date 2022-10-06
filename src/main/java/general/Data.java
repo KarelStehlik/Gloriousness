@@ -21,24 +21,25 @@ public final class Data {
   private static final String shaderDirectory = "assets/shady shit";
   private static final String imageDirectory = "assets/final images";
   private static final String imageDataDirectory = "assets/image coordinates";
-  private static Map<String, Shader> shaders;
-  private static Map<String, Texture> textures;
-  private static Map<String, ImageData> images;
+  private static final String statsDirectory = "stats";
+  private static final Map<String, Shader> shaders = new HashMap<>(1);
+  private static final Map<String, Texture> textures= new HashMap<>(1);
+  private static final Map<String, ImageData> images= new HashMap<>(1);
   private static final long startTime = System.nanoTime();
+  private static final Map<String, Map<String, Map<String, Float>>> entityStats = new HashMap<>(5);
 
   private Data() {
   }
 
   public static void init() {
-    shaders = new HashMap<>(1);
+    // loads shaders
     var shaderNames = new File(shaderDirectory).list();
     assert shaderNames != null : shaderDirectory + " is not a valid directory.";
     for (String shaderName : shaderNames) {
       loadShader(shaderName);
     }
 
-    textures = new HashMap<>(1);
-    images = new HashMap<>(1);
+    // loads textures
     String[] textureNames = new File(imageDataDirectory).list();
     assert textureNames != null : imageDataDirectory + " is not a valid directory.";
     for (String textureName : textureNames) {
@@ -53,6 +54,32 @@ public final class Data {
       } catch (IOException e) {
         System.out.println("could not read file " + imageDataDirectory + '/' + textureName);
         e.printStackTrace();
+        return;
+      }
+    }
+
+    // loads stats
+    String[] types = new File(statsDirectory).list();
+    for (String type : types) {
+      String shortenedType = type.substring(0, type.length() - 4);
+      entityStats.put(shortenedType, new HashMap<>(10));
+      String[] sources;
+      try {
+        sources = Files.readString(Paths.get(statsDirectory + "/" + type)).split("\n");
+      } catch (IOException e) {
+        System.out.println("could not read file " + statsDirectory + "/" + type);
+        e.printStackTrace();
+        return;
+      }
+      for (String source : sources) {
+        String[] splitSource = source.split("\\|");
+        entityStats.get(shortenedType).put(splitSource[0], new HashMap<>(10));
+        for (int i = 1, splitSourceLength = splitSource.length; i < splitSourceLength; i++) {
+          String stat = splitSource[i];
+          String[] splitStat = stat.split("=");
+          entityStats.get(shortenedType).get(splitSource[0])
+              .put(splitStat[0], Float.parseFloat(splitStat[1]));
+        }
       }
     }
   }
@@ -79,7 +106,7 @@ public final class Data {
   /**
    * the coordinates of the image in its texture
    */
-  public static List<Float> getImageCoordinates(String name) {
+  public static float[] getImageCoordinates(String name) {
     //System.out.println(name);
     return images.get(name).textureCoordinates;
   }
@@ -118,9 +145,16 @@ public final class Data {
     return shaders.values();
   }
 
-  public static void updateShaders() {
-    getShader("colorCycle").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
-    getShader("colorCycle2").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
+  public static Map<String, Float> getEntityStats(String _type, String _name) {
+    var type = entityStats.get(_type);
+    if(type==null){
+      throw new IllegalStateException("No entity type - "+_type);
+    }
+    var result = type.get(_name);
+    if(result==null){
+      throw new IllegalStateException("No "+_type+" "+_name);
+    }
+    return result;
   }
 
   /**
@@ -130,11 +164,23 @@ public final class Data {
   private static class ImageData {
 
     String textureName;
-    List<Float> textureCoordinates;
+    float[] textureCoordinates;
 
     ImageData(String name, List<Float> coords) {
       textureName = name;
-      textureCoordinates = coords;
+      textureCoordinates = new float[8];
+      for(int i=0; i<8; i++){
+        textureCoordinates[i]=coords.get(i);
+      }
     }
+
+    static float Float2float(Float f){
+      return f;
+    }
+  }
+
+  public static void updateShaders() {
+    getShader("colorCycle").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
+    getShader("colorCycle2").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
   }
 }
