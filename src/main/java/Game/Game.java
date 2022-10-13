@@ -17,12 +17,7 @@ import windowStuff.UserInputListener;
 
 public final class Game implements UserInputHandler {
 
-  private static final int tickInterval = 1000 / 60;
-
-  public UserInputListener getInputListener() {
-    return userInput;
-  }
-
+  public static final int tickInterval = 1000 / 60;
   private final UserInputListener userInput;
   private final Graphics graphics;
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
@@ -35,19 +30,17 @@ public final class Game implements UserInputHandler {
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
   private double last60TicksTime = 0;
-
-  private static final class SingletonHolder {
-
-    private static final Game singleton = new Game();
-  }
-
-  public static Game get(){
-    return SingletonHolder.singleton;
-  }
-
   private Game() {
     userInput = new UserInputListener(this);
     graphics = new Graphics();
+  }
+
+  public static Game get() {
+    return SingletonHolder.singleton;
+  }
+
+  public UserInputListener getInputListener() {
+    return userInput;
   }
 
   public void init() {
@@ -76,7 +69,7 @@ public final class Game implements UserInputHandler {
     double t0 = System.nanoTime();
     ticks++;
     if (ticks % 60 == 0) {
-      System.out.println(ticks + " in "+last60TicksTime / 1000000000+" seconds");
+      System.out.println(ticks + " in " + last60TicksTime / 1000000000 + " seconds");
       last60TicksTime = 0;
     }
     var iter = tickables.iterator();
@@ -95,7 +88,7 @@ public final class Game implements UserInputHandler {
     newKeyDetects.clear();
     mouseDetects.addAll(newMouseDetects);
     newMouseDetects.clear();
-    last60TicksTime += System.nanoTime()-t0;
+    last60TicksTime += System.nanoTime() - t0;
   }
 
   public void graphicsUpdate(double dt) {
@@ -123,7 +116,7 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        t.onMouseMove((float)newX, 1080f-(float)newY);
+        t.onMouseMove((float) newX, (float) newY);
       }
     }
   }
@@ -156,7 +149,9 @@ public final class Game implements UserInputHandler {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-    if(action == GLFW_REPEAT){return;}
+    if (action == GLFW_REPEAT) {
+      return;
+    }
     //Util.testBit(mods, GLFW_MOD_SHIFT)
     var iter = keyDetects.iterator();
     while (iter.hasNext()) {
@@ -175,5 +170,10 @@ public final class Game implements UserInputHandler {
     glfwSetScrollCallback(window, userInput::scrollCallback);
     glfwSetMouseButtonCallback(window, userInput::mouseButtonCallback);
     glfwSetKeyCallback(window, userInput::keyCallback);
+  }
+
+  private static final class SingletonHolder {
+
+    private static final Game singleton = new Game();
   }
 }

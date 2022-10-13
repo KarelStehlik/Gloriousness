@@ -4,11 +4,8 @@ import static windowStuff.Batch.MAX_BATCH_SIZE;
 
 import general.Data;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 public class BatchSystem {
@@ -23,15 +20,26 @@ public class BatchSystem {
 
   private boolean paused = false, visible = true;
 
-  public void pause(){paused = true;}
-  public void unpause(){paused = false;}
-  public void show(){visible = true;}
-  public void hide(){visible = false;}
-
   public BatchSystem() {
     //batches = new LinkedList<>(); // is sorted
     Collection<Shader> shaders = Data.getAllShaders();
     batches = new LinkedList<>();
+  }
+
+  public void pause() {
+    paused = true;
+  }
+
+  public void unpause() {
+    paused = false;
+  }
+
+  public void show() {
+    visible = true;
+  }
+
+  public void hide() {
+    visible = false;
   }
 
   public void addSprite(Sprite sprite) {
@@ -51,7 +59,8 @@ public class BatchSystem {
       if (batch.layer > sprite.layer) {
         break;
       }
-      if (batch.textureName.equals(sprite.textureName) && !batch.freeSpriteSlots.isEmpty() && Objects.equals(
+      if (batch.textureName.equals(sprite.textureName) && !batch.freeSpriteSlots.isEmpty()
+          && Objects.equals(
           batch.shader, sprite.shader)) {
         batch.addSprite(sprite);
         return;
@@ -59,7 +68,8 @@ public class BatchSystem {
     }
 
     // available batch does not exist, create one
-    Batch batch = new Batch(sprite.textureName, MAX_BATCH_SIZE, sprite.shader.name, sprite.layer, this);
+    Batch batch = new Batch(sprite.textureName, MAX_BATCH_SIZE, sprite.shader.name, sprite.layer,
+        this);
     batch.addSprite(sprite);
     batches.add(index, batch); // keep the list sorted
   }
@@ -73,11 +83,11 @@ public class BatchSystem {
       }
     }
 
-    if(!visible){
+    if (!visible) {
       return;
     }
 
-    if(!paused) {
+    if (!paused) {
       var iter = batches.iterator();
       while (iter.hasNext()) {
         Batch batch = iter.next();
@@ -89,8 +99,7 @@ public class BatchSystem {
       }
     }
 
-
-    for(Shader s : Data.getAllShaders()){
+    for (Shader s : Data.getAllShaders()) {
       s.useCamera(camera);
     }
     for (Batch batch : batches) {
@@ -104,7 +113,7 @@ public class BatchSystem {
     this.camera = camera;
   }
 
-  public Camera getCamera(){
+  public Camera getCamera() {
     return camera;
   }
 }

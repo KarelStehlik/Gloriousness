@@ -9,18 +9,17 @@ public class Text {
 
   private static final double textureHeight =
       64d / 4096d; //the height of a glyph sub-texture, in uv coordinates
-  float scale;
-
-  private List<Symbol> symbols;
   private final int layer;
-  public int x, y;
   private final float fontSize;
   private final String fontName;
   private final int maxWidth;
   private final String text;
   private final String shader;
   private final BatchSystem bs;
-  private float[] colors = {0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,};
+  public int x, y;
+  float scale;
+  private List<Symbol> symbols;
+  private float[] colors = {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,};
   private boolean deleted = false;
 
   public Text(String value, String font, int width, int x, int y, int layer, float size,
@@ -49,24 +48,26 @@ public class Text {
     arrange();
   }
 
-  public void setText(String value){
-    if(deleted){return;}
+  public void setText(String value) {
+    if (deleted) {
+      return;
+    }
     List<Symbol> newSymbols = new LinkedList<>();
     Iterator<Symbol> existing = symbols.listIterator();
-    for(char c : value.toCharArray()){
-      if(existing.hasNext()){
+    for (char c : value.toCharArray()) {
+      if (existing.hasNext()) {
         Symbol s = existing.next();
         newSymbols.add(s);
-        if(s.character != c){
+        if (s.character != c) {
           s.setCharacter(c);
         }
-      }else{
-        Symbol s=new Symbol(c, x, y, shader);
+      } else {
+        Symbol s = new Symbol(c, x, y, shader);
         bs.addSprite(s.sprite);
         newSymbols.add(s);
       }
     }
-    while(existing.hasNext()){
+    while (existing.hasNext()) {
       Symbol s = existing.next();
       s.delete();
       existing.remove();
@@ -138,7 +139,7 @@ public class Text {
       sprite.delete();
     }
 
-    void setCharacter(char c){
+    void setCharacter(char c) {
       float[] uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
       float w = uv[0] - uv[2];
       width = w * scale;

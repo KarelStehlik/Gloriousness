@@ -36,11 +36,11 @@ final class Batch {
   final List<Integer> freeSpriteSlots;
   final int layer;
   final BatchSystem group;
+  final Shader shader;
   private final Sprite[] sprites;
   private final Texture texture;
   private final int maxSize;
   private final int vao, vbo, ebo;
-  final Shader shader;
   boolean isEmpty;
 
 
@@ -133,7 +133,7 @@ final class Batch {
     glDeleteVertexArrays(vao);
   }
 
-  public void update(){
+  public void update() {
     for (int i = 0; i < maxSize; i++) {
       Sprite sprite = sprites[i];
       if (sprite != null) {

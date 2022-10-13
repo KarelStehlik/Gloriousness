@@ -3,6 +3,7 @@ package windowStuff;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
+import general.Constants;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -73,12 +74,12 @@ public class UserInputListener {
     lastX = x;
     lastY = y;
     x = newX;
-    y = newY;
+    y = Constants.screenSize.y - newY;
     dx = newX - lastX;
-    dy = newY - lastY;
+    dy = Constants.screenSize.y - newY - lastY;
     dragging = Arrays.asList(buttonsPressed, 5).contains(true);
     if (game != null) {
-      game.onMouseMove(newX, newY);
+      game.onMouseMove(newX, Constants.screenSize.y - newY);
     }
   }
 

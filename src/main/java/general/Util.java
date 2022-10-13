@@ -11,6 +11,22 @@ public final class Util {
   private static final int sinScale = 32;
   // float array that will store the sine values
   private static final float[] sin = new float[(90 * sinScale) + 1];
+  // number of table entries
+  private static final int arcSinScale = 2048;
+  // float array that will store the sine values
+  private static final float[] arcSin = new float[arcSinScale + 1];
+  private static final float[] cycleColors = new float[]{
+      0, 0, 3, 1,
+      0, 1.5f, 1.5f, 1,
+      3, 0, 0, 1,
+      3, 0, 0, 1,
+  };
+  private static final float[] cycle2colors = new float[]{
+      0, 1, .5f, 1,
+      1, 0, .5f, 1,
+      0, 0, .5f, 1,
+      1, 1, .5f, 1,
+  };
 
   // static initializer block
   // fill the sine look-up table
@@ -21,12 +37,22 @@ public final class Util {
     }
   }
 
+  // static initializer block
+  // fill the sine look-up table
+  static {
+    double toDeg = 180 / Math.PI;
+    double step = 1.0 / arcSinScale;
+    for (int i = 0; i < arcSin.length; i++) {
+      arcSin[i] = (float) (Math.asin(i * step) * toDeg);
+    }
+  }
+
   public static float sin(float a) {
     // Limit range if needed.
     if (a > 360) {
       a %= 360;
-    }else if(a<0){
-      a+=360 * ((int)(Math.abs(a)/360)+1);
+    } else if (a < 0) {
+      a += 360 * ((int) (Math.abs(a) / 360) + 1);
     }
     // compute the index
     int angleIndex = (int) (a * sinScale);
@@ -44,21 +70,6 @@ public final class Util {
 
   public static float cos(float a) {
     return sin(a + 90);
-  }
-
-  // number of table entries
-  private static final int arcSinScale = 2048;
-  // float array that will store the sine values
-  private static final float[] arcSin = new float[arcSinScale + 1];
-
-  // static initializer block
-  // fill the sine look-up table
-  static {
-    double toDeg = 180 / Math.PI;
-    double step = 1.0 / arcSinScale;
-    for (int i = 0; i < arcSin.length; i++) {
-      arcSin[i] = (float) (Math.asin(i * step) * toDeg);
-    }
   }
 
   public static float arcSin(float a) {
@@ -90,12 +101,12 @@ public final class Util {
   }
 
   public static float get_rotation(float x, float y) {
-    float inv_hypot = 1/(float) Math.sqrt(x * x + y * y);
+    float inv_hypot = 1 / (float) Math.sqrt(x * x + y * y);
     float asin = arcSin(Math.max(Math.min(y * inv_hypot, 1), -1));
     if (x >= 0) {
       return asin;
     }
-    return  180 - asin;
+    return 180 - asin;
   }
 
   public static float[] getRandomColors() {
@@ -107,31 +118,17 @@ public final class Util {
     };
   }
 
-  private static final float[] cycleColors = new float[]{
-      0, 0, 3, 1,
-      0, 1.5f, 1.5f, 1,
-      3, 0, 0, 1,
-      3, 0, 0, 1,
-  };
-
   public static float[] getCycleColors() {
     return cycleColors;
   }
 
   public static float[] getCycleColors(float strength) {
     float[] result = cycleColors.clone();
-    for(int i=0; i<12; i++){
-      result[i + i/3] *= strength;
+    for (int i = 0; i < 12; i++) {
+      result[i + i / 3] *= strength;
     }
     return result;
   }
-
-  private static final float[] cycle2colors = new float[]{
-      0, 1, .5f, 1,
-      1, 0, .5f, 1,
-      0, 0, .5f, 1,
-      1, 1, .5f, 1,
-  };
 
   public static float[] getCycle2colors() {
     return cycle2colors;
@@ -146,12 +143,13 @@ public final class Util {
     };
   }
 
-  public static boolean rectIntersect(Rectangle a, Rectangle b){
+  public static boolean rectIntersect(Rectangle a, Rectangle b) {
     return ((a.x > b.x + b.width) != (a.x + a.width > b.y)) &&
         ((a.y > b.y + b.height) != (a.y + a.height > b.y));
   }
-  public static float square(float x){
-    return x*x;
+
+  public static float square(float x) {
+    return x * x;
   }
 }
 

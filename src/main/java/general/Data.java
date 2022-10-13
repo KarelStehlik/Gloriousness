@@ -23,8 +23,8 @@ public final class Data {
   private static final String imageDataDirectory = "assets/image coordinates";
   private static final String statsDirectory = "stats";
   private static final Map<String, Shader> shaders = new HashMap<>(1);
-  private static final Map<String, Texture> textures= new HashMap<>(1);
-  private static final Map<String, ImageData> images= new HashMap<>(1);
+  private static final Map<String, Texture> textures = new HashMap<>(1);
+  private static final Map<String, ImageData> images = new HashMap<>(1);
   private static final long startTime = System.nanoTime();
   private static final Map<String, Map<String, Map<String, Float>>> entityStats = new HashMap<>(5);
 
@@ -147,14 +147,19 @@ public final class Data {
 
   public static Map<String, Float> getEntityStats(String _type, String _name) {
     var type = entityStats.get(_type);
-    if(type==null){
-      throw new IllegalStateException("No entity type - "+_type);
+    if (type == null) {
+      throw new IllegalStateException("No entity type - " + _type);
     }
     var result = type.get(_name);
-    if(result==null){
-      throw new IllegalStateException("No "+_type+" "+_name);
+    if (result == null) {
+      throw new IllegalStateException("No " + _type + " " + _name);
     }
     return result;
+  }
+
+  public static void updateShaders() {
+    getShader("colorCycle").uploadUniform("time", (int) ((System.nanoTime() - startTime) >> 10));
+    getShader("colorCycle2").uploadUniform("time", (int) ((System.nanoTime() - startTime) >> 10));
   }
 
   /**
@@ -169,18 +174,13 @@ public final class Data {
     ImageData(String name, List<Float> coords) {
       textureName = name;
       textureCoordinates = new float[8];
-      for(int i=0; i<8; i++){
-        textureCoordinates[i]=coords.get(i);
+      for (int i = 0; i < 8; i++) {
+        textureCoordinates[i] = coords.get(i);
       }
     }
 
-    static float Float2float(Float f){
+    static float Float2float(Float f) {
       return f;
     }
-  }
-
-  public static void updateShaders() {
-    getShader("colorCycle").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
-    getShader("colorCycle2").uploadUniform("time", (int) ((System.nanoTime()-startTime) >> 10));
   }
 }

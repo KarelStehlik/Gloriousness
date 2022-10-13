@@ -10,12 +10,8 @@ import org.joml.Vector2f;
 
 public class Sprite {
 
-  private float x;
-  private float y;
   private final float[] vertices = new float[36];
   private final float[] positions = new float[12];
-  private float[] colors = new float[16];
-  private float[] texCoords = new float[8];
   protected boolean hasUnsavedChanges = true;
   protected String textureName;
   protected int layer;
@@ -24,10 +20,14 @@ public class Sprite {
   protected int slotInBatch;
   protected boolean deleteThis = false;
   protected boolean mustBeRebatched = false;
+  protected boolean rebuffer = false;
+  private float x;
+  private float y;
+  private float[] colors = new float[16];
+  private float[] texCoords = new float[8];
   private float rotation = 0;
   private float width, height;
   private String imageName;
-  protected boolean rebuffer = false;
 
   public Sprite(String imageName, float sizeX, float sizeY, int layer,
       String shader) {
@@ -108,10 +108,10 @@ public class Sprite {
     hasUnsavedChanges = true;
   }
 
-  public void setSize(float w, float h){
-    width = w/2;
-    height = h/2;
-    hasUnsavedChanges=true;
+  public void setSize(float w, float h) {
+    width = w / 2;
+    height = h / 2;
+    hasUnsavedChanges = true;
   }
 
   public synchronized void updateVertices() {
@@ -122,18 +122,18 @@ public class Sprite {
     float rotationCos = Util.cos(rotation);
     float XC = width * rotationCos, YC = height * rotationCos,
         XS = width * rotationSin, YS = height * rotationSin;
-   ////+-
-   //vertices[0] = x + XC - YS;
-   //vertices[1] = y + XS + YC;
-   ////-+
-   //vertices[Constants.VertexSizeFloats] = x - XC + YS;
-   //vertices[1 + Constants.VertexSizeFloats] = y - XS - YC;
-   ////++
-   //vertices[2 * Constants.VertexSizeFloats] = x + XC + YS;
-   //vertices[1 + 2 * Constants.VertexSizeFloats] = y + XS - YC;
-   ////--
-   //vertices[3 * Constants.VertexSizeFloats] = x - XC - YS;
-   //vertices[1 + 3 * Constants.VertexSizeFloats] = y - XS + YC;
+    ////+-
+    //vertices[0] = x + XC - YS;
+    //vertices[1] = y + XS + YC;
+    ////-+
+    //vertices[Constants.VertexSizeFloats] = x - XC + YS;
+    //vertices[1 + Constants.VertexSizeFloats] = y - XS - YC;
+    ////++
+    //vertices[2 * Constants.VertexSizeFloats] = x + XC + YS;
+    //vertices[1 + 2 * Constants.VertexSizeFloats] = y + XS - YC;
+    ////--
+    //vertices[3 * Constants.VertexSizeFloats] = x - XC - YS;
+    //vertices[1 + 3 * Constants.VertexSizeFloats] = y - XS + YC;
 
     //+-
     positions[0] = getX() + XC - YS;
@@ -152,18 +152,18 @@ public class Sprite {
   }
 
   protected synchronized void bufferVertices(long offset) {
-    for(int i=0; i<4; i++){
-      vertices[9*i] = positions[3*i];
-      vertices[9*i+1] = positions[3*i+1];
-      vertices[9*i+2] = positions[3*i+2];
+    for (int i = 0; i < 4; i++) {
+      vertices[9 * i] = positions[3 * i];
+      vertices[9 * i + 1] = positions[3 * i + 1];
+      vertices[9 * i + 2] = positions[3 * i + 2];
 
-      vertices[9*i+3] = colors[4*i];
-      vertices[9*i+4] = colors[4*i+1];
-      vertices[9*i+5] = colors[4*i+2];
-      vertices[9*i+6] = colors[4*i+3];
+      vertices[9 * i + 3] = colors[4 * i];
+      vertices[9 * i + 4] = colors[4 * i + 1];
+      vertices[9 * i + 5] = colors[4 * i + 2];
+      vertices[9 * i + 6] = colors[4 * i + 3];
 
-      vertices[9*i+7] = texCoords[2*i];
-      vertices[9*i+8] = texCoords[2*i+1];
+      vertices[9 * i + 7] = texCoords[2 * i];
+      vertices[9 * i + 8] = texCoords[2 * i + 1];
     }
 
     glBufferSubData(GL_ARRAY_BUFFER, offset, vertices);
