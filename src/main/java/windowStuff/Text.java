@@ -10,21 +10,20 @@ public class Text {
   private static final double textureHeight =
       64d / 4096d; //the height of a glyph sub-texture, in uv coordinates
   private final int layer;
-  private final float fontSize;
   private final String fontName;
   private final int maxWidth;
   private final String text;
   private final String shader;
   private final BatchSystem bs;
   public int x, y;
-  float scale;
+  private float fontSize;
+  private float scale;
   private List<Symbol> symbols;
-  private float[] colors = {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,};
+  private float[] colors = new float[]{0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
   private boolean deleted = false;
-
   public Text(String value, String font, int width, int x, int y, int layer, float size,
       BatchSystem bs) {
-    this(value, font, width, x, x, layer, size, bs, "basic");
+    this(value, font, width, x, y, layer, size, bs, "basic");
   }
 
   public Text(String value, String font, int width, int x, int y, int layer, float size,
@@ -41,11 +40,23 @@ public class Text {
     symbols = new LinkedList<>();
     scale = (float) (fontSize / textureHeight);
     for (char c : value.toCharArray()) {
-      Symbol s = new Symbol(c, x, y, shader);
-      symbols.add(s);
-      bs.addSprite(s.sprite);
+      Symbol symbol = new Symbol(c, x, y, shader);
+      symbols.add(symbol);
+      bs.addSprite(symbol.sprite);
     }
     arrange();
+  }
+
+  public float getFontSize() {
+    return fontSize;
+  }
+
+  public void setFontSize(float size) {
+    fontSize = size;
+    scale = (float) (fontSize / textureHeight);
+    for (Symbol symbol : symbols) {
+      symbol.updateScale();
+    }
   }
 
   public void setText(String value) {
@@ -56,20 +67,20 @@ public class Text {
     Iterator<Symbol> existing = symbols.listIterator();
     for (char c : value.toCharArray()) {
       if (existing.hasNext()) {
-        Symbol s = existing.next();
-        newSymbols.add(s);
-        if (s.character != c) {
-          s.setCharacter(c);
+        Symbol symbol = existing.next();
+        newSymbols.add(symbol);
+        if (symbol.character != c) {
+          symbol.setCharacter(c);
         }
       } else {
-        Symbol s = new Symbol(c, x, y, shader);
-        bs.addSprite(s.sprite);
-        newSymbols.add(s);
+        Symbol symbol = new Symbol(c, x, y, shader);
+        bs.addSprite(symbol.sprite);
+        newSymbols.add(symbol);
       }
     }
     while (existing.hasNext()) {
-      Symbol s = existing.next();
-      s.delete();
+      Symbol symbol = existing.next();
+      symbol.delete();
       existing.remove();
     }
     symbols.clear();
@@ -78,8 +89,8 @@ public class Text {
   }
 
   public void setColors(float[] colors) {
-    for (var s : symbols) {
-      s.sprite.setColors(colors);
+    for (var symbol : symbols) {
+      symbol.sprite.setColors(colors);
     }
     this.colors = colors;
   }
@@ -121,22 +132,35 @@ public class Text {
     char character;
 
     Symbol(char c, float x, float y, String shader) {
-      float[] uv = Data.getImageCoordinates(fontName + '-' + Character.getName(c));
+      String imageName = fontName + '-' + Character.getName(c);
+      float[] uv = Data.getImageCoordinates(imageName);
       float w = uv[0] - uv[2];
       width = w * scale;
-      sprite = new Sprite(fontName + '-' + Character.getName(c), width, fontSize, layer, shader);
+      sprite = new Sprite(imageName, width, fontSize, layer, shader);
       sprite.setX(x + width / 2);
       sprite.setY(y);
       character = c;
       sprite.setColors(colors);
     }
 
-    void move(float x, float y) {
-      sprite.setPosition(x, y);
+    void updateScale() {
+      String imageName = fontName + '-' + Character.getName(character);
+      float[] uv = Data.getImageCoordinates(imageName);
+      float w = uv[0] - uv[2];
+      width = w * scale;
+      sprite.setSize(width, fontSize);
+    }
+
+    void move(float X, float Y) {
+      sprite.setPosition(X, Y);
     }
 
     void delete() {
       sprite.delete();
+    }
+
+    public char getCharacter() {
+      return character;
     }
 
     void setCharacter(char c) {

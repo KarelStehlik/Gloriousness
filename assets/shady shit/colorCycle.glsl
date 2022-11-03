@@ -14,7 +14,7 @@ out vec4 fColor;
 out vec2 texCoords;
 
 void main(){
-    float t = float(time) / 1048576f;
+    float t = float(time) / 1048576;
     float tf = (t - int(t));
     int ti = int(t);
     fColor = vec4(0,0,0,color[3]);

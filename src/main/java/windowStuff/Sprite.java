@@ -6,7 +6,6 @@ import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import general.Data;
 import general.Util;
 import java.util.Objects;
-import org.joml.Vector2f;
 
 public class Sprite {
 
@@ -28,6 +27,7 @@ public class Sprite {
   private float rotation = 0;
   private float width, height;
   private String imageName;
+  private Animation animation;
 
   public Sprite(String imageName, float sizeX, float sizeY, int layer,
       String shader) {
@@ -45,17 +45,19 @@ public class Sprite {
     width = sizeX / 2;
     height = sizeY / 2;
     this.shader = Data.getShader(shader);
-    Vector2f BL = new Vector2f(x - width, y - height);
-    Vector2f TR = new Vector2f(x + width, y + height);
-    //vertices = new float[]{
-    //    // x     y     z  r  g  b  a  u  v
-    //    TR.x, BL.y, 1, 0, 0, 0, 1, 1, 0,// +-
-    //    BL.x, TR.y, 1, 0, 0, 0, 1, 0, 1,// -+
-    //    TR.x, TR.y, 1, 0, 0, 0, 1, 1, 1,// ++
-    //    BL.x, BL.y, 1, 0, 0, 0, 1, 0, 0// --
-    //};
-    setImage(imageName);
     this.layer = layer;
+    setImage(imageName);
+    this.animation = () -> {
+    };
+  }
+
+  protected void onAnimationEnd() {
+    animation = () -> {
+    };
+  }
+
+  public void playAnimation(Animation anim) {
+    animation = anim;
   }
 
   public void setShader(String shader) {
@@ -75,9 +77,7 @@ public class Sprite {
   public void setImage(String name) {
     if (!Objects.equals(this.textureName, Data.getImageTexture(name))) {
       this.textureName = Data.getImageTexture(name);
-      if (batch != null) {
-        mustBeRebatched = true;
-      }
+      mustBeRebatched = (batch != null) || mustBeRebatched;
     }
     imageName = name;
     setUV();
@@ -94,6 +94,7 @@ public class Sprite {
 
   protected synchronized void unBatch() {
     batch.removeSprite(this);
+    batch = null;
   }
 
   public void setPosition(float X, float Y) {
@@ -115,6 +116,7 @@ public class Sprite {
   }
 
   public synchronized void updateVertices() {
+    animation.update();
     if (!hasUnsavedChanges) {
       return;
     }
@@ -122,18 +124,6 @@ public class Sprite {
     float rotationCos = Util.cos(rotation);
     float XC = width * rotationCos, YC = height * rotationCos,
         XS = width * rotationSin, YS = height * rotationSin;
-    ////+-
-    //vertices[0] = x + XC - YS;
-    //vertices[1] = y + XS + YC;
-    ////-+
-    //vertices[Constants.VertexSizeFloats] = x - XC + YS;
-    //vertices[1 + Constants.VertexSizeFloats] = y - XS - YC;
-    ////++
-    //vertices[2 * Constants.VertexSizeFloats] = x + XC + YS;
-    //vertices[1 + 2 * Constants.VertexSizeFloats] = y + XS - YC;
-    ////--
-    //vertices[3 * Constants.VertexSizeFloats] = x - XC - YS;
-    //vertices[1 + 3 * Constants.VertexSizeFloats] = y - XS + YC;
 
     //+-
     positions[0] = getX() + XC - YS;
@@ -149,6 +139,7 @@ public class Sprite {
     positions[10] = getY() - XS + YC;
 
     hasUnsavedChanges = false;
+    rebuffer = true;
   }
 
   protected synchronized void bufferVertices(long offset) {
@@ -177,7 +168,6 @@ public class Sprite {
 
   protected synchronized void _delete() {
     unBatch();
-    //vertices = null;
   }
 
   public void delete() {
@@ -198,5 +188,45 @@ public class Sprite {
 
   public void setY(float y) {
     this.y = y;
+  }
+
+  @FunctionalInterface
+  interface Animation {
+
+    void update();
+  }
+
+  public class BasicAnimation implements Animation {
+
+    private final int length;
+    private final float frameLengthNano;
+    private final double startTime;
+    private final String end;
+    private final String name;
+
+    public BasicAnimation(String name, float duration) {
+      this(name, duration, imageName);
+    }
+
+    public BasicAnimation(String name, float duration, String endImage) {
+      length = Data.getAnimationLength(name);
+      frameLengthNano = duration / length * 1000000000;
+      startTime = System.nanoTime();
+      end = endImage;
+      this.name = name;
+    }
+
+    @Override
+    public void update() {
+      int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
+      hasUnsavedChanges = true;
+      if (frame > length) {
+        imageName = end;
+        onAnimationEnd();
+      } else {
+        imageName = name + '-' + frame;
+      }
+      setUV();
+    }
   }
 }

@@ -18,24 +18,29 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   final Map<String, Float> stats;
   final Map<String, Float> baseStats;
   private final UserInputListener input;
-  protected float health;
   private final Sprite sprite;
-  private float vx, vy;
   private final float speed = 10;
+  private final BulletLauncher bulletLauncher;
+  protected float health;
+  private float vx, vy;
 
   public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world);
     baseStats = Data.getEntityStats("mob", "Player");
     stats = new HashMap<>(baseStats);
     health = stats.get("health");
-    input = Game.get().getInputListener();
+    input = Game.get().getUserInputListener();
     sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 10);
     sprite.setPosition(960, 540);
-    sprite.setShader("colorCycle");
-    sprite.setColors(Util.getCycleColors());
+    sprite.setShader("basic");
     world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
+    bulletLauncher = new BulletLauncher(world, "Egg", x, y, 10,
+        30, 30, 100, 30, 3, 5);
+    Projectile.OnCollideComponent<Mob> bulletDamageComponent = target -> target.takeDamage(
+        x - 200, DamageType.PHYSICAL);
+    bulletLauncher.addMobCollide(target -> target.takeDamage(vx, DamageType.PHYSICAL));
   }
 
   public void takeDamage(float amount, DamageType type) {
@@ -59,7 +64,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   }
 
   @Override
-  public void onMouseButton(int button, double _x, double _y, int action, int mods) {
+  public void onMouseButton(int button, double x, double y, int action, int mods) {
   }
 
   @Override
@@ -74,12 +79,15 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   @Override
   public void onGameTick(int tick) {
     if (input.isMousePressed(0)) {
-      new BasicDamageProjectile(world, "faura", x, y, 20, Util.get_rotation(input.getX() - x,
-          input.getY() - y) + Data.gameMechanicsRng.nextFloat() * 60 - 30, 50, 50, 20, 50, 2, true,
-          false, 100);
+      float dist = (float) Math.hypot(input.getX() - x, input.getY() - y);
+      for (int i = 0; i < 300; i++) {
+        bulletLauncher.attack(Util.get_rotation(input.getX() - x, input.getY() - y)
+            + Data.gameMechanicsRng.nextFloat() * 60 - 30);
+      }
     }
     x = Math.max(width / 2f, Math.min(1920 - width / 2f, x + vx));
     y = Math.max(height / 2f, Math.min(1080 - height / 2f, y + vy));
+    bulletLauncher.move(x, y);
     sprite.setPosition(x, y);
   }
 

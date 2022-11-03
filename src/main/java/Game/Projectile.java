@@ -1,28 +1,31 @@
 package Game;
 
 import general.Util;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
 
   private final Sprite sprite;
+  private final Collection<OnCollideComponent<Player>> playerCollides = new LinkedList<>();
+  private final Collection<Mob> alreadyHitMobs;
+  private final Collection<OnCollideComponent<Mob>> mobCollides = new LinkedList<>();
+  private final Collection<Projectile> alreadyHitProjectiles;
+  private final Collection<OnCollideComponent<Projectile>> projectileCollides = new LinkedList<>();
   protected int pierce;
   protected float size;
-  protected boolean collidesWithEnemies = false, collidesWithPlayer = false, collidesWithProjectiles = false;
   private float speed;
   private float vx, vy;
   private float duration;
   private boolean wasDeleted = false;
   private float rotation;
+  private boolean alreadyHitPlayer = false;
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
-      int W, int H, int pierce, float size, float duration,
-      boolean enemies, boolean players, boolean projectiles) {
+      int W, int H, int pierce, float size, float duration) {
     super(X, Y, W, H, world);
-    world.getProjectilesList().add(this);
-    collidesWithEnemies = enemies;
-    collidesWithPlayer = players;
-    collidesWithProjectiles = projectiles;
     sprite = new Sprite(image, X, Y, W, H, 1, "basic");
     sprite.setRotation(rotation);
     world.getBs().addSprite(sprite);
@@ -33,9 +36,11 @@ public class Projectile extends GameObject implements TickDetect {
     this.size = size;
     this.duration = duration;
     this.rotation = rotation;
+    alreadyHitMobs = new HashSet<>(pierce);
+    alreadyHitProjectiles = new HashSet<>(pierce);
   }
 
-  public void changePierce(int amount) {
+  protected void changePierce(int amount) {
     pierce += amount;
     if (pierce < 0) {
       delete();
@@ -67,7 +72,7 @@ public class Projectile extends GameObject implements TickDetect {
     fly();
     handleCollisions();
     world.getProjectilesGrid().add(this);
-    duration -= Game.tickInterval / 1024f;
+    duration -= Game.tickIntervalMillis / 1024f;
     if (duration <= 0) {
       delete();
     }
@@ -81,27 +86,57 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   private void handleCollisions() {
-    if (collidesWithEnemies) {
+    if (!mobCollides.isEmpty()) {
       world.getMobsGrid().callForEach(getHitbox(), this::collide);
     }
-    if (collidesWithProjectiles) {
+    if (!projectileCollides.isEmpty()) {
       world.getProjectilesGrid().callForEach(getHitbox(), this::collide);
     }
-    if (collidesWithPlayer) {
+    if (!playerCollides.isEmpty()) {
       collide(world.getPlayer());
     }
   }
 
   protected void collide(Player e) {
+    if (!alreadyHitPlayer) {
+      alreadyHitPlayer = true;
+      for (var component : playerCollides) {
+        component.collide(e);
+      }
+      changePierce(-1);
+    }
+  }
 
+  public void addPlayerCollide(OnCollideComponent<Player> component) {
+    playerCollides.add(component);
   }
 
   protected void collide(Mob e) {
+    if (!alreadyHitMobs.contains(e)) {
+      alreadyHitMobs.add(e);
+      for (var component : mobCollides) {
+        component.collide(e);
+      }
+      changePierce(-1);
+    }
+  }
 
+  public void addMobCollide(OnCollideComponent<Mob> component) {
+    mobCollides.add(component);
   }
 
   protected void collide(Projectile e) {
+    if (!alreadyHitProjectiles.contains(e) && !e.equals(this)) {
+      alreadyHitProjectiles.add(e);
+      for (var component : projectileCollides) {
+        component.collide(e);
+      }
+      changePierce(-1);
+    }
+  }
 
+  public void addProjectileCollide(OnCollideComponent<Projectile> component) {
+    projectileCollides.add(component);
   }
 
   private void onDelete() {
@@ -118,5 +153,11 @@ public class Projectile extends GameObject implements TickDetect {
   @Override
   public boolean WasDeleted() {
     return wasDeleted;
+  }
+
+  @FunctionalInterface
+  protected interface OnCollideComponent<T extends GameObject> {
+
+    void collide(T target);
   }
 }

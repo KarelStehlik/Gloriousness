@@ -10,11 +10,6 @@ import windowStuff.Sprite;
 
 public abstract class Mob extends GameObject implements TickDetect {
 
-  private static final String[] images = new String[]{"magic_tree", "Cancelbutton", "Intro",
-      "Freeze",
-      "fire", "farm", "Farm1", "Farm2", "Mancatcher", "Button", "Golem", "crab", "Defender",
-      "Farm11", "Farm21", "Meteor", "mine", "Chestplates", "Boulder", "crater", "faura", "Egg",
-      "Bowman", "Bullet"};
   protected final Sprite sprite;
   protected final float rotation;
   protected final SquareGrid<Mob> grid;
@@ -26,7 +21,7 @@ public abstract class Mob extends GameObject implements TickDetect {
   protected float vx, vy;
   protected float currentAngle = 0;
 
-  public Mob(World world, String name) {
+  public Mob(World world, String name, String image) {
     super(150, 150, 150, 150, world);
     baseStats = Data.getEntityStats("mob", name);
     stats = new HashMap<>(baseStats);
@@ -36,10 +31,8 @@ public abstract class Mob extends GameObject implements TickDetect {
     grid = world.getMobsGrid();
     vx = Data.gameMechanicsRng.nextFloat(stats.get("speed"));
     vy = Data.gameMechanicsRng.nextFloat(stats.get("speed"));
-    rotation = Data.gameMechanicsRng.nextFloat(20) - 10;
-    String imageName = images[(int) (Data.unstableRng.nextFloat() * images.length)];
-    sprite = new Sprite("Bowman", x, y, width, height, 0, "colorCycle2");
-    sprite.setColors(Util.getCycle2colors(.66f));
+    rotation = Data.gameMechanicsRng.nextFloat(5) - 2.5f;
+    sprite = new Sprite(image, x, y, width, height, 0, "basic");
     world.getBs().addSprite(sprite);
     exists = true;
   }
@@ -61,9 +54,6 @@ public abstract class Mob extends GameObject implements TickDetect {
   }
 
   private void miscTickActions() {
-    if (Data.unstableRng.nextFloat() < 0.5) {
-      sprite.setImage(images[(int) (Data.unstableRng.nextFloat() * images.length)]);
-    }
     sprite.setRotation(currentAngle);
     sprite.setPosition(x, y);
   }

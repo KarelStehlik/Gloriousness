@@ -49,6 +49,10 @@ public class BatchSystem {
   }
 
   private void _addSprite(Sprite sprite) {
+    assert sprite.batch == null : "Sprite already has a batch";
+    if (sprite.deleteThis) {
+      return;
+    }
     // find an available batch, if it exists
     int index = 0; // at which index do the batches have the correct layer?
     for (Batch batch : batches) {
@@ -99,8 +103,8 @@ public class BatchSystem {
       }
     }
 
-    for (Shader s : Data.getAllShaders()) {
-      s.useCamera(camera);
+    for (Shader shader : Data.getAllShaders()) {
+      shader.useCamera(camera);
     }
     for (Batch batch : batches) {
       batch.draw();

@@ -4,13 +4,14 @@ package Game;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 public class SquareGrid<T extends GameObject> {
 
   public final int widthSquares, heightSquares, bottomSquares, leftSquares;
-  private final List<ArrayList<LinkedList<Member>>> data;
+  private final List<ArrayList<Member>> data;
   private final int squareSizePow2;
   private long idOfSearch = -9223372036854775806L;
 
@@ -23,20 +24,15 @@ public class SquareGrid<T extends GameObject> {
     this.heightSquares = (height >> squareSizePow2) + 1;
     this.bottomSquares = (bottom >> squareSizePow2) + 1;
     this.leftSquares = (left >> squareSizePow2) + 1;
-    data = new ArrayList<>(widthSquares);
-    for (int x = 0; x < widthSquares; x++) {
-      data.add(new ArrayList<>(heightSquares));
-      for (int y = 0; y < heightSquares; y++) {
-        data.get(x).add(new LinkedList<>());
-      }
+    data = new ArrayList<>(widthSquares * heightSquares);
+    for (int i = 0; i < widthSquares * heightSquares; i++) {
+      data.add(new ArrayList<>(4));
     }
   }
 
   public void clear() {
-    for (int x = 0; x < widthSquares; x++) {
-      for (int y = 0; y < heightSquares; y++) {
-        data.get(x).get(y).clear();
-      }
+    for (Collection<Member> entities : data) {
+      entities.clear();
     }
   }
 
@@ -48,9 +44,9 @@ public class SquareGrid<T extends GameObject> {
     int right = Math.min((hb.x + hb.width >> squareSizePow2) - leftSquares, widthSquares - 1);
     Member m = new Member(in);
 
-    for (int x = left; x <= right; x++) {
-      for (int y = bottom; y <= top; y++) {
-        data.get(x).get(y).add(m);
+    for (int y = bottom; y <= top; y++) {
+      for (int x = left; x <= right; x++) {
+        data.get(x + y * widthSquares).add(m);
       }
     }
   }
@@ -98,9 +94,9 @@ public class SquareGrid<T extends GameObject> {
     int top = Math.min((hb.y >> squareSizePow2) - bottomSquares, heightSquares - 1);
     int right = Math.min((hb.x + hb.width >> squareSizePow2) - leftSquares, widthSquares - 1);
 
-    for (int x = left; x <= right; x++) {
-      for (int y = bottom; y <= top; y++) {
-        for (Member box : data.get(x).get(y)) {
+    for (int y = bottom; y <= top; y++) {
+      for (int x = left; x <= right; x++) {
+        for (Member box : data.get(x + y * widthSquares)) {
           if (box.lastChecked != idOfSearch) {
             F.collide(box.hitbox);
             box.lastChecked = idOfSearch;
@@ -125,7 +121,7 @@ public class SquareGrid<T extends GameObject> {
   public void callForEach(Iterable<? extends Point> area, collideFunction<T> F) {
     idOfSearch++;
     for (Point p : area) {
-      for (Member box : data.get(p.x).get(p.y)) {
+      for (Member box : data.get(p.x + p.y * widthSquares)) {
         if (box.lastChecked != idOfSearch) {
           F.collide(box.hitbox);
           box.lastChecked = idOfSearch;

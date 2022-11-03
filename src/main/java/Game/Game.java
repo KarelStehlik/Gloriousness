@@ -17,8 +17,8 @@ import windowStuff.UserInputListener;
 
 public final class Game implements UserInputHandler {
 
-  public static final int tickInterval = 1000 / 60;
-  private final UserInputListener userInput;
+  public static final int tickIntervalMillis = 1000 / 60;
+  private final UserInputListener userInputListener;
   private final Graphics graphics;
   private final Map<String, BatchSystem> bs = new HashMap<>(1);
   private final Collection<TickDetect> tickables = new LinkedList<>();
@@ -30,8 +30,9 @@ public final class Game implements UserInputHandler {
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
   private double last60TicksTime = 0;
+
   private Game() {
-    userInput = new UserInputListener(this);
+    userInputListener = new UserInputListener(this);
     graphics = new Graphics();
   }
 
@@ -39,8 +40,8 @@ public final class Game implements UserInputHandler {
     return SingletonHolder.singleton;
   }
 
-  public UserInputListener getInputListener() {
-    return userInput;
+  public UserInputListener getUserInputListener() {
+    return userInputListener;
   }
 
   public void init() {
@@ -62,7 +63,7 @@ public final class Game implements UserInputHandler {
   }
 
   public void tick() {
-    long timeTillTick = startTime + (long) tickInterval * ticks - System.currentTimeMillis();
+    long timeTillTick = startTime + (long) tickIntervalMillis * ticks - System.currentTimeMillis();
     if (timeTillTick > 0) {
       return;
     }
@@ -81,7 +82,7 @@ public final class Game implements UserInputHandler {
         t.onGameTick(ticks);
       }
     }
-    userInput.handleEvents();
+    userInputListener.handleEvents();
     tickables.addAll(newTickables);
     newTickables.clear();
     keyDetects.addAll(newKeyDetects);
@@ -93,7 +94,7 @@ public final class Game implements UserInputHandler {
 
   public void graphicsUpdate(double dt) {
     graphics.redraw(dt);
-    userInput.endFrame();
+    userInputListener.endFrame();
   }
 
   public BatchSystem getBatchSystem(String name) {
@@ -129,7 +130,7 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        t.onMouseButton(button, userInput.getX(), userInput.getY(), action, mods);
+        t.onMouseButton(button, userInputListener.getX(), userInputListener.getY(), action, mods);
       }
     }
   }
@@ -166,10 +167,10 @@ public final class Game implements UserInputHandler {
 
   @SuppressWarnings("resource")
   public void setInputCallback(long window) {
-    glfwSetCursorPosCallback(window, userInput::mousePosCallback);
-    glfwSetScrollCallback(window, userInput::scrollCallback);
-    glfwSetMouseButtonCallback(window, userInput::mouseButtonCallback);
-    glfwSetKeyCallback(window, userInput::keyCallback);
+    glfwSetCursorPosCallback(window, userInputListener::mousePosCallback);
+    glfwSetScrollCallback(window, userInputListener::scrollCallback);
+    glfwSetMouseButtonCallback(window, userInputListener::mouseButtonCallback);
+    glfwSetKeyCallback(window, userInputListener::keyCallback);
   }
 
   private static final class SingletonHolder {

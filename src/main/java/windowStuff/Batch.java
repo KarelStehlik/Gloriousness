@@ -103,8 +103,7 @@ final class Batch {
   }
 
   public void addSprite(Sprite sprite) {
-    assert !freeSpriteSlots.isEmpty()
-        && (sprite.batch == null) : "Attempt to add sprite to a full batch.";
+    assert !freeSpriteSlots.isEmpty() : "Attempt to add sprite to a full batch.";
     int slot = freeSpriteSlots.remove(0);
     synchronized (sprites) {
       sprites[slot] = sprite;
@@ -127,7 +126,7 @@ final class Batch {
     }
   }
 
-  protected void delete() {
+  void delete() {
     glDeleteBuffers(vbo);
     glDeleteBuffers(ebo);
     glDeleteVertexArrays(vao);
@@ -143,9 +142,8 @@ final class Batch {
           sprite.unBatch();
           group.addSprite(sprite);
           sprite.mustBeRebatched = false;
-        } else if (sprite.hasUnsavedChanges) {
+        } else {
           sprite.updateVertices();
-          sprite.rebuffer = true;
         }
       }
     }
@@ -162,7 +160,7 @@ final class Batch {
 
     for (int i = 0; i < maxSize; i++) {
       Sprite sprite = sprites[i];
-      if (sprite != null) {
+      if (sprite != null && !sprite.deleteThis) {
         if (sprite.rebuffer) {
           sprite.bufferVertices(offset);
         }

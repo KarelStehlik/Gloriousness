@@ -14,7 +14,7 @@ out float glowOpacity;
 
 void main(){
     float t = float(time) / (1<<17);
-    glowOpacity = color[2];
+    glowOpacity = color.z;
     vec3 col = 0.5 + 0.5*cos(t+color.xyx+vec3(0,2,4));
     fColor = vec4(col,color[3]);
     texCoords = inTexCoords;

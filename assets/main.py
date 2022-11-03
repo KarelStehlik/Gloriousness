@@ -4,10 +4,6 @@ import os
 TEXSIZE = 4096
 
 
-def sortFunc(image):
-    return max(image.size[0], image.size[1])
-
-
 class Animation:  # contains images that may be swapped between frequently. this must be saved in one texture.
     def __init__(self):
         self.images = []
@@ -45,13 +41,41 @@ class TestSetup:
                 return False
         return True
 
+    def findLeftIntersect(self, right, y1, y2):
+        r = 0
+        for e in self.covered:
+            if right >= e[0] + e[2] >r and y1 < e[1] + e[3] and y2> e[1]:
+                r = e[0] + e[2]
+        return r
+
+    def findTopIntersect(self, bottom, x1, x2):
+        r = 0
+        for e in self.covered:
+            if x1 < e[0] + e[2] and x2 > e[0] and bottom >= e[1] + e[3] > r:
+                r = e[1] + e[3]
+        return r
+
+    def fallDown(self, x, y, w, h):
+        rx, ry = 0,0
+        for e in self.covered:
+            if x >= e[0] + e[2] >rx and y < e[1] + e[3] and y+h> e[1]:
+                rx = e[0] + e[2]
+            if x < e[0] + e[2] and x+w > e[0] and y >= e[1] + e[3] > ry:
+                ry = e[1] + e[3]
+        return (rx, ry)
+
     def add(self, e, poi):
-        self.POIs.append((poi[0], poi[1] + e.size[1]))
-        self.POIs.append((poi[0] + e.size[0], poi[1]))
+        loc = self.fallDown(*poi, *e.size)
+
+        a = (loc[0], loc[1] + e.size[1])
+        b = (loc[0] + e.size[0], loc[1])
+        self.POIs.append(a)
+        self.POIs.append(b)
         self.POIs.remove(poi)
-        self.covered.append((*poi, *e.size))
+        self.POIs.sort(key=lambda p: p[0] + p[1])
+        self.covered.append((*loc, *e.size))
         self.images.append(e)
-        self.imageLocations.append(poi)
+        self.imageLocations.append(loc)
         self.spaceLeft -= e.pixelCount
 
     def try_add_animation(self, anim):
@@ -74,7 +98,7 @@ class TestSetup:
         return True
 
     def save(self):
-        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (255, 255, 255, 0))
+        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (255, 0, 255, 0))
         text = ""
 
         for i in range(len(self.images)):
@@ -83,15 +107,16 @@ class TestSetup:
             new.paste(e, poi)
             b, l, t, r = poi[1] / TEXSIZE, poi[0] / TEXSIZE, (poi[1] + e.size[1]) / TEXSIZE, (
                     poi[0] + e.size[0]) / TEXSIZE
-            b+=1/TEXSIZE
-            l+=1/TEXSIZE
-            t-=1/TEXSIZE
-            r-=1/TEXSIZE
+            b += 1 / TEXSIZE
+            l += 1 / TEXSIZE
+            t -= 1 / TEXSIZE
+            r -= 1 / TEXSIZE
             text += f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"
 
         new.save("final images/T" + str(n_textures) + ".png")
         file = open(f"image coordinates/T{n_textures}.txt", "w")
         file.write(text[1::])
+
 
 animations = {}
 for e in os.listdir("final images"):
@@ -108,11 +133,11 @@ for e in os.listdir("rawImages"):
         if animName not in animations.keys():
             animations[animName] = Animation()
         animations[animName].add(img)
-    elif os.path.isdir("rawImages/"+e):
+    elif os.path.isdir("rawImages/" + e):
         animations[e] = Animation()
-        for f in os.listdir("rawImages/"+e):
-            img = Image.open("rawImages/" + e+"/"+f)
-            img.name = f.split(".")[0]
+        for f in os.listdir("rawImages/" + e):
+            img = Image.open("rawImages/" + e + "/" + f)
+            img.name = e + "-" + f.split(".")[0]
             img.pixelCount = img.size[0] * img.size[1]
             animations[e].add(img)
     else:
@@ -121,13 +146,14 @@ for e in os.listdir("rawImages"):
         img.pixelCount = img.size[0] * img.size[1]
         files.append(img)
 
-files.sort(key=sortFunc, reverse=True)
+files.sort(key=lambda image: max(image.size[0], image.size[1]), reverse=True)
 n_textures = 0
 print(str([e.name for e in files]).replace("\'", "\""))
 
 while files or animations:
     # create a new image
     setup = TestSetup()
+
     # loop through all standalone textures, see if they fit on the image
     i = 0
     while i < len(files):
@@ -140,8 +166,9 @@ while files or animations:
                 i -= 1
                 break
         i += 1
+
     # loop through all animations, see if they fit on the image
-    for key, value in list(animations.items()):
+    for key, value in sorted(animations.items(), key=lambda a: a[1].size)[::-1]:
         if setup.try_add_animation(value):
             animations.pop(key)
     setup.save()

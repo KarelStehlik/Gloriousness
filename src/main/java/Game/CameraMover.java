@@ -18,7 +18,7 @@ public class CameraMover implements KeyboardDetect, TickDetect {
     game.addKeyDetect(this);
     game.addTickable(this);
     cam = game.getBatchSystem("main").getCamera();
-    input = game.getInputListener();
+    input = game.getUserInputListener();
   }
 
   @Override

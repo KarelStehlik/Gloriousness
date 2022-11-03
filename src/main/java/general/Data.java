@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import windowStuff.Shader;
 import windowStuff.Texture;
@@ -27,8 +29,15 @@ public final class Data {
   private static final Map<String, ImageData> images = new HashMap<>(1);
   private static final long startTime = System.nanoTime();
   private static final Map<String, Map<String, Map<String, Float>>> entityStats = new HashMap<>(5);
+  private static final Map<String, Integer> animationLengths = new TreeMap<>();
 
   private Data() {
+  }
+
+  public static int getAnimationLength(String name) {
+    var result = animationLengths.get(name);
+    assert result != null : "no such animation: " + name;
+    return result;
   }
 
   public static void init() {
@@ -98,6 +107,11 @@ public final class Data {
    */
   public static void loadImage(String tex, String[] data) {
     assert data.length == 9 : "invalid image location data : " + Arrays.toString(data);
+    if (Pattern.matches(".*-\\d+", data[0])) {
+      var animName = data[0].substring(0, data[0].lastIndexOf('-'));
+      var number = Integer.parseInt(data[0].substring(data[0].lastIndexOf('-') + 1));
+      animationLengths.put(animName, Math.max(animationLengths.getOrDefault(animName, 0), number));
+    }
     images.put(data[0], new ImageData(tex, List.of(data).subList(1, 9).stream().map(
         Float::parseFloat).collect(Collectors.toList())));
     List.of(data).subList(1, 8);
@@ -115,7 +129,9 @@ public final class Data {
    * the batch texture where the image is located
    */
   public static String getImageTexture(String name) {
-    return images.get(name).textureName;
+    var result = images.get(name).textureName;
+    assert result != null : "no such image: \"" + name + '\"';
+    return result;
   }
 
   public static void loadShader(String name) {

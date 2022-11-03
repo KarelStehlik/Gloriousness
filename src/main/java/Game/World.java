@@ -22,25 +22,26 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     game.addMouseDetect(this);
     game.addKeyDetect(this);
     game.addTickable(this);
-    mobsGrid = new SquareGrid<Mob>(-500, -500, WIDTH + 1000, HEIGHT + 1000, 5);
+    mobsGrid = new SquareGrid<Mob>(-500, -500, WIDTH + 1000, HEIGHT + 1000, 6);
     mobsList = new LinkedList<>();
     projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000, 8);
     projectilesList = new LinkedList<>();
     bs = game.getBatchSystem("main");
     getBs().getCamera().moveTo(0, -0, 20);
     player = new Player(this);
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 5000; i++) {
       addEnemy(new BasicMob(this));
     }
+  }
+
+  public Player getPlayer() {
+    return player;
   }
 
   public List<Projectile> getProjectilesList() {
     return projectilesList;
   }
 
-  public Player getPlayer() {
-    return player;
-  }
 
   protected void endGame() {
     System.out.println("gjghjghjg");
