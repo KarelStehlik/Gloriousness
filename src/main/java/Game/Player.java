@@ -38,9 +38,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     Game.get().addMouseDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 10,
         30, 30, 100, 30, 3, 5);
-    Projectile.OnCollideComponent<Mob> bulletDamageComponent = target -> target.takeDamage(
-        x - 200, DamageType.PHYSICAL);
-    bulletLauncher.addMobCollide(target -> target.takeDamage(vx, DamageType.PHYSICAL));
+    bulletLauncher.addMobCollide((proj, target) -> target.takeDamage(vx, DamageType.PHYSICAL));
   }
 
   public void takeDamage(float amount, DamageType type) {

@@ -22,6 +22,7 @@ public class Projectile extends GameObject implements TickDetect {
   private boolean wasDeleted = false;
   private float rotation;
   private boolean alreadyHitPlayer = false;
+  private float power;
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration) {
@@ -38,6 +39,15 @@ public class Projectile extends GameObject implements TickDetect {
     this.rotation = rotation;
     alreadyHitMobs = new HashSet<>(pierce);
     alreadyHitProjectiles = new HashSet<>(pierce);
+    power = 1;
+  }
+
+  public void multiplyPower(float mult){
+    power *= mult;
+  }
+
+  public float getPower(){
+    return power;
   }
 
   protected void changePierce(int amount) {
@@ -101,7 +111,7 @@ public class Projectile extends GameObject implements TickDetect {
     if (!alreadyHitPlayer) {
       alreadyHitPlayer = true;
       for (var component : playerCollides) {
-        component.collide(e);
+        component.collide(this, e);
       }
       changePierce(-1);
     }
@@ -115,7 +125,7 @@ public class Projectile extends GameObject implements TickDetect {
     if (!alreadyHitMobs.contains(e)) {
       alreadyHitMobs.add(e);
       for (var component : mobCollides) {
-        component.collide(e);
+        component.collide(this, e);
       }
       changePierce(-1);
     }
@@ -129,7 +139,7 @@ public class Projectile extends GameObject implements TickDetect {
     if (!alreadyHitProjectiles.contains(e) && !e.equals(this)) {
       alreadyHitProjectiles.add(e);
       for (var component : projectileCollides) {
-        component.collide(e);
+        component.collide(this, e);
       }
       changePierce(-1);
     }
@@ -158,6 +168,6 @@ public class Projectile extends GameObject implements TickDetect {
   @FunctionalInterface
   protected interface OnCollideComponent<T extends GameObject> {
 
-    void collide(T target);
+    void collide(Projectile proj, T target);
   }
 }
