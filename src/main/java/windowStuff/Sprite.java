@@ -7,17 +7,18 @@ import general.Data;
 import general.Util;
 import java.util.Objects;
 
-public class Sprite {
+public class Sprite implements AbstractSprite {
 
   private final float[] vertices = new float[36];
   private final float[] positions = new float[12];
   protected boolean hasUnsavedChanges = true;
   protected String textureName;
+  protected BatchSystem bsToJoin = null;
   protected int layer;
   protected Batch batch = null;
   protected Shader shader;
   protected int slotInBatch;
-  protected boolean deleteThis = false;
+  protected boolean deleted = false;
   protected boolean mustBeRebatched = false;
   protected boolean rebuffer = false;
   private float x;
@@ -51,29 +52,64 @@ public class Sprite {
     };
   }
 
+  @Override
+  public int getLayer() {
+    return layer;
+  }
+
+  @Override
+  public Batch getBatch() {
+    return batch;
+  }
+
+  @Override
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  @Override
+  public void addToBs(BatchSystem bs) {
+    bs.addSprite(this);
+  }
+
+  @Override
+  public float getWidth() {
+    return width;
+  }
+
+  @Override
+  public float getHeight() {
+    return height;
+  }
+
   protected void onAnimationEnd() {
     animation = () -> {
     };
   }
 
+  @Override
   public void playAnimation(Animation anim) {
     animation = anim;
   }
 
+  @Override
   public void setShader(String shader) {
     this.shader = Data.getShader(shader);
     this.mustBeRebatched = true;
   }
 
+  @Override
   public float getRotation() {
     return rotation;
   }
 
+  @Override
   public void setRotation(float r) {
     rotation = r;
     hasUnsavedChanges = true;
   }
 
+  @Override
   public void setImage(String name) {
     if (!Objects.equals(this.textureName, Data.getImageTexture(name))) {
       this.textureName = Data.getImageTexture(name);
@@ -92,23 +128,31 @@ public class Sprite {
     slotInBatch = slot;
   }
 
-  protected synchronized void unBatch() {
-    batch.removeSprite(this);
-    batch = null;
+  @Override
+  public synchronized void unBatch() {
+    if (batch != null) {
+      batch.removeSprite(this);
+      batch = null;
+    } else {
+      bsToJoin = null;
+    }
   }
 
+  @Override
   public void setPosition(float X, float Y) {
     setX(X);
     setY(Y);
     hasUnsavedChanges = true;
   }
 
+  @Override
   public void scale(float multiplier) {
     width *= multiplier;
     height *= multiplier;
     hasUnsavedChanges = true;
   }
 
+  @Override
   public void setSize(float w, float h) {
     width = w / 2;
     height = h / 2;
@@ -161,6 +205,7 @@ public class Sprite {
     rebuffer = false;
   }
 
+  @Override
   public void setColors(float[] colors) {
     assert colors.length == 16 : "expected 16 colors for sprite.";
     this.colors = colors;
@@ -170,22 +215,27 @@ public class Sprite {
     unBatch();
   }
 
+  @Override
   public void delete() {
-    deleteThis = true;
+    deleted = true;
   }
 
+  @Override
   public float getX() {
     return x;
   }
 
+  @Override
   public void setX(float x) {
     this.x = x;
   }
 
+  @Override
   public float getY() {
     return y;
   }
 
+  @Override
   public void setY(float y) {
     this.y = y;
   }

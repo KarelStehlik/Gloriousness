@@ -1,9 +1,14 @@
 package Game;
 
+import general.Constants;
+import general.Data;
+import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import windowStuff.BatchSystem;
+import windowStuff.Button;
+import windowStuff.Sprite;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
@@ -15,6 +20,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final SquareGrid<Projectile> projectilesGrid;
   private final List<Projectile> projectilesList;
   private final Player player;
+  private final Sprite mapSprite;
+  private final List<Point> mapData;
   private int tick = 0;
 
   public World() {
@@ -29,9 +36,25 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     bs = game.getBatchSystem("main");
     getBs().getCamera().moveTo(0, -0, 20);
     player = new Player(this);
+    String mapName = Data.listMaps()[0];
+    mapSprite = new Sprite(mapName, Constants.screenSize.x / 2f, Constants.screenSize.y / 2f,
+        Constants.screenSize.x, Constants.screenSize.y, 0, "basic");
+    bs.addSprite(mapSprite);
+    mapData = Data.getMapData(mapName);
     for (int i = 0; i < 5000; i++) {
       addEnemy(new BasicMob(this));
     }
+
+    game.addMouseDetect(new Button(bs, new Sprite("btd_map", 100, 100, 100, 100, 10, "basic"),
+        (int button, int action) -> {
+          if (button == 0 && action == 1) {
+            addEnemy(new BasicMob(this));
+          }
+        }, () -> "some text is texted but it is also very long which may result in things"+tick));
+  }
+
+  public List<Point> getMapData() {
+    return mapData;
   }
 
   public Player getPlayer() {
@@ -93,7 +116,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public void delete() {
-
+    mapSprite.delete();
   }
 
   @Override

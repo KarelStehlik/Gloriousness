@@ -43,6 +43,7 @@ public class BatchSystem {
   }
 
   public void addSprite(Sprite sprite) {
+    sprite.bsToJoin = this;
     synchronized (spritesToAdd) {
       spritesToAdd.add(sprite);
     }
@@ -50,9 +51,10 @@ public class BatchSystem {
 
   private void _addSprite(Sprite sprite) {
     assert sprite.batch == null : "Sprite already has a batch";
-    if (sprite.deleteThis) {
+    if (sprite.deleted || !Objects.equals(sprite.bsToJoin, this)) {
       return;
     }
+    sprite.bsToJoin = null;
     // find an available batch, if it exists
     int index = 0; // at which index do the batches have the correct layer?
     for (Batch batch : batches) {

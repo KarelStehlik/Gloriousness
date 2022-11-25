@@ -1,8 +1,8 @@
 package Game;
 
-import general.Constants;
 import general.Data;
 import general.Util;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,19 +20,22 @@ public abstract class Mob extends GameObject implements TickDetect {
   protected boolean exists;
   protected float vx, vy;
   protected float currentAngle = 0;
+  private int nextMapPoint = 1;
 
   public Mob(World world, String name, String image) {
-    super(150, 150, 150, 150, world);
+    super(world.getMapData().get(0).x, world.getMapData().get(0).y, 150, 150, world);
     baseStats = Data.getEntityStats("mob", name);
     stats = new HashMap<>(baseStats);
     health = stats.get("health");
     this.name = name;
     setSize((int) (2 * stats.get("size")), (int) (2 * stats.get("size")));
     grid = world.getMobsGrid();
-    vx = Data.gameMechanicsRng.nextFloat(stats.get("speed"));
-    vy = Data.gameMechanicsRng.nextFloat(stats.get("speed"));
+    float rotationToNextPoint = Util.get_rotation(world.getMapData().get(nextMapPoint).x - x,
+        world.getMapData().get(nextMapPoint).y - y);
+    vx = stats.get("speed") * Util.cos(rotationToNextPoint);
+    vy = stats.get("speed") * Util.sin(rotationToNextPoint);
     rotation = Data.gameMechanicsRng.nextFloat(5) - 2.5f;
-    sprite = new Sprite(image, x, y, width, height, 0, "basic");
+    sprite = new Sprite(image, x, y, width, height, 1, "basic");
     world.getBs().addSprite(sprite);
     exists = true;
   }
@@ -48,7 +51,7 @@ public abstract class Mob extends GameObject implements TickDetect {
   @Override
   public void onGameTick(int tick) {
     runAI();
-    handleCollisions();
+    // handleCollisions();
     grid.add(this);
     miscTickActions();
   }
@@ -63,23 +66,26 @@ public abstract class Mob extends GameObject implements TickDetect {
   }
 
   private void runAI() {
-    x = x + vx;
-    y = y + vy;
-    if (x < 0) {
-      x = -x;
-      vx = -vx;
-    } else if (x > Constants.screenSize.x) {
-      x = 2 * Constants.screenSize.x - x;
-      vx = -vx;
+    Point nextPoint = world.getMapData().get(nextMapPoint);
+    if (Math.abs(nextPoint.x - x) + Math.abs(nextPoint.y - y) < stats.get("speed")) {
+      x = nextPoint.x;
+      y = nextPoint.y;
+      nextMapPoint += 1;
+      if (nextMapPoint >= world.getMapData().size()) {
+        passed();
+      }
+    } else {
+      float rotationToNextPoint = Util.get_rotation(world.getMapData().get(nextMapPoint).x - x,
+          world.getMapData().get(nextMapPoint).y - y);
+      vx = stats.get("speed") * Util.cos(rotationToNextPoint);
+      vy = stats.get("speed") * Util.sin(rotationToNextPoint);
+      x = x + vx;
+      y = y + vy;
     }
-    if (y < 0) {
-      y = -y;
-      vy = -vy;
-    } else if (y > Constants.screenSize.y) {
-      y = 2 * Constants.screenSize.y - y;
-      vy = -vy;
-    }
-    currentAngle += rotation;
+  }
+
+  private void passed() {
+    delete();
   }
 
   private void collide(Mob other) {

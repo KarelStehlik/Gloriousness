@@ -1,27 +1,12 @@
 import cProfile
 
-from PodSixNet.Connection import connection, ConnectionListener
-
 import game_client as game_stuff
 import groups
 import images
 import client_utility
 from imports import *
 from images import images
-
-
-class MyNetworkListener(ConnectionListener):
-    def __init__(self, *args, **kwargs):
-        super().__init__()
-        self.start = False
-        self.mode = None
-
-    def set_mode(self, m):
-        self.mode = m
-
-    def Network(self, data):
-        # print(data)
-        self.mode.network(data)
+import constants
 
 
 class mode:
@@ -60,14 +45,18 @@ class mode:
 
 
 class mode_intro(mode):
-    def __init__(self, win, batch, nwl):
+    def __init__(self, win, batch):
         super().__init__(win, batch)
-        nwl.set_mode(self)
         self.buttons = []
-        self.buttons.append(
-            client_utility.button(self.join, constants.SCREEN_WIDTH * 2 / 5, constants.SCREEN_HEIGHT / 3,
-                                  constants.SCREEN_WIDTH * 1 / 5, constants.SCREEN_HEIGHT / 7, batch, text="Play"))
-        self.bg = pyglet.sprite.Sprite(images.Intro, x=0, y=0, group=groups.g[0], batch=batch)
+        with open("mapNames.txt", "r") as names:
+            i=0
+            for line in names.read().split("\n"):
+                self.buttons.append(
+                    client_utility.button(lambda: self.join(line), i,constants.SCREEN_HEIGHT *.33,
+                                          constants.SCREEN_WIDTH * .2, constants.SCREEN_HEIGHT *.3, batch,
+                                          image = images.__getattr__(line)))
+                i+=constants.SCREEN_WIDTH * .2
+        self.bg = pyglet.sprite.Sprite(images.Intro, x=constants.SCREEN_WIDTH/2, y=constants.SCREEN_HEIGHT/2, group=groups.g[0], batch=batch)
         self.bg.scale_x, self.bg.scale_y = constants.SCREEN_WIDTH / self.bg.width, constants.SCREEN_HEIGHT / self.bg.height
         self.joined = False
 
@@ -82,10 +71,9 @@ class mode_intro(mode):
         self.mousey = y
         [e.mouse_move(x, y) for e in self.buttons]
 
-    def join(self):
-        if not self.joined:
-            connection.Send({"action": "join"})
-            self.joined = True
+    def join(self, bg):
+        self.end()
+        self.win.start_game(game_stuff.Game(bg, self.batch))
 
     def mouse_drag(self, x, y, dx, dy, button, modifiers):
         self.mouse_move(x, y, dx, dy)
@@ -99,17 +87,10 @@ class mode_intro(mode):
         while len(self.buttons) >= 1:
             self.buttons.pop(0).delete()
 
-    def network(self, data):
-        if "action" in data and data["action"] == "start_game":
-            newgame = game_stuff.Game(data["side"], self.batch, connection, float(data["time0"]))
-            self.end()
-            self.win.start_game(newgame)
-
 
 class mode_main(mode):
-    def __init__(self, win, batch, nwl, game):
+    def __init__(self, win, batch, game):
         super().__init__(win, batch)
-        nwl.set_mode(self)
         self.game = game
 
     def tick(self):
@@ -144,20 +125,19 @@ class mode_main(mode):
 class windoo(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.nwl = MyNetworkListener()
         self.batch = pyglet.graphics.Batch()
         self.sec = time.time()
         self.frames = 0
         self.fpscount = pyglet.text.Label(x=5, y=5, text="0", color=(255, 255, 255, 255),
                                           group=groups.g[11], batch=self.batch)
         self.mouseheld = False
-        self.current_mode = mode_intro(self, self.batch, self.nwl)
+        self.current_mode = mode_intro(self, self.batch)
         self.keys = key.KeyStateHandler()
         self.push_handlers(self.keys)
         self.last_tick = time.time()
 
     def start_game(self, game):
-        self.current_mode = mode_main(self, self.batch, self.nwl, game)
+        self.current_mode = mode_main(self, self.batch, game)
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.current_mode.mouse_move(x, y, dx, dy)
@@ -168,11 +148,10 @@ class windoo(pyglet.window.Window):
     def on_close(self):
         self.close()
         connection.close()
-        os._exit(0)
+        raise KeyboardInterrupt()
 
     def error_close(self):
         self.close()
-        connection.close()
 
     def tick(self):
         self.dispatch_events()
@@ -215,9 +194,6 @@ def main():
     pyglet.options['debug_gl'] = False
     pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
 
-    connection.DoConnect(('192.168.1.237', 5071))
-    # place = windoo(caption='test', fullscreen=True)
-    #connection.DoConnect(('127.0.0.1', 5071))
     place = windoo(caption='test', style=pyglet.window.Window.WINDOW_STYLE_BORDERLESS, width=constants.SCREEN_WIDTH,
                    height=constants.SCREEN_HEIGHT)
     place.set_location(0, 0)
@@ -225,18 +201,7 @@ def main():
     while True:
         t += 1
         try:
-            if not constants.ARTIFICIAL_DELAY or t % 10 == 0:
-                connection.Pump()
-                place.nwl.Pump()
             place.tick()
-            '''if t % 1000 == 0:
-                with cProfile.Profile() as pr:
-                    place.tick()
-                stats = pstats.Stats(pr).sort_stats(pstats.SortKey.TIME)
-                stats.print_stats()
-            else:
-                place.tick()
-            '''
         except Exception as e:
             place.error_close()
             raise e

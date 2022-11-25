@@ -43,7 +43,6 @@ final class Batch {
   private final int vao, vbo, ebo;
   boolean isEmpty;
 
-
   Batch(String textureName, int size, String shader, int layer, BatchSystem system) {
     texture = Data.getTexture(textureName);
     this.textureName = textureName;
@@ -102,13 +101,17 @@ final class Batch {
     glBindVertexArray(0);
   }
 
+  public BatchSystem getGroup() {
+    return group;
+  }
+
   public void addSprite(Sprite sprite) {
     assert !freeSpriteSlots.isEmpty() : "Attempt to add sprite to a full batch.";
     int slot = freeSpriteSlots.remove(0);
+    sprite.getBatched(this, slot);
     synchronized (sprites) {
       sprites[slot] = sprite;
     }
-    sprite.getBatched(this, slot);
     isEmpty = false;
   }
 
@@ -136,7 +139,7 @@ final class Batch {
     for (int i = 0; i < maxSize; i++) {
       Sprite sprite = sprites[i];
       if (sprite != null) {
-        if (sprite.deleteThis) {
+        if (sprite.deleted) {
           sprite._delete();
         } else if (sprite.mustBeRebatched) {
           sprite.unBatch();
@@ -160,7 +163,7 @@ final class Batch {
 
     for (int i = 0; i < maxSize; i++) {
       Sprite sprite = sprites[i];
-      if (sprite != null && !sprite.deleteThis) {
+      if (sprite != null && !sprite.deleted) {
         if (sprite.rebuffer) {
           sprite.bufferVertices(offset);
         }

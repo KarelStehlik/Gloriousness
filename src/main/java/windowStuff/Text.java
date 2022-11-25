@@ -15,19 +15,23 @@ public class Text {
   private final String text;
   private final String shader;
   private final BatchSystem bs;
+  private final AbstractSprite background;
   public int x, y;
   private float fontSize;
   private float scale;
   private List<Symbol> symbols;
   private float[] colors = new float[]{0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
   private boolean deleted = false;
+  private boolean hidden = false;
+  private int lineCount = 1;
+
   public Text(String value, String font, int width, int x, int y, int layer, float size,
       BatchSystem bs) {
-    this(value, font, width, x, y, layer, size, bs, "basic");
+    this(value, font, width, x, y, layer, size, bs, "basic", null);
   }
 
   public Text(String value, String font, int width, int x, int y, int layer, float size,
-      BatchSystem bs, String shader) {
+      BatchSystem bs, String shader, String backgroundImage) {
     fontSize = size;
     this.x = x;
     this.bs = bs;
@@ -39,12 +43,42 @@ public class Text {
     this.shader = shader;
     symbols = new LinkedList<>();
     scale = (float) (fontSize / textureHeight);
+
+    if (backgroundImage == null) {
+      background = new NoSprite();
+    } else {
+      background = new Sprite(backgroundImage, width, fontSize, layer, shader);
+      background.addToBs(bs);
+    }
+
     for (char c : value.toCharArray()) {
       Symbol symbol = new Symbol(c, x, y, shader);
       symbols.add(symbol);
       bs.addSprite(symbol.sprite);
     }
     arrange();
+  }
+
+  public void hide() {
+    if (hidden) {
+      return;
+    }
+    for (Symbol s : symbols) {
+      s.sprite.unBatch();
+    }
+    background.unBatch();
+    hidden = true;
+  }
+
+  public void show() {
+    if (!hidden) {
+      return;
+    }
+    background.addToBs(bs);
+    for (Symbol s : symbols) {
+      bs.addSprite(s.sprite);
+    }
+    hidden = false;
   }
 
   public float getFontSize() {
@@ -74,7 +108,9 @@ public class Text {
         }
       } else {
         Symbol symbol = new Symbol(c, x, y, shader);
-        bs.addSprite(symbol.sprite);
+        if (!hidden) {
+          bs.addSprite(symbol.sprite);
+        }
         newSymbols.add(symbol);
       }
     }
@@ -100,21 +136,27 @@ public class Text {
     for (var symbol : symbols) {
       symbol.move(symbol.sprite.getX() + dx, symbol.sprite.getY() + dy);
     }
+    background.setPosition(newX + maxWidth / 2f, newY - lineCount * fontSize / 2);
     x = newX;
     y = newY;
   }
 
   private void arrange() {
     int line = 0;
-    float xOffset = 0;
+    float xOffset = fontSize / 4;
     for (var symbol : symbols) {
       symbol.move(x + xOffset + symbol.width * .5f, y - line * fontSize);
       xOffset += symbol.width;
       if (symbol.character == ' ' && xOffset > maxWidth - fontSize * 2) {
         line++;
-        xOffset = 0;
+        xOffset = fontSize / 4;
       }
     }
+
+    lineCount = line;
+
+    background.setPosition(x + maxWidth / 2f, y - line * fontSize / 2);
+    background.setSize(maxWidth, (line + 1) * fontSize);
   }
 
   public void delete() {

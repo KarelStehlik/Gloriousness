@@ -42,11 +42,11 @@ public class Projectile extends GameObject implements TickDetect {
     power = 1;
   }
 
-  public void multiplyPower(float mult){
+  public void multiplyPower(float mult) {
     power *= mult;
   }
 
-  public float getPower(){
+  public float getPower() {
     return power;
   }
 

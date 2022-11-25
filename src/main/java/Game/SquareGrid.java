@@ -11,7 +11,7 @@ import java.util.List;
 public class SquareGrid<T extends GameObject> {
 
   public final int widthSquares, heightSquares, bottomSquares, leftSquares;
-  private final List<ArrayList<Member>> data;
+  private final List<LinkedList<Member>> data;
   private final int squareSizePow2;
   private long idOfSearch = -9223372036854775806L;
 
@@ -26,7 +26,7 @@ public class SquareGrid<T extends GameObject> {
     this.leftSquares = (left >> squareSizePow2) + 1;
     data = new ArrayList<>(widthSquares * heightSquares);
     for (int i = 0; i < widthSquares * heightSquares; i++) {
-      data.add(new ArrayList<>(4));
+      data.add(new LinkedList<>());
     }
   }
 

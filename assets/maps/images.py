@@ -3,6 +3,7 @@ import os
 
 data = {}
 
+
 class im:
     def __getattr__(self, item):
         if item in data:
@@ -14,6 +15,11 @@ class im:
 
 images = im()
 
-for e in os.listdir("imageFiles"):
-    data[e[:-4]] = pyglet.image.load("imageFiles/" + e)
+def centre(image):
+    image.anchor_x = image.width // 2
+    image.anchor_y = image.height // 2
 
+for e in os.listdir("imageFiles"):
+    img = pyglet.image.load("imageFiles/" + e)
+    centre(img)
+    data[e[:-4]] = img

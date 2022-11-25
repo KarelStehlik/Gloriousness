@@ -12,7 +12,6 @@ public class BulletLauncher {
   private final Collection<OnCollideComponent<Mob>> mobCollides = new LinkedList<>();
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new LinkedList<>();
   private final World world;
-  private float x, y;
   private final String image;
   private final float speed;
   private final int width;
@@ -21,6 +20,8 @@ public class BulletLauncher {
   private final int size;
   private final int power;
   private final float duration;
+  private float x, y;
+
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
       int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
