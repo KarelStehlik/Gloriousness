@@ -94,9 +94,6 @@ public class Text {
   }
 
   public void setText(String value) {
-    if (deleted) {
-      return;
-    }
     List<Symbol> newSymbols = new LinkedList<>();
     Iterator<Symbol> existing = symbols.listIterator();
     for (char c : value.toCharArray()) {
@@ -144,12 +141,19 @@ public class Text {
   private void arrange() {
     int line = 0;
     float xOffset = fontSize / 4;
-    for (var symbol : symbols) {
+    for (int i = 0, size = symbols.size(); i < size; i++) {
+      Symbol symbol = symbols.get(i);
       symbol.move(x + xOffset + symbol.width * .5f, y - line * fontSize);
       xOffset += symbol.width;
-      if (symbol.character == ' ' && xOffset > maxWidth - fontSize * 2) {
-        line++;
-        xOffset = fontSize / 4;
+      if (symbol.character == ' ') {
+        float nextWordLen = 0;
+        for(int j=i+1; j<symbols.size() && symbols.get(j).character != ' '; j++){
+          nextWordLen+= symbols.get(j).width;
+        }
+        if(xOffset > maxWidth - nextWordLen) {
+          line++;
+          xOffset = fontSize / 4;
+        }
       }
     }
 
@@ -211,6 +215,7 @@ public class Text {
       width = w * scale;
       sprite.setImage(fontName + '-' + Character.getName(c));
       sprite.setSize(width, fontSize);
+      character = c;
     }
   }
 }

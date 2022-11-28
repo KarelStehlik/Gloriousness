@@ -15,7 +15,7 @@ public class Button implements MouseDetect {
     mouseoverTextGenerator = caption;
     bs.addSprite(sprite);
     mouseoverText = new Text(caption.get(), "Calibri", 300, 0, 0, sprite.getLayer(),
-        40, bs, "basic", "Cancelbutton");
+        40, bs, "basic", "textbox");
     mouseoverText.hide();
   }
 

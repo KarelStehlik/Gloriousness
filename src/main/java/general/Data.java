@@ -156,16 +156,24 @@ public final class Data {
    */
   public static float[] getImageCoordinates(String name) {
     //System.out.println(name);
-    return images.get(name).textureCoordinates;
+    try {
+      return images.get(name).textureCoordinates;
+    }catch(NullPointerException e){
+      System.out.println("No such image: "+name);
+      return getImageCoordinates("notfound");
+    }
   }
 
   /**
    * the batch texture where the image is located
    */
   public static String getImageTexture(String name) {
-    var result = images.get(name).textureName;
-    assert result != null : "no such image: \"" + name + '\"';
-    return result;
+    try {
+      return images.get(name).textureName;
+    }catch(NullPointerException e){
+      System.out.println("No such image: "+name);
+      return getImageTexture("notfound");
+    }
   }
 
   public static void loadShader(String name) {

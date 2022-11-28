@@ -13,6 +13,10 @@ public final class Constants {
   public static final int SpriteSizeFloats = 36;
   public static final Vector2i screenSize;
 
+  //gameplay
+  public static final int StartingHealth = 100;
+  public static final int MobSpread = 50;
+
   static {
     IntBuffer b = BufferUtils.createIntBuffer(4);
     glGetIntegerv(GL_VIEWPORT, b);

@@ -15,7 +15,7 @@ public class Projectile extends GameObject implements TickDetect {
   private final Collection<Projectile> alreadyHitProjectiles;
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new LinkedList<>();
   protected int pierce;
-  protected float size;
+  protected int size;
   private float speed;
   private float vx, vy;
   private float duration;
@@ -25,8 +25,8 @@ public class Projectile extends GameObject implements TickDetect {
   private float power;
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
-      int W, int H, int pierce, float size, float duration) {
-    super(X, Y, W, H, world);
+      int W, int H, int pierce, int size, float duration) {
+    super(X, Y, size, size, world);
     sprite = new Sprite(image, X, Y, W, H, 1, "basic");
     sprite.setRotation(rotation);
     world.getBs().addSprite(sprite);
@@ -108,6 +108,9 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Player e) {
+    if(Util.distanceSquared(x-e.x, y-e.y) > size + Util.square(e.width + size)/4){
+      return;
+    }
     if (!alreadyHitPlayer) {
       alreadyHitPlayer = true;
       for (var component : playerCollides) {
@@ -122,6 +125,9 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Mob e) {
+    if(Util.distanceSquared(x-e.x, y-e.y) > size + Util.square(e.width + size)/4){
+      return;
+    }
     if (!alreadyHitMobs.contains(e)) {
       alreadyHitMobs.add(e);
       for (var component : mobCollides) {
@@ -136,6 +142,9 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Projectile e) {
+    if(Util.distanceSquared(x-e.x, y-e.y) > size + Util.square(e.width + size)/4){
+      return;
+    }
     if (!alreadyHitProjectiles.contains(e) && !e.equals(this)) {
       alreadyHitProjectiles.add(e);
       for (var component : projectileCollides) {

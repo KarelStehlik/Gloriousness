@@ -151,5 +151,9 @@ public final class Util {
   public static float square(float x) {
     return x * x;
   }
+
+  public static float distanceSquared(float dx, float dy){
+    return dx*dx+dy*dy;
+  }
 }
 

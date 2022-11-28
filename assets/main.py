@@ -107,9 +107,10 @@ class TestSetup:
             new.paste(e, poi)
             b, l, t, r = poi[1] / TEXSIZE, poi[0] / TEXSIZE, (poi[1] + e.size[1]) / TEXSIZE, (
                     poi[0] + e.size[0]) / TEXSIZE
-            b += 1 / TEXSIZE
-            l += 1 / TEXSIZE
-            t -= 1 / TEXSIZE
+
+            #b += 1 / TEXSIZE
+            #l += 1 / TEXSIZE
+            #t -= 1 / TEXSIZE
             r -= 1 / TEXSIZE
             text += f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"
 

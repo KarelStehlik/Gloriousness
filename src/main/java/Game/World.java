@@ -9,6 +9,7 @@ import java.util.List;
 import windowStuff.BatchSystem;
 import windowStuff.Button;
 import windowStuff.Sprite;
+import windowStuff.Text;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
@@ -23,6 +24,18 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Sprite mapSprite;
   private final List<Point> mapData;
   private int tick = 0;
+  private int health = Constants.StartingHealth;
+  private final Text healthTracker;
+  private final MobSpawner mobSpawner = new MobSpawner();
+
+  public int getHealth() {
+    return health;
+  }
+
+  public void changeHealth(int change) {
+    health += change;
+    healthTracker.setText("Lives: "+ health);
+  }
 
   public World() {
     Game game = Game.get();
@@ -41,16 +54,18 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         Constants.screenSize.x, Constants.screenSize.y, 0, "basic");
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
-    for (int i = 0; i < 5000; i++) {
+    for (int i = 0; i < 4950; i++) {
       addEnemy(new BasicMob(this));
     }
 
-    game.addMouseDetect(new Button(bs, new Sprite("btd_map", 100, 100, 100, 100, 10, "basic"),
+    game.addMouseDetect(new Button(bs, new Sprite("btd_map", 100, 100, 200, 200, 10, "basic"),
         (int button, int action) -> {
           if (button == 0 && action == 1) {
             addEnemy(new BasicMob(this));
           }
-        }, () -> "some text is texted but it is also very long which may result in things"+tick));
+        }, () -> "some text is texted but it is also very long which may result in "+tick));
+
+    healthTracker = new Text("Lives: "+ health,"Calibri", 500, 0, 1050, 5, 40, bs);
   }
 
   public List<Point> getMapData() {
@@ -101,6 +116,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     tickEntities(projectilesGrid, projectilesList);
     player.onGameTick(tick);
     projectilesGrid.clear();
+    mobSpawner.run(tick);
   }
 
   private <T extends GameObject & TickDetect> void tickEntities(SquareGrid<T> grid, List<T> list) {
@@ -134,5 +150,17 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   SquareGrid<Projectile> getProjectilesGrid() {
     return projectilesGrid;
+  }
+
+  private class MobSpawner{
+    private float mobsToSpawn = 0;
+
+    private void run(int tickId){
+      mobsToSpawn += tickId/10f;
+      while(mobsToSpawn >= 1){
+        mobsToSpawn --;
+        addEnemy(new BasicMob(World.this));
+      }
+    }
   }
 }

@@ -1,5 +1,6 @@
 package Game;
 
+import general.Constants;
 import general.Data;
 import general.Util;
 import java.awt.Point;
@@ -21,13 +22,15 @@ public abstract class Mob extends GameObject implements TickDetect {
   protected float vx, vy;
   protected float currentAngle = 0;
   private int nextMapPoint = 1;
+  private final Point offset;
 
   public Mob(World world, String name, String image) {
-    super(world.getMapData().get(0).x, world.getMapData().get(0).y, 150, 150, world);
+    super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread, Constants.MobSpread), world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread, Constants.MobSpread), 150, 150, world);
     baseStats = Data.getEntityStats("mob", name);
     stats = new HashMap<>(baseStats);
     health = stats.get("health");
     this.name = name;
+    offset = new Point((int)x-world.getMapData().get(0).x, (int)y-world.getMapData().get(0).y);
     setSize((int) (2 * stats.get("size")), (int) (2 * stats.get("size")));
     grid = world.getMobsGrid();
     float rotationToNextPoint = Util.get_rotation(world.getMapData().get(nextMapPoint).x - x,
@@ -67,16 +70,16 @@ public abstract class Mob extends GameObject implements TickDetect {
 
   private void runAI() {
     Point nextPoint = world.getMapData().get(nextMapPoint);
-    if (Math.abs(nextPoint.x - x) + Math.abs(nextPoint.y - y) < stats.get("speed")) {
-      x = nextPoint.x;
-      y = nextPoint.y;
+    if (Math.abs(nextPoint.x + offset.x - x) + Math.abs(nextPoint.y + offset.y - y) < stats.get("speed")) {
+      x = nextPoint.x + offset.x;
+      y = nextPoint.y + offset.y;
       nextMapPoint += 1;
       if (nextMapPoint >= world.getMapData().size()) {
         passed();
       }
     } else {
-      float rotationToNextPoint = Util.get_rotation(world.getMapData().get(nextMapPoint).x - x,
-          world.getMapData().get(nextMapPoint).y - y);
+      float rotationToNextPoint = Util.get_rotation(nextPoint.x + offset.x - x,
+          nextPoint.y + offset.y - y);
       vx = stats.get("speed") * Util.cos(rotationToNextPoint);
       vy = stats.get("speed") * Util.sin(rotationToNextPoint);
       x = x + vx;
@@ -86,6 +89,7 @@ public abstract class Mob extends GameObject implements TickDetect {
 
   private void passed() {
     delete();
+    world.changeHealth(-1);
   }
 
   private void collide(Mob other) {
