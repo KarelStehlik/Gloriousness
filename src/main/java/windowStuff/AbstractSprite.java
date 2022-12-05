@@ -6,33 +6,33 @@ interface AbstractSprite {
 
   float getHeight();
 
-  void playAnimation(Sprite.Animation anim);
+  AbstractSprite playAnimation(Sprite.Animation anim);
 
-  void setShader(String shader);
+  AbstractSprite setShader(String shader);
 
   float getRotation();
 
-  void setRotation(float r);
+  AbstractSprite setRotation(float r);
 
-  void setImage(String name);
+  AbstractSprite setImage(String name);
 
-  void setPosition(float X, float Y);
+  AbstractSprite setPosition(float X, float Y);
 
-  void scale(float multiplier);
+  AbstractSprite scale(float multiplier);
 
-  void setSize(float w, float h);
+  AbstractSprite setSize(float w, float h);
 
-  void setColors(float[] colors);
+  AbstractSprite setColors(float[] colors);
 
   void delete();
 
   float getX();
 
-  void setX(float x);
+  AbstractSprite setX(float x);
 
   float getY();
 
-  void setY(float y);
+  AbstractSprite setY(float y);
 
   Batch getBatch();
 
@@ -40,7 +40,7 @@ interface AbstractSprite {
 
   boolean isDeleted();
 
-  void addToBs(BatchSystem bs);
+  AbstractSprite addToBs(BatchSystem bs);
 
   void unBatch();
 }

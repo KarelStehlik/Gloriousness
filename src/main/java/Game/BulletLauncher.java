@@ -58,7 +58,7 @@ public class BulletLauncher {
 
   public void attack(float angle) {
     Projectile p = new Projectile(world, image, x, y, speed, angle, width, height, pierce, size,
-        duration);
+        duration, power);
     world.getProjectilesList().add(p);
     for (var collide : playerCollides) {
       p.addPlayerCollide(collide);

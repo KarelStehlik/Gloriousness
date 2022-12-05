@@ -28,6 +28,13 @@ public final class Util {
       1, 1, .5f, 1,
   };
 
+  private static final float[] noColors = new float[]{
+      0, 0, 0, 1,
+      0, 0, 0, 1,
+      0, 0, 0, 1,
+      0, 0, 0, 1,
+  };
+
   // static initializer block
   // fill the sine look-up table
   static {
@@ -152,8 +159,20 @@ public final class Util {
     return x * x;
   }
 
-  public static float distanceSquared(float dx, float dy){
-    return dx*dx+dy*dy;
+  public static float distanceSquared(float dx, float dy) {
+    return dx * dx + dy * dy;
+  }
+
+  public static float[] getBaseColors(float opacity) {
+    if (opacity == 1) {
+      return noColors;
+    }
+    return new float[]{
+        0, 0, 0, opacity,
+        0, 0, 0, opacity,
+        0, 0, 0, opacity,
+        0, 0, 0, opacity
+    };
   }
 }
 

@@ -4,6 +4,8 @@ import windowStuff.Sprite.Animation;
 
 public class NoSprite implements AbstractSprite {
 
+  boolean deleted = false;
+
   @Override
   public float getWidth() {
     return 0;
@@ -15,13 +17,13 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
-  public void playAnimation(Animation anim) {
-
+  public NoSprite playAnimation(Animation anim) {
+    return this;
   }
 
   @Override
-  public void setShader(String shader) {
-
+  public NoSprite setShader(String shader) {
+    return this;
   }
 
   @Override
@@ -30,38 +32,38 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
-  public void setRotation(float r) {
-
+  public NoSprite setRotation(float r) {
+    return this;
   }
 
   @Override
-  public void setImage(String name) {
-
+  public NoSprite setImage(String name) {
+    return this;
   }
 
   @Override
-  public void setPosition(float X, float Y) {
-
+  public NoSprite setPosition(float X, float Y) {
+    return this;
   }
 
   @Override
-  public void scale(float multiplier) {
-
+  public NoSprite scale(float multiplier) {
+    return this;
   }
 
   @Override
-  public void setSize(float w, float h) {
-
+  public NoSprite setSize(float w, float h) {
+    return this;
   }
 
   @Override
-  public void setColors(float[] colors) {
-
+  public NoSprite setColors(float[] colors) {
+    return this;
   }
 
   @Override
   public void delete() {
-
+    deleted = true;
   }
 
   @Override
@@ -70,8 +72,8 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
-  public void setX(float x) {
-
+  public NoSprite setX(float x) {
+    return this;
   }
 
   @Override
@@ -80,8 +82,8 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
-  public void setY(float y) {
-
+  public NoSprite setY(float y) {
+    return this;
   }
 
   @Override
@@ -96,12 +98,12 @@ public class NoSprite implements AbstractSprite {
 
   @Override
   public boolean isDeleted() {
-    return false;
+    return deleted;
   }
 
   @Override
-  public void addToBs(BatchSystem bs) {
-
+  public NoSprite addToBs(BatchSystem bs) {
+    return this;
   }
 
   @Override

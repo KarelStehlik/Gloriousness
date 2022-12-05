@@ -2,8 +2,8 @@ package Game;
 
 import general.Util;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.TreeSet;
 import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
@@ -25,7 +25,7 @@ public class Projectile extends GameObject implements TickDetect {
   private float power;
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
-      int W, int H, int pierce, int size, float duration) {
+      int W, int H, int pierce, int size, float duration, float power) {
     super(X, Y, size, size, world);
     sprite = new Sprite(image, X, Y, W, H, 1, "basic");
     sprite.setRotation(rotation);
@@ -37,9 +37,9 @@ public class Projectile extends GameObject implements TickDetect {
     this.size = size;
     this.duration = duration;
     this.rotation = rotation;
-    alreadyHitMobs = new HashSet<>(pierce);
-    alreadyHitProjectiles = new HashSet<>(pierce);
-    power = 1;
+    alreadyHitMobs = new TreeSet<>();
+    alreadyHitProjectiles = new TreeSet<>();
+    this.power = power;
   }
 
   public void multiplyPower(float mult) {
@@ -108,7 +108,8 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Player e) {
-    if(Util.distanceSquared(x-e.x, y-e.y) > size + Util.square(e.width + size)/4){
+    if (wasDeleted
+        || Util.distanceSquared(x - e.x, y - e.y) > size + Util.square(e.width + size) / 4) {
       return;
     }
     if (!alreadyHitPlayer) {
@@ -125,7 +126,8 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Mob e) {
-    if(Util.distanceSquared(x-e.x, y-e.y) > size + Util.square(e.width + size)/4){
+    if (wasDeleted
+        || Util.distanceSquared(x - e.x, y - e.y) > size + Util.square(e.width + size) / 4) {
       return;
     }
     if (!alreadyHitMobs.contains(e)) {
@@ -142,7 +144,8 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Projectile e) {
-    if(Util.distanceSquared(x-e.x, y-e.y) > size + Util.square(e.width + size)/4){
+    if (wasDeleted
+        || Util.distanceSquared(x - e.x, y - e.y) > size + Util.square(e.width + size) / 4) {
       return;
     }
     if (!alreadyHitProjectiles.contains(e) && !e.equals(this)) {

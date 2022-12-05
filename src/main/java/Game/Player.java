@@ -36,9 +36,10 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
-    bulletLauncher = new BulletLauncher(world, "Egg", x, y, 10,
-        30, 30, 20, 30, 3, 50);
-    bulletLauncher.addMobCollide((proj, target) -> target.takeDamage(proj.getPower(), DamageType.PHYSICAL));
+    bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
+        30, 30, 50, 30, 3, 100);
+    bulletLauncher.addMobCollide(
+        (proj, target) -> target.takeDamage(proj.getPower(), DamageType.PHYSICAL));
   }
 
   public void takeDamage(float amount, DamageType type) {
@@ -78,7 +79,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   public void onGameTick(int tick) {
     if (input.isMousePressed(0)) {
       float dist = (float) Math.hypot(input.getX() - x, input.getY() - y);
-      for (int i = 0; i < 50; i++) {
+      for (int i = 0; i < 1; i++) {
         bulletLauncher.attack(Util.get_rotation(input.getX() - x, input.getY() - y)
             + Data.gameMechanicsRng.nextFloat() * 60 - 30);
       }

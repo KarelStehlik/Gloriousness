@@ -147,10 +147,10 @@ public class Text {
       xOffset += symbol.width;
       if (symbol.character == ' ') {
         float nextWordLen = 0;
-        for(int j=i+1; j<symbols.size() && symbols.get(j).character != ' '; j++){
-          nextWordLen+= symbols.get(j).width;
+        for (int j = i + 1; j < symbols.size() && symbols.get(j).character != ' '; j++) {
+          nextWordLen += symbols.get(j).width;
         }
-        if(xOffset > maxWidth - nextWordLen) {
+        if (xOffset > maxWidth - nextWordLen) {
           line++;
           xOffset = fontSize / 4;
         }

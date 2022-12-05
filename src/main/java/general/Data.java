@@ -158,8 +158,8 @@ public final class Data {
     //System.out.println(name);
     try {
       return images.get(name).textureCoordinates;
-    }catch(NullPointerException e){
-      System.out.println("No such image: "+name);
+    } catch (NullPointerException e) {
+      System.out.println("No such image: " + name);
       return getImageCoordinates("notfound");
     }
   }
@@ -170,8 +170,8 @@ public final class Data {
   public static String getImageTexture(String name) {
     try {
       return images.get(name).textureName;
-    }catch(NullPointerException e){
-      System.out.println("No such image: "+name);
+    } catch (NullPointerException e) {
+      System.out.println("No such image: " + name);
       return getImageTexture("notfound");
     }
   }

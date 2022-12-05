@@ -2,8 +2,10 @@ package Game;
 
 import java.awt.Rectangle;
 
-public class GameObject {
+public class GameObject implements Comparable<GameObject> {
 
+  private static int idGen = Integer.MIN_VALUE;
+  public final int id;
   private final Rectangle hitbox;
   protected float x, y;
   protected int width, height;
@@ -17,6 +19,8 @@ public class GameObject {
     height = H;
     world = w;
     hitbox = new Rectangle((int) (x - width / 2), (int) (y + height / 2), width, height);
+    id = idGen;
+    idGen++;
   }
 
   Rectangle getHitbox() {
@@ -34,5 +38,10 @@ public class GameObject {
     height = _height;
     hitbox.setSize(width, height);
     hitbox.setLocation((int) (x - width / 2), (int) (y + height / 2));
+  }
+
+  @Override
+  public int compareTo(GameObject o) {
+    return id - o.id;
   }
 }

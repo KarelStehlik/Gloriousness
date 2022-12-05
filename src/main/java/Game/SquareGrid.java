@@ -8,12 +8,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SquareGrid<T extends GameObject> {
+public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
 
   public final int widthSquares, heightSquares, bottomSquares, leftSquares;
-  private final List<LinkedList<Member>> data;
-  private final int squareSizePow2;
-  private long idOfSearch = -9223372036854775806L;
+  protected final List<LinkedList<Member>> data;
+  protected final int squareSizePow2;
+  protected long idOfSearch = -9223372036854775806L;
 
   /**
    * ignores collisions outside the bounds of the grid.
@@ -30,12 +30,14 @@ public class SquareGrid<T extends GameObject> {
     }
   }
 
+  @Override
   public void clear() {
     for (Collection<Member> entities : data) {
       entities.clear();
     }
   }
 
+  @Override
   public void add(T in) {
     Rectangle hb = in.getHitbox();
     int bottom = Math.max((hb.y - hb.height >> squareSizePow2) - bottomSquares, 0);
@@ -56,6 +58,7 @@ public class SquareGrid<T extends GameObject> {
    * @return all objects in the SG that intersect the area, and some that do not if you wish to call
    *     a function on each of these objects, use SquareGrid::callForEach instead.
    */
+  @Override
   public List<T> get(T in) {
     return get(in.getHitbox());
   }
@@ -65,6 +68,7 @@ public class SquareGrid<T extends GameObject> {
    * @return all objects in the SG that intersect the area, and some that do not if you wish to call
    *     a function on each of these objects, use SquareGrid::callForEach instead.
    */
+  @Override
   public List<T> get(Rectangle hb) {
     List<T> detected = new LinkedList<>();
     callForEach(hb, detected::add);
@@ -76,6 +80,7 @@ public class SquareGrid<T extends GameObject> {
    * @return all objects in the SG that intersect the area, and some that do not if you wish to call
    *     a function on each of these objects, use SquareGrid::callForEach instead.
    */
+  @Override
   public List<T> get(Iterable<? extends Point> area) {
     List<T> detected = new LinkedList<>();
     callForEach(area, detected::add);
@@ -86,6 +91,7 @@ public class SquareGrid<T extends GameObject> {
    * @param hb the area from which to choose objects
    * @param F  the collide function to call on each object in area
    */
+  @Override
   public void callForEach(Rectangle hb, collideFunction<T> F) {
     idOfSearch++;
 
@@ -110,6 +116,7 @@ public class SquareGrid<T extends GameObject> {
    * @param in the area from which to choose objects
    * @param F  the collide function to call on each object in area
    */
+  @Override
   public void callForEach(GameObject in, collideFunction<T> F) {
     callForEach(in.getHitbox(), F);
   }
@@ -118,6 +125,7 @@ public class SquareGrid<T extends GameObject> {
    * @param area the area from which to choose objects
    * @param F    the collide function to call on each object in area
    */
+  @Override
   public void callForEach(Iterable<? extends Point> area, collideFunction<T> F) {
     idOfSearch++;
     for (Point p : area) {
@@ -130,13 +138,7 @@ public class SquareGrid<T extends GameObject> {
     }
   }
 
-  @FunctionalInterface
-  interface collideFunction<T> {
-
-    void collide(T other);
-  }
-
-  private class Member {
+  protected class Member {
 
     T hitbox;
     long lastChecked = -9223372036854775807L;

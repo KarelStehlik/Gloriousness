@@ -23,7 +23,7 @@ public class Sprite implements AbstractSprite {
   protected boolean rebuffer = false;
   private float x;
   private float y;
-  private float[] colors = new float[16];
+  private float[] colors = Util.getBaseColors(1);
   private float[] texCoords = new float[8];
   private float rotation = 0;
   private float width, height;
@@ -35,8 +35,19 @@ public class Sprite implements AbstractSprite {
     this(imageName, 0, 0, sizeX, sizeY, layer, shader);
   }
 
+  public Sprite(String imageName, float sizeX, float sizeY, int layer,
+      String shader, BatchSystem bs) {
+    this(imageName, 0, 0, sizeX, sizeY, layer, shader);
+    this.addToBs(bs);
+  }
+
   public Sprite(String imageName, float sizeX, float sizeY, int layer) {
     this(imageName, 0, 0, sizeX, sizeY, layer, "basic");
+  }
+
+  public Sprite(String imageName, float sizeX, float sizeY, int layer, BatchSystem bs) {
+    this(imageName, 0, 0, sizeX, sizeY, layer, "basic");
+    this.addToBs(bs);
   }
 
   public Sprite(String imageName, float x, float y, float sizeX, float sizeY, int layer,
@@ -68,8 +79,9 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void addToBs(BatchSystem bs) {
+  public Sprite addToBs(BatchSystem bs) {
     bs.addSprite(this);
+    return this;
   }
 
   @Override
@@ -88,14 +100,16 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void playAnimation(Animation anim) {
+  public Sprite playAnimation(Animation anim) {
     animation = anim;
+    return this;
   }
 
   @Override
-  public void setShader(String shader) {
+  public Sprite setShader(String shader) {
     this.shader = Data.getShader(shader);
     this.mustBeRebatched = true;
+    return this;
   }
 
   @Override
@@ -104,19 +118,21 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setRotation(float r) {
+  public Sprite setRotation(float r) {
     rotation = r;
     hasUnsavedChanges = true;
+    return this;
   }
 
   @Override
-  public void setImage(String name) {
+  public Sprite setImage(String name) {
     if (!Objects.equals(this.textureName, Data.getImageTexture(name))) {
       this.textureName = Data.getImageTexture(name);
       mustBeRebatched = (batch != null) || mustBeRebatched;
     }
     imageName = name;
     setUV();
+    return this;
   }
 
   private void setUV() {
@@ -139,24 +155,27 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setPosition(float X, float Y) {
+  public Sprite setPosition(float X, float Y) {
     setX(X);
     setY(Y);
     hasUnsavedChanges = true;
+    return this;
   }
 
   @Override
-  public void scale(float multiplier) {
+  public Sprite scale(float multiplier) {
     width *= multiplier;
     height *= multiplier;
     hasUnsavedChanges = true;
+    return this;
   }
 
   @Override
-  public void setSize(float w, float h) {
+  public Sprite setSize(float w, float h) {
     width = w / 2;
     height = h / 2;
     hasUnsavedChanges = true;
+    return this;
   }
 
   public synchronized void updateVertices() {
@@ -206,9 +225,10 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setColors(float[] colors) {
+  public Sprite setColors(float[] colors) {
     assert colors.length == 16 : "expected 16 colors for sprite.";
     this.colors = colors;
+    return this;
   }
 
   protected synchronized void _delete() {
@@ -226,8 +246,9 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setX(float x) {
+  public Sprite setX(float x) {
     this.x = x;
+    return this;
   }
 
   @Override
@@ -236,8 +257,9 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setY(float y) {
+  public Sprite setY(float y) {
     this.y = y;
+    return this;
   }
 
   @FunctionalInterface
