@@ -2,13 +2,14 @@ package Game;
 
 import general.Constants;
 import general.Data;
-import general.Util;
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import windowStuff.BatchSystem;
 import windowStuff.Button;
+import windowStuff.ButtonArray;
 import windowStuff.Sprite;
 import windowStuff.Text;
 
@@ -24,10 +25,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Player player;
   private final Sprite mapSprite;
   private final List<Point> mapData;
-  private final Text healthTracker;
+  private final Text resourceTracker;
   private final MobSpawner mobSpawner = new MobSpawner();
   private int tick = 0;
   private int health = Constants.StartingHealth;
+  private TurretGenerator[] availableTurrets;
+  private float money = 100;
+  public Tool currentTool = null;
 
   public World() {
     Game game = Game.get();
@@ -47,19 +51,17 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
-    game.addMouseDetect(new Button(bs, new Sprite("btd_map", 100, 100, 200, 200, 10, "basic"),
-        (int button, int action) -> {
-          if (button == 0 && action == 1) {
-            new PlaceObjectTool(
-                new Sprite("fire", 200, 200, 10, bs).setColors(Util.getBaseColors(.6f)),
-                (int x, int y) -> {
-                  new Turret(this, x, y);
-                  return true;
-                });
-          }
-        }, () -> "some text is texted but it is also very long which may result in " + tick));
+    TurretGenerator test = new TurretGenerator(this, "gun", "ph", 100).
+        addOnMobCollide((proj, mob)->mob.takeDamage(proj.getPower(), DamageType.PHYSICAL));
+    availableTurrets = new TurretGenerator[] {test,test,test,test,test,test,test,test,test,test,
+        test,test,test,test,test,test,test,test,test,test,test,test,test,test,};
 
-    healthTracker = new Text("Lives: " + health, "Calibri", 500, 0, 1050, 5, 40, bs);
+    ButtonArray turretBar = new ButtonArray(2,
+        Arrays.stream(availableTurrets).map(tg ->tg.makeButton(5)).toArray(Button[]::new),
+        new Sprite("Button", 4).addToBs(bs),75,Constants.screenSize.x,Constants.screenSize.y,10,1,1);
+    game.addMouseDetect(turretBar);
+
+    resourceTracker = new Text("Lives: " + health+ "\nCash: " + (int) getMoney(), "Calibri", 500, 0, 1050, 10, 40, bs);
   }
 
   public int getHealth() {
@@ -68,7 +70,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void changeHealth(int change) {
     health += change;
-    healthTracker.setText("Lives: " + health);
+    resourceTracker.setText("Lives: " + health + "\nCash: " + (int) getMoney());
   }
 
   public List<Point> getMapData() {
@@ -94,22 +96,30 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-
+    if(currentTool != null) {
+      currentTool.onKeyPress(key, action, mods);
+    }
   }
 
   @Override
   public void onMouseButton(int button, double x, double y, int action, int mods) {
-
+    if(currentTool != null) {
+      currentTool.onMouseButton(button, x, y, action, mods);
+    }
   }
 
   @Override
   public void onScroll(double scroll) {
-
+    if(currentTool != null) {
+      currentTool.onScroll(scroll);
+    }
   }
 
   @Override
   public void onMouseMove(float newX, float newY) {
-
+    if(currentTool != null) {
+      currentTool.onMouseMove(newX, newY);
+    }
   }
 
   @Override
@@ -157,6 +167,15 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     return projectilesGrid;
   }
 
+  public float getMoney() {
+    return money;
+  }
+
+  public void setMoney(float money) {
+    this.money = money;
+    resourceTracker.setText("Lives: " + health + "\nCash: " + (int) getMoney());
+  }
+
   private class MobSpawner {
 
     private float mobsToSpawn = 0;
@@ -165,7 +184,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       mobsToSpawn += tickId / 100f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
-        addEnemy(new BasicMob(World.this));
+        BasicMob e = new BasicMob(World.this);
+        e.addStatusEffect(new Mob.StatusEffect(0, m ->{
+          m.stats.put("health", m.stats.get("health") * tickId);
+        }));
+        addEnemy(e);
       }
     }
   }

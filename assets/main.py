@@ -111,7 +111,7 @@ class TestSetup:
             #b += 1 / TEXSIZE
             #l += 1 / TEXSIZE
             #t -= 1 / TEXSIZE
-            r -= 1 / TEXSIZE
+            #r -= 1 / TEXSIZE
             text += f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"
 
         new.save("final images/T" + str(n_textures) + ".png")

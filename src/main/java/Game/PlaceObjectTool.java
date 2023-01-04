@@ -6,7 +6,8 @@ public class PlaceObjectTool extends Tool {
 
   private final onClick click;
   private final Sprite sprite;
-  public PlaceObjectTool(Sprite sprite, onClick onclick) {
+  public PlaceObjectTool(World world, Sprite sprite, onClick onclick) {
+    super(world);
     click = onclick;
     this.sprite = sprite;
     sprite.setPosition(input.getX(), input.getY());

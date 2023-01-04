@@ -1,0 +1,1 @@
+gun|power=100|range=500|pierce=100|cd=0.01|projectileDuration=2|bulletSize=50|speed=10

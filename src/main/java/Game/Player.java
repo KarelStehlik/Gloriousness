@@ -30,7 +30,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     stats = new HashMap<>(baseStats);
     health = stats.get("health");
     input = Game.get().getUserInputListener();
-    sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 10);
+    sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 2);
     sprite.setPosition(960, 540);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);

@@ -10,43 +10,57 @@ import windowStuff.UserInputListener;
 
 public class Turret extends GameObject implements TickDetect {
 
-  private static final int HEIGHT = 200, WIDTH = 100;
+  public static final int HEIGHT = 100, WIDTH = 100;
+
   final Map<String, Float> stats;
   final Map<String, Float> baseStats;
   private final UserInputListener input;
   private final Sprite sprite;
-  private final float speed = 10;
-  private final BulletLauncher bulletLauncher;
-  private final int range = 500;
+  protected final BulletLauncher bulletLauncher;
   protected float health;
   private float vx, vy;
+  public final String type;
+  private float remainingCD = 0;
 
-  public Turret(World world, int X, int Y) {
+  public Turret(World world, int X, int Y, String imageName, BulletLauncher launcher, String type) {
     super(X, Y, WIDTH, HEIGHT, world);
-    baseStats = Data.getEntityStats("mob", "Player");
+    this.type = type;
+    baseStats = Data.getEntityStats("turret", type);
     stats = new HashMap<>(baseStats);
-    health = stats.get("health");
     input = Game.get().getUserInputListener();
-    sprite = new Sprite("Defender", WIDTH, HEIGHT, 10);
+    sprite = new Sprite(imageName, WIDTH, HEIGHT, 2);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
-    bulletLauncher = new BulletLauncher(world, "Egg", x, y, 30,
-        30, 30, 0, 30, 3, 200);
-    bulletLauncher.addMobCollide(
-        (proj, target) -> target.takeDamage(proj.getPower(), DamageType.PHYSICAL));
+    bulletLauncher = launcher;
+    launcher.move(x,y);
     Game.get().addTickable(this);
+    updateStats();
+  }
+
+  private void updateStats(){
+    // TBD: effects (get stats from base stats)
+
+    bulletLauncher.setDuration(stats.get("projectileDuration"));
+    bulletLauncher.setPierce(stats.get("pierce").intValue());
+    bulletLauncher.setPower(stats.get("power"));
+    bulletLauncher.setSize(stats.get("bulletSize"));
+    bulletLauncher.setSpeed(stats.get("speed"));
   }
 
   @Override
   public void onGameTick(int tick) {
-    Mob target = world.getMobsGrid().getFirst(new Point((int) x, (int) y), range);
-    if (target != null) {
-      for (int i = 0; i < 10; i++) {
-        bulletLauncher.attack(
-            Util.get_rotation(target.x - x, target.y - y) + Data.gameMechanicsRng.nextFloat() * 20
-                - 10);
-      }
+    if(remainingCD > 0){
+      remainingCD-= Game.tickIntervalMillis/1000f;
+    }
+
+    for(; remainingCD<=0; remainingCD+=stats.get("cd")) {
+      Mob target = world.getMobsGrid()
+          .getFirst(new Point((int) x, (int) y), stats.get("range").intValue());
+      if (target != null) {
+          bulletLauncher.attack(
+              Util.get_rotation(target.x - x, target.y - y));
+        }
     }
   }
 

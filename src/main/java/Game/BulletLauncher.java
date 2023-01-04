@@ -13,13 +13,36 @@ public class BulletLauncher {
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new LinkedList<>();
   private final World world;
   private final String image;
-  private final float speed;
-  private final int width;
-  private final int height;
-  private final int pierce;
-  private final int size;
-  private final int power;
-  private final float duration;
+  private float speed;
+  private int width;
+  private int height;
+
+  public void setSpeed(float speed) {
+    this.speed = speed;
+  }
+
+  public void setPierce(int pierce) {
+    this.pierce = pierce;
+  }
+
+  public void setSize(float size) {
+    width = (int) (width * size / this.size);
+    height = (int) (height * size / this.size);
+    this.size = size;
+  }
+
+  public void setPower(float power) {
+    this.power = power;
+  }
+
+  public void setDuration(float duration) {
+    this.duration = duration;
+  }
+
+  private int pierce;
+  private float size;
+  private float power;
+  private float duration;
   private float x, y;
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
@@ -37,6 +60,23 @@ public class BulletLauncher {
     this.duration = duration;
     this.x = x;
     this.y = y;
+  }
+
+  public BulletLauncher(BulletLauncher og){
+    world = og.world;
+    image = og.image;
+    speed = og.speed;
+    width = og.width;
+    height = og.height;
+    pierce = og.pierce;
+    size = og.size;
+    power = og.power;
+    duration = og.duration;
+    x = og.x;
+    y = og.y;
+    playerCollides.addAll(og.playerCollides);
+    mobCollides.addAll(og.mobCollides);
+    projectileCollides.addAll(og.projectileCollides);
   }
 
   public void addPlayerCollide(OnCollideComponent<Player> component) {
@@ -57,8 +97,7 @@ public class BulletLauncher {
   }
 
   public void attack(float angle) {
-    Projectile p = new Projectile(world, image, x, y, speed, angle, width, height, pierce, size,
-        duration, power);
+    Projectile p = new Projectile(world, image, x, y, speed, angle, width, height, pierce, size, duration, power);
     world.getProjectilesList().add(p);
     for (var collide : playerCollides) {
       p.addPlayerCollide(collide);
