@@ -1,15 +1,11 @@
 package windowStuff;
 
-import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.glBufferSubData;
-
 import general.Data;
 import general.Util;
 import java.util.Objects;
 
 public class Sprite implements AbstractSprite {
 
-  private final float[] vertices = new float[36];
   private final float[] positions = new float[12];
   protected boolean hasUnsavedChanges = true;
   protected String textureName;
@@ -210,22 +206,21 @@ public class Sprite implements AbstractSprite {
     rebuffer = true;
   }
 
-  protected synchronized void bufferVertices(long offset) {
+  protected synchronized void bufferToArray(int offset, float[] vertices) {
     for (int i = 0; i < 4; i++) {
-      vertices[9 * i] = positions[3 * i];
-      vertices[9 * i + 1] = positions[3 * i + 1];
-      vertices[9 * i + 2] = positions[3 * i + 2];
+      int off = offset+9 * i;
+      vertices[off] = positions[3 * i];
+      vertices[off + 1] = positions[3 * i + 1];
 
-      vertices[9 * i + 3] = colors[4 * i];
-      vertices[9 * i + 4] = colors[4 * i + 1];
-      vertices[9 * i + 5] = colors[4 * i + 2];
-      vertices[9 * i + 6] = colors[4 * i + 3];
+      vertices[off + 3] = colors[4 * i];
+      vertices[off + 4] = colors[4 * i + 1];
+      vertices[off + 5] = colors[4 * i + 2];
+      vertices[off + 6] = colors[4 * i + 3];
 
-      vertices[9 * i + 7] = texCoords[2 * i];
-      vertices[9 * i + 8] = texCoords[2 * i + 1];
+      vertices[off + 7] = texCoords[2 * i];
+      vertices[off + 8] = texCoords[2 * i + 1];
     }
 
-    glBufferSubData(GL_ARRAY_BUFFER, offset, vertices);
     rebuffer = false;
   }
 

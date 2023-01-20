@@ -10,11 +10,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import windowStuff.AbstractSprite;
 import windowStuff.Sprite;
 
 public abstract class Mob extends GameObject implements TickDetect {
 
-  protected final Sprite sprite;
+  protected final AbstractSprite sprite;
   protected final float rotation;
   protected final SquareGrid<Mob> grid;
   final Map<String, Float> stats;
@@ -76,7 +77,8 @@ public abstract class Mob extends GameObject implements TickDetect {
     vy = stats.get("speed") * Util.sin(rotationToNextPoint);
     rotation = Data.gameMechanicsRng.nextFloat(5) - 2.5f;
     sprite = new Sprite(image, x, y, width, height, 1, "basic");
-    world.getBs().addSprite(sprite);
+    //sprite = new NoSprite();
+    sprite.addToBs(world.getBs());
     exists = true;
   }
 

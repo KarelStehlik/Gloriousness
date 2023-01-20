@@ -98,7 +98,7 @@ class TestSetup:
         return True
 
     def save(self):
-        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (255, 0, 255, 0))
+        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (255,255,255,255))
         text = ""
 
         for i in range(len(self.images)):
@@ -125,27 +125,32 @@ for e in os.listdir("final images"):
 for e in os.listdir("image coordinates"):
     os.remove(f"image coordinates/{e}")
 files = []
-for e in os.listdir("rawImages"):
+
+def add(fromFolder, e):
     if e.startswith("ANIM_"):
         animName = e.split("_")[1]
-        img = Image.open("rawImages/" + e)
+        img = Image.open(fromFolder + e)
         img.pixelCount = img.size[0] * img.size[1]
         img.name = e.split("_")[2].split(".")[0]
         if animName not in animations.keys():
             animations[animName] = Animation()
         animations[animName].add(img)
-    elif os.path.isdir("rawImages/" + e):
+    elif os.path.isdir(fromFolder + e):
         animations[e] = Animation()
-        for f in os.listdir("rawImages/" + e):
-            img = Image.open("rawImages/" + e + "/" + f)
+        for f in os.listdir(fromFolder + e):
+            img = Image.open(fromFolder + e + "/" + f)
             img.name = e + "-" + f.split(".")[0]
             img.pixelCount = img.size[0] * img.size[1]
             animations[e].add(img)
     else:
-        img = Image.open("rawImages/" + e)
+        img = Image.open(fromFolder + e)
         img.name = e.split(".")[0]
         img.pixelCount = img.size[0] * img.size[1]
         files.append(img)
+for e in os.listdir("rawImages"):
+    add("rawImages/",e)
+for e in os.listdir("fonts"):
+    add("fonts/",e)
 
 files.sort(key=lambda image: max(image.size[0], image.size[1]), reverse=True)
 n_textures = 0

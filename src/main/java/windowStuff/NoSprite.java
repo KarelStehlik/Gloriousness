@@ -5,15 +5,16 @@ import windowStuff.Sprite.Animation;
 public class NoSprite implements AbstractSprite {
 
   boolean deleted = false;
+  float x,y,w,h;
 
   @Override
   public float getWidth() {
-    return 0;
+    return w;
   }
 
   @Override
   public float getHeight() {
-    return 0;
+    return h;
   }
 
   @Override
@@ -43,17 +44,17 @@ public class NoSprite implements AbstractSprite {
 
   @Override
   public NoSprite setPosition(float X, float Y) {
-    return this;
+    x=X;y=Y;return this;
   }
 
   @Override
   public NoSprite scale(float multiplier) {
-    return this;
+    w*=multiplier;h*=multiplier;return this;
   }
 
   @Override
   public NoSprite setSize(float w, float h) {
-    return this;
+    this.w=w/2;this.h=h/2;return this;
   }
 
   @Override
@@ -68,22 +69,22 @@ public class NoSprite implements AbstractSprite {
 
   @Override
   public float getX() {
-    return 0;
+    return x;
   }
 
   @Override
   public NoSprite setX(float x) {
-    return this;
+    this.x=x;return this;
   }
 
   @Override
   public float getY() {
-    return 0;
+    return y;
   }
 
   @Override
   public NoSprite setY(float y) {
-    return this;
+    this.y=y;return this;
   }
 
   @Override

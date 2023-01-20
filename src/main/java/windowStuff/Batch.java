@@ -17,7 +17,6 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
@@ -42,6 +41,7 @@ final class Batch {
   private final int maxSize;
   private final int vao, vbo, ebo;
   boolean isEmpty;
+  float[] vertices ;
 
   Batch(String textureName, int size, String shader, int layer, BatchSystem system) {
     texture = Data.getTexture(textureName);
@@ -76,7 +76,7 @@ final class Batch {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
 
-    float[] vertices = new float[size * Constants.SpriteSizeFloats];
+    vertices = new float[size * Constants.SpriteSizeFloats];
     FloatBuffer vertexBuffer = Util.buffer(vertices).flip();
     vbo = glGenBuffers();
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -120,10 +120,9 @@ final class Batch {
       sprites[sprite.slotInBatch] = null;
     }
     freeSpriteSlots.add(sprite.slotInBatch);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferSubData(GL_ARRAY_BUFFER,
-        (long) Constants.SpriteSizeFloats * Float.BYTES * sprite.slotInBatch,
-        new float[Constants.SpriteSizeFloats]);
+    for(int i = Constants.SpriteSizeFloats * sprite.slotInBatch; i<Constants.SpriteSizeFloats * (sprite.slotInBatch+1);i++){
+      vertices[i]=0;
+    }
     if (freeSpriteSlots.size() == maxSize) {
       isEmpty = true;
     }
@@ -159,17 +158,19 @@ final class Batch {
     glActiveTexture(GL_TEXTURE0);
     texture.bind();
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    long offset = 0;
+    int offset = 0;
 
     for (int i = 0; i < maxSize; i++) {
       Sprite sprite = sprites[i];
       if (sprite != null && !sprite.deleted) {
         if (sprite.rebuffer) {
-          sprite.bufferVertices(offset);
+          sprite.bufferToArray(offset, vertices);
         }
       }
-      offset += Constants.SpriteSizeFloats * Float.BYTES;
+      offset += Constants.SpriteSizeFloats;
     }
+
+    glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
     glDrawElements(GL_TRIANGLES, 6 * maxSize, GL_UNSIGNED_INT, 0);
   }
 

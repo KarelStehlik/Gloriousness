@@ -1,6 +1,6 @@
 package windowStuff;
 
-interface AbstractSprite {
+public interface AbstractSprite {
 
   float getWidth();
 

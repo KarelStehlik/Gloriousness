@@ -10,6 +10,7 @@ import java.util.List;
 import windowStuff.BatchSystem;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
+import windowStuff.NoSprite;
 import windowStuff.Sprite;
 import windowStuff.Text;
 
@@ -60,6 +61,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         Arrays.stream(availableTurrets).map(tg ->tg.makeButton(5)).toArray(Button[]::new),
         new Sprite("Button", 4).addToBs(bs),75,Constants.screenSize.x,Constants.screenSize.y,10,1,1);
     game.addMouseDetect(turretBar);
+
+    game.addMouseDetect(new Button(bs, new NoSprite().setSize(100,100).setPosition(410,660)
+        ,(button, mods)->{
+      BasicMob e = new BasicMob(World.this);
+      addEnemy(e);
+    },()->"aaa"));
 
     resourceTracker = new Text("Lives: " + health+ "\nCash: " + (int) getMoney(), "Calibri", 500, 0, 1050, 10, 40, bs);
   }
@@ -181,15 +188,20 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private float mobsToSpawn = 0;
 
     private void run(int tickId) {
-      mobsToSpawn += tickId / 100f;
+      mobsToSpawn += tickId/100000000000f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
         BasicMob e = new BasicMob(World.this);
         e.addStatusEffect(new Mob.StatusEffect(0, m ->{
-          m.stats.put("health", m.stats.get("health") * tickId);
+          m.stats.put("health", m.stats.get("health") * scaling(tickId));
+          m.stats.put("speed", m.stats.get("speed") * (float)Math.pow(scaling(tickId),0.3));
         }));
         addEnemy(e);
       }
+    }
+
+    private float scaling(int tickId){
+      return 1+(Math.max(tickId, 10) - 10) / 100f;
     }
   }
 }

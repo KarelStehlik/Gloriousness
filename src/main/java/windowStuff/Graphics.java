@@ -16,18 +16,11 @@ import org.joml.Vector3f;
 
 public final class Graphics {
 
-  private final Collection<BatchSystem> batchSystems = new LinkedList<BatchSystem>();
-
-  //private BatchSystem test;
-  //private Sprite sTest;
+  private final Collection<BatchSystem> batchSystems = new LinkedList<>();
 
   public void init() {
     Data.init();
     System.out.println(Constants.screenSize); // this is needed to load Constants
-    //test = new BatchSystem();
-    //sTest = new Sprite("Farm21", 50, 50, 100, 100, 0, "colorCycle");
-    //test.addSprite(sTest);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     System.out.println(glGetString(GL_RENDERER));
@@ -39,11 +32,7 @@ public final class Graphics {
   }
 
   public void redraw(double dt) {
-    //test.useCamera(camera);
     Data.updateShaders();
-    //test.draw();
-
-    //Sprite.updateAll();
 
     for (BatchSystem bs : batchSystems) {
       bs.draw();

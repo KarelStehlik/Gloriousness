@@ -22,6 +22,8 @@ public class PlaceObjectTool extends Tool {
   public void onMouseButton(int button, double x, double y, int action, int mods) {
     if (button == 0 && action == 1 && click.click((int) x, (int) y)) {
       delete();
+    }else if(button == 1&& action == 1){
+      delete();
     }
   }
 
