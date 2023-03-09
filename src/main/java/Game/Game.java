@@ -10,8 +10,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import windowStuff.BatchSystem;
 import windowStuff.Graphics;
+import windowStuff.SpriteBatching;
+import windowStuff.SuperBatch;
 import windowStuff.UserInputHandler;
 import windowStuff.UserInputListener;
 
@@ -20,7 +21,7 @@ public final class Game implements UserInputHandler {
   public static final int tickIntervalMillis = 1000 / 60;
   private final UserInputListener userInputListener;
   private final Graphics graphics;
-  private final Map<String, BatchSystem> bs = new HashMap<>(1);
+  private final Map<String, SpriteBatching> bs = new HashMap<>(1);
   private final Collection<TickDetect> tickables = new LinkedList<>();
   private final Collection<TickDetect> newTickables = new LinkedList<>();
   private final Collection<KeyboardDetect> keyDetects = new LinkedList<>();
@@ -97,14 +98,14 @@ public final class Game implements UserInputHandler {
     userInputListener.endFrame();
   }
 
-  public BatchSystem getBatchSystem(String name) {
-    BatchSystem r = bs.get(name);
+  public SpriteBatching getSpriteBatching(String name) {
+    SpriteBatching r = bs.get(name);
     if (r != null) {
       return r;
     }
-    BatchSystem newBS = new BatchSystem();
+    SpriteBatching newBS = new SuperBatch();
     System.out.println("creating new batch system: " + name);
-    graphics.addBatchSystem(newBS);
+    graphics.addSpriteBatching(newBS);
     bs.put(name, newBS);
     return newBS;
   }

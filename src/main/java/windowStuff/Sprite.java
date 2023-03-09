@@ -9,14 +9,11 @@ public class Sprite implements AbstractSprite {
   private final float[] positions = new float[12];
   protected boolean hasUnsavedChanges = true;
   protected String textureName;
-  protected BatchSystem bsToJoin = null;
   protected int layer;
-  protected Batch batch = null;
   protected Shader shader;
-  protected int slotInBatch;
   protected boolean deleted = false;
   protected boolean mustBeRebatched = false;
-  protected boolean rebuffer = false;
+  private boolean hidden = false;
   private float x;
   private float y;
   private float[] colors = Util.getBaseColors(1);
@@ -25,18 +22,16 @@ public class Sprite implements AbstractSprite {
   private float width, height;
   private String imageName;
   private Animation animation;
-
-  public Sprite(String imageName, int layer){
+  public Sprite(String imageName, int layer) {
     this(imageName, 0, 0, 100, 100, layer, "basic");
   }
-
   public Sprite(String imageName, float sizeX, float sizeY, int layer,
       String shader) {
     this(imageName, 0, 0, sizeX, sizeY, layer, shader);
   }
 
   public Sprite(String imageName, float sizeX, float sizeY, int layer,
-      String shader, BatchSystem bs) {
+      String shader, SpriteBatching bs) {
     this(imageName, 0, 0, sizeX, sizeY, layer, shader);
     this.addToBs(bs);
   }
@@ -45,7 +40,7 @@ public class Sprite implements AbstractSprite {
     this(imageName, 0, 0, sizeX, sizeY, layer, "basic");
   }
 
-  public Sprite(String imageName, float sizeX, float sizeY, int layer, BatchSystem bs) {
+  public Sprite(String imageName, float sizeX, float sizeY, int layer, SpriteBatching bs) {
     this(imageName, 0, 0, sizeX, sizeY, layer, "basic");
     this.addToBs(bs);
   }
@@ -64,13 +59,18 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public int getLayer() {
-    return layer;
+  public boolean isHidden() {
+    return hidden;
   }
 
   @Override
-  public Batch getBatch() {
-    return batch;
+  public void setHidden(boolean hidden) {
+    this.hidden = hidden;
+  }
+
+  @Override
+  public int getLayer() {
+    return layer;
   }
 
   @Override
@@ -79,7 +79,7 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public Sprite addToBs(BatchSystem bs) {
+  public Sprite addToBs(SpriteBatching bs) {
     bs.addSprite(this);
     return this;
   }
@@ -129,7 +129,7 @@ public class Sprite implements AbstractSprite {
     String newTexture = Data.getImageTexture(name);
     if (!Objects.equals(this.textureName, newTexture)) {
       this.textureName = newTexture;
-      mustBeRebatched = (batch != null) || mustBeRebatched;
+      mustBeRebatched = true;
     }
     imageName = name;
     setUV();
@@ -138,21 +138,6 @@ public class Sprite implements AbstractSprite {
 
   private void setUV() {
     texCoords = Data.getImageCoordinates(this.imageName);
-  }
-
-  protected synchronized void getBatched(Batch newBatch, int slot) {
-    batch = newBatch;
-    slotInBatch = slot;
-  }
-
-  @Override
-  public synchronized void unBatch() {
-    if (batch != null) {
-      batch.removeSprite(this);
-      batch = null;
-    } else {
-      bsToJoin = null;
-    }
   }
 
   @Override
@@ -181,7 +166,7 @@ public class Sprite implements AbstractSprite {
 
   public synchronized void updateVertices() {
     animation.update();
-    if (!hasUnsavedChanges) {
+    if (!hasUnsavedChanges || hidden) {
       return;
     }
     float rotationSin = Util.sin(rotation);
@@ -203,12 +188,14 @@ public class Sprite implements AbstractSprite {
     positions[10] = getY() - XS + YC;
 
     hasUnsavedChanges = false;
-    rebuffer = true;
   }
 
   protected synchronized void bufferToArray(int offset, float[] vertices) {
+    if (hidden) {
+      return;
+    }
     for (int i = 0; i < 4; i++) {
-      int off = offset+9 * i;
+      int off = offset + 9 * i;
       vertices[off] = positions[3 * i];
       vertices[off + 1] = positions[3 * i + 1];
 
@@ -220,8 +207,6 @@ public class Sprite implements AbstractSprite {
       vertices[off + 7] = texCoords[2 * i];
       vertices[off + 8] = texCoords[2 * i + 1];
     }
-
-    rebuffer = false;
   }
 
   @Override
@@ -229,10 +214,6 @@ public class Sprite implements AbstractSprite {
     assert colors.length == 16 : "expected 16 colors for sprite.";
     this.colors = colors;
     return this;
-  }
-
-  protected synchronized void _delete() {
-    unBatch();
   }
 
   @Override

@@ -16,7 +16,7 @@ public class Text {
   private final int maxWidth;
   private final String text;
   private final String shader;
-  private final BatchSystem bs;
+  private final SpriteBatching bs;
   private final AbstractSprite background;
   public int x, y;
   private float fontSize;
@@ -28,12 +28,12 @@ public class Text {
   private int lineCount = 1;
 
   public Text(String value, String font, int width, int x, int y, int layer, float size,
-      BatchSystem bs) {
+      SpriteBatching bs) {
     this(value, font, width, x, y, layer, size, bs, "basic", null);
   }
 
   public Text(String value, String font, int width, int x, int y, int layer, float size,
-      BatchSystem bs, String shader, String backgroundImage) {
+      SpriteBatching bs, String shader, String backgroundImage) {
     fontSize = size;
     this.x = x;
     this.bs = bs;
@@ -41,7 +41,7 @@ public class Text {
     text = value;
     this.maxWidth = width;
     fontName = font;
-    this.layer = layer+1;
+    this.layer = layer + 1;
     this.shader = shader;
     symbols = new LinkedList<>();
     scale = (float) (fontSize / textureHeight);
@@ -67,9 +67,9 @@ public class Text {
       return;
     }
     for (Symbol s : symbols) {
-      s.sprite.unBatch();
+      s.sprite.setHidden(true);
     }
-    background.unBatch();
+    background.setHidden(true);
     hidden = true;
   }
 
@@ -77,9 +77,9 @@ public class Text {
     if (!hidden) {
       return;
     }
-    background.addToBs(bs);
+    background.setHidden(false);
     for (Symbol s : symbols) {
-      bs.addSprite(s.sprite);
+      s.sprite.setHidden(false);
     }
     hidden = false;
   }
@@ -133,7 +133,8 @@ public class Text {
 
   public void move(int newX, int newY) {
     newX = Math.min(newX, Constants.screenSize.x - maxWidth);
-    newY = Math.min(newY + (int)(lineCount*fontSize), Constants.screenSize.y - (int)fontSize/2);
+    newY = Math.min(newY + (int) (lineCount * fontSize),
+        Constants.screenSize.y - (int) fontSize / 2);
     int dx = newX - x, dy = newY - y;
     for (var symbol : symbols) {
       symbol.move(symbol.sprite.getX() + dx, symbol.sprite.getY() + dy);
@@ -148,7 +149,7 @@ public class Text {
     float xOffset = fontSize / 4;
     for (int i = 0, size = symbols.size(); i < size; i++) {
       Symbol symbol = symbols.get(i);
-      if(symbol.character == '\n'){
+      if (symbol.character == '\n') {
         line++;
         xOffset = fontSize / 4;
       }
@@ -199,7 +200,7 @@ public class Text {
     }
 
     void updateScale() {
-      String imageName= fontName + '-' + Character.getName(character);
+      String imageName = fontName + '-' + Character.getName(character);
       float[] uv = Data.getImageCoordinates(imageName);
       float w = uv[0] - uv[2];
       width = w * scale;
@@ -219,7 +220,7 @@ public class Text {
     }
 
     void setCharacter(char c) {
-      String imageName =fontName + '-' + Character.getName(c);
+      String imageName = fontName + '-' + Character.getName(c);
       float[] uv = Data.getImageCoordinates(imageName);
       float w = uv[0] - uv[2];
       width = w * scale;

@@ -16,6 +16,44 @@ public class BulletLauncher {
   private float speed;
   private int width;
   private int height;
+  private int pierce;
+  private float size;
+  private float power;
+  private float duration;
+  private float x, y;
+
+  public BulletLauncher(World world, String projectileImage, float x, float y,
+      float projectileSpeed,
+      int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
+      int power) {
+    this.world = world;
+    this.image = projectileImage;
+    this.speed = projectileSpeed;
+    this.width = projectileSpriteWidth;
+    this.height = projectileSpriteHeight;
+    this.pierce = pierce;
+    this.size = size;
+    this.power = power;
+    this.duration = duration;
+    this.x = x;
+    this.y = y;
+  }
+  public BulletLauncher(BulletLauncher og) {
+    world = og.world;
+    image = og.image;
+    speed = og.speed;
+    width = og.width;
+    height = og.height;
+    pierce = og.pierce;
+    size = og.size;
+    power = og.power;
+    duration = og.duration;
+    x = og.x;
+    y = og.y;
+    playerCollides.addAll(og.playerCollides);
+    mobCollides.addAll(og.mobCollides);
+    projectileCollides.addAll(og.projectileCollides);
+  }
 
   public void setSpeed(float speed) {
     this.speed = speed;
@@ -39,46 +77,6 @@ public class BulletLauncher {
     this.duration = duration;
   }
 
-  private int pierce;
-  private float size;
-  private float power;
-  private float duration;
-  private float x, y;
-
-  public BulletLauncher(World world, String projectileImage, float x, float y,
-      float projectileSpeed,
-      int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
-      int power) {
-    this.world = world;
-    this.image = projectileImage;
-    this.speed = projectileSpeed;
-    this.width = projectileSpriteWidth;
-    this.height = projectileSpriteHeight;
-    this.pierce = pierce;
-    this.size = size;
-    this.power = power;
-    this.duration = duration;
-    this.x = x;
-    this.y = y;
-  }
-
-  public BulletLauncher(BulletLauncher og){
-    world = og.world;
-    image = og.image;
-    speed = og.speed;
-    width = og.width;
-    height = og.height;
-    pierce = og.pierce;
-    size = og.size;
-    power = og.power;
-    duration = og.duration;
-    x = og.x;
-    y = og.y;
-    playerCollides.addAll(og.playerCollides);
-    mobCollides.addAll(og.mobCollides);
-    projectileCollides.addAll(og.projectileCollides);
-  }
-
   public void addPlayerCollide(OnCollideComponent<Player> component) {
     playerCollides.add(component);
   }
@@ -97,7 +95,8 @@ public class BulletLauncher {
   }
 
   public void attack(float angle) {
-    Projectile p = new Projectile(world, image, x, y, speed, angle, width, height, pierce, size, duration, power);
+    Projectile p = new Projectile(world, image, x, y, speed, angle, width, height, pierce, size,
+        duration, power);
     world.getProjectilesList().add(p);
     for (var collide : playerCollides) {
       p.addPlayerCollide(collide);

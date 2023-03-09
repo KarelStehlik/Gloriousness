@@ -16,7 +16,7 @@ import org.joml.Vector3f;
 
 public final class Graphics {
 
-  private final Collection<BatchSystem> batchSystems = new LinkedList<>();
+  private final Collection<SpriteBatching> SpriteBatchings = new LinkedList<>();
 
   public void init() {
     Data.init();
@@ -26,15 +26,15 @@ public final class Graphics {
     System.out.println(glGetString(GL_RENDERER));
   }
 
-  public void addBatchSystem(BatchSystem bs) {
-    batchSystems.add(bs);
+  public void addSpriteBatching(SpriteBatching bs) {
+    SpriteBatchings.add(bs);
     bs.useCamera(new Camera(new Vector3f(0, 0, 20)));
   }
 
   public void redraw(double dt) {
     Data.updateShaders();
 
-    for (BatchSystem bs : batchSystems) {
+    for (SpriteBatching bs : SpriteBatchings) {
       bs.draw();
     }
   }

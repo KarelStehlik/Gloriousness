@@ -15,6 +15,7 @@ import windowStuff.Sprite;
 
 public abstract class Mob extends GameObject implements TickDetect {
 
+  public final List<StatusEffect> effects = new LinkedList<>();
   protected final AbstractSprite sprite;
   protected final float rotation;
   protected final SquareGrid<Mob> grid;
@@ -27,36 +28,6 @@ public abstract class Mob extends GameObject implements TickDetect {
   protected float vx, vy;
   private int nextMapPoint = 1;
   private TrackProgress progress = new TrackProgress(0, 0);
-  public final List<StatusEffect> effects = new LinkedList<>();
-
-  public static class StatusEffect {
-    public final int priority;
-    public final UpdateFunc updateFunc;
-    public StatusEffect(int prio, UpdateFunc f){
-      priority = prio;
-      updateFunc = f;
-    }
-
-    @FunctionalInterface
-    public interface UpdateFunc{
-      void update(Mob mob);
-    }
-  }
-
-  public void addStatusEffect(StatusEffect e){
-    effects.add(e);
-    effects.sort(Comparator.comparingInt(eff -> eff.priority));
-    updateStats();
-  }
-
-  private void updateStats(){
-    float hpPart = health / stats.get("health");
-    stats.putAll(baseStats);
-    for(StatusEffect eff: effects){
-      eff.updateFunc.update(this);
-    }
-    health = stats.get("health")*hpPart;
-  }
 
   public Mob(World world, String name, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
@@ -82,6 +53,21 @@ public abstract class Mob extends GameObject implements TickDetect {
     exists = true;
   }
 
+  public void addStatusEffect(StatusEffect e) {
+    effects.add(e);
+    effects.sort(Comparator.comparingInt(eff -> eff.priority));
+    updateStats();
+  }
+
+  private void updateStats() {
+    float hpPart = health / stats.get("health");
+    stats.putAll(baseStats);
+    for (StatusEffect eff : effects) {
+      eff.updateFunc.update(this);
+    }
+    health = stats.get("health") * hpPart;
+  }
+
   public TrackProgress getProgress() {
     return progress;
   }
@@ -96,7 +82,8 @@ public abstract class Mob extends GameObject implements TickDetect {
     }
   }
 
-  public void onDeath(){}
+  public void onDeath() {
+  }
 
   @Override
   public void onGameTick(int tick) {
@@ -132,7 +119,7 @@ public abstract class Mob extends GameObject implements TickDetect {
       vy = stats.get("speed") * Util.sin(rotationToNextPoint);
       x = x + vx;
       y = y + vy;
-      sprite.setRotation(rotationToNextPoint-90f);
+      sprite.setRotation(rotationToNextPoint - 90f);
     }
   }
 
@@ -176,10 +163,28 @@ public abstract class Mob extends GameObject implements TickDetect {
         height);
   }
 
+  public static class StatusEffect {
+
+    public final int priority;
+    public final UpdateFunc updateFunc;
+
+    public StatusEffect(int prio, UpdateFunc f) {
+      priority = prio;
+      updateFunc = f;
+    }
+
+    @FunctionalInterface
+    public interface UpdateFunc {
+
+      void update(Mob mob);
+    }
+  }
+
   public static class TrackProgress implements Comparable<TrackProgress> {
 
     private final int checkpoint;
     private final int distanceToNext;
+
     public TrackProgress(int newCheckpoint, int newDistance) {
       checkpoint = newCheckpoint;
       distanceToNext = newDistance;

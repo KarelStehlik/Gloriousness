@@ -34,13 +34,13 @@ public interface AbstractSprite {
 
   AbstractSprite setY(float y);
 
-  Batch getBatch();
-
   int getLayer();
 
   boolean isDeleted();
 
-  AbstractSprite addToBs(BatchSystem bs);
+  AbstractSprite addToBs(SpriteBatching bs);
 
-  void unBatch();
+  boolean isHidden();
+
+  void setHidden(boolean hidden);
 }

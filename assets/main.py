@@ -44,7 +44,7 @@ class TestSetup:
     def findLeftIntersect(self, right, y1, y2):
         r = 0
         for e in self.covered:
-            if right >= e[0] + e[2] >r and y1 < e[1] + e[3] and y2> e[1]:
+            if right >= e[0] + e[2] > r and y1 < e[1] + e[3] and y2 > e[1]:
                 r = e[0] + e[2]
         return r
 
@@ -56,11 +56,11 @@ class TestSetup:
         return r
 
     def fallDown(self, x, y, w, h):
-        rx, ry = 0,0
+        rx, ry = 0, 0
         for e in self.covered:
-            if x >= e[0] + e[2] >rx and y < e[1] + e[3] and y+h> e[1]:
+            if x >= e[0] + e[2] > rx and y < e[1] + e[3] and y + h > e[1]:
                 rx = e[0] + e[2]
-            if x < e[0] + e[2] and x+w > e[0] and y >= e[1] + e[3] > ry:
+            if x < e[0] + e[2] and x + w > e[0] and y >= e[1] + e[3] > ry:
                 ry = e[1] + e[3]
         return (rx, ry)
 
@@ -98,7 +98,7 @@ class TestSetup:
         return True
 
     def save(self):
-        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (255,255,255,255))
+        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (0, 0, 0, 0))
         text = ""
 
         for i in range(len(self.images)):
@@ -108,10 +108,10 @@ class TestSetup:
             b, l, t, r = poi[1] / TEXSIZE, poi[0] / TEXSIZE, (poi[1] + e.size[1]) / TEXSIZE, (
                     poi[0] + e.size[0]) / TEXSIZE
 
-            #b += 1 / TEXSIZE
-            #l += 1 / TEXSIZE
-            #t -= 1 / TEXSIZE
-            #r -= 1 / TEXSIZE
+            b += 1 / TEXSIZE
+            l += 1 / TEXSIZE
+            t -= 1 / TEXSIZE
+            r -= 1 / TEXSIZE
             text += f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"
 
         new.save("final images/T" + str(n_textures) + ".png")
@@ -125,6 +125,7 @@ for e in os.listdir("final images"):
 for e in os.listdir("image coordinates"):
     os.remove(f"image coordinates/{e}")
 files = []
+
 
 def add(fromFolder, e):
     if e.startswith("ANIM_"):
@@ -147,10 +148,12 @@ def add(fromFolder, e):
         img.name = e.split(".")[0]
         img.pixelCount = img.size[0] * img.size[1]
         files.append(img)
+
+
 for e in os.listdir("rawImages"):
-    add("rawImages/",e)
+    add("rawImages/", e)
 for e in os.listdir("fonts"):
-    add("fonts/",e)
+    add("fonts/", e)
 
 files.sort(key=lambda image: max(image.size[0], image.size[1]), reverse=True)
 n_textures = 0
