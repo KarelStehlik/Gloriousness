@@ -79,7 +79,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
           ).setLinearScaling(new Vector2f(30, 30))
       );
       game.addTickable(
-          new Animation("Explosion", bs, 1, x, y, 500, 500, 2)
+          new Animation("Explosion-0", bs, 1, x, y, 500, 500, 2)
       );
     }, null));
 
@@ -204,7 +204,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private float mobsToSpawn = 0;
 
     private void run(int tickId) {
-      mobsToSpawn += tickId / 1000f;
+      mobsToSpawn += tickId / 10f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
         BasicMob e = new BasicMob(World.this);

@@ -115,6 +115,9 @@ public class UserInputListener {
   }
 
   public void keyCallback(long window, int key, int scancode, int action, int mods) {
+    if(key==-1){ // idk why this happens, but it does
+      return;
+    }
     keysPressed[key] = action >= GLFW_PRESS;
     if (game != null) {
       events.add(() -> game.onKeyPress(key, action, mods));

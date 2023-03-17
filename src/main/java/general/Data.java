@@ -15,6 +15,8 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.joml.Vector2i;
 import windowStuff.Shader;
 import windowStuff.Texture;
 
@@ -29,18 +31,19 @@ public final class Data {
   private static final String mapDataFile = "assets/maps/output.txt";
   private static final Map<String, Shader> shaders = new HashMap<>(1);
   private static final Map<String, Texture> textures = new HashMap<>(1);
-  private static final Map<String, ImageData> images = new HashMap<>(1);
+  private static final List<ImageData> images = new ArrayList<>(1);
+  private static final Map<String, Integer> imageIndices = new HashMap<>(1);
   private static final long startTime = System.nanoTime();
   private static final Map<String, Map<String, Map<String, Float>>> entityStats = new HashMap<>(5);
-  private static final Map<String, Integer> animationLengths = new TreeMap<>();
+  private static final Map<Integer, Integer> animationLengths = new TreeMap<>();
   private static final Map<String, ArrayList<Point>> mapData = new HashMap<>(1);
 
   private Data() {
   }
 
-  public static int getAnimationLength(String name) {
-    var result = animationLengths.get(name);
-    assert result != null : "no such animation: " + name;
+  public static int getAnimationLength(int first) {
+    var result = animationLengths.get(first);
+    assert result != null : "no animation at index " +first+", tex: " + images.get(first);
     return result;
   }
 
@@ -141,39 +144,47 @@ public final class Data {
    */
   public static void loadImage(String tex, String[] data) {
     assert data.length == 9 : "invalid image location data : " + Arrays.toString(data);
-    if (Pattern.matches(".*-\\d+", data[0])) {
-      var animName = data[0].substring(0, data[0].lastIndexOf('-'));
-      var number = Integer.parseInt(data[0].substring(data[0].lastIndexOf('-') + 1));
-      animationLengths.put(animName, Math.max(animationLengths.getOrDefault(animName, 0), number));
-    }
-    images.put(data[0], new ImageData(tex, List.of(data).subList(1, 9).stream().map(
+    imageIndices.put(data[0], images.size());
+    images.add(new ImageData(tex, List.of(data).subList(1, 9).stream().map(
         Float::parseFloat).collect(Collectors.toList())));
-    List.of(data).subList(1, 8);
+
+    if (Pattern.matches(".*-\\d+", data[0])) {
+      var animName = data[0].substring(0, data[0].lastIndexOf('-')) + "-0";
+      var number = Integer.parseInt(data[0].substring(data[0].lastIndexOf('-') + 1));
+      int startIndex = getImageId(animName);
+      animationLengths.put(startIndex, Math.max(animationLengths.getOrDefault(startIndex, 0), number));
+      System.out.println(data[0] + " " +number);
+    }
+  }
+
+  public static void sortAnimationImages(){
+    for(var animation : animationLengths.entrySet()){
+      int start = animation.getKey();
+      int length = animation.getValue();
+    }
+  }
+
+  public static int getImageId(String name){
+    Integer result = imageIndices.get(name);
+    if(result != null){
+      return result;
+    }
+    System.out.println("No such image: " + name);
+    return 0;
   }
 
   /**
    * the coordinates of the image in its texture
    */
-  public static float[] getImageCoordinates(String name) {
-    //System.out.println(name);
-    try {
-      return images.get(name).textureCoordinates;
-    } catch (NullPointerException e) {
-      System.out.println("No such image: " + name);
-      return getImageCoordinates("notfound");
-    }
+  public static float[] getImageCoordinates(int id) {
+    return images.get(id).textureCoordinates;
   }
 
   /**
    * the batch texture where the image is located
    */
-  public static String getImageTexture(String name) {
-    try {
-      return images.get(name).textureName;
-    } catch (NullPointerException e) {
-      System.out.println("No such image: " + name);
-      return getImageTexture("notfound");
-    }
+  public static String getImageTexture(int id) {
+    return images.get(id).textureName;
   }
 
   public static void loadShader(String name) {
@@ -235,10 +246,6 @@ public final class Data {
       for (int i = 0; i < 8; i++) {
         textureCoordinates[i] = coords.get(i);
       }
-    }
-
-    static float Float2float(Float f) {
-      return f;
     }
   }
 }

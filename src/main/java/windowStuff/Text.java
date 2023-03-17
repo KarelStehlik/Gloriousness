@@ -189,7 +189,7 @@ public class Text {
 
     Symbol(char c, float x, float y, String shader) {
       String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Data.getImageCoordinates(imageName);
+      float[] uv = Data.getImageCoordinates(Data.getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite = new Sprite(imageName, width, fontSize, layer, shader);
@@ -201,7 +201,7 @@ public class Text {
 
     void updateScale() {
       String imageName = fontName + '-' + Character.getName(character);
-      float[] uv = Data.getImageCoordinates(imageName);
+      float[] uv = Data.getImageCoordinates(Data.getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setSize(width, fontSize);
@@ -221,7 +221,7 @@ public class Text {
 
     void setCharacter(char c) {
       String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Data.getImageCoordinates(imageName);
+      float[] uv = Data.getImageCoordinates(Data.getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setImage(imageName);

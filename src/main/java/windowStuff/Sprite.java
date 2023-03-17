@@ -20,7 +20,7 @@ public class Sprite implements AbstractSprite {
   private float[] texCoords = new float[8];
   private float rotation = 0;
   private float width, height;
-  private String imageName;
+  private int imageId;
   private Animation animation;
   public Sprite(String imageName, int layer) {
     this(imageName, 0, 0, 100, 100, layer, "basic");
@@ -126,18 +126,18 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public Sprite setImage(String name) {
-    String newTexture = Data.getImageTexture(name);
+    imageId = Data.getImageId(name);
+    String newTexture = Data.getImageTexture(imageId);
     if (!Objects.equals(this.textureName, newTexture)) {
       this.textureName = newTexture;
       mustBeRebatched = true;
     }
-    imageName = name;
     setUV();
     return this;
   }
 
   private void setUV() {
-    texCoords = Data.getImageCoordinates(this.imageName);
+    texCoords = Data.getImageCoordinates(imageId);
   }
 
   @Override
@@ -254,19 +254,19 @@ public class Sprite implements AbstractSprite {
     private final int length;
     private final float frameLengthNano;
     private final double startTime;
-    private final String end;
-    private final String name;
+    private final int end;
+    private final int first;
 
-    public BasicAnimation(String name, float duration) {
-      this(name, duration, imageName);
+    public BasicAnimation(int first, float duration) {
+      this(first, duration, first);
     }
 
-    public BasicAnimation(String name, float duration, String endImage) {
-      length = Data.getAnimationLength(name);
+    public BasicAnimation(int first, float duration, int endImageId) {
+      length = Data.getAnimationLength(first);
       frameLengthNano = duration / length * 1000000000;
       startTime = System.nanoTime();
-      end = endImage;
-      this.name = name;
+      end = endImageId;
+      this.first = first;
     }
 
     @Override
@@ -274,10 +274,10 @@ public class Sprite implements AbstractSprite {
       int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
       hasUnsavedChanges = true;
       if (frame > length) {
-        imageName = end;
+        imageId = end;
         onAnimationEnd();
       } else {
-        imageName = name + '-' + frame;
+        imageId = first + frame;
       }
       setUV();
     }
