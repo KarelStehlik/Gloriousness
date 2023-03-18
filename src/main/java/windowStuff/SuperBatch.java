@@ -23,7 +23,6 @@ import general.Data;
 import general.Util;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,12 +35,11 @@ public class SuperBatch implements SpriteBatching {
   private int numSprites = 0;
   private Camera camera;
   private boolean paused = false, visible = true;
-  private final int minLayer = 0;
-  private final int maxLayer = 0;
+  private final ImageSet images;
 
   public SuperBatch() {
+    this.images=Data.getImageSet();
     //batches = new LinkedList<>(); // is sorted
-    Collection<Shader> shaders = Data.getAllShaders();
     int[] elements = new int[6 * eboSize];
     for (int i = 0; i < eboSize; i++) {
       elements[6 * i] = 2 + 4 * i;
@@ -123,7 +121,7 @@ public class SuperBatch implements SpriteBatching {
     sprite.mustBeRebatched = false;
     int layer = sprite.layer;
     String tex = sprite.textureName;
-    String shader = sprite.shader.name;
+    Shader shader = sprite.shader;
 
     //find the right batch. todo: maybe a bin search?
     int smallerBatches = 0;
@@ -176,13 +174,13 @@ public class SuperBatch implements SpriteBatching {
     int drawStart = 0;
     while (drawStart < batches.size()) {
       String texture = batches.get(drawStart).texture;
-      String shader = batches.get(drawStart).shader;
+      Shader shader = batches.get(drawStart).shader;
       int spriteCount = batches.get(drawStart).squishSize();
 
       int drawEnd = drawStart + 1;
 
       while (drawEnd < batches.size() && batches.get(drawEnd).texture.equals(texture)
-          && batches.get(drawEnd).shader.equals(shader)) {
+          && batches.get(drawEnd).shader == shader) {
         spriteCount += batches.get(drawEnd).squishSize();
         drawEnd++;
       }
@@ -202,10 +200,9 @@ public class SuperBatch implements SpriteBatching {
 
       glBindVertexArray(this.vao);
 
-      Shader shade = Data.getShader(shader);
-      shade.use();
-      Data.getTexture(texture).bind();
-      shade.uploadTexture("sampler", 0);
+      shader.use();
+      images.getTexture(texture).bind();
+      shader.uploadTexture("sampler", 0);
       glActiveTexture(GL_TEXTURE0);
 
       glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -223,8 +220,8 @@ public class SuperBatch implements SpriteBatching {
   }
 
   @Override
-  public void useCamera(Camera camera) {
-    this.camera = camera;
+  public void useCamera(Camera cam) {
+    this.camera = cam;
   }
 
   @Override
@@ -235,10 +232,11 @@ public class SuperBatch implements SpriteBatching {
   private class Batch implements Comparable<Batch> {
 
     public final int layer;
-    public final String texture, shader;
+    public final String texture;
+    public final Shader shader;
     private final List<Sprite> sprites = new LinkedList<>();
 
-    Batch(int layer, String texture, String shader) {
+    Batch(int layer, String texture, Shader shader) {
       this.layer = layer;
       this.texture = texture;
       this.shader = shader;
@@ -279,17 +277,17 @@ public class SuperBatch implements SpriteBatching {
       if (texture.compareTo(o.texture) != 0) {
         return texture.compareTo(o.texture);
       }
-      return shader.compareTo(o.shader);
+      return shader.shaderID-o.shader.shaderID;
     }
 
-    public int compareTo(int lay, String tex, String shade) {
+    public int compareTo(int lay, String tex, Shader shade) {
       if (layer - lay != 0) {
         return layer - lay;
       }
       if (texture.compareTo(tex) != 0) {
         return texture.compareTo(tex);
       }
-      return shader.compareTo(shade);
+      return shader.shaderID-shade.shaderID;
     }
 
     public int bufferToArray(float[] arr, int offset) {
@@ -307,6 +305,15 @@ public class SuperBatch implements SpriteBatching {
     @Override
     public boolean equals(Object o) {
       return o instanceof Batch && compareTo((Batch) o) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+      int result = layer;
+      result = 31 * result + (texture != null ? texture.hashCode() : 0);
+      result = 31 * result + (shader != null ? shader.hashCode() : 0);
+      result = 31 * result + sprites.hashCode();
+      return result;
     }
   }
 }

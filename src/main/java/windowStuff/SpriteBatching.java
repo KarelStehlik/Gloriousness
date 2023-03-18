@@ -6,7 +6,7 @@ public interface SpriteBatching {
 
   Camera getCamera();
 
-  void useCamera(Camera camera);
+  void useCamera(Camera cam);
 
   void draw();
 }

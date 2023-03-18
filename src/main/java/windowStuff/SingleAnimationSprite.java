@@ -18,8 +18,8 @@ public class SingleAnimationSprite extends Sprite {
   public SingleAnimationSprite(String anim, float duration, float x, float y, float sizeX,
       float sizeY,
       int layer, String shader) {
-    super(anim + "-0", x, y, sizeX, sizeY, layer, shader);
-    playAnimation(new BasicAnimation(Data.getImageId(anim), duration));
+    super(anim, x, y, sizeX, sizeY, layer, shader);
+    playAnimation(new BasicAnimation(Data.getImageSet().getImageId(anim), duration));
   }
 
   public boolean animationEnded() {

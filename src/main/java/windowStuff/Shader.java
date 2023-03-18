@@ -33,7 +33,7 @@ import org.lwjgl.BufferUtils;
 public class Shader {
 
   final String name;
-  private final int shaderID;
+  final int shaderID;
 
   public Shader(String path) {
 

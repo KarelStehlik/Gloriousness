@@ -103,7 +103,9 @@ public final class Game implements UserInputHandler {
     if (r != null) {
       return r;
     }
+
     SpriteBatching newBS = new SuperBatch();
+
     System.out.println("creating new batch system: " + name);
     graphics.addSpriteBatching(newBS);
     bs.put(name, newBS);
