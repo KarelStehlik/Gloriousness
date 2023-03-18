@@ -99,7 +99,7 @@ class TestSetup:
 
     def save(self):
         new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (0, 0, 0, 0))
-        text = ""
+        images = []
 
         for i in range(len(self.images)):
             poi = self.imageLocations[i]
@@ -112,8 +112,22 @@ class TestSetup:
             l += 1 / TEXSIZE
             t -= 1 / TEXSIZE
             r -= 1 / TEXSIZE
-            text += f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"
+            images += [f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"]
 
+        def sortingKey(string):
+            imageName = string[0:string.index("|")]
+            if("-" in imageName):
+                spl = imageName.split("-")
+                try:
+                    spl[-1]=int(spl[-1])
+                except ValueError:
+                    pass
+                return spl
+            return [imageName]
+
+        images.sort(key=sortingKey)
+
+        text = ''.join(images)
         new.save("final images/T" + str(n_textures) + ".png")
         file = open(f"image coordinates/T{n_textures}.txt", "w")
         file.write(text[1::])

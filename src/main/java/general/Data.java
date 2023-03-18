@@ -15,8 +15,6 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.joml.Vector2i;
 import windowStuff.Shader;
 import windowStuff.Texture;
 
@@ -153,7 +151,6 @@ public final class Data {
       var number = Integer.parseInt(data[0].substring(data[0].lastIndexOf('-') + 1));
       int startIndex = getImageId(animName);
       animationLengths.put(startIndex, Math.max(animationLengths.getOrDefault(startIndex, 0), number));
-      System.out.println(data[0] + " " +number);
     }
   }
 
