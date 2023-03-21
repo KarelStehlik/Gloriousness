@@ -38,7 +38,7 @@ public class SuperBatch implements SpriteBatching {
   private final ImageSet images;
 
   public SuperBatch() {
-    this.images=Data.getImageSet();
+    this.images=Graphics.getLoadedImages();
     //batches = new LinkedList<>(); // is sorted
     int[] elements = new int[6 * eboSize];
     for (int i = 0; i < eboSize; i++) {

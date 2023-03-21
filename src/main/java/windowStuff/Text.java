@@ -1,8 +1,6 @@
 package windowStuff;
 
 import general.Constants;
-import general.Data;
-import general.Util;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,8 +47,7 @@ public class Text {
     if (backgroundImage == null) {
       background = new NoSprite();
     } else {
-      background = new Sprite(backgroundImage, width, fontSize, layer, "basic").setColors(
-          Util.getCycle2colors());
+      background = new Sprite(backgroundImage, width, fontSize, layer, "basic");
       background.addToBs(bs);
     }
 
@@ -189,7 +186,7 @@ public class Text {
 
     Symbol(char c, float x, float y, String shader) {
       String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Data.getImageSet().getImageCoordinates(Data.getImageSet().getImageId(imageName));
+      float[] uv = Graphics.getLoadedImages().getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite = new Sprite(imageName, width, fontSize, layer, shader);
@@ -201,7 +198,7 @@ public class Text {
 
     void updateScale() {
       String imageName = fontName + '-' + Character.getName(character);
-      float[] uv = Data.getImageSet().getImageCoordinates(Data.getImageSet().getImageId(imageName));
+      float[] uv = Graphics.getLoadedImages().getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setSize(width, fontSize);
@@ -221,7 +218,7 @@ public class Text {
 
     void setCharacter(char c) {
       String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Data.getImageSet().getImageCoordinates(Data.getImageSet().getImageId(imageName));
+      float[] uv = Graphics.getLoadedImages().getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setImage(imageName);

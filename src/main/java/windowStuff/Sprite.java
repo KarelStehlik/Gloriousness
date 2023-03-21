@@ -126,8 +126,8 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public Sprite setImage(String name) {
-    imageId = Data.getImageSet().getImageId(name);
-    String newTexture = Data.getImageSet().getImageTexture(imageId);
+    imageId = Graphics.getLoadedImages().getImageId(name);
+    String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
     if (!Objects.equals(this.textureName, newTexture)) {
       this.textureName = newTexture;
       mustBeRebatched = true;
@@ -137,7 +137,7 @@ public class Sprite implements AbstractSprite {
   }
 
   private void setUV() {
-    texCoords = Data.getImageSet().getImageCoordinates(imageId);
+    texCoords = Graphics.getLoadedImages().getImageCoordinates(imageId);
   }
 
   @Override
@@ -262,7 +262,7 @@ public class Sprite implements AbstractSprite {
     }
 
     public BasicAnimation(int first, float duration, int endImageId) {
-      length = Data.getImageSet().getAnimationLength(first);
+      length = Graphics.getLoadedImages().getAnimationLength(first);
       frameLengthNano = duration / length * 1000000000;
       startTime = System.nanoTime();
       end = endImageId;

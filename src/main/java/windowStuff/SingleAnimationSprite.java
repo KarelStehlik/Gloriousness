@@ -1,7 +1,5 @@
 package windowStuff;
 
-import general.Data;
-
 public class SingleAnimationSprite extends Sprite {
 
   private boolean ended = false;
@@ -19,7 +17,7 @@ public class SingleAnimationSprite extends Sprite {
       float sizeY,
       int layer, String shader) {
     super(anim, x, y, sizeX, sizeY, layer, shader);
-    playAnimation(new BasicAnimation(Data.getImageSet().getImageId(anim), duration));
+    playAnimation(new BasicAnimation(Graphics.getLoadedImages().getImageId(anim), duration));
   }
 
   public boolean animationEnded() {

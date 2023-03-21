@@ -18,6 +18,16 @@ public final class Graphics {
 
   private final Collection<SpriteBatching> SpriteBatchings = new LinkedList<>();
 
+  public static ImageSet getLoadedImages() {
+    return loadedImages;
+  }
+
+  public static void setLoadedImages(ImageSet Images) {
+    loadedImages = Images;
+  }
+
+  private static ImageSet loadedImages;
+
   public void init() {
     Data.init();
     System.out.println(Constants.screenSize); // this is needed to load Constants

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import windowStuff.Graphics;
 import windowStuff.ImageSet;
 import windowStuff.Shader;
 
@@ -28,16 +29,12 @@ public final class Data {
   private static final Map<String, Map<String, Map<String, Float>>> entityStats = new HashMap<>(5);
   private static final Map<String, ArrayList<Point>> mapData = new HashMap<>(1);
 
-  private static final ImageSet defaultImageSet = new ImageSet(imageDirectory, imageDataDirectory);
-
-  public static ImageSet getImageSet(){
-    return defaultImageSet;
-  }
-
   private Data() {
   }
 
   public static void init() {
+    Graphics.setLoadedImages(new ImageSet(imageDirectory, imageDataDirectory));
+
     // loads shaders
     var shaderNames = new File(shaderDirectory).list();
     assert shaderNames != null : shaderDirectory + " is not a valid directory.";
