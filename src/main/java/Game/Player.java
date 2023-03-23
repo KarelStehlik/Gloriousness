@@ -5,10 +5,13 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
+import general.Constants;
 import general.Data;
 import general.Util;
 import java.util.HashMap;
 import java.util.Map;
+
+import windowStuff.Camera;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
 
@@ -24,6 +27,8 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   protected float health;
   private float vx, vy;
 
+  private final Camera camera;
+
   public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world);
     baseStats = Data.getEntityStats("mob", "Player");
@@ -34,6 +39,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     sprite.setPosition(960, 540);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
+    camera = world.getBs().getCamera();
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
@@ -88,6 +94,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     y = Math.max(height / 2f, Math.min(1080 - height / 2f, y + vy));
     bulletLauncher.move(x, y);
     sprite.setPosition(x, y);
+    //camera.moveTo(x-Constants.screenSize.x/2f,y-Constants.screenSize.y/2f,0);
   }
 
   @Override

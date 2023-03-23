@@ -22,7 +22,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private static final int HEIGHT = 16384;
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
-  private final List<Mob> mobsList;
+  private final List<TdMob> mobsList;
   private final SquareGrid<Projectile> projectilesGrid;
   private final List<Projectile> projectilesList;
   private final Player player;
@@ -34,7 +34,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private final TurretGenerator[] availableTurrets;
-  private float money = 1234567890;
+  private double money = 1234567890;
 
   public World() {
     Game game = Game.get();
@@ -113,7 +113,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     System.out.println("gjghjghjg");
   }
 
-  public void addEnemy(Mob e) {
+  public void addEnemy(TdMob e) {
     mobsList.add(e);
   }
 
@@ -190,11 +190,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     return projectilesGrid;
   }
 
-  public float getMoney() {
+  public double getMoney() {
     return money;
   }
 
-  public void setMoney(float money) {
+  public void setMoney(double money) {
     this.money = money;
     resourceTracker.setText("Lives: " + health + "\nCash: " + (int) getMoney());
   }
@@ -208,7 +208,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
         BasicMob e = new BasicMob(World.this);
-        e.addStatusEffect(new Mob.StatusEffect(0, m -> {
+        e.addStatusEffect(new TdMob.StatusEffect(0, m -> {
           m.stats.put("health", m.stats.get("health") * scaling(tickId));
           m.stats.put("speed", m.stats.get("speed") * (float) Math.pow(scaling(tickId), 0.3));
         }));

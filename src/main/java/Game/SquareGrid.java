@@ -11,7 +11,7 @@ import java.util.List;
 public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
 
   public final int widthSquares, heightSquares, bottomSquares, leftSquares;
-  protected final List<LinkedList<Member>> data;
+  protected final List<ArrayList<Member>> data;
   protected final int squareSizePow2;
   protected long idOfSearch = -9223372036854775806L;
 
@@ -26,7 +26,7 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
     this.leftSquares = (left >> squareSizePow2) + 1;
     data = new ArrayList<>(widthSquares * heightSquares);
     for (int i = 0; i < widthSquares * heightSquares; i++) {
-      data.add(new LinkedList<>());
+      data.add(new ArrayList<>(4));
     }
   }
 

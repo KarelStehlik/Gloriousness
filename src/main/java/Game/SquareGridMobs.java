@@ -1,12 +1,12 @@
 package Game;
 
-import Game.Mob.TrackProgress;
+import Game.TdMob.TrackProgress;
 import general.Util;
 import java.awt.Point;
 import java.util.Comparator;
 import java.util.List;
 
-public class SquareGridMobs extends SquareGrid<Mob> {
+public class SquareGridMobs extends SquareGrid<TdMob> {
 
   public SquareGridMobs(int left, int bottom, int width, int height, int squareSize) {
     super(left, bottom, width, height, squareSize);
@@ -18,7 +18,7 @@ public class SquareGridMobs extends SquareGrid<Mob> {
     }
   }
 
-  public Mob getFirst(Point centre, int radius) {
+  public TdMob getFirst(Point centre, int radius) {
     idOfSearch++;
 
     int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
@@ -26,8 +26,8 @@ public class SquareGridMobs extends SquareGrid<Mob> {
     int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
     int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
 
-    Mob.TrackProgress best = new TrackProgress(-1, 0);
-    Mob result = null;
+    TdMob.TrackProgress best = new TrackProgress(-1, 0);
+    TdMob result = null;
 
     for (int y = bottom; y <= top; y++) {
       for (int x = left; x <= right; x++) {

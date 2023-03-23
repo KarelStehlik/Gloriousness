@@ -26,7 +26,7 @@ public class TurretGenerator {
     return templateLauncher;
   }
 
-  public TurretGenerator addOnMobCollide(Projectile.OnCollideComponent<Mob> collide) {
+  public TurretGenerator addOnMobCollide(Projectile.OnCollideComponent<TdMob> collide) {
     templateLauncher.addMobCollide(collide);
     return this;
   }

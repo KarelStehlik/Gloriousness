@@ -54,7 +54,7 @@ public class Turret extends GameObject implements TickDetect {
     }
 
     for (; remainingCD <= 0; remainingCD += stats.get("cd")) {
-      Mob target = world.getMobsGrid()
+      TdMob target = world.getMobsGrid()
           .getFirst(new Point((int) x, (int) y), stats.get("range").intValue());
       if (target != null) {
         bulletLauncher.attack(

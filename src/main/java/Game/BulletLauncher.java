@@ -9,7 +9,7 @@ public class BulletLauncher {
 
 
   private final Collection<OnCollideComponent<Player>> playerCollides = new LinkedList<>();
-  private final Collection<OnCollideComponent<Mob>> mobCollides = new LinkedList<>();
+  private final Collection<OnCollideComponent<TdMob>> mobCollides = new LinkedList<>();
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new LinkedList<>();
   private final World world;
   private final String image;
@@ -81,7 +81,7 @@ public class BulletLauncher {
     playerCollides.add(component);
   }
 
-  public void addMobCollide(OnCollideComponent<Mob> component) {
+  public void addMobCollide(OnCollideComponent<TdMob> component) {
     mobCollides.add(component);
   }
 

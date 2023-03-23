@@ -13,12 +13,12 @@ import java.util.Map;
 import windowStuff.AbstractSprite;
 import windowStuff.Sprite;
 
-public abstract class Mob extends GameObject implements TickDetect {
+public abstract class TdMob extends GameObject implements TickDetect {
 
   public final List<StatusEffect> effects = new LinkedList<>();
   protected final AbstractSprite sprite;
   protected final float rotation;
-  protected final SquareGrid<Mob> grid;
+  protected final SquareGrid<TdMob> grid;
   final Map<String, Float> stats;
   final Map<String, Float> baseStats;
   final String name;
@@ -29,7 +29,7 @@ public abstract class Mob extends GameObject implements TickDetect {
   private int nextMapPoint = 1;
   private TrackProgress progress = new TrackProgress(0, 0);
 
-  public Mob(World world, String name, String image) {
+  public TdMob(World world, String name, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
@@ -128,7 +128,7 @@ public abstract class Mob extends GameObject implements TickDetect {
     world.changeHealth(-1);
   }
 
-  private void collide(Mob other) {
+  private void collide(TdMob other) {
     if (!other.canCollide) {
       return;
     }
@@ -176,7 +176,7 @@ public abstract class Mob extends GameObject implements TickDetect {
     @FunctionalInterface
     public interface UpdateFunc {
 
-      void update(Mob mob);
+      void update(TdMob mob);
     }
   }
 

@@ -10,8 +10,8 @@ public class Projectile extends GameObject implements TickDetect {
 
   private final Sprite sprite;
   private final Collection<OnCollideComponent<Player>> playerCollides = new LinkedList<>();
-  private final Collection<Mob> alreadyHitMobs;
-  private final Collection<OnCollideComponent<Mob>> mobCollides = new LinkedList<>();
+  private final Collection<TdMob> alreadyHitMobs;
+  private final Collection<OnCollideComponent<TdMob>> mobCollides = new LinkedList<>();
   private final Collection<Projectile> alreadyHitProjectiles;
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new LinkedList<>();
   protected int pierce;
@@ -125,7 +125,7 @@ public class Projectile extends GameObject implements TickDetect {
     playerCollides.add(component);
   }
 
-  protected void collide(Mob e) {
+  protected void collide(TdMob e) {
     if (wasDeleted || e.WasDeleted()
         || Util.distanceSquared(x - e.x, y - e.y) > size + Util.square(e.width + size) / 4) {
       return;
@@ -139,7 +139,7 @@ public class Projectile extends GameObject implements TickDetect {
     }
   }
 
-  public void addMobCollide(OnCollideComponent<Mob> component) {
+  public void addMobCollide(OnCollideComponent<TdMob> component) {
     mobCollides.add(component);
   }
 
