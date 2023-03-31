@@ -24,7 +24,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 public class SuperBatch implements SpriteBatching {
 
     private final List<Sprite> spritesToAdd = new ArrayList<>(20);
-    private final int ebo, vao, vbo, vao2;
+    private final int ebo, vao, vbo;
     private final List<Batch> batches = new ArrayList<>(5);
     private final ImageSet images;
     private int eboSize = 1024;
@@ -34,16 +34,6 @@ public class SuperBatch implements SpriteBatching {
     public SuperBatch() {
         this.images = Graphics.getLoadedImages();
         //batches = new LinkedList<>(); // is sorted
-        int[] elements = new int[6 * eboSize];
-        for (int i = 0; i < eboSize; i++) {
-            elements[6 * i] = 2 + 4 * i;
-            elements[6 * i + 1] = 1 + 4 * i;
-            elements[6 * i + 2] = 4 * i;
-            elements[6 * i + 3] = 4 * i;
-            elements[6 * i + 4] = 1 + 4 * i;
-            elements[6 * i + 5] = 3 + 4 * i;
-        }
-        vao2 = glGenVertexArrays();
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
