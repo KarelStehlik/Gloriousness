@@ -2,13 +2,13 @@ package Game;
 
 public interface MouseDetect {
 
-  void onMouseButton(int button, double x, double y, int action, int mods);
+    void onMouseButton(int button, double x, double y, int action, int mods);
 
-  void onScroll(double scroll);
+    void onScroll(double scroll);
 
-  void onMouseMove(float newX, float newY);
+    void onMouseMove(float newX, float newY);
 
-  void delete();
+    void delete();
 
-  boolean WasDeleted();
+    boolean WasDeleted();
 }

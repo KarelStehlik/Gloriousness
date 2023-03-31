@@ -2,31 +2,31 @@ package windowStuff;
 
 public class SingleAnimationSprite extends Sprite {
 
-  private boolean ended = false;
+    private boolean ended = false;
 
-  public SingleAnimationSprite(String anim, float duration, float sizeX, float sizeY, int layer,
-      String shader) {
-    this(anim, duration, 0, 0, sizeX, sizeY, layer, shader);
-  }
+    public SingleAnimationSprite(String anim, float duration, float sizeX, float sizeY, int layer,
+                                 String shader) {
+        this(anim, duration, 0, 0, sizeX, sizeY, layer, shader);
+    }
 
-  public SingleAnimationSprite(String anim, float duration, float sizeX, float sizeY, int layer) {
-    this(anim, duration, 0, 0, sizeX, sizeY, layer, "basic");
-  }
+    public SingleAnimationSprite(String anim, float duration, float sizeX, float sizeY, int layer) {
+        this(anim, duration, 0, 0, sizeX, sizeY, layer, "basic");
+    }
 
-  public SingleAnimationSprite(String anim, float duration, float x, float y, float sizeX,
-      float sizeY,
-      int layer, String shader) {
-    super(anim, x, y, sizeX, sizeY, layer, shader);
-    playAnimation(new BasicAnimation(Graphics.getLoadedImages().getImageId(anim), duration));
-  }
+    public SingleAnimationSprite(String anim, float duration, float x, float y, float sizeX,
+                                 float sizeY,
+                                 int layer, String shader) {
+        super(anim, x, y, sizeX, sizeY, layer, shader);
+        playAnimation(new BasicAnimation(Graphics.getLoadedImages().getImageId(anim), duration));
+    }
 
-  public boolean animationEnded() {
-    return ended;
-  }
+    public boolean animationEnded() {
+        return ended;
+    }
 
-  @Override
-  protected void onAnimationEnd() {
-    ended = true;
-    delete();
-  }
+    @Override
+    protected void onAnimationEnd() {
+        ended = true;
+        delete();
+    }
 }

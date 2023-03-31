@@ -2,9 +2,9 @@ package Game;
 
 public interface KeyboardDetect {
 
-  void onKeyPress(int key, int action, int mods);
+    void onKeyPress(int key, int action, int mods);
 
-  void delete();
+    void delete();
 
-  boolean WasDeleted();
+    boolean WasDeleted();
 }

@@ -2,11 +2,11 @@ package windowStuff;
 
 public interface SpriteBatching {
 
-  void addSprite(Sprite sprite);
+    void addSprite(Sprite sprite);
 
-  Camera getCamera();
+    Camera getCamera();
 
-  void useCamera(Camera cam);
+    void useCamera(Camera cam);
 
-  void draw();
+    void draw();
 }
