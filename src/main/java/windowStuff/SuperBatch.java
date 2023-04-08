@@ -1,12 +1,5 @@
 package windowStuff;
 
-import general.Constants;
-import general.Data;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import static org.lwjgl.opengl.ARBVertexArrayObject.glBindVertexArray;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -15,16 +8,29 @@ import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glDrawElements;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13C.glActiveTexture;
-import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15C.GL_STREAM_DRAW;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengles.GLES20.GL_DYNAMIC_DRAW;
+
+import general.Constants;
+import general.Data;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SuperBatch implements SpriteBatching {
 
     private final List<Sprite> spritesToAdd = new ArrayList<>(20);
-    private final int ebo, vao, vbo;
+    private final int ebo, vao, vbo, vboStatic;
+    private long vboStaticSize = 1024;
+    private boolean rebufferAllStatic = false;
     private final List<Batch> batches = new ArrayList<>(5);
     private final ImageSet images;
     private int eboSize = 1024;
@@ -41,32 +47,45 @@ public class SuperBatch implements SpriteBatching {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
         {
-            int positionCount = 3;
+            int positionCount = 2;
             int floatBytes = Float.BYTES;
             int vertexBytes = Constants.VertexSizeFloats * floatBytes;
 
             vbo = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-            glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes, 0);
             glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes, 0);
+            //GL33C.glVertexAttribDivisor(0, 0);
 
             int colorCount = 4;
-            glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes, positionCount * floatBytes);
-            glEnableVertexAttribArray(1);
-
+            glEnableVertexAttribArray(2);
             int texCoords = 2;
             glVertexAttribPointer(2, texCoords, GL_FLOAT, false, vertexBytes,
                     (positionCount + colorCount) * floatBytes);
-            glEnableVertexAttribArray(2);
+            //GL33C.glVertexAttribDivisor(2, 0);
+
+            vboStatic = glGenBuffers();
+            //glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes, positionCount*floatBytes);
+            //GL33C.glVertexAttribDivisor(1, 0);
         }
 
         glBindVertexArray(0);
     }
 
+    private void growVboStatic(){
+        vboStaticSize *=2L;
+        glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
+        glBufferData(GL_ARRAY_BUFFER, vboStaticSize, GL_DYNAMIC_DRAW);
+        rebufferAllStatic=true;
+    }
+
+    int[] elements;
     private void growEbo() {
         eboSize = (int) (eboSize * 1.5);
-        int[] elements = new int[6 * eboSize];
+        elements = new int[6 * eboSize];
         for (int i = 0; i < eboSize; i++) {
             elements[6 * i] = 2 + 4 * i;
             elements[6 * i + 1] = 1 + 4 * i;
@@ -169,11 +188,14 @@ public class SuperBatch implements SpriteBatching {
             float[] vertexArray = new float[spriteCount * Constants.SpriteSizeFloats];
             int offset = 0;
 
+            glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
+            glBufferData(GL_ARRAY_BUFFER, spriteCount*16L*Float.BYTES, GL_DYNAMIC_DRAW);
             for (int i = drawStart; i < drawEnd; i++) {
                 offset += batches.get(i).bufferToArray(vertexArray, offset);
             }
 
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_STREAM_DRAW);
 
             glBindVertexArray(this.vao);
 
@@ -182,10 +204,8 @@ public class SuperBatch implements SpriteBatching {
             shader.uploadTexture("sampler", 0);
             glActiveTexture(GL_TEXTURE0);
 
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
-
             glDrawElements(GL_TRIANGLES, 6 * spriteCount, GL_UNSIGNED_INT, 0);
+            //GL31C.glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, spriteCount);
 
             shader.detach();
             glBindVertexArray(0);
@@ -194,6 +214,7 @@ public class SuperBatch implements SpriteBatching {
 
             drawStart = drawEnd;
         }
+        rebufferAllStatic=false;
 
     }
 
@@ -272,7 +293,11 @@ public class SuperBatch implements SpriteBatching {
             synchronized (sprites) {
                 for (var sprite : sprites) {
                     sprite.updateVertices();
-                    sprite.bufferToArray(offset + spriteOffset, arr);
+                    sprite.bufferPositions(offset + spriteOffset, arr);
+
+                    if(sprite.rebufferStatic) {
+                        sprite.bufferStatic((long) (offset + spriteOffset) * 2);
+                    }
                     spriteOffset += Constants.SpriteSizeFloats;
                 }
                 return spriteOffset;

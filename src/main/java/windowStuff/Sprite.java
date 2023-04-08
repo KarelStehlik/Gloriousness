@@ -1,13 +1,15 @@
 package windowStuff;
 
+import static org.lwjgl.opengles.GLES20.GL_ARRAY_BUFFER;
+
 import general.Data;
 import general.Util;
-
 import java.util.Objects;
+import org.lwjgl.opengl.GL15;
 
 public class Sprite implements AbstractSprite {
 
-    private final float[] positions = new float[12];
+    private final float[] positions = new float[8];
     protected boolean hasUnsavedChanges = true;
     protected String textureName;
     protected int layer;
@@ -23,6 +25,7 @@ public class Sprite implements AbstractSprite {
     private float width, height;
     private int imageId;
     private Animation animation;
+    protected boolean rebufferStatic = true;
 
     public Sprite(String imageName, int layer) {
         this(imageName, 0, 0, 100, 100, layer, "basic");
@@ -181,41 +184,47 @@ public class Sprite implements AbstractSprite {
         positions[0] = getX() + XC - YS;
         positions[1] = getY() + XS + YC;
         //-+
-        positions[3] = getX() - XC + YS;
-        positions[4] = getY() - XS - YC;
+        positions[2] = getX() - XC + YS;
+        positions[3] = getY() - XS - YC;
         //++
-        positions[6] = getX() + XC + YS;
-        positions[7] = getY() + XS - YC;
+        positions[4] = getX() + XC + YS;
+        positions[5] = getY() + XS - YC;
         //--
-        positions[9] = getX() - XC - YS;
-        positions[10] = getY() - XS + YC;
+        positions[6] = getX() - XC - YS;
+        positions[7] = getY() - XS + YC;
 
         hasUnsavedChanges = false;
     }
 
-    protected synchronized void bufferToArray(int offset, float[] vertices) {
+    protected synchronized void bufferPositions(int offset, float[] vertices) {
         if (hidden) {
             return;
         }
         for (int i = 0; i < 4; i++) {
-            int off = offset + 9 * i;
-            vertices[off] = positions[3 * i];
-            vertices[off + 1] = positions[3 * i + 1];
+            int off = offset + 8 * i;
+            vertices[off] = positions[2 * i];
+            vertices[off + 1] = positions[2 * i + 1];
 
-            vertices[off + 3] = colors[4 * i];
-            vertices[off + 4] = colors[4 * i + 1];
-            vertices[off + 5] = colors[4 * i + 2];
-            vertices[off + 6] = colors[4 * i + 3];
+            vertices[off + 2] = colors[4 * i];
+            vertices[off + 3] = colors[4 * i + 1];
+            vertices[off + 4] = colors[4 * i + 2];
+            vertices[off + 5] = colors[4 * i + 3];
 
-            vertices[off + 7] = texCoords[2 * i];
-            vertices[off + 8] = texCoords[2 * i + 1];
+            vertices[off + 6] = texCoords[2 * i];
+            vertices[off + 7] = texCoords[2 * i + 1];
         }
+    }
+
+    protected synchronized void bufferStatic(long offset){
+        GL15.glBufferSubData(GL_ARRAY_BUFFER,offset,colors);
+        rebufferStatic=false;
     }
 
     @Override
     public Sprite setColors(float[] colors) {
         assert colors.length == 16 : "expected 16 colors for sprite.";
         this.colors = colors;
+        rebufferStatic=true;
         return this;
     }
 

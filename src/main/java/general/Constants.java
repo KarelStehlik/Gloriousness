@@ -1,17 +1,16 @@
 package general;
 
-import org.joml.Vector2i;
-import org.lwjgl.BufferUtils;
-
-import java.nio.IntBuffer;
-
 import static org.lwjgl.opengl.GL11C.GL_VIEWPORT;
 import static org.lwjgl.opengl.GL11C.glGetIntegerv;
 
+import java.nio.IntBuffer;
+import org.joml.Vector2i;
+import org.lwjgl.BufferUtils;
+
 public final class Constants {
 
-    public static final int VertexSizeFloats = 9;
-    public static final int SpriteSizeFloats = 36;
+    public static final int VertexSizeFloats = 8;
+    public static final int SpriteSizeFloats = 32;
     public static final Vector2i screenSize;
 
     //gameplay

@@ -1,18 +1,40 @@
 package windowStuff;
 
-import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL11C.GL_FALSE;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgrami;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderi;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static org.lwjgl.opengl.GL11C.GL_FALSE;
-import static org.lwjgl.opengl.GL20.*;
+import java.util.regex.Pattern;
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
 
 public class Shader {
 
+    private static final Pattern COMPILE = Pattern.compile(
+        "#type ");
     final String name;
     final int shaderID;
 
@@ -24,7 +46,7 @@ public class Shader {
         String vertexSource = null;
         String fragmentSource = null;
         try {
-            String[] sources = Files.readString(Paths.get(path)).split("#type ");
+            String[] sources = COMPILE.split(Files.readString(Paths.get(path)));
             for (String source : sources) {
                 if (source.startsWith("fragment")) {
                     fragmentSource = source.substring(source.indexOf('#'));
