@@ -14,15 +14,14 @@ import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.GL_STREAM_DRAW;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengles.GLES20.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengles.GLES20.GL_STREAM_DRAW;
 
 import general.Constants;
 import general.Data;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class SuperBatch implements SpriteBatching {
@@ -51,25 +50,22 @@ public class SuperBatch implements SpriteBatching {
             int floatBytes = Float.BYTES;
             int vertexBytes = Constants.VertexSizeFloats * floatBytes;
 
-            vbo = glGenBuffers();
+            vbo = Graphics.streamVbo;
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes, 0);
-            //GL33C.glVertexAttribDivisor(0, 0);
 
             int colorCount = 4;
             glEnableVertexAttribArray(2);
             int texCoords = 2;
             glVertexAttribPointer(2, texCoords, GL_FLOAT, false, vertexBytes,
                     (positionCount + colorCount) * floatBytes);
-            //GL33C.glVertexAttribDivisor(2, 0);
 
             vboStatic = glGenBuffers();
-            //glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
+            glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes, positionCount*floatBytes);
-            //GL33C.glVertexAttribDivisor(1, 0);
+            glVertexAttribPointer(1, colorCount, GL_FLOAT, false, colorCount*Float.BYTES, 0);
         }
 
         glBindVertexArray(0);
@@ -82,7 +78,7 @@ public class SuperBatch implements SpriteBatching {
         rebufferAllStatic=true;
     }
 
-    int[] elements;
+    private int[] elements;
     private void growEbo() {
         eboSize = (int) (eboSize * 1.5);
         elements = new int[6 * eboSize];
@@ -148,19 +144,16 @@ public class SuperBatch implements SpriteBatching {
             shader.useCamera(camera);
         }
 
-        List<Sprite> rebatchSprites = new ArrayList<>(5);
         for (Batch b : batches) {
             var spriterator = b.sprites.iterator();
             while (spriterator.hasNext()) {
                 final Sprite s = spriterator.next();
                 if (s.mustBeRebatched) {
                     spriterator.remove();
-                    rebatchSprites.add(s);
+                    spritesToAdd.add(s);
                 }
             }
         }
-        rebatchSprites.forEach(this::_addSprite);
-        rebatchSprites.clear();
 
         synchronized (spritesToAdd) {
             spritesToAdd.forEach(this::_addSprite);
@@ -188,11 +181,21 @@ public class SuperBatch implements SpriteBatching {
             float[] vertexArray = new float[spriteCount * Constants.SpriteSizeFloats];
             int offset = 0;
 
+            //var draw = shader.new DrawCall(spriteCount);
+
             glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
-            glBufferData(GL_ARRAY_BUFFER, spriteCount*16L*Float.BYTES, GL_DYNAMIC_DRAW);
+            while(vboStaticSize<(long) spriteCount *Constants.SpriteSizeFloats*Float.BYTES){
+                growVboStatic();
+            }
+            //glBufferData(GL_ARRAY_BUFFER, (long) spriteCount *Constants.SpriteSizeFloats, GL_STREAM_DRAW);
             for (int i = drawStart; i < drawEnd; i++) {
                 offset += batches.get(i).bufferToArray(vertexArray, offset);
+//                synchronized (batches.get(i).sprites) {
+//                    batches.get(i).sprites.forEach(draw::addSprite);
+//                }
             }
+
+            //draw.draw(images.getTexture(texture));
 
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_STREAM_DRAW);
@@ -205,7 +208,6 @@ public class SuperBatch implements SpriteBatching {
             glActiveTexture(GL_TEXTURE0);
 
             glDrawElements(GL_TRIANGLES, 6 * spriteCount, GL_UNSIGNED_INT, 0);
-            //GL31C.glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, spriteCount);
 
             shader.detach();
             glBindVertexArray(0);
@@ -214,7 +216,7 @@ public class SuperBatch implements SpriteBatching {
 
             drawStart = drawEnd;
         }
-        rebufferAllStatic=false;
+        //rebufferAllStatic=false;
 
     }
 
@@ -228,12 +230,12 @@ public class SuperBatch implements SpriteBatching {
         return camera;
     }
 
-    private static class Batch implements Comparable<Batch> {
+    private class Batch implements Comparable<Batch> {
 
         public final int layer;
         public final String texture;
         public final Shader shader;
-        private final List<Sprite> sprites = new LinkedList<>();
+        private final ArrayList<Sprite> sprites = new ArrayList<>(10);
 
         Batch(int layer, String texture, Shader shader) {
             this.layer = layer;
@@ -249,15 +251,8 @@ public class SuperBatch implements SpriteBatching {
         int squishSize() {
             synchronized (sprites) {
                 int count = 0;
-                final var spriterator = sprites.iterator();
-                while (spriterator.hasNext()) {
-                    if (spriterator.next().isDeleted()) {
-                        spriterator.remove();
-                    } else {
-                        count++;
-                    }
-                }
-                return count;
+                sprites.removeIf(Sprite::isDeleted);
+                return sprites.size();
             }
         }
 
@@ -295,8 +290,8 @@ public class SuperBatch implements SpriteBatching {
                     sprite.updateVertices();
                     sprite.bufferPositions(offset + spriteOffset, arr);
 
-                    if(sprite.rebufferStatic) {
-                        sprite.bufferStatic((long) (offset + spriteOffset) * 2);
+                    if(sprite.rebufferStatic||rebufferAllStatic) {
+                        sprite.bufferStatic((long) (offset + spriteOffset) *Float.BYTES*16L/Constants.SpriteSizeFloats);
                     }
                     spriteOffset += Constants.SpriteSizeFloats;
                 }

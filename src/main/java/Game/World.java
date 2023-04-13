@@ -71,12 +71,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
             float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
             game.addTickable(
                     new Animation(
-                            new Sprite("Shockwave", x, y, 100, 100, 1, "basic").addToBs(bs).setColors(
+                            new Sprite("Shockwave", x, y, 100, 100, 3, "basic").addToBs(bs).setColors(
                                     Util.getBaseColors(0.8f)), 3
                     ).setLinearScaling(new Vector2f(30, 30))
             );
             game.addTickable(
-                    new Animation("Explosion-0", bs, 1, x, y, 500, 500, 2)
+                    new Animation("Explosion-0", bs, 1, x, y, 500, 500, 3)
             );
         }, null));
 

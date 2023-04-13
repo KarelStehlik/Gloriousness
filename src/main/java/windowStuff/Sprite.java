@@ -1,11 +1,11 @@
 package windowStuff;
 
+import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import static org.lwjgl.opengles.GLES20.GL_ARRAY_BUFFER;
 
 import general.Data;
 import general.Util;
 import java.util.Objects;
-import org.lwjgl.opengl.GL15;
 
 public class Sprite implements AbstractSprite {
 
@@ -26,6 +26,8 @@ public class Sprite implements AbstractSprite {
     private int imageId;
     private Animation animation;
     protected boolean rebufferStatic = true;
+
+    private Short[] staticData;
 
     public Sprite(String imageName, int layer) {
         this(imageName, 0, 0, 100, 100, layer, "basic");
@@ -205,18 +207,18 @@ public class Sprite implements AbstractSprite {
             vertices[off] = positions[2 * i];
             vertices[off + 1] = positions[2 * i + 1];
 
-            vertices[off + 2] = colors[4 * i];
-            vertices[off + 3] = colors[4 * i + 1];
-            vertices[off + 4] = colors[4 * i + 2];
-            vertices[off + 5] = colors[4 * i + 3];
+            //vertices[off + 2] = colors[4 * i];
+            //vertices[off + 3] = colors[4 * i + 1];
+            //vertices[off + 4] = colors[4 * i + 2];
+            //vertices[off + 5] = colors[4 * i + 3];
 
             vertices[off + 6] = texCoords[2 * i];
             vertices[off + 7] = texCoords[2 * i + 1];
         }
     }
 
-    protected synchronized void bufferStatic(long offset){
-        GL15.glBufferSubData(GL_ARRAY_BUFFER,offset,colors);
+    protected synchronized void bufferStatic(long offsetBytes){
+        glBufferSubData(GL_ARRAY_BUFFER,offsetBytes,colors);
         rebufferStatic=false;
     }
 

@@ -1,20 +1,25 @@
 package windowStuff;
 
-import general.Constants;
-import general.Data;
-import org.joml.Vector3f;
-
-import java.util.Collection;
-import java.util.LinkedList;
-
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_RENDERER;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.glBlendFunc;
+import static org.lwjgl.opengl.GL11C.glGetString;
+import static org.lwjgl.opengl.GL15C.glGenBuffers;
+
+import general.Constants;
+import general.Data;
+import java.util.Collection;
+import java.util.LinkedList;
+import org.joml.Vector3f;
 
 public final class Graphics {
 
     private static ImageSet loadedImages;
     private final Collection<SpriteBatching> SpriteBatchings = new LinkedList<>();
+    protected static int streamVbo;
 
     public static ImageSet getLoadedImages() {
         return loadedImages;
@@ -26,6 +31,7 @@ public final class Graphics {
 
     public void init() {
         Data.init();
+        streamVbo= glGenBuffers();
         System.out.println(Constants.screenSize); // this is needed to load Constants
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
