@@ -38,7 +38,6 @@ public class SuperBatch implements SpriteBatching {
 
     public SuperBatch() {
         this.images = Graphics.getLoadedImages();
-        //batches = new LinkedList<>(); // is sorted
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
@@ -181,21 +180,15 @@ public class SuperBatch implements SpriteBatching {
             float[] vertexArray = new float[spriteCount * Constants.SpriteSizeFloats];
             int offset = 0;
 
-            //var draw = shader.new DrawCall(spriteCount);
-
             glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
             while(vboStaticSize<(long) spriteCount *Constants.SpriteSizeFloats*Float.BYTES){
                 growVboStatic();
             }
-            //glBufferData(GL_ARRAY_BUFFER, (long) spriteCount *Constants.SpriteSizeFloats, GL_STREAM_DRAW);
+
             for (int i = drawStart; i < drawEnd; i++) {
                 offset += batches.get(i).bufferToArray(vertexArray, offset);
-//                synchronized (batches.get(i).sprites) {
-//                    batches.get(i).sprites.forEach(draw::addSprite);
-//                }
             }
 
-            //draw.draw(images.getTexture(texture));
 
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_STREAM_DRAW);
@@ -250,7 +243,6 @@ public class SuperBatch implements SpriteBatching {
          */
         int squishSize() {
             synchronized (sprites) {
-                int count = 0;
                 sprites.removeIf(Sprite::isDeleted);
                 return sprites.size();
             }

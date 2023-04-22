@@ -55,10 +55,6 @@ public class Shader {
         "#type ");
     final String name;
     final int shaderID;
-    final int staticDataPerVertex = 6;
-    private final int vao, vbo;
-    private long vboSize = 1024;
-    private boolean rebufferAllStatic = true;
 
     public Shader(String path) {
 
@@ -123,88 +119,6 @@ public class Shader {
             glDeleteShader(vertexID);
             glDeleteShader(fragmentID);
         }
-
-        //setup vao
-        vao = glGenVertexArrays();
-        glBindVertexArray(vao);
-
-        {
-            int positionCount = 2;
-            int floatBytes = Float.BYTES;
-            int vertexBytes = Constants.VertexSizeFloats * floatBytes;
-
-            glBindBuffer(GL_ARRAY_BUFFER, Graphics.streamVbo);
-
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes, 0);
-
-            int colorCount = 4;
-            glEnableVertexAttribArray(2);
-            int texCoords = 2;
-            glVertexAttribPointer(2, texCoords, GL_FLOAT, false, vertexBytes,
-                (positionCount + colorCount) * floatBytes);
-
-            vbo = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER,vboSize, GL_DYNAMIC_DRAW);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes, positionCount*floatBytes);
-        }
-
-        glBindVertexArray(0);
-    }
-
-    private float[] vertexArray;
-
-    protected class DrawCall {
-        private int offset = 0;
-        private final int spriteCount;
-        protected DrawCall(int numSprites) {
-            while (numSprites * 4L * staticDataPerVertex > vboSize) {
-                growVbo();
-            }
-            vertexArray = new float[numSprites * Constants.SpriteSizeFloats];
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            spriteCount=numSprites;
-        }
-
-        protected void addSprite(Sprite sprite) {
-            sprite.updateVertices();
-            sprite.bufferPositions(offset, vertexArray);
-
-            if(sprite.rebufferStatic || rebufferAllStatic) {
-                sprite.bufferStatic((long) offset * 2);
-            }
-            offset += Constants.SpriteSizeFloats;
-        }
-
-        protected void draw(Texture texture) {
-            rebufferAllStatic=false;
-            glBindBuffer(GL_ARRAY_BUFFER, Graphics.streamVbo);
-            glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_STREAM_DRAW);
-
-            glBindVertexArray(vao);
-
-            use();
-            texture.bind();
-            uploadTexture("sampler", 0);
-            glActiveTexture(GL_TEXTURE0);
-
-            glDrawElements(GL_TRIANGLES, 6 * spriteCount, GL_UNSIGNED_INT, 0);
-
-            detach();
-            glBindVertexArray(0);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        }
-    }
-
-    private void growVbo(){
-        vboSize *=2L;
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vboSize, GL_DYNAMIC_DRAW);
-        rebufferAllStatic=true;
-        System.out.println("new vbo size: "+vboSize);
     }
 
     public void use() {
