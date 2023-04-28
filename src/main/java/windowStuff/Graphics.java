@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11C.GL_RENDERER;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengl.GL11C.glGetString;
+import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.glGenBuffers;
 
 import general.Constants;
@@ -19,7 +20,7 @@ public final class Graphics {
 
     private static ImageSet loadedImages;
     private final Collection<SpriteBatching> SpriteBatchings = new LinkedList<>();
-    protected static int streamVbo;
+    protected static GlBufferWrapper vbo;
 
     public static ImageSet getLoadedImages() {
         return loadedImages;
@@ -31,7 +32,7 @@ public final class Graphics {
 
     public void init() {
         Data.init();
-        streamVbo= glGenBuffers();
+        vbo = new GlBufferWrapper(GL_ARRAY_BUFFER);
         System.out.println(Constants.screenSize); // this is needed to load Constants
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

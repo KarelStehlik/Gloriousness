@@ -27,7 +27,7 @@ import java.util.List;
 public class SuperBatch implements SpriteBatching {
 
     private final List<Sprite> spritesToAdd = new ArrayList<>(20);
-    private final int ebo, vao, vbo, vboStatic;
+    private final int ebo, vao;
     private long vboStaticSize = 1024;
     private boolean rebufferAllStatic = false;
     private final List<Batch> batches = new ArrayList<>(5);
@@ -48,33 +48,24 @@ public class SuperBatch implements SpriteBatching {
             int positionCount = 2;
             int floatBytes = Float.BYTES;
             int vertexBytes = Constants.VertexSizeFloats * floatBytes;
+            int colorCount = 4;
+            int texCoords = 2;
 
-            vbo = Graphics.streamVbo;
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            Graphics.vbo.bind();
 
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes, 0);
 
-            int colorCount = 4;
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes,
+                    positionCount*floatBytes);
+
             glEnableVertexAttribArray(2);
-            int texCoords = 2;
             glVertexAttribPointer(2, texCoords, GL_FLOAT, false, vertexBytes,
                     (positionCount + colorCount) * floatBytes);
-
-            vboStatic = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, colorCount, GL_FLOAT, false, colorCount*Float.BYTES, 0);
         }
 
         glBindVertexArray(0);
-    }
-
-    private void growVboStatic(){
-        vboStaticSize *=2L;
-        glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
-        glBufferData(GL_ARRAY_BUFFER, vboStaticSize, GL_DYNAMIC_DRAW);
-        rebufferAllStatic=true;
     }
 
     private int[] elements;
@@ -177,21 +168,12 @@ public class SuperBatch implements SpriteBatching {
                 growEbo();
             }
 
-            float[] vertexArray = new float[spriteCount * Constants.SpriteSizeFloats];
-            int offset = 0;
-
-            glBindBuffer(GL_ARRAY_BUFFER, vboStatic);
-            while(vboStaticSize<(long) spriteCount *Constants.SpriteSizeFloats*Float.BYTES){
-                growVboStatic();
-            }
-
+            Graphics.vbo.alloc(spriteCount*Constants.SpriteSizeFloats*Float.BYTES, GL_STREAM_DRAW);
+            Graphics.vbo.bind();
             for (int i = drawStart; i < drawEnd; i++) {
-                offset += batches.get(i).bufferToArray(vertexArray, offset);
+                batches.get(i).buffer(Graphics.vbo);
             }
-
-
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_STREAM_DRAW);
+            Graphics.vbo.resetSubDataOffset();
 
             glBindVertexArray(this.vao);
 
@@ -209,8 +191,6 @@ public class SuperBatch implements SpriteBatching {
 
             drawStart = drawEnd;
         }
-        //rebufferAllStatic=false;
-
     }
 
     @Override
@@ -275,19 +255,11 @@ public class SuperBatch implements SpriteBatching {
             return shader.shaderID - shade.shaderID;
         }
 
-        public int bufferToArray(float[] arr, int offset) {
-            int spriteOffset = 0;
+        public void buffer(GlBufferWrapper buffer){
             synchronized (sprites) {
                 for (var sprite : sprites) {
-                    sprite.updateVertices();
-                    sprite.bufferPositions(offset + spriteOffset, arr);
-
-                    if(sprite.rebufferStatic||rebufferAllStatic) {
-                        sprite.bufferStatic((long) (offset + spriteOffset) *Float.BYTES*16L/Constants.SpriteSizeFloats);
-                    }
-                    spriteOffset += Constants.SpriteSizeFloats;
+                    sprite.buffer(buffer);
                 }
-                return spriteOffset;
             }
         }
 

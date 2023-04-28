@@ -3,6 +3,7 @@ package windowStuff;
 import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import static org.lwjgl.opengles.GLES20.GL_ARRAY_BUFFER;
 
+import general.Constants;
 import general.Data;
 import general.Util;
 import java.util.Objects;
@@ -198,6 +199,26 @@ public class Sprite implements AbstractSprite {
         hasUnsavedChanges = false;
     }
 
+    protected synchronized void buffer(GlBufferWrapper buffer){
+        if (hidden) {
+            return;
+        }
+        float[] vertices = new float[Constants.SpriteSizeFloats];
+        for (int i = 0; i < 4; i++) {
+            int off = 8 * i;
+            vertices[off] = positions[2 * i];
+            vertices[off + 1] = positions[2 * i + 1];
+
+            vertices[off + 2] = colors[4 * i];
+            vertices[off + 3] = colors[4 * i + 1];
+            vertices[off + 4] = colors[4 * i + 2];
+            vertices[off + 5] = colors[4 * i + 3];
+
+            vertices[off + 6] = texCoords[2 * i];
+            vertices[off + 7] = texCoords[2 * i + 1];
+        }
+        buffer.subDataAdvance(vertices);
+    }
     protected synchronized void bufferPositions(int offset, float[] vertices) {
         if (hidden) {
             return;
@@ -207,10 +228,10 @@ public class Sprite implements AbstractSprite {
             vertices[off] = positions[2 * i];
             vertices[off + 1] = positions[2 * i + 1];
 
-            //vertices[off + 2] = colors[4 * i];
-            //vertices[off + 3] = colors[4 * i + 1];
-            //vertices[off + 4] = colors[4 * i + 2];
-            //vertices[off + 5] = colors[4 * i + 3];
+//            vertices[off + 2] = colors[4 * i];
+//            vertices[off + 3] = colors[4 * i + 1];
+//            vertices[off + 4] = colors[4 * i + 2];
+//            vertices[off + 5] = colors[4 * i + 3];
 
             vertices[off + 6] = texCoords[2 * i];
             vertices[off + 7] = texCoords[2 * i + 1];

@@ -1,6 +1,6 @@
 package windowStuff;
 
-import static org.lwjgl.opengles.GLES20.*;
+import static org.lwjgl.opengl.GL15C.*;
 
 public class GlBufferWrapper {
     private final int id;
@@ -18,6 +18,7 @@ public class GlBufferWrapper {
     }
 
     public void alloc(int newSize, int usage){
+        System.out.println("allocated: "+newSize);
         while(size<newSize){
             size*=2;
         }
@@ -30,12 +31,15 @@ public class GlBufferWrapper {
     }
 
     public void data(float[] data){
+        alloc(data.length*Float.BYTES, GL_STREAM_DRAW);
         glBufferSubData(type,0,data);
     }
     public void data(int[] data){
+        alloc(data.length*Integer.BYTES, GL_STREAM_DRAW);
         glBufferSubData(type,0,data);
     }
     public void data(short[] data){
+        alloc(data.length*Short.BYTES, GL_STREAM_DRAW);
         glBufferSubData(type,0,data);
     }
 
@@ -52,6 +56,7 @@ public class GlBufferWrapper {
         offset+=data.length*Short.BYTES;
     }
     public void resetSubDataOffset(){
+        System.out.println("used: " + offset);
         offset=0;
     }
 }
