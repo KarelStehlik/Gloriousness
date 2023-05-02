@@ -199,9 +199,10 @@ public class Sprite implements AbstractSprite {
         hasUnsavedChanges = false;
     }
 
-    protected synchronized void buffer(GlBufferWrapper buffer){
+    // returns 1 if not buffered
+    protected synchronized int buffer(GlBufferWrapper buffer){
         if (hidden) {
-            return;
+            return 1;
         }
         float[] vertices = new float[Constants.SpriteSizeFloats];
         for (int i = 0; i < 4; i++) {
@@ -217,7 +218,9 @@ public class Sprite implements AbstractSprite {
             vertices[off + 6] = texCoords[2 * i];
             vertices[off + 7] = texCoords[2 * i + 1];
         }
+       // System.out.println(Arrays.toString(vertices));
         buffer.subDataAdvance(vertices);
+        return 0;
     }
     protected synchronized void bufferPositions(int offset, float[] vertices) {
         if (hidden) {

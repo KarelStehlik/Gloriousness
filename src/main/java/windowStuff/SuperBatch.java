@@ -16,7 +16,6 @@ import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengles.GLES20.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengles.GLES20.GL_STREAM_DRAW;
 
 import general.Constants;
@@ -54,15 +53,16 @@ public class SuperBatch implements SpriteBatching {
             Graphics.vbo.bind();
 
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes, 0);
+            glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes,
+                0);
 
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes,
-                    positionCount*floatBytes);
+                positionCount*floatBytes);
 
             glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, texCoords, GL_FLOAT, false, vertexBytes,
-                    (positionCount + colorCount) * floatBytes);
+                (positionCount + colorCount) * floatBytes);
         }
 
         glBindVertexArray(0);
@@ -168,14 +168,20 @@ public class SuperBatch implements SpriteBatching {
                 growEbo();
             }
 
-            Graphics.vbo.alloc(spriteCount*Constants.SpriteSizeFloats*Float.BYTES, GL_STREAM_DRAW);
-            Graphics.vbo.bind();
-            for (int i = drawStart; i < drawEnd; i++) {
-                batches.get(i).buffer(Graphics.vbo);
-            }
-            Graphics.vbo.resetSubDataOffset();
-
             glBindVertexArray(this.vao);
+
+            Graphics.vbo.alloc(spriteCount*Constants.SpriteSizeFloats*Float.BYTES, GL_STREAM_DRAW);
+
+            for (int i = drawStart; i < drawEnd; i++) {
+                synchronized (batches.get(i).sprites){
+                    for(Sprite s:batches.get(i).sprites){
+                        s.updateVertices();
+                        spriteCount-=s.buffer(Graphics.vbo);
+                    }
+                }
+            }
+
+            Graphics.vbo.resetSubDataOffset();
 
             shader.use();
             images.getTexture(texture).bind();
@@ -253,14 +259,6 @@ public class SuperBatch implements SpriteBatching {
                 return texture.compareTo(tex);
             }
             return shader.shaderID - shade.shaderID;
-        }
-
-        public void buffer(GlBufferWrapper buffer){
-            synchronized (sprites) {
-                for (var sprite : sprites) {
-                    sprite.buffer(buffer);
-                }
-            }
         }
 
         @Override

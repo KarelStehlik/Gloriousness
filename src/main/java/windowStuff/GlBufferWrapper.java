@@ -6,8 +6,8 @@ public class GlBufferWrapper {
     private final int id;
     private int size;
     private final int type;
+    private long offset=0;
 
-    private int offset=0;
     public GlBufferWrapper(int size, int type){
         this.id=glGenBuffers();
         this.size=size;
@@ -18,7 +18,6 @@ public class GlBufferWrapper {
     }
 
     public void alloc(int newSize, int usage){
-        System.out.println("allocated: "+newSize);
         while(size<newSize){
             size*=2;
         }
@@ -45,18 +44,17 @@ public class GlBufferWrapper {
 
     public void subDataAdvance(float[] data){
         glBufferSubData(type,offset,data);
-        offset+=data.length*Float.BYTES;
+        offset+= (long) data.length *Float.BYTES;
     }
     public void subDataAdvance(int[] data){
         glBufferSubData(type,offset,data);
-        offset+=data.length*Integer.BYTES;
+        offset+= (long) data.length *Integer.BYTES;
     }
     public void subDataAdvance(short[] data){
         glBufferSubData(type,offset,data);
-        offset+=data.length*Short.BYTES;
+        offset+= (long) data.length *Short.BYTES;
     }
     public void resetSubDataOffset(){
-        System.out.println("used: " + offset);
         offset=0;
     }
 }
