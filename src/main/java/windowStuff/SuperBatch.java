@@ -20,6 +20,7 @@ import static org.lwjgl.opengles.GLES20.GL_STREAM_DRAW;
 
 import general.Constants;
 import general.Data;
+import general.Log;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,7 +126,6 @@ public class SuperBatch implements SpriteBatching {
 
     @Override
     public void draw() {
-
         if (!visible) {
             return;
         }
@@ -181,7 +181,7 @@ public class SuperBatch implements SpriteBatching {
                 }
             }
 
-            Graphics.vbo.resetSubDataOffset();
+            Graphics.vbo.doneBuffering();
 
             shader.use();
             images.getTexture(texture).bind();
@@ -196,6 +196,11 @@ public class SuperBatch implements SpriteBatching {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
             drawStart = drawEnd;
+
+            //int dt = Log.elapsed(true);
+            //Log.conditional("graphics tick: "+ dt +", entities: "+spriteCount, dt>10);
+            //Log.setTimer();
+            //Log.write(Log.elapsed(true)+"ms, objects="+spriteCount);
         }
     }
 

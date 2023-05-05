@@ -1,5 +1,7 @@
 package Game;
 
+import general.Log;
+import general.Log.Timer;
 import windowStuff.*;
 
 import java.util.Collection;
@@ -23,7 +25,6 @@ public final class Game implements UserInputHandler {
     private final Collection<MouseDetect> newMouseDetects = new LinkedList<>();
     private long startTime = System.currentTimeMillis();
     private int ticks = 0;
-    private double last60TicksTime = 0;
 
     private Game() {
         userInputListener = new UserInputListener(this);
@@ -56,7 +57,9 @@ public final class Game implements UserInputHandler {
         newMouseDetects.add(t);
     }
 
+    private Log.Timer timer=new Timer();
     public void tick() {
+        timer.elapsed(true);
         long timeTillTick = startTime + (long) tickIntervalMillis * ticks - System.currentTimeMillis();
         if (timeTillTick > 0) {
             return;
@@ -64,8 +67,8 @@ public final class Game implements UserInputHandler {
         double t0 = System.nanoTime();
         ticks++;
         if (ticks % 60 == 0) {
-            System.out.println(ticks + " in " + last60TicksTime / 1000000000 + " seconds");
-            last60TicksTime = 0;
+            System.out.println(ticks + " in " + timer.saved + " ms");
+            timer.saved=0;
         }
         var iter = tickables.iterator();
         while (iter.hasNext()) {
@@ -83,7 +86,7 @@ public final class Game implements UserInputHandler {
         newKeyDetects.clear();
         mouseDetects.addAll(newMouseDetects);
         newMouseDetects.clear();
-        last60TicksTime += System.nanoTime() - t0;
+        timer.saved+=timer.elapsed(true);
     }
 
     public void graphicsUpdate(double dt) {

@@ -2,16 +2,21 @@ package Game;
 
 import general.Constants;
 import general.Data;
+import general.Log;
 import general.Util;
-import org.joml.Vector2f;
-import windowStuff.Button;
-import windowStuff.*;
-
-import java.awt.*;
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.joml.Vector2f;
+import windowStuff.Button;
+import windowStuff.ButtonArray;
+import windowStuff.NoSprite;
+import windowStuff.Sprite;
+import windowStuff.SpriteBatching;
+import windowStuff.Text;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
@@ -39,9 +44,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         game.addKeyDetect(this);
         game.addTickable(this);
         mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000, 7);
-        mobsList = new LinkedList<>();
+        mobsList = new ArrayList<>(1024);
         projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000, 8);
-        projectilesList = new LinkedList<>();
+        projectilesList = new ArrayList<>(128);
         bs = game.getSpriteBatching("main");
         getBs().getCamera().moveTo(0, -0, 20);
         player = new Player(this);
@@ -151,10 +156,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         player.onGameTick(tick);
         projectilesGrid.clear();
         mobSpawner.run(tick);
+        //int dt = Log.elapsed(true);
     }
 
     private <T extends GameObject & TickDetect> void tickEntities(SpacePartitioning<T> grid,
-                                                                  Iterable<T> list) {
+                                                                  List<T> list) {
         grid.clear();
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
             T e = iterator.next();
