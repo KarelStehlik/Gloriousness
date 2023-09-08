@@ -29,6 +29,17 @@ public class Sprite implements AbstractSprite {
   private Animation animation;
   private Short[] staticData;
 
+  public float getOpacity() {
+    return opacity;
+  }
+
+  public Sprite setOpacity(float opacity) {
+    this.opacity = opacity;
+    return this;
+  }
+
+  protected float opacity=1;
+
   public Sprite(String imageName, int layer) {
     this(imageName, 0, 0, 100, 100, layer, "basic");
   }
@@ -247,7 +258,7 @@ public class Sprite implements AbstractSprite {
       vertices[off + 2] = colors[4 * i];
       vertices[off + 3] = colors[4 * i + 1];
       vertices[off + 4] = colors[4 * i + 2];
-      vertices[off + 5] = colors[4 * i + 3];
+      vertices[off + 5] = colors[4 * i + 3] * opacity;
 
       vertices[off + 6] = texCoords[2 * i];
       vertices[off + 7] = texCoords[2 * i + 1];

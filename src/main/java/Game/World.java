@@ -1,5 +1,11 @@
 package Game;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.glBlendFunc;
+
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -73,19 +79,23 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return;
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
-      game.addTickable(
-          new Animation(
-              new Sprite("Shockwave", x, y, 100, 100, 3, "basic").addToBs(bs).setColors(
-                  Util.getBaseColors(0.8f)), 3
-          ).setLinearScaling(new Vector2f(30, 30))
-      );
-      game.addTickable(
-          new Animation("Explosion-0", bs, 1, x, y, 500, 500, 3)
-      );
+      explosionVisual(x,y);
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
         0, 1050, 10, 40, bs);
+  }
+
+  public void explosionVisual(float x, float y){
+    Game game = Game.get();
+    game.addTickable(
+        new Animation(
+            new Sprite("Shockwave", x, y, 100, 100, 3, "basic").addToBs(bs), 3
+        ).setLinearScaling(new Vector2f(30, 30)).setOpacityScaling(-0.01f)
+    );
+    game.addTickable(
+        new Animation("Explosion-0", bs, .7f, x, y, 500, 500, 3)
+    );
   }
 
   public int getHealth() {

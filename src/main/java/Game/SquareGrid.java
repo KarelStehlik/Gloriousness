@@ -151,7 +151,7 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
       for (int x = left; x <= right; x++) {
         for (Member box : data.get(x + y * widthSquares)) {
           if (box.lastChecked != idOfSearch &&
-              Util.distanceSquared(box.hitbox.x - location.x, box.hitbox.y-location.y) > Util.square(box.hitbox.width/2f+radius) ) {
+              Util.distanceSquared(box.hitbox.x - location.x, box.hitbox.y-location.y) < Util.square(box.hitbox.width/2f+radius) ) {
             F.collide(box.hitbox);
             box.lastChecked = idOfSearch;
           }

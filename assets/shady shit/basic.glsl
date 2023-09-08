@@ -27,5 +27,6 @@ out vec4 color;
 
 void main(){
     float avg = (fColor[0] + fColor[1] + fColor[2])*.333;
-    color = (fColor * avg + texture(sampler, texCoords) * (1-avg)) * fColor[3];
+    color = (fColor * avg + texture(sampler, texCoords) * (1-avg));
+    color[3]*=fColor[3];
 }

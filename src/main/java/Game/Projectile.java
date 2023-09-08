@@ -2,6 +2,7 @@ package Game;
 
 import general.Log;
 import general.Util;
+import java.awt.Point;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -111,10 +112,10 @@ public class Projectile extends GameObject implements TickDetect {
 
   private void handleCollisions() {
     if (!mobCollides.isEmpty()) {
-      world.getMobsGrid().callForEach(getHitbox(), this::collide);
+      world.getMobsGrid().callForEachCircle(location, (int) (size/2), this::collide);
     }
     if (!projectileCollides.isEmpty()) {
-      world.getProjectilesGrid().callForEach(getHitbox(), this::collide);
+      world.getProjectilesGrid().callForEachCircle(location, (int) (size/2), this::collide);
     }
     if (!playerCollides.isEmpty()) {
       collide(world.getPlayer());
@@ -138,8 +139,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(TdMob e) {
-    if (wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)
-        || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + size) / 4) {
+    if (wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)) {
       return;
     }
     alreadyHitMobs.add(e);
@@ -154,8 +154,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Projectile e) {
-    if (wasDeleted || e.WasDeleted() || e.equals(this) || alreadyHitProjectiles.contains(e)
-        || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + size) / 4) {
+    if (wasDeleted || e.WasDeleted() || e.equals(this) || alreadyHitProjectiles.contains(e)) {
       return;
     }
     alreadyHitProjectiles.add(e);

@@ -10,6 +10,17 @@ public class Animation implements TickDetect {
   private final Sprite sprite;
 
   private float scaling = 1;
+
+  public float getOpacityScaling() {
+    return opacityScaling;
+  }
+
+  public Animation setOpacityScaling(float opacityScaling) {
+    this.opacityScaling = opacityScaling;
+    return this;
+  }
+
+  private float opacityScaling=0;
   private Vector2f linearScaling = new Vector2f(0, 0);
   private float duration;
 
@@ -41,6 +52,8 @@ public class Animation implements TickDetect {
     sprite.scale(scaling);
     sprite.setSize(2 * sprite.getWidth() + linearScaling.x,
         2 * sprite.getHeight() + linearScaling.y);
+    float opac = Math.max(0, Math.min(1, sprite.getOpacity()+opacityScaling));
+    sprite.setOpacity(opac);
     duration -= Game.tickIntervalMillis / 1000f;
     if (duration < 0) {
       delete();
