@@ -40,9 +40,16 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        300, 300, 50, 300, 3, 100);
+        30, 30, 50, 30, 3, 100);
     bulletLauncher.addMobCollide(
-        (proj, target) -> target.takeDamage(proj.getPower(), DamageType.PHYSICAL));
+        (proj, target) -> target.takeDamage(proj.getPower(), DamageType.PHYSICAL)
+    );
+    bulletLauncher.addMobCollide(
+        (proj, target) -> {
+          world.aoeDamage((int) proj.x, (int) proj.y, (int) proj.getPower(), proj.getPower(), DamageType.TRUE);
+          world.explosionVisual(proj.x,proj.y,proj.getPower(),false,"Explosion-0");
+        }
+    );
   }
 
   public void takeDamage(float amount, DamageType type) {

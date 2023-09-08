@@ -12,7 +12,6 @@ public class GameObject implements Comparable<GameObject> {
   protected int width, height;
   protected boolean canCollide = true;
   protected World world;
-  protected Point location;
 
   protected GameObject(float X, float Y, int W, int H, World w) {
     x = X;
@@ -23,7 +22,6 @@ public class GameObject implements Comparable<GameObject> {
     hitbox = new Rectangle((int) (x - width / 2), (int) (y + height / 2), width, height);
     id = idGen;
     idGen++;
-    location = new Point((int)x, (int)y);
   }
 
   Rectangle getHitbox() {
@@ -34,7 +32,6 @@ public class GameObject implements Comparable<GameObject> {
     x = _x;
     y = _y;
     hitbox.setLocation((int) (x - width / 2), (int) (y + height / 2));
-    location.move((int)x, (int)y);
   }
 
   void setSize(int _width, int _height) {

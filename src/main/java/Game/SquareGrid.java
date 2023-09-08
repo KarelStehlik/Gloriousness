@@ -139,19 +139,19 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
     }
   }
 
-  public void callForEachCircle(Point location, int radius, collideFunction<T> F) {
+  public void callForEachCircle(int x, int y, int radius, collideFunction<T> F) {
     idOfSearch++;
 
-    int bottom = Math.max((location.y - radius >> squareSizePow2) - bottomSquares, 0);
-    int left = Math.max((location.x - radius >> squareSizePow2) - leftSquares, 0);
-    int top = Math.min((location.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
-    int right = Math.min((location.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
+    int bottom = Math.max((y - radius >> squareSizePow2) - bottomSquares, 0);
+    int left = Math.max((x - radius >> squareSizePow2) - leftSquares, 0);
+    int top = Math.min((y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
+    int right = Math.min((x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
 
-    for (int y = bottom; y <= top; y++) {
-      for (int x = left; x <= right; x++) {
-        for (Member box : data.get(x + y * widthSquares)) {
+    for (int Y = bottom; Y <= top; Y++) {
+      for (int X = left; X <= right; X++) {
+        for (Member box : data.get(X + Y * widthSquares)) {
           if (box.lastChecked != idOfSearch &&
-              Util.distanceSquared(box.hitbox.x - location.x, box.hitbox.y-location.y) < Util.square(box.hitbox.width/2f+radius) ) {
+              Util.distanceSquared(box.hitbox.x - x, box.hitbox.y-y) < Util.square(box.hitbox.width/2f+radius) ) {
             F.collide(box.hitbox);
             box.lastChecked = idOfSearch;
           }

@@ -79,23 +79,29 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return;
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
-      explosionVisual(x,y);
+      explosionVisual(x,y, 100, true, "Explosion-0");
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
         0, 1050, 10, 40, bs);
   }
 
-  public void explosionVisual(float x, float y){
+  public void explosionVisual(float x, float y, float size, boolean shockwave, String image){
     Game game = Game.get();
+    if(shockwave) {
+      game.addTickable(
+          new Animation(
+              new Sprite("Shockwave", x, y, size, size, 3, "basic").addToBs(bs).setOpacity(0.7f), 3
+          ).setLinearScaling(new Vector2f(size/3, size/3)).setOpacityScaling(-0.01f)
+      );
+    }
     game.addTickable(
-        new Animation(
-            new Sprite("Shockwave", x, y, 100, 100, 3, "basic").addToBs(bs), 3
-        ).setLinearScaling(new Vector2f(30, 30)).setOpacityScaling(-0.01f)
+        new Animation(image, bs, .7f, x, y, size*5, size*5, 3).setRotation(Data.unstableRng.nextFloat(360))
     );
-    game.addTickable(
-        new Animation("Explosion-0", bs, .7f, x, y, 500, 500, 3)
-    );
+  }
+
+  public void aoeDamage(int x, int y, int size, float damage, DamageType type){
+    mobsGrid.callForEachCircle(x, y, size, m ->m.takeDamage(damage, type));
   }
 
   public int getHealth() {

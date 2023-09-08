@@ -112,10 +112,10 @@ public class Projectile extends GameObject implements TickDetect {
 
   private void handleCollisions() {
     if (!mobCollides.isEmpty()) {
-      world.getMobsGrid().callForEachCircle(location, (int) (size/2), this::collide);
+      world.getMobsGrid().callForEachCircle((int) x, (int) y, (int) (size/2), this::collide);
     }
     if (!projectileCollides.isEmpty()) {
-      world.getProjectilesGrid().callForEachCircle(location, (int) (size/2), this::collide);
+      world.getProjectilesGrid().callForEachCircle((int) x, (int) y, (int) (size/2), this::collide);
     }
     if (!playerCollides.isEmpty()) {
       collide(world.getPlayer());

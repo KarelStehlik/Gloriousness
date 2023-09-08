@@ -32,6 +32,11 @@ public class Animation implements TickDetect {
     this.duration = duration;
   }
 
+  public Animation setRotation(float rot){
+    sprite.setRotation(rot);
+    return this;
+  }
+
   public Animation(Sprite anim, float duration) {
     sprite = anim;
     this.duration = duration;
