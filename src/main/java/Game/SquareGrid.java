@@ -1,6 +1,7 @@
 package Game;
 
 
+import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -133,6 +134,27 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
         if (box.lastChecked != idOfSearch) {
           F.collide(box.hitbox);
           box.lastChecked = idOfSearch;
+        }
+      }
+    }
+  }
+
+  public void callForEachCircle(Point location, int radius, collideFunction<T> F) {
+    idOfSearch++;
+
+    int bottom = Math.max((location.y - radius >> squareSizePow2) - bottomSquares, 0);
+    int left = Math.max((location.x - radius >> squareSizePow2) - leftSquares, 0);
+    int top = Math.min((location.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
+    int right = Math.min((location.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
+
+    for (int y = bottom; y <= top; y++) {
+      for (int x = left; x <= right; x++) {
+        for (Member box : data.get(x + y * widthSquares)) {
+          if (box.lastChecked != idOfSearch &&
+              Util.distanceSquared(box.hitbox.x - location.x, box.hitbox.y-location.y) > Util.square(box.hitbox.width/2f+radius) ) {
+            F.collide(box.hitbox);
+            box.lastChecked = idOfSearch;
+          }
         }
       }
     }

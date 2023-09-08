@@ -123,7 +123,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   protected void collide(Player e) {
     if (wasDeleted || e.WasDeleted() || alreadyHitPlayer
-        || Util.distanceSquared(x - e.x, y - e.y) > size + Util.square(e.width + size) / 4) {
+        || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + size) / 4) {
       return;
     }
     alreadyHitPlayer = true;
@@ -139,7 +139,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   protected void collide(TdMob e) {
     if (wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)
-        || Util.distanceSquared(x - e.x, y - e.y) > size + Util.square(e.width + size) / 4) {
+        || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + size) / 4) {
       return;
     }
     alreadyHitMobs.add(e);
@@ -155,7 +155,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   protected void collide(Projectile e) {
     if (wasDeleted || e.WasDeleted() || e.equals(this) || alreadyHitProjectiles.contains(e)
-        || Util.distanceSquared(x - e.x, y - e.y) > size + Util.square(e.width + size) / 4) {
+        || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + size) / 4) {
       return;
     }
     alreadyHitProjectiles.add(e);
