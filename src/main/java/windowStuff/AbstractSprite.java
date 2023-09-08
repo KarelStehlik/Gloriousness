@@ -2,45 +2,45 @@ package windowStuff;
 
 public interface AbstractSprite {
 
-    float getWidth();
+  float getWidth();
 
-    float getHeight();
+  float getHeight();
 
-    AbstractSprite playAnimation(Sprite.Animation anim);
+  AbstractSprite playAnimation(Sprite.Animation anim);
 
-    AbstractSprite setShader(String shader);
+  AbstractSprite setShader(String shader);
 
-    float getRotation();
+  float getRotation();
 
-    AbstractSprite setRotation(float r);
+  AbstractSprite setRotation(float r);
 
-    AbstractSprite setImage(String name);
+  AbstractSprite setImage(String name);
 
-    AbstractSprite setPosition(float X, float Y);
+  AbstractSprite setPosition(float X, float Y);
 
-    AbstractSprite scale(float multiplier);
+  AbstractSprite scale(float multiplier);
 
-    AbstractSprite setSize(float w, float h);
+  AbstractSprite setSize(float w, float h);
 
-    AbstractSprite setColors(float[] colors);
+  AbstractSprite setColors(float[] colors);
 
-    void delete();
+  void delete();
 
-    float getX();
+  float getX();
 
-    AbstractSprite setX(float x);
+  AbstractSprite setX(float x);
 
-    float getY();
+  float getY();
 
-    AbstractSprite setY(float y);
+  AbstractSprite setY(float y);
 
-    int getLayer();
+  int getLayer();
 
-    boolean isDeleted();
+  boolean isDeleted();
 
-    AbstractSprite addToBs(SpriteBatching bs);
+  AbstractSprite addToBs(SpriteBatching bs);
 
-    boolean isHidden();
+  boolean isHidden();
 
-    void setHidden(boolean hidden);
+  void setHidden(boolean hidden);
 }

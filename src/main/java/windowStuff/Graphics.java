@@ -8,7 +8,6 @@ import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.glGenBuffers;
 
 import general.Constants;
 import general.Data;
@@ -18,37 +17,37 @@ import org.joml.Vector3f;
 
 public final class Graphics {
 
-    private static ImageSet loadedImages;
-    private final Collection<SpriteBatching> SpriteBatchings = new LinkedList<>();
-    protected static GlBufferWrapper vbo;
+  protected static GlBufferWrapper vbo;
+  private static ImageSet loadedImages;
+  private final Collection<SpriteBatching> SpriteBatchings = new LinkedList<>();
 
-    public static ImageSet getLoadedImages() {
-        return loadedImages;
+  public static ImageSet getLoadedImages() {
+    return loadedImages;
+  }
+
+  public static void setLoadedImages(ImageSet Images) {
+    loadedImages = Images;
+  }
+
+  public void init() {
+    Data.init();
+    vbo = new GlBufferWrapper(GL_ARRAY_BUFFER);
+    System.out.println(Constants.screenSize); // this is needed to load Constants
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    System.out.println(glGetString(GL_RENDERER));
+  }
+
+  public void addSpriteBatching(SpriteBatching bs) {
+    SpriteBatchings.add(bs);
+    bs.useCamera(new Camera(new Vector3f(0, 0, 20)));
+  }
+
+  public void redraw(double dt) {
+    Data.updateShaders();
+
+    for (SpriteBatching bs : SpriteBatchings) {
+      bs.draw();
     }
-
-    public static void setLoadedImages(ImageSet Images) {
-        loadedImages = Images;
-    }
-
-    public void init() {
-        Data.init();
-        vbo = new GlBufferWrapper(GL_ARRAY_BUFFER);
-        System.out.println(Constants.screenSize); // this is needed to load Constants
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        System.out.println(glGetString(GL_RENDERER));
-    }
-
-    public void addSpriteBatching(SpriteBatching bs) {
-        SpriteBatchings.add(bs);
-        bs.useCamera(new Camera(new Vector3f(0, 0, 20)));
-    }
-
-    public void redraw(double dt) {
-        Data.updateShaders();
-
-        for (SpriteBatching bs : SpriteBatchings) {
-            bs.draw();
-        }
-    }
+  }
 }

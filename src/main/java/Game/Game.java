@@ -1,179 +1,185 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+
 import general.Log;
 import general.Log.Timer;
-import windowStuff.*;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import static org.lwjgl.glfw.GLFW.*;
+import windowStuff.Graphics;
+import windowStuff.SpriteBatching;
+import windowStuff.SuperBatch;
+import windowStuff.UserInputHandler;
+import windowStuff.UserInputListener;
 
 public final class Game implements UserInputHandler {
 
-    public static final int tickIntervalMillis = 1000 / 60;
-    private final UserInputListener userInputListener;
-    private final Graphics graphics;
-    private final Map<String, SpriteBatching> bs = new HashMap<>(1);
-    private final Collection<TickDetect> tickables = new LinkedList<>();
-    private final Collection<TickDetect> newTickables = new LinkedList<>();
-    private final Collection<KeyboardDetect> keyDetects = new LinkedList<>();
-    private final Collection<KeyboardDetect> newKeyDetects = new LinkedList<>();
-    private final Collection<MouseDetect> mouseDetects = new LinkedList<>();
-    private final Collection<MouseDetect> newMouseDetects = new LinkedList<>();
-    private long startTime = System.currentTimeMillis();
-    private int ticks = 0;
+  public static final int tickIntervalMillis = 1000 / 60;
+  private final UserInputListener userInputListener;
+  private final Graphics graphics;
+  private final Map<String, SpriteBatching> bs = new HashMap<>(1);
+  private final Collection<TickDetect> tickables = new LinkedList<>();
+  private final Collection<TickDetect> newTickables = new LinkedList<>();
+  private final Collection<KeyboardDetect> keyDetects = new LinkedList<>();
+  private final Collection<KeyboardDetect> newKeyDetects = new LinkedList<>();
+  private final Collection<MouseDetect> mouseDetects = new LinkedList<>();
+  private final Collection<MouseDetect> newMouseDetects = new LinkedList<>();
+  private long startTime = System.currentTimeMillis();
+  private int ticks = 0;
+  private final Log.Timer timer = new Timer();
 
-    private Game() {
-        userInputListener = new UserInputListener(this);
-        graphics = new Graphics();
+  private Game() {
+    userInputListener = new UserInputListener(this);
+    graphics = new Graphics();
+  }
+
+  public static Game get() {
+    return SingletonHolder.singleton;
+  }
+
+  public UserInputListener getUserInputListener() {
+    return userInputListener;
+  }
+
+  public void init() {
+    graphics.init();
+    startTime = System.currentTimeMillis();
+    new World();
+  }
+
+  public void addTickable(TickDetect t) {
+    newTickables.add(t);
+  }
+
+  public void addKeyDetect(KeyboardDetect t) {
+    newKeyDetects.add(t);
+  }
+
+  public void addMouseDetect(MouseDetect t) {
+    newMouseDetects.add(t);
+  }
+
+  public void tick() {
+    timer.elapsed(true);
+    long timeTillTick = startTime + (long) tickIntervalMillis * ticks - System.currentTimeMillis();
+    if (timeTillTick > 0) {
+      return;
+    }
+    ticks++;
+    if (ticks % 60 == 0) {
+      System.out.println(ticks + " in " + timer.saved + " ms");
+      timer.saved = 0;
+    }
+    var iter = tickables.iterator();
+    while (iter.hasNext()) {
+      TickDetect t = iter.next();
+      if (t.WasDeleted()) {
+        iter.remove();
+      } else {
+        t.onGameTick(ticks);
+      }
+    }
+    userInputListener.handleEvents();
+    tickables.addAll(newTickables);
+    newTickables.clear();
+    keyDetects.addAll(newKeyDetects);
+    newKeyDetects.clear();
+    mouseDetects.addAll(newMouseDetects);
+    newMouseDetects.clear();
+    timer.saved += timer.elapsed(true);
+  }
+
+  public void graphicsUpdate(double dt) {
+    graphics.redraw(dt);
+    userInputListener.endFrame();
+  }
+
+  public SpriteBatching getSpriteBatching(String name) {
+    SpriteBatching r = bs.get(name);
+    if (r != null) {
+      return r;
     }
 
-    public static Game get() {
-        return SingletonHolder.singleton;
+    SpriteBatching newBS = new SuperBatch();
+
+    System.out.println("creating new batch system: " + name);
+    graphics.addSpriteBatching(newBS);
+    bs.put(name, newBS);
+    return newBS;
+  }
+
+  @Override
+  public void onMouseMove(double newX, double newY) {
+    var iter = mouseDetects.iterator();
+    while (iter.hasNext()) {
+      MouseDetect t = iter.next();
+      if (t.WasDeleted()) {
+        iter.remove();
+      } else {
+        t.onMouseMove((float) newX, (float) newY);
+      }
     }
+  }
 
-    public UserInputListener getUserInputListener() {
-        return userInputListener;
+  @Override
+  public void onMouseButton(int button, int action, int mods) {
+    var iter = mouseDetects.iterator();
+    while (iter.hasNext()) {
+      MouseDetect t = iter.next();
+      if (t.WasDeleted()) {
+        iter.remove();
+      } else {
+        t.onMouseButton(button, userInputListener.getX(), userInputListener.getY(), action, mods);
+      }
     }
+  }
 
-    public void init() {
-        graphics.init();
-        startTime = System.currentTimeMillis();
-        new World();
+  @Override
+  public void onScroll(double xOffset, double yOffset) {
+    var iter = mouseDetects.iterator();
+    while (iter.hasNext()) {
+      MouseDetect t = iter.next();
+      if (t.WasDeleted()) {
+        iter.remove();
+      } else {
+        t.onScroll(xOffset);
+      }
     }
+  }
 
-    public void addTickable(TickDetect t) {
-        newTickables.add(t);
+  @Override
+  public void onKeyPress(int key, int action, int mods) {
+    if (action == GLFW_REPEAT) {
+      return;
     }
-
-    public void addKeyDetect(KeyboardDetect t) {
-        newKeyDetects.add(t);
+    //Util.testBit(mods, GLFW_MOD_SHIFT)
+    var iter = keyDetects.iterator();
+    while (iter.hasNext()) {
+      KeyboardDetect t = iter.next();
+      if (t.WasDeleted()) {
+        iter.remove();
+      } else {
+        t.onKeyPress(key, action, mods);
+      }
     }
+  }
 
-    public void addMouseDetect(MouseDetect t) {
-        newMouseDetects.add(t);
-    }
+  @SuppressWarnings("resource")
+  public void setInputCallback(long window) {
+    glfwSetCursorPosCallback(window, userInputListener::mousePosCallback);
+    glfwSetScrollCallback(window, userInputListener::scrollCallback);
+    glfwSetMouseButtonCallback(window, userInputListener::mouseButtonCallback);
+    glfwSetKeyCallback(window, userInputListener::keyCallback);
+  }
 
-    private Log.Timer timer=new Timer();
-    public void tick() {
-        timer.elapsed(true);
-        long timeTillTick = startTime + (long) tickIntervalMillis * ticks - System.currentTimeMillis();
-        if (timeTillTick > 0) {
-            return;
-        }
-        double t0 = System.nanoTime();
-        ticks++;
-        if (ticks % 60 == 0) {
-            System.out.println(ticks + " in " + timer.saved + " ms");
-            timer.saved=0;
-        }
-        var iter = tickables.iterator();
-        while (iter.hasNext()) {
-            TickDetect t = iter.next();
-            if (t.WasDeleted()) {
-                iter.remove();
-            } else {
-                t.onGameTick(ticks);
-            }
-        }
-        userInputListener.handleEvents();
-        tickables.addAll(newTickables);
-        newTickables.clear();
-        keyDetects.addAll(newKeyDetects);
-        newKeyDetects.clear();
-        mouseDetects.addAll(newMouseDetects);
-        newMouseDetects.clear();
-        timer.saved+=timer.elapsed(true);
-    }
+  private static final class SingletonHolder {
 
-    public void graphicsUpdate(double dt) {
-        graphics.redraw(dt);
-        userInputListener.endFrame();
-    }
-
-    public SpriteBatching getSpriteBatching(String name) {
-        SpriteBatching r = bs.get(name);
-        if (r != null) {
-            return r;
-        }
-
-        SpriteBatching newBS = new SuperBatch();
-
-        System.out.println("creating new batch system: " + name);
-        graphics.addSpriteBatching(newBS);
-        bs.put(name, newBS);
-        return newBS;
-    }
-
-    @Override
-    public void onMouseMove(double newX, double newY) {
-        var iter = mouseDetects.iterator();
-        while (iter.hasNext()) {
-            MouseDetect t = iter.next();
-            if (t.WasDeleted()) {
-                iter.remove();
-            } else {
-                t.onMouseMove((float) newX, (float) newY);
-            }
-        }
-    }
-
-    @Override
-    public void onMouseButton(int button, int action, int mods) {
-        var iter = mouseDetects.iterator();
-        while (iter.hasNext()) {
-            MouseDetect t = iter.next();
-            if (t.WasDeleted()) {
-                iter.remove();
-            } else {
-                t.onMouseButton(button, userInputListener.getX(), userInputListener.getY(), action, mods);
-            }
-        }
-    }
-
-    @Override
-    public void onScroll(double xOffset, double yOffset) {
-        var iter = mouseDetects.iterator();
-        while (iter.hasNext()) {
-            MouseDetect t = iter.next();
-            if (t.WasDeleted()) {
-                iter.remove();
-            } else {
-                t.onScroll(xOffset);
-            }
-        }
-    }
-
-    @Override
-    public void onKeyPress(int key, int action, int mods) {
-        if (action == GLFW_REPEAT) {
-            return;
-        }
-        //Util.testBit(mods, GLFW_MOD_SHIFT)
-        var iter = keyDetects.iterator();
-        while (iter.hasNext()) {
-            KeyboardDetect t = iter.next();
-            if (t.WasDeleted()) {
-                iter.remove();
-            } else {
-                t.onKeyPress(key, action, mods);
-            }
-        }
-    }
-
-    @SuppressWarnings("resource")
-    public void setInputCallback(long window) {
-        glfwSetCursorPosCallback(window, userInputListener::mousePosCallback);
-        glfwSetScrollCallback(window, userInputListener::scrollCallback);
-        glfwSetMouseButtonCallback(window, userInputListener::mouseButtonCallback);
-        glfwSetKeyCallback(window, userInputListener::keyCallback);
-    }
-
-    private static final class SingletonHolder {
-
-        private static final Game singleton = new Game();
-    }
+    private static final Game singleton = new Game();
+  }
 }
