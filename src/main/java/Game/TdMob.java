@@ -90,6 +90,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     runAI();
     grid.add(this);
     miscTickActions();
+    sprite.setPosition(x, y);
   }
 
   @Override
@@ -104,7 +105,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   private void miscTickActions() {
-    sprite.setPosition(x, y);
   }
 
   private void runAI() {
