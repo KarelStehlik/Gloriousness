@@ -11,6 +11,7 @@ public class GameObject implements Comparable<GameObject> {
   protected int width, height;
   protected boolean canCollide = true;
   protected World world;
+  public long lastChecked = -9223372036854775807L;
 
   protected GameObject(float X, float Y, int W, int H, World w) {
     x = X;

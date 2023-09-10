@@ -107,10 +107,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.setPosition(x, y);
   }
 
-  private void handleCollisions() {
-    grid.callForEach(this.getHitbox(), this::collide);
-  }
-
   private void runAI() {
     Point nextPoint = world.getMapData().get(nextMapPoint);
     int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - x) + Math.abs(
@@ -196,23 +192,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
         return o.distanceToNext - distanceToNext;
       }
       return checkpoint - o.checkpoint;
-    }
-
-    @Override
-    public int hashCode() {
-      int result = checkpoint;
-      result = 31 * result + distanceToNext;
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      return o instanceof TrackProgress && compareTo((TrackProgress) o) == 0;
-    }
-
-    @Override
-    public String toString() {
-      return checkpoint + ", " + distanceToNext;
     }
   }
 }

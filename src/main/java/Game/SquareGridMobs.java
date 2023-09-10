@@ -13,8 +13,8 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
   }
 
   public void filled() {
-    for (List<Member> l : data) {
-      l.sort(Comparator.comparing((Member m) -> m.hitbox));
+    for (List<TdMob> l : data) {
+      l.sort(Comparator.comparing((TdMob m) -> m.getProgress()).reversed());
     }
   }
 
@@ -31,14 +31,14 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
 
     for (int y = bottom; y <= top; y++) {
       for (int x = left; x <= right; x++) {
-        for (Member box : data.get(x + y * widthSquares)) {
-          if (box.lastChecked == idOfSearch || box.hitbox.getProgress().compareTo(best) < 0) {
+        for (TdMob box : data.get(x + y * widthSquares)) {
+          if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) < 0) {
             break;
           } // this is the most advanced box in the square. if we have already seen it, no other one can be farther.
           box.lastChecked = idOfSearch;
-          if (Util.distanceSquared(box.hitbox.x - centre.x, box.hitbox.y - centre.y)
+          if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
               < radius * radius) {
-            result = box.hitbox;
+            result = box;
             best = result.getProgress();
             break;
           }

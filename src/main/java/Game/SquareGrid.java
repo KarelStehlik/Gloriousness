@@ -11,7 +11,7 @@ import java.util.List;
 public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
 
   public final int widthSquares, heightSquares, bottomSquares, leftSquares;
-  protected final List<ArrayList<Member>> data;
+  protected final List<ArrayList<T>> data;
   protected final int squareSizePow2;
   protected long idOfSearch = -9223372036854775806L;
 
@@ -32,7 +32,7 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
 
   @Override
   public void clear() {
-    for (ArrayList<Member> entities : data) {
+    for (ArrayList<T> entities : data) {
       entities.clear();
     }
   }
@@ -44,11 +44,10 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
     int left = Math.max((hb.x >> squareSizePow2) - leftSquares, 0);
     int top = Math.min((hb.y >> squareSizePow2) - bottomSquares, heightSquares - 1);
     int right = Math.min((hb.x + hb.width >> squareSizePow2) - leftSquares, widthSquares - 1);
-    Member m = new Member(in);
 
     for (int y = bottom; y <= top; y++) {
       for (int x = left; x <= right; x++) {
-        data.get(x + y * widthSquares).add(m);
+        data.get(x + y * widthSquares).add(in);
       }
     }
   }
@@ -102,9 +101,9 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
 
     for (int y = bottom; y <= top; y++) {
       for (int x = left; x <= right; x++) {
-        for (Member box : data.get(x + y * widthSquares)) {
+        for (T box : data.get(x + y * widthSquares)) {
           if (box.lastChecked != idOfSearch) {
-            F.collide(box.hitbox);
+            F.collide(box);
             box.lastChecked = idOfSearch;
           }
         }
@@ -129,9 +128,9 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
   public void callForEach(Iterable<? extends Point> area, collideFunction<T> F) {
     idOfSearch++;
     for (Point p : area) {
-      for (Member box : data.get(p.x + p.y * widthSquares)) {
+      for (T box : data.get(p.x + p.y * widthSquares)) {
         if (box.lastChecked != idOfSearch) {
-          F.collide(box.hitbox);
+          F.collide(box);
           box.lastChecked = idOfSearch;
         }
       }
@@ -148,25 +147,15 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
 
     for (int Y = bottom; Y <= top; Y++) {
       for (int X = left; X <= right; X++) {
-        for (Member box : data.get(X + Y * widthSquares)) {
+        for (T box : data.get(X + Y * widthSquares)) {
           if (box.lastChecked != idOfSearch &&
-              Util.distanceSquared(box.hitbox.x - x, box.hitbox.y - y) < Util.square(
-                  box.hitbox.width / 2f + radius)) {
-            F.collide(box.hitbox);
+              Util.distanceSquared(box.x - x, box.y - y) < Util.square(
+                  box.width / 2f + radius)) {
+            F.collide(box);
             box.lastChecked = idOfSearch;
           }
         }
       }
-    }
-  }
-
-  protected class Member {
-
-    T hitbox;
-    long lastChecked = -9223372036854775807L;
-
-    Member(T hb) {
-      hitbox = hb;
     }
   }
 }
