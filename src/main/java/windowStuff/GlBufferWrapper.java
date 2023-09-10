@@ -15,9 +15,9 @@ public class GlBufferWrapper {
 
   private final int id;
   private final int type;
+  private final ByteBuffer buffer;
   private int size;
   private long offset = 0;
-  private final ByteBuffer buffer;
 
   public GlBufferWrapper(int size, int type) {
     this.id = glGenBuffers();

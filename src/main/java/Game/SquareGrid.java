@@ -5,7 +5,6 @@ import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -151,7 +150,8 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
       for (int X = left; X <= right; X++) {
         for (Member box : data.get(X + Y * widthSquares)) {
           if (box.lastChecked != idOfSearch &&
-              Util.distanceSquared(box.hitbox.x - x, box.hitbox.y-y) < Util.square(box.hitbox.width/2f+radius) ) {
+              Util.distanceSquared(box.hitbox.x - x, box.hitbox.y - y) < Util.square(
+                  box.hitbox.width / 2f + radius)) {
             F.collide(box.hitbox);
             box.lastChecked = idOfSearch;
           }

@@ -30,9 +30,9 @@ public final class Game implements UserInputHandler {
   private final Collection<KeyboardDetect> newKeyDetects = new LinkedList<>();
   private final Collection<MouseDetect> mouseDetects = new LinkedList<>();
   private final Collection<MouseDetect> newMouseDetects = new LinkedList<>();
+  private final Log.Timer timer = new Timer();
   private long startTime = System.currentTimeMillis();
   private int ticks = 0;
-  private final Log.Timer timer = new Timer();
 
   private Game() {
     userInputListener = new UserInputListener(this);

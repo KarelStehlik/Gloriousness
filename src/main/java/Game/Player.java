@@ -9,20 +9,18 @@ import general.Data;
 import general.Util;
 import java.util.HashMap;
 import java.util.Map;
-import windowStuff.Camera;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
 
 public class Player extends GameObject implements KeyboardDetect, MouseDetect, TickDetect {
 
   private static final int HEIGHT = 200, WIDTH = 100;
+  private static final float speed = 10;
   final Map<String, Float> stats;
   final Map<String, Float> baseStats;
   private final UserInputListener input;
   private final Sprite sprite;
-  private final float speed = 10;
   private final BulletLauncher bulletLauncher;
-  private final Camera camera;
   protected float health;
   private float vx, vy;
 
@@ -36,18 +34,15 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     sprite.setPosition(960, 540);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
-    camera = world.getBs().getCamera();
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        30, 30, 50, 30, 3, 100);
-    bulletLauncher.addMobCollide(
-        (proj, target) -> target.takeDamage(proj.getPower(), DamageType.PHYSICAL)
-    );
+        30, 30, 50, 30, 3, 100, stats.get("cd"));
     bulletLauncher.addMobCollide(
         (proj, target) -> {
-          world.aoeDamage((int) proj.x, (int) proj.y, (int) proj.getPower(), proj.getPower(), DamageType.TRUE);
-          world.explosionVisual(proj.x,proj.y,proj.getPower(),false,"Explosion-0");
+          world.aoeDamage((int) proj.x, (int) proj.y, (int) proj.getPower(), proj.getPower(),
+              DamageType.TRUE);
+          world.explosionVisual(proj.x, proj.y, proj.getPower(), false, "Explosion2-0");
         }
     );
   }
@@ -66,7 +61,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
         (input.isKeyPressed(GLFW_KEY_D) ? speed : 0) - (input.isKeyPressed(GLFW_KEY_A) ? speed : 0);
     vy =
         (input.isKeyPressed(GLFW_KEY_W) ? speed : 0) - (input.isKeyPressed(GLFW_KEY_S) ? speed : 0);
-    if (vx != 0 && vy != 0) {
+    if (vx != 0 && vy != 0) { // diagonal movement
       vx *= 0.7071067811865475f;
       vy *= 0.7071067811865475f;
     }
@@ -97,9 +92,10 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   @Override
   public void onGameTick(int tick) {
+    bulletLauncher.tickCooldown();
     if (input.isMousePressed(0)) {
       float dist = (float) Math.hypot(input.getX() - x, input.getY() - y);
-      for (int i = 0; i < 1; i++) {
+      while (bulletLauncher.canAttack()) {
         bulletLauncher.attack(Util.get_rotation(input.getX() - x, input.getY() - y)
             + Data.gameMechanicsRng.nextFloat() * 60 - 30);
       }

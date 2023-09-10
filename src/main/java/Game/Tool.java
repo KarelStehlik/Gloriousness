@@ -16,7 +16,6 @@ public abstract class Tool implements MouseDetect, KeyboardDetect, TickDetect {
   @Override
   public void delete() {
     deleted = true;
-    world.currentTool = null;
   }
 
   @Override

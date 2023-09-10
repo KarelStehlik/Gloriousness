@@ -25,11 +25,11 @@ import java.util.List;
 
 public class SuperBatch implements SpriteBatching {
 
+  private static final long vboStaticSize = 1024;
   private final List<Sprite> spritesToAdd = new ArrayList<>(20);
   private final int ebo, vao;
   private final List<Batch> batches = new ArrayList<>(5);
   private final ImageSet images;
-  private static final long vboStaticSize = 1024;
   private final boolean rebufferAllStatic = false;
   private int eboSize = 1024;
   private Camera camera;

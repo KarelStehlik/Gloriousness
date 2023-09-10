@@ -1,6 +1,5 @@
 package Game;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 
 public class GameObject implements Comparable<GameObject> {

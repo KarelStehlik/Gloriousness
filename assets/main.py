@@ -177,6 +177,9 @@ while files or animations:
     # create a new image
     setup = TestSetup()
 
+    # loop through all animations, see if they fit on the image
+    anims = sorted(animations.items(), key=lambda a: a[1].size, reverse=True)
+
     # loop through all standalone textures, see if they fit on the image
     i = 0
     while i < len(files):
@@ -190,9 +193,9 @@ while files or animations:
                 break
         i += 1
 
-    # loop through all animations, see if they fit on the image
-    for key, value in sorted(animations.items(), key=lambda a: a[1].size)[::-1]:
+    for key, value in anims:
         if setup.try_add_animation(value):
             animations.pop(key)
+
     setup.save()
     n_textures += 1

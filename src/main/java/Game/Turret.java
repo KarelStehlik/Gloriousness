@@ -19,7 +19,6 @@ public class Turret extends GameObject implements TickDetect {
   private final Sprite sprite;
   protected float health;
   private float vx, vy;
-  private float remainingCD = 0;
 
   public Turret(World world, int X, int Y, String imageName, BulletLauncher launcher, String type) {
     super(X, Y, WIDTH, HEIGHT, world);
@@ -45,21 +44,18 @@ public class Turret extends GameObject implements TickDetect {
     bulletLauncher.setPower(stats.get("power"));
     bulletLauncher.setSize(stats.get("bulletSize"));
     bulletLauncher.setSpeed(stats.get("speed"));
+    bulletLauncher.setCooldown(stats.get("cd"));
   }
 
   @Override
   public void onGameTick(int tick) {
-    if (remainingCD > 0) {
-      remainingCD -= Game.tickIntervalMillis / 1000f;
-    }
-
-    for (; remainingCD <= 0; remainingCD += stats.get("cd")) {
-      TdMob target = world.getMobsGrid()
+    bulletLauncher.tickCooldown();
+    TdMob target = world.getMobsGrid()
+        .getFirst(new Point((int) x, (int) y), stats.get("range").intValue());
+    while (target != null && bulletLauncher.canAttack()) {
+      bulletLauncher.attack(Util.get_rotation(target.x - x, target.y - y));
+      target = world.getMobsGrid()
           .getFirst(new Point((int) x, (int) y), stats.get("range").intValue());
-      if (target != null) {
-        bulletLauncher.attack(
-            Util.get_rotation(target.x - x, target.y - y));
-      }
     }
   }
 

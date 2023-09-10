@@ -1,15 +1,8 @@
 package Game;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-
 import general.Constants;
 import general.Data;
 import general.Log;
-import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +12,7 @@ import org.joml.Vector2f;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
 import windowStuff.NoSprite;
+import windowStuff.SingleAnimationSprite;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
 import windowStuff.Text;
@@ -38,7 +32,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Text resourceTracker;
   private final MobSpawner mobSpawner = new MobSpawner();
   private final TurretGenerator[] availableTurrets;
-  public Tool currentTool = null;
+  private final Log.Timer t = new Log.Timer();
+  private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 1234567890;
@@ -79,29 +74,31 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return;
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
-      explosionVisual(x,y, 100, true, "Explosion-0");
+      explosionVisual(x, y, 100, true, "Explosion1-0");
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
         0, 1050, 10, 40, bs);
+
+    currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
+    currentTool.delete();
   }
 
-  public void explosionVisual(float x, float y, float size, boolean shockwave, String image){
+  public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
     Game game = Game.get();
-    if(shockwave) {
+    if (shockwave) {
       game.addTickable(
           new Animation(
               new Sprite("Shockwave", x, y, size, size, 3, "basic").addToBs(bs).setOpacity(0.7f), 3
-          ).setLinearScaling(new Vector2f(size/3, size/3)).setOpacityScaling(-0.01f)
+          ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
       );
     }
-    game.addTickable(
-        new Animation(image, bs, .7f, x, y, size*5, size*5, 3).setRotation(Data.unstableRng.nextFloat(360))
-    );
+    Sprite s = new SingleAnimationSprite(image, .7f, x, y, size * 5, size * 5, 4, "basic").
+        addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
   }
 
-  public void aoeDamage(int x, int y, int size, float damage, DamageType type){
-    mobsGrid.callForEachCircle(x, y, size, m ->m.takeDamage(damage, type));
+  public void aoeDamage(int x, int y, int size, float damage, DamageType type) {
+    mobsGrid.callForEachCircle(x, y, size, m -> m.takeDamage(damage, type));
   }
 
   public int getHealth() {
@@ -125,7 +122,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     return projectilesList;
   }
 
-
   protected void endGame() {
     System.out.println("gjghjghjg");
   }
@@ -136,33 +132,31 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-    if (currentTool != null) {
+    if (!currentTool.WasDeleted()) {
       currentTool.onKeyPress(key, action, mods);
     }
   }
 
   @Override
   public void onMouseButton(int button, double x, double y, int action, int mods) {
-    if (currentTool != null) {
+    if (!currentTool.WasDeleted()) {
       currentTool.onMouseButton(button, x, y, action, mods);
     }
   }
 
   @Override
   public void onScroll(double scroll) {
-    if (currentTool != null) {
+    if (!currentTool.WasDeleted()) {
       currentTool.onScroll(scroll);
     }
   }
 
   @Override
   public void onMouseMove(float newX, float newY) {
-    if (currentTool != null) {
+    if (!currentTool.WasDeleted()) {
       currentTool.onMouseMove(newX, newY);
     }
   }
-
-  private final Log.Timer t = new Log.Timer();
 
   @Override
   public void onGameTick(int tick) {
@@ -220,7 +214,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 //    Log.write(t.elapsedNano(true));
 
-   // list.removeIf(T::WasDeleted);
+    // list.removeIf(T::WasDeleted);
 
 //    Log.write(t.elapsedNano(true));
     //for(int i=0;i<list.size(); i++){
@@ -250,6 +244,17 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   public void setMoney(double money) {
     this.money = money;
     resourceTracker.setText("Lives: " + health + "\nCash: " + (int) getMoney());
+  }
+
+  public Tool getCurrentTool() {
+    return currentTool;
+  }
+
+  public void setCurrentTool(Tool currentTool) {
+    if (this.currentTool != null) {
+      this.currentTool.delete();
+    }
+    this.currentTool = currentTool;
   }
 
   private class MobSpawner {

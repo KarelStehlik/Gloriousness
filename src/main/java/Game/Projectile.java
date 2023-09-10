@@ -1,12 +1,9 @@
 package Game;
 
-import general.Log;
 import general.Util;
-import java.awt.Point;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.TreeSet;
 import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
@@ -38,7 +35,7 @@ public class Projectile extends GameObject implements TickDetect {
     vx = Util.cos(rotation) * speed;
     vy = Util.sin(rotation) * speed;
     this.size = size;
-    this.duration = duration*1024;
+    this.duration = duration * 1024;
     this.rotation = rotation;
     alreadyHitMobs = new HashSet<>(pierce);
     alreadyHitProjectiles = new HashSet<>(pierce);
@@ -112,10 +109,11 @@ public class Projectile extends GameObject implements TickDetect {
 
   private void handleCollisions() {
     if (!mobCollides.isEmpty()) {
-      world.getMobsGrid().callForEachCircle((int) x, (int) y, (int) (size/2), this::collide);
+      world.getMobsGrid().callForEachCircle((int) x, (int) y, (int) (size / 2), this::collide);
     }
     if (!projectileCollides.isEmpty()) {
-      world.getProjectilesGrid().callForEachCircle((int) x, (int) y, (int) (size/2), this::collide);
+      world.getProjectilesGrid()
+          .callForEachCircle((int) x, (int) y, (int) (size / 2), this::collide);
     }
     if (!playerCollides.isEmpty()) {
       collide(world.getPlayer());

@@ -18,6 +18,7 @@ public class Sprite implements AbstractSprite {
   protected boolean deleted = false;
   protected boolean mustBeRebatched = false;
   protected boolean rebufferStatic = true;
+  protected float opacity = 1;
   private boolean hidden = false;
   private float x;
   private float y;
@@ -28,17 +29,6 @@ public class Sprite implements AbstractSprite {
   private int imageId;
   private Animation animation;
   private Short[] staticData;
-
-  public float getOpacity() {
-    return opacity;
-  }
-
-  public Sprite setOpacity(float opacity) {
-    this.opacity = opacity;
-    return this;
-  }
-
-  protected float opacity=1;
 
   public Sprite(String imageName, int layer) {
     this(imageName, 0, 0, 100, 100, layer, "basic");
@@ -75,6 +65,15 @@ public class Sprite implements AbstractSprite {
     setImage(imageName);
     this.animation = () -> {
     };
+  }
+
+  public float getOpacity() {
+    return opacity;
+  }
+
+  public Sprite setOpacity(float opacity) {
+    this.opacity = opacity;
+    return this;
   }
 
   @Override

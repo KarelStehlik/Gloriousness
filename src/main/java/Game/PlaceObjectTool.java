@@ -1,13 +1,13 @@
 package Game;
 
-import windowStuff.Sprite;
+import windowStuff.AbstractSprite;
 
 public class PlaceObjectTool extends Tool {
 
   private final onClick click;
-  private final Sprite sprite;
+  private final AbstractSprite sprite;
 
-  public PlaceObjectTool(World world, Sprite sprite, onClick onclick) {
+  public PlaceObjectTool(World world, AbstractSprite sprite, onClick onclick) {
     super(world);
     click = onclick;
     this.sprite = sprite;

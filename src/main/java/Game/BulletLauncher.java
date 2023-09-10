@@ -4,7 +4,6 @@ import Game.Projectile.OnCollideComponent;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 public class BulletLauncher {
 
@@ -22,11 +21,13 @@ public class BulletLauncher {
   private float power;
   private float duration;
   private float x, y;
+  private float cooldown;
+  private float remainingCooldown;
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
       int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
-      int power) {
+      int power, float cooldownMs) {
     this.world = world;
     this.image = projectileImage;
     this.speed = projectileSpeed;
@@ -38,6 +39,8 @@ public class BulletLauncher {
     this.duration = duration;
     this.x = x;
     this.y = y;
+    this.cooldown = cooldownMs;
+    this.remainingCooldown = cooldownMs;
   }
 
   public BulletLauncher(BulletLauncher og) {
@@ -52,13 +55,28 @@ public class BulletLauncher {
     duration = og.duration;
     x = og.x;
     y = og.y;
+    cooldown = og.cooldown;
     playerCollides.addAll(og.playerCollides);
     mobCollides.addAll(og.mobCollides);
     projectileCollides.addAll(og.projectileCollides);
   }
 
+  public void tickCooldown() {
+    if (remainingCooldown > 0) {
+      remainingCooldown -= Game.tickIntervalMillis;
+    }
+  }
+
+  public boolean canAttack() {
+    return remainingCooldown <= 0;
+  }
+
   public void setSpeed(float speed) {
     this.speed = speed;
+  }
+
+  public void setCooldown(float cooldown) {
+    this.cooldown = cooldown;
   }
 
   public void setPierce(int pierce) {
@@ -109,6 +127,7 @@ public class BulletLauncher {
     for (var collide : projectileCollides) {
       p.addProjectileCollide(collide);
     }
+    remainingCooldown += cooldown;
   }
 
   public void attack(float targetX, float targetY) {

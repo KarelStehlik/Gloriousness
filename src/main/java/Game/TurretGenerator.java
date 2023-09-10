@@ -18,7 +18,7 @@ public class TurretGenerator {
     this.image = imageName;
     this.world = world;
     this.templateLauncher = new BulletLauncher(world, "Egg", 0, 0, 0,
-        50, 50, 0, 50, 0, 0);
+        50, 50, 0, 50, 0, 0, 0);
     this.cost = cost;
   }
 
@@ -52,14 +52,12 @@ public class TurretGenerator {
   }
 
   public void select() {
-    if (world.currentTool != null) {
-      world.currentTool.delete();
-    }
-    world.currentTool =
+    world.setCurrentTool(
         new PlaceObjectTool(world,
             new Sprite("image", Turret.WIDTH, Turret.HEIGHT, 10, world.getBs()).setColors(
                 Util.getBaseColors(.6f)),
-            this::generate);
+            this::generate)
+    );
   }
 
   public Button makeButton(int layer) {

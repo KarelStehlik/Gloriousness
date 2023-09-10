@@ -33,5 +33,6 @@ out vec4 color;
 
 void main(){
     vec4 tex = texture(sampler, texCoords);
-    color = fColor * glowOpacity * tex[3] + tex * (1-glowOpacity);
+    color = fColor * glowOpacity + tex * (1-glowOpacity);
+    color[3]=fColor[3]*tex[3];
 }
