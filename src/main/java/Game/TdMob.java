@@ -15,13 +15,15 @@ import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
+  private static final class statIds{
+    static final int health = 1;
+  }
+
   public final List<StatusEffect> effects = new LinkedList<>();
   protected final AbstractSprite sprite;
   protected final float rotation;
   protected final SquareGrid<TdMob> grid;
-  final Map<String, Float> stats;
-  final Map<String, Float> baseStats;
-  final String name;
+  protected final String name;
   private final Point offset;
   protected float health;
   protected boolean exists;
@@ -33,9 +35,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-            Constants.MobSpread), 150, 150, world);
-    baseStats = Data.getEntityStats("mob", name);
-    stats = new HashMap<>(baseStats);
+            Constants.MobSpread), 150, 150, world, Data.getEntityStats("mob", name));
     health = stats.get("health");
     this.name = name;
     offset = new Point((int) x - world.getMapData().get(0).x,
@@ -61,6 +61,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   private void updateStats() {
     float hpPart = health / stats.get("health");
+    stats.clear();
     stats.putAll(baseStats);
     for (StatusEffect eff : effects) {
       eff.updateFunc.update(this);
@@ -171,7 +172,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
     @FunctionalInterface
     public interface UpdateFunc {
-
       void update(TdMob mob);
     }
   }

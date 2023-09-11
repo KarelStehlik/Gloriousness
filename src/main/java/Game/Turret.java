@@ -13,18 +13,14 @@ public class Turret extends GameObject implements TickDetect {
   public static final int HEIGHT = 100, WIDTH = 100;
   public final String type;
   protected final BulletLauncher bulletLauncher;
-  final Map<String, Float> stats;
-  final Map<String, Float> baseStats;
   private final UserInputListener input;
   private final Sprite sprite;
   protected float health;
   private float vx, vy;
 
   public Turret(World world, int X, int Y, String imageName, BulletLauncher launcher, String type) {
-    super(X, Y, WIDTH, HEIGHT, world);
+    super(X, Y, WIDTH, HEIGHT, world, Data.getEntityStats("turret", type));
     this.type = type;
-    baseStats = Data.getEntityStats("turret", type);
-    stats = new HashMap<>(baseStats);
     input = Game.get().getUserInputListener();
     sprite = new Sprite(imageName, WIDTH, HEIGHT, 2);
     sprite.setPosition(x, y);

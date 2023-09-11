@@ -26,7 +26,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power) {
-    super(X, Y, (int) size, (int) size, world);
+    super(X, Y, (int) size, (int) size, world, null);
     sprite = new Sprite(image, X, Y, W, H, 1, "basic");
     sprite.setRotation(rotation);
     world.getBs().addSprite(sprite);

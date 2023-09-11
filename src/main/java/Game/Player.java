@@ -16,8 +16,6 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
-  final Map<String, Float> stats;
-  final Map<String, Float> baseStats;
   private final UserInputListener input;
   private final Sprite sprite;
   private final BulletLauncher bulletLauncher;
@@ -25,9 +23,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   private float vx, vy;
 
   public Player(World world) {
-    super(0, 0, WIDTH, HEIGHT, world);
-    baseStats = Data.getEntityStats("mob", "Player");
-    stats = new HashMap<>(baseStats);
+    super(0, 0, WIDTH, HEIGHT, world, Data.getEntityStats("mob", "Player"));
     health = stats.get("health");
     input = Game.get().getUserInputListener();
     sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 2);

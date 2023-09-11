@@ -3,8 +3,8 @@ package Game;
 import Game.TdMob.TrackProgress;
 import general.Util;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class SquareGridMobs extends SquareGrid<TdMob> {
 
@@ -13,7 +13,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
   }
 
   public void filled() {
-    for (List<TdMob> l : data) {
+    for (ArrayList<TdMob> l : data) {
       l.sort(Comparator.comparing((TdMob m) -> m.getProgress()).reversed());
     }
   }

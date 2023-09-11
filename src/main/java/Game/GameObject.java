@@ -1,6 +1,8 @@
 package Game;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameObject implements Comparable<GameObject> {
 
@@ -12,8 +14,10 @@ public class GameObject implements Comparable<GameObject> {
   protected boolean canCollide = true;
   protected World world;
   public long lastChecked = -9223372036854775807L;
+  public final Map<String, Float> stats;
+  protected final Map<String, Float> baseStats;
 
-  protected GameObject(float X, float Y, int W, int H, World w) {
+  protected GameObject(float X, float Y, int W, int H, World w, Map<String, Float> stats) {
     x = X;
     y = Y;
     width = W;
@@ -22,6 +26,8 @@ public class GameObject implements Comparable<GameObject> {
     hitbox = new Rectangle((int) (x - width / 2), (int) (y + height / 2), width, height);
     id = idGen;
     idGen++;
+    baseStats=stats;
+    this.stats= baseStats==null? null : new HashMap<>(baseStats);
   }
 
   Rectangle getHitbox() {
