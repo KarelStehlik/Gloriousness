@@ -33,6 +33,7 @@ public class BuffHandler<T extends GameObject> {
         eff.trigger(target);
       }
     }
+    target.onStatsUpdate();
   }
 
   public void add(Buff<T> e) {

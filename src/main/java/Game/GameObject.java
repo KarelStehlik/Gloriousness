@@ -33,16 +33,18 @@ public class GameObject {
     return hitbox;
   }
 
-  void move(float _x, float _y) {
+  public void move(float _x, float _y) {
     x = _x;
     y = _y;
     hitbox.setLocation((int) (x - width / 2), (int) (y + height / 2));
   }
 
-  void setSize(int _width, int _height) {
+  public void setSize(int _width, int _height) {
     width = _width;
     height = _height;
     hitbox.setSize(width, height);
     hitbox.setLocation((int) (x - width / 2), (int) (y + height / 2));
   }
+
+  public void onStatsUpdate(){}
 }

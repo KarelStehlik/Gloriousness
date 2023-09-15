@@ -2,5 +2,4 @@
 .gradle/
 build/
 *.bin
-.BUILD.bat
 build_log.txt
