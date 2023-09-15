@@ -18,7 +18,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected final String name;
   private final BuffHandler<TdMob> buffHandler;
   private final Point offset;
-  protected float health;
+  protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
   private int nextMapPoint = 1;
@@ -29,7 +29,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread), 150, 150, world, Data.getEntityStats("mob", name));
-    health = stats.get("health");
+    healthPart = 1;
     this.name = name;
     offset = new Point((int) x - world.getMapData().get(0).x,
         (int) y - world.getMapData().get(0).y);
@@ -57,8 +57,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   public void takeDamage(float amount, DamageType type) {
     float resistance = stats.getOrDefault(type.resistanceName, 1f);
-    health -= amount * resistance;
-    if (health <= 0 && exists) {
+    healthPart -= amount * resistance / stats.get("health");
+    if (healthPart <= 0 && exists) {
       world.setMoney(world.getMoney() + stats.get("value"));
       onDeath();
       delete();

@@ -25,24 +25,22 @@ import java.util.List;
 
 public class SuperBatch implements SpriteBatching {
 
-  private static final long vboStaticSize = 1024;
-  private final List<Sprite> spritesToAdd = new ArrayList<>(20);
+  private final List<Sprite> spritesToAdd = new ArrayList<>(1);
   private final int ebo, vao;
-  private final List<Batch> batches = new ArrayList<>(5);
+  private final List<Batch> batches = new ArrayList<>(1);
   private final ImageSet images;
-  private final boolean rebufferAllStatic = false;
-  private int eboSize = 1024;
+  private int eboSize = 1042;
   private Camera camera;
   private boolean visible = true;
-  private int[] elements;
 
   public SuperBatch() {
     this.images = Graphics.getLoadedImages();
+
+    ebo = glGenBuffers();
     vao = glGenVertexArrays();
     glBindVertexArray(vao);
 
-    ebo = glGenBuffers();
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    growEbo();
 
     {
       int positionCount = 2;
@@ -71,7 +69,7 @@ public class SuperBatch implements SpriteBatching {
 
   private void growEbo() {
     eboSize = (int) (eboSize * 1.5);
-    elements = new int[6 * eboSize];
+    int[] elements = new int[6 * eboSize];
     for (int i = 0; i < eboSize; i++) {
       elements[6 * i] = 2 + 4 * i;
       elements[6 * i + 1] = 1 + 4 * i;
@@ -119,19 +117,21 @@ public class SuperBatch implements SpriteBatching {
       shader.useCamera(camera);
     }
 
-    for (Batch b : batches) {
-      var spriterator = b.sprites.iterator();
-      while (spriterator.hasNext()) {
-        final Sprite s = spriterator.next();
-        if (s.mustBeRebatched) {
-          spriterator.remove();
-          spritesToAdd.add(s);
+    synchronized (spritesToAdd) {
+      for (Batch b : batches) {
+        var spriterator = b.sprites.iterator();
+        while (spriterator.hasNext()) {
+          final Sprite s = spriterator.next();
+          if (s.mustBeRebatched) {
+            spriterator.remove();
+            spritesToAdd.add(s);
+          }
         }
       }
-    }
 
-    synchronized (spritesToAdd) {
-      spritesToAdd.forEach(this::_addSprite);
+      for (Sprite sprite : spritesToAdd) {
+        _addSprite(sprite);
+      }
       spritesToAdd.clear();
     }
 
@@ -181,11 +181,6 @@ public class SuperBatch implements SpriteBatching {
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
       drawStart = drawEnd;
-
-      //int dt = Log.elapsed(true);
-      //Log.conditional("graphics tick: "+ dt +", entities: "+spriteCount, dt>10);
-      //Log.setTimer();
-      //Log.write(Log.elapsed(true)+"ms, objects="+spriteCount);
     }
   }
 

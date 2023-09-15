@@ -262,7 +262,6 @@ public class Sprite implements AbstractSprite {
       vertices[off + 6] = texCoords[2 * i];
       vertices[off + 7] = texCoords[2 * i + 1];
     }
-    // System.out.println(Arrays.toString(vertices));
     buffer.subDataAdvance(vertices);
     return 0;
   }

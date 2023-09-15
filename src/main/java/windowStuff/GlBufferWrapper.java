@@ -2,8 +2,9 @@ package windowStuff;
 
 import static org.lwjgl.opengl.GL15C.glBindBuffer;
 import static org.lwjgl.opengl.GL15C.glBufferData;
-import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import static org.lwjgl.opengl.GL15C.glGenBuffers;
+import static org.lwjgl.opengl.GL15C.nglBufferSubData;
+import static org.lwjgl.system.MemoryUtil.memAddress;
 
 import general.Constants;
 import java.nio.ByteBuffer;
@@ -24,7 +25,6 @@ public class GlBufferWrapper {
     this.size = size;
     this.type = type;
     buffer = BufferUtils.createByteBuffer(CPU_BUFFER_SIZE);
-    //buffer = ByteBuffer.allocateDirect(CPU_BUFFER_SIZE);
   }
 
   public GlBufferWrapper(int type) {
@@ -42,7 +42,7 @@ public class GlBufferWrapper {
   private void passBuffer() {
     bind();
     buffer.rewind();
-    glBufferSubData(type, offset, buffer);
+    nglBufferSubData(type, offset, Math.min(buffer.remaining(), size - offset), memAddress(buffer));
     offset += CPU_BUFFER_SIZE;
   }
 

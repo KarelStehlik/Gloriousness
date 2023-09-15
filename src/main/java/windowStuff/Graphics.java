@@ -3,10 +3,8 @@ package windowStuff;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_RENDERER;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 
 import general.Constants;
@@ -35,7 +33,6 @@ public final class Graphics {
     System.out.println(Constants.screenSize); // this is needed to load Constants
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    System.out.println(glGetString(GL_RENDERER));
   }
 
   public void addSpriteBatching(SpriteBatching bs) {

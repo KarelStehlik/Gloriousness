@@ -161,7 +161,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public void onGameTick(int tick) {
-    this.tick = tick;
+    this.tick++;
     tickEntities(mobsGrid, mobsList);
 
     mobsGrid.filled();
@@ -237,7 +237,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private void run(int tickId) {
-      mobsToSpawn += tickId / 10f;
+      mobsToSpawn += tickId / 1000f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);
