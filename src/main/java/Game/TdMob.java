@@ -12,17 +12,18 @@ import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  private final BuffHandler<TdMob> buffHandler;
   protected final AbstractSprite sprite;
   protected final float rotation;
   protected final SquareGrid<TdMob> grid;
   protected final String name;
+  private final BuffHandler<TdMob> buffHandler;
   private final Point offset;
   protected float health;
   protected boolean exists;
   protected float vx, vy;
   private int nextMapPoint = 1;
   private TrackProgress progress = new TrackProgress(0, 0);
+
   public TdMob(World world, String name, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
@@ -43,14 +44,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
     //sprite = new NoSprite();
     sprite.addToBs(world.getBs());
     exists = true;
-    buffHandler= new BuffHandler<>(this);
+    buffHandler = new BuffHandler<>(this);
   }
 
   public TrackProgress getProgress() {
     return progress;
   }
 
-  public void addBuff(Buff<TdMob> eff){
+  public void addBuff(Buff<TdMob> eff) {
     buffHandler.add(eff);
   }
 

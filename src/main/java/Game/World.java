@@ -190,7 +190,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       T e = iterator.next();
       if (e.WasDeleted()) {
         iterator.remove();
-      }else{
+      } else {
         e.onGameTick(tick);
       }
     }
@@ -232,23 +232,23 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private float mobsToSpawn = 0;
 
+    private static float scaling(int tickId) {
+      return 1 + (Math.max(tickId, 10) - 10) / 100f;
+    }
+
     private void run(int tickId) {
       mobsToSpawn += tickId / 10f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);
         e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
-            m->{
-            m.stats.put("health", m.stats.get("health") * scaling(tickId));
-            m.stats.put("speed", m.stats.get("speed") * (float) Math.pow(scaling(tickId), 0.3));
+            m -> {
+              m.stats.put("health", m.stats.get("health") * scaling(tickId));
+              m.stats.put("speed", m.stats.get("speed") * (float) Math.pow(scaling(tickId), 0.3));
             }
-            ));
+        ));
         addEnemy(e);
       }
-    }
-
-    private static float scaling(int tickId) {
-      return 1 + (Math.max(tickId, 10) - 10) / 100f;
     }
   }
 }
