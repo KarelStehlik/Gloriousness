@@ -19,7 +19,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   private final BulletLauncher bulletLauncher;
   protected double healthPart;
   private float vx, vy;
-  
+
   public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world, Data.getEntityStats("mob", "Player"));
     healthPart = 1;
