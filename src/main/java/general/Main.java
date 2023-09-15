@@ -1,6 +1,7 @@
-package windowStuff;
+package general;
 
 import org.lwjgl.Version;
+import windowStuff.Window;
 
 public final class Main {
 

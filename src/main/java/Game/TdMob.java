@@ -1,25 +1,18 @@
 package Game;
 
+import Game.Buffs.Buff;
+import Game.Buffs.BuffHandler;
 import general.Constants;
 import general.Data;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import windowStuff.AbstractSprite;
 import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  private static final class statIds{
-    static final int health = 1;
-  }
-
-  public final List<StatusEffect> effects = new LinkedList<>();
+  private final BuffHandler<TdMob> buffHandler;
   protected final AbstractSprite sprite;
   protected final float rotation;
   protected final SquareGrid<TdMob> grid;
@@ -30,7 +23,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected float vx, vy;
   private int nextMapPoint = 1;
   private TrackProgress progress = new TrackProgress(0, 0);
-
   public TdMob(World world, String name, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
@@ -51,26 +43,15 @@ public abstract class TdMob extends GameObject implements TickDetect {
     //sprite = new NoSprite();
     sprite.addToBs(world.getBs());
     exists = true;
-  }
-
-  public void addStatusEffect(StatusEffect e) {
-    effects.add(e);
-    effects.sort(Comparator.comparingInt(eff -> eff.priority));
-    updateStats();
-  }
-
-  private void updateStats() {
-    float hpPart = health / stats.get("health");
-    stats.clear();
-    stats.putAll(baseStats);
-    for (StatusEffect eff : effects) {
-      eff.updateFunc.update(this);
-    }
-    health = stats.get("health") * hpPart;
+    buffHandler= new BuffHandler<>(this);
   }
 
   public TrackProgress getProgress() {
     return progress;
+  }
+
+  public void addBuff(Buff<TdMob> eff){
+    buffHandler.add(eff);
   }
 
   public void takeDamage(float amount, DamageType type) {
@@ -88,16 +69,19 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   @Override
   public void onGameTick(int tick) {
+    buffHandler.tick();
     runAI();
     grid.add(this);
     miscTickActions();
     sprite.setPosition(x, y);
+
   }
 
   @Override
   public void delete() {
     sprite.delete();
     exists = false;
+    buffHandler.delete();
   }
 
   @Override
@@ -136,44 +120,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
     world.changeHealth(-1);
   }
 
-  private void collide(TdMob other) {
-    if (!other.canCollide) {
-      return;
-    }
-    float distanceSq = (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
-    int minDistance = (int) Util.square(stats.get("size") + other.stats.get("size"));
-    if (distanceSq < minDistance) {
-      float dir = Util.get_rotation(x - other.x, y - other.y);
-      float overlap =
-          ((stats.get("size") + other.stats.get("size")) - (float) Math.sqrt(distanceSq)) / 2;
-      float sin = Util.sin(dir), cos = Util.cos(dir);
-      x += overlap * cos;
-      y += overlap * sin;
-      other.x -= overlap * cos;
-      other.y -= overlap * sin;
-    }
-  }
-
   @Override
   public Rectangle getHitbox() {
     return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
         height);
-  }
-
-  public static class StatusEffect {
-
-    public final int priority;
-    public final UpdateFunc updateFunc;
-
-    public StatusEffect(int prio, UpdateFunc f) {
-      priority = prio;
-      updateFunc = f;
-    }
-
-    @FunctionalInterface
-    public interface UpdateFunc {
-      void update(TdMob mob);
-    }
   }
 
   public static class TrackProgress implements Comparable<TrackProgress> {

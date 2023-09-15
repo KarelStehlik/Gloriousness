@@ -4,18 +4,17 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameObject implements Comparable<GameObject> {
+public class GameObject {
 
   private static int idGen = Integer.MIN_VALUE;
   public final int id;
+  public final Map<String, Float> stats;
+  public final Map<String, Float> baseStats;
   private final Rectangle hitbox;
+  public long lastChecked = -9223372036854775807L;
   protected float x, y;
   protected int width, height;
-  protected boolean canCollide = true;
   protected World world;
-  public long lastChecked = -9223372036854775807L;
-  public final Map<String, Float> stats;
-  protected final Map<String, Float> baseStats;
 
   protected GameObject(float X, float Y, int W, int H, World w, Map<String, Float> stats) {
     x = X;
@@ -26,8 +25,8 @@ public class GameObject implements Comparable<GameObject> {
     hitbox = new Rectangle((int) (x - width / 2), (int) (y + height / 2), width, height);
     id = idGen;
     idGen++;
-    baseStats=stats;
-    this.stats= baseStats==null? null : new HashMap<>(baseStats);
+    baseStats = stats;
+    this.stats = baseStats == null ? null : new HashMap<>(baseStats);
   }
 
   Rectangle getHitbox() {
@@ -45,10 +44,5 @@ public class GameObject implements Comparable<GameObject> {
     height = _height;
     hitbox.setSize(width, height);
     hitbox.setLocation((int) (x - width / 2), (int) (y + height / 2));
-  }
-
-  @Override
-  public int compareTo(GameObject o) {
-    return id - o.id;
   }
 }

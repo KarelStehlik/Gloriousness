@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Buffs.Buff;
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -31,7 +32,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final List<Point> mapData;
   private final Text resourceTracker;
   private final MobSpawner mobSpawner = new MobSpawner();
-  private final TurretGenerator[] availableTurrets;
   private final Log.Timer t = new Log.Timer();
   private Tool currentTool;
   private int tick = 0;
@@ -58,7 +58,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator test = new TurretGenerator(this, "gun", "ph", 100).
         addOnMobCollide((proj, mob) -> mob.takeDamage(proj.getPower(), DamageType.PHYSICAL));
-    availableTurrets = new TurretGenerator[]{test, test, test, test, test, test, test, test, test,
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, test, test, test, test,
+        test, test, test, test,
         test,
         test, test, test, test, test, test, test, test, test, test, test, test, test, test,};
 
@@ -123,7 +124,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   }
 
   protected void endGame() {
-    System.out.println("gjghjghjg");
+    Log.write("gjghjghjg");
   }
 
   public void addEnemy(TdMob e) {
@@ -160,27 +161,15 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public void onGameTick(int tick) {
-    //t.elapsed(true);
-    //Log.conditional("\n", tick%60==0);
-    //Log.conditional(t.elapsedNano(true), tick%60==0);
-
     this.tick = tick;
     tickEntities(mobsGrid, mobsList);
 
-    //Log.conditional(t.elapsedNano(true), tick%60==0);
-
     mobsGrid.filled();
-
-    //Log.conditional(t.elapsedNano(true), tick%60==0);
 
     tickEntities(projectilesGrid, projectilesList);
 
-    //Log.conditional(t.elapsedNano(true), tick%60==0);
-
     player.onGameTick(tick);
     mobSpawner.run(tick);
-
-    //Log.conditional(t.elapsedNano(true), tick%60==0);
   }
 
   @Override
@@ -195,34 +184,16 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   private <T extends GameObject & TickDetect> void tickEntities(SpacePartitioning<T> grid,
       List<T> list) {
-
-//    Log.write('\n');
-//    Log.write(list.size());
-//    t.elapsed(true);
-
     grid.clear();
-
-//    Log.write(t.elapsedNano(true));
 
     for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
       T e = iterator.next();
-      e.onGameTick(tick);
-
       if (e.WasDeleted()) {
         iterator.remove();
+      }else{
+        e.onGameTick(tick);
       }
     }
-//    Log.write(t.elapsedNano(true));
-
-    // list.removeIf(T::WasDeleted);
-
-//    Log.write(t.elapsedNano(true));
-    //for(int i=0;i<list.size(); i++){
-    //  if(list.get(i).WasDeleted()){
-    //    list.remove(i);
-    //    i-=1;
-    //  }
-    //}
   }
 
   SpriteBatching getBs() {
@@ -265,16 +236,18 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       mobsToSpawn += tickId / 10f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
-        BasicMob e = new BasicMob(World.this);
-        e.addStatusEffect(new TdMob.StatusEffect(0, m -> {
-          m.stats.put("health", m.stats.get("health") * scaling(tickId));
-          m.stats.put("speed", m.stats.get("speed") * (float) Math.pow(scaling(tickId), 0.3));
-        }));
+        TdMob e = new BasicMob(World.this);
+        e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
+            m->{
+            m.stats.put("health", m.stats.get("health") * scaling(tickId));
+            m.stats.put("speed", m.stats.get("speed") * (float) Math.pow(scaling(tickId), 0.3));
+            }
+            ));
         addEnemy(e);
       }
     }
 
-    private float scaling(int tickId) {
+    private static float scaling(int tickId) {
       return 1 + (Math.max(tickId, 10) - 10) / 100f;
     }
   }

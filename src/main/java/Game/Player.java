@@ -7,8 +7,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 import general.Data;
 import general.Util;
-import java.util.HashMap;
-import java.util.Map;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
 

@@ -3,17 +3,13 @@ package Game;
 import general.Data;
 import general.Util;
 import java.awt.Point;
-import java.util.HashMap;
-import java.util.Map;
 import windowStuff.Sprite;
-import windowStuff.UserInputListener;
 
 public class Turret extends GameObject implements TickDetect {
 
   public static final int HEIGHT = 100, WIDTH = 100;
   public final String type;
   protected final BulletLauncher bulletLauncher;
-  private final UserInputListener input;
   private final Sprite sprite;
   protected float health;
   private float vx, vy;
@@ -21,7 +17,6 @@ public class Turret extends GameObject implements TickDetect {
   public Turret(World world, int X, int Y, String imageName, BulletLauncher launcher, String type) {
     super(X, Y, WIDTH, HEIGHT, world, Data.getEntityStats("turret", type));
     this.type = type;
-    input = Game.get().getUserInputListener();
     sprite = new Sprite(imageName, WIDTH, HEIGHT, 2);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
