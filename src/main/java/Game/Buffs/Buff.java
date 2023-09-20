@@ -47,7 +47,7 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
   }
 
   @Override
-  public int compareTo(Buff<T> o) {
+  public int compareTo(Buff o) {
     return priority - o.priority;
   }
 
@@ -55,6 +55,7 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
   public boolean equals(Object o) {
     return o instanceof Buff && compareTo((Buff) o) == 0;
   }
+
 
   @FunctionalInterface
   public interface Modifier<T> {

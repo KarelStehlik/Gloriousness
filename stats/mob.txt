@@ -1,3 +1,2 @@
-None|size=10.0|speed=10|health=100
-Basic|size=20.0|speed=5|health=100|value=1
+BasicMob|size=20.0|speed=5|health=100|value=1
 Player|speed=1|health=100|cd=5|projSize=10|projSpeed=30|projPierce=100|projDuration=3|projPower=100

@@ -22,8 +22,7 @@ public class BuffHandler<T extends GameObject> {
   }
 
   public void updateStats() {
-    target.stats.clear();
-    target.stats.putAll(target.baseStats);
+    target.clearStats();
     for (Iterator<Buff<T>> iterator = buffs.get(Buff.TRIGGER_ON_UPDATE).iterator();
         iterator.hasNext(); ) {
       Buff<T> eff = iterator.next();

@@ -9,12 +9,12 @@ public class TurretGenerator {
   private static final float COST_SCALING = 1.2f;
   World world;
   BulletLauncher templateLauncher;
-  String type;
   String image;
   float cost;
+  Place type;
 
-  public TurretGenerator(World world, String type, String imageName, float cost) {
-    this.type = type;
+  public TurretGenerator(World world, Place placeFunction, String imageName, float cost) {
+    this.type = placeFunction;
     this.image = imageName;
     this.world = world;
     this.templateLauncher = new BulletLauncher(world, "Egg", 0, 0, 0,
@@ -47,7 +47,7 @@ public class TurretGenerator {
     }
     world.setMoney(world.getMoney() - cost);
     cost *= COST_SCALING;
-    Turret t = new Turret(world, x, y, image, new BulletLauncher(templateLauncher), type);
+    type.place(x, y, new BulletLauncher(templateLauncher));
     return true;
   }
 
@@ -67,5 +67,11 @@ public class TurretGenerator {
             this.select();
           }
         }, () -> type + ": cost= " + (int) cost);
+  }
+
+  @FunctionalInterface
+  interface Place {
+
+    void place(int x, int y, BulletLauncher l);
   }
 }

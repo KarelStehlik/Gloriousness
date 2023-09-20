@@ -56,12 +56,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
-    TurretGenerator test = new TurretGenerator(this, "gun", "ph", 100).
+    TurretGenerator test = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l),
+        "ph", 100).
         addOnMobCollide((proj, mob) -> mob.takeDamage(proj.getPower(), DamageType.PHYSICAL));
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, test, test, test, test,
-        test, test, test, test,
-        test,
-        test, test, test, test, test, test, test, test, test, test, test, test, test, test,};
+        test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+        test, test, test, test, test,};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton(5)).toArray(Button[]::new),
@@ -196,11 +196,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
   }
 
-  SpriteBatching getBs() {
+  public SpriteBatching getBs() {
     return bs;
   }
 
-  SquareGridMobs getMobsGrid() {
+  public SquareGridMobs getMobsGrid() {
     return mobsGrid;
   }
 
@@ -237,14 +237,14 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private void run(int tickId) {
-      mobsToSpawn += tickId / 1000f;
+      mobsToSpawn += tickId / 10f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);
         e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
             m -> {
-              m.stats.put("health", m.stats.get("health") * scaling(tickId));
-              m.stats.put("speed", m.stats.get("speed") * (float) Math.pow(scaling(tickId), 0.3));
+              m.baseStats.health *= scaling(tickId);
+              m.baseStats.speed *= (float) Math.pow(scaling(tickId), 0.3);
             }
         ));
         addEnemy(e);

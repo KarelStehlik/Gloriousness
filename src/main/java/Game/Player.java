@@ -14,6 +14,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
+  public final Stats stats;
   private final UserInputListener input;
   private final Sprite sprite;
   private final BulletLauncher bulletLauncher;
@@ -21,7 +22,8 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   private float vx, vy;
 
   public Player(World world) {
-    super(0, 0, WIDTH, HEIGHT, world, Data.getEntityStats("mob", "Player"));
+    super(0, 0, WIDTH, HEIGHT, world);
+    stats = new Stats();
     healthPart = 1;
     input = Game.get().getUserInputListener();
     sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 2);
@@ -31,7 +33,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        30, 30, 50, 30, 3, 100, stats.get("cd"));
+        30, 30, 50, 30, 3, 100, stats.cd);
     bulletLauncher.addMobCollide(
         (proj, target) -> {
           world.aoeDamage((int) proj.x, (int) proj.y, (int) proj.getPower(), proj.getPower(),
@@ -43,18 +45,18 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   }
 
   @Override
-  public void onStatsUpdate(){
-    bulletLauncher.setSize(stats.get("projSize"));
-    bulletLauncher.setSpeed(stats.get("projSpeed"));
-    bulletLauncher.setPierce(stats.get("projPierce").intValue());
-    bulletLauncher.setDuration(stats.get("projDuration"));
-    bulletLauncher.setCooldown(stats.get("cd"));
-    bulletLauncher.setPower(stats.get("projPower"));
+  public void onStatsUpdate() {
+    bulletLauncher.setSize(stats.projSize);
+    bulletLauncher.setSpeed(stats.projSpeed);
+    bulletLauncher.setPierce((int) stats.projPierce);
+    bulletLauncher.setDuration(stats.projDuration);
+    bulletLauncher.setCooldown(stats.cd);
+    bulletLauncher.setPower(stats.projPower);
   }
 
   public void takeDamage(float amount, DamageType type) {
-    float resistance = stats.getOrDefault(type.resistanceName, 1f);
-    healthPart -= amount * resistance/stats.get("health");
+    float resistance = 1;
+    healthPart -= amount * resistance / stats.health;
     if (healthPart < 0) {
       world.endGame();
     }
@@ -111,4 +113,38 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     sprite.setPosition(x, y);
     //camera.moveTo(x-Constants.screenSize.x/2f,y-Constants.screenSize.y/2f,0);
   }
+
+  private static class BaseStats {
+
+    public void init() {
+    }
+  }
+
+  public static final class Stats extends BaseStats {
+
+    public float speed = 1f;
+    public float health = 100f;
+    public float cd = 5f;
+    public float projSize = 10f;
+    public float projSpeed = 30f;
+    public float projPierce = 100f;
+    public float projDuration = 3f;
+    public float projPower = 100f;
+
+    public Stats() {
+      init();
+    }
+
+    @Override
+    public void init() {
+      speed = 1f;
+      health = 100f;
+      cd = 5f;
+      projSize = 10f;
+      projSpeed = 30f;
+      projPierce = 100f;
+      projDuration = 3f;
+      projPower = 100f;
+    }
+  } // end of generated stats
 }
