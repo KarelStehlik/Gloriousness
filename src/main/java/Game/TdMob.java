@@ -24,6 +24,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected float vx, vy;
   private int nextMapPoint = 1;
   private TrackProgress progress = new TrackProgress(0, 0);
+
   public TdMob(World world, String name, String image, BaseStats newStats) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),

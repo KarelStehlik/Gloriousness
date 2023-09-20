@@ -3,10 +3,16 @@ import os
 
 
 def toClassText(input):
-    className, *spl = input.split("|")
-    initFunc = "    @Override\n    public void init() {\n      " + "f;\n      ".join(spl) + "f;\n    }"
-    declaration = "    public float " + "f;\n    public float ".join(spl) + "f;"
-    whole = "public static final class Stats extends BaseStats {\n" + declaration + "\n\n" + initFunc + "\n\n    public Stats() {init();}\n  } // end of generated stats"
+    input=input.replace(" ", "")
+    className, baseStats, extraStats = input.split("%")
+   # print(input.split("%"))
+    baseStats = baseStats.split("|")
+    extraStats = extraStats.split("|")
+
+    initFunc = "    public void init() {\n      " + "f;\n      ".join(baseStats + extraStats) + "f;\n    }"
+    declaration = "    public float " + "f;\n    public float ".join(extraStats) + "f;"
+    end = "  }\n    public final ExtraStats extraStats = new ExtraStats();\n// end of generated stats\n"
+    whole = "public static final class ExtraStats {\n" + declaration + "\n\n" + initFunc + "\n\n  public ExtraStats() {init();}\n" + end
     return className, whole
 
 
@@ -38,8 +44,9 @@ def findAndUpdate(statsText):
     if text is None:
         return -2
 
-    with open(path, "w") as file:
-        file.write(text)
+    # with open(path, "w") as file:
+    #    file.write(text)
+    print(text)
 
     return 1
 
@@ -59,10 +66,12 @@ def handleStatsText(statsText):
 
 def main():
     for filename in os.listdir("stats"):
-        with open("stats\\"+filename, "r") as file:
+        with open("stats\\" + filename, "r") as file:
             for line in file.readlines():
                 handleStatsText(line.strip())
-   # handleStatsText("Player|speed=1|health=100|cd=5|projSize=100|projSpeed=30|projPierce=100|projDuration=3|projPower=100")
+
+
+# handleStatsText("Player|speed=1|health=100|cd=5|projSize=100|projSpeed=30|projPierce=100|projDuration=3|projPower=100")
 
 
 main()

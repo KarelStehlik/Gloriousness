@@ -12,6 +12,7 @@ public class Turret extends GameObject implements TickDetect {
   private final Sprite sprite;
   protected float health;
   private float vx, vy;
+
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
       BaseStats newStats) {
     super(X, Y, WIDTH, HEIGHT, world);
