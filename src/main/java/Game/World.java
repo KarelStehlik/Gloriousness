@@ -161,9 +161,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public void onGameTick(int tick) {
-    this.tick++;
-    tickEntities(mobsGrid, mobsList);
 
+    this.tick++;
+
+    tickEntities(mobsGrid, mobsList);
     mobsGrid.filled();
 
     tickEntities(projectilesGrid, projectilesList);

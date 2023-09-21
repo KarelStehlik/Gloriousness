@@ -24,6 +24,9 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import Game.Game;
+import imgui.ImGui;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -33,7 +36,8 @@ public final class Window {
   private final long window;
 
   private final Game game;
-
+  private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
+  private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
   private volatile boolean running = false;
 
   private Window() {
@@ -64,6 +68,11 @@ public final class Window {
     game.setInputCallback(window);
 
     glfwSwapInterval(1);
+    GL.createCapabilities();
+
+    ImGui.createContext();
+    imGuiGlfw.init(window, true);
+    imGuiGl3.init("#version 330 core");
   }
 
   public static Window get() {
@@ -105,7 +114,12 @@ public final class Window {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    imGuiGlfw.newFrame();
+    ImGui.newFrame();
+
     game.graphicsUpdate(dt / 1000000000);
+    ImGui.render();
+    imGuiGl3.renderDrawData(ImGui.getDrawData());
 
     glfwSwapBuffers(window);
   }

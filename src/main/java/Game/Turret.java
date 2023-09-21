@@ -16,6 +16,7 @@ public class Turret extends GameObject implements TickDetect {
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
       BaseStats newStats) {
     super(X, Y, WIDTH, HEIGHT, world);
+    baseStats = newStats;
     sprite = new Sprite(imageName, WIDTH, HEIGHT, 2);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
@@ -24,7 +25,6 @@ public class Turret extends GameObject implements TickDetect {
     launcher.move(x, y);
     Game.get().addTickable(this);
     onStatsUpdate();
-    baseStats = newStats;
   }
 
   @Override

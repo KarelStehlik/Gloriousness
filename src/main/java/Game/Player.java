@@ -112,7 +112,6 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     y = Math.max(height / 2f, Math.min(1080 - height / 2f, y + vy));
     bulletLauncher.move(x, y);
     sprite.setPosition(x, y);
-    //camera.moveTo(x-Constants.screenSize.x/2f,y-Constants.screenSize.y/2f,0);
   }
 
   public static class BaseStats {

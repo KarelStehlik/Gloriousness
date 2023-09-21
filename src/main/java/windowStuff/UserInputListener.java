@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import general.Constants;
+import imgui.ImGui;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -84,7 +85,7 @@ public class UserInputListener {
   }
 
   public void mouseButtonCallback(long window, int button, int action, int mods) {
-    if (button > buttonsPressed.length) {
+    if (button > buttonsPressed.length || ImGui.getIO().getWantCaptureMouse()) {
       return;
     }
     if (action == GLFW_PRESS) {
