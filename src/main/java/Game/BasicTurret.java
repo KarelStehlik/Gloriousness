@@ -2,11 +2,25 @@ package Game;
 
 public class BasicTurret extends Turret {
 
-  Stats stats = new Stats();
+  public final ExtraStats extraStats = new ExtraStats();
+
 
   protected BasicTurret(World world, int X, int Y, BulletLauncher launcher) {
     super(world, X, Y, "none", launcher, new Stats());
     onStatsUpdate();
+  }
+
+  // generated stats
+  public static final class ExtraStats {
+
+
+    public ExtraStats() {
+      init();
+    }
+
+    public void init() {
+
+    }
   }
 
   public static final class Stats extends BaseStats {
@@ -25,5 +39,6 @@ public class BasicTurret extends Turret {
       bulletSize = 50f;
       speed = 10f;
     }
-  } // end of generated stats
+  }
+  // end of generated stats
 }

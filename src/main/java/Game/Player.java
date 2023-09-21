@@ -14,7 +14,8 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
-  public final Stats stats;
+  public final ExtraStats stats;
+  public final ExtraStats extraStats = new ExtraStats();
   private final UserInputListener input;
   private final Sprite sprite;
   private final BulletLauncher bulletLauncher;
@@ -23,7 +24,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world);
-    stats = new Stats();
+    stats = new ExtraStats();
     healthPart = 1;
     input = Game.get().getUserInputListener();
     sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 2);
@@ -114,13 +115,18 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     //camera.moveTo(x-Constants.screenSize.x/2f,y-Constants.screenSize.y/2f,0);
   }
 
-  private static class BaseStats {
+  public static class BaseStats {
+
+    public BaseStats() {
+      init();
+    }
 
     public void init() {
     }
   }
 
-  public static final class Stats extends BaseStats {
+  // generated stats
+  public static final class ExtraStats {
 
     public float speed = 1f;
     public float health = 100f;
@@ -131,11 +137,10 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     public float projDuration = 3f;
     public float projPower = 100f;
 
-    public Stats() {
+    public ExtraStats() {
       init();
     }
 
-    @Override
     public void init() {
       speed = 1f;
       health = 100f;
@@ -146,5 +151,18 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
       projDuration = 3f;
       projPower = 100f;
     }
-  } // end of generated stats
+  }
+
+  public static final class Stats extends BaseStats {
+
+    public Stats() {
+      init();
+    }
+
+    @Override
+    public void init() {
+
+    }
+  }
+  // end of generated stats
 }

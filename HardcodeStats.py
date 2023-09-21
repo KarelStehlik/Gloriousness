@@ -3,21 +3,34 @@ import os
 
 
 def toClassText(input):
-    input=input.replace(" ", "")
+    input = input.replace(" ", "")
     className, baseStats, extraStats = input.split("%")
-   # print(input.split("%"))
     baseStats = baseStats.split("|")
     extraStats = extraStats.split("|")
 
-    initFunc = "    public void init() {\n      " + "f;\n      ".join(baseStats + extraStats) + "f;\n    }"
-    declaration = "    public float " + "f;\n    public float ".join(extraStats) + "f;"
-    end = "  }\n    public final ExtraStats extraStats = new ExtraStats();\n// end of generated stats\n"
-    whole = "public static final class ExtraStats {\n" + declaration + "\n\n" + initFunc + "\n\n  public ExtraStats() {init();}\n" + end
-    return className, whole
+    if baseStats==[""]:baseStats=[]
+    if extraStats==[""]:extraStats=[]
+
+    hasExtra = len(extraStats) != 0
+    hasBase = len(baseStats) != 0
+    print(className, baseStats)
+
+    initExtra = "    public void init() {\n      " + "f;\n      ".join(extraStats) + "f;" * hasExtra + "\n    }"
+    declaration = "    public float " * hasExtra + "f;\n    public float ".join(extraStats) + "f;" * hasExtra
+
+    initBase = "    public void init() {\n      " + "f;\n      ".join(baseStats) + "f;" * hasBase + "\n    }\n"
+    overrideBaseStats = "  public static final class Stats extends BaseStats {\n    @Override\n" + initBase+ "    public Stats(){init();}\n  }\n"
+
+    startExtra = "  public static final class ExtraStats {\n"
+    endExtra = "  }\n  public final ExtraStats extraStats = new ExtraStats();"
+    extra = startExtra + declaration + "\n\n" + initExtra + "\n\n    public ExtraStats() {init();}\n" + endExtra
+
+    all = f"// generated stats\n{extra}\n\n{overrideBaseStats}  // end of generated stats"
+    return className, all
 
 
 def replaceStats(input, newStats):
-    found = input.find("public static final class Stats extends BaseStats {")
+    found = input.find("// generated stats")
     if found == -1:
         return None
     found2 = input.find("// end of generated stats")
@@ -44,9 +57,8 @@ def findAndUpdate(statsText):
     if text is None:
         return -2
 
-    # with open(path, "w") as file:
-    #    file.write(text)
-    print(text)
+    with open(path, "w") as file:
+        file.write(text)
 
     return 1
 
