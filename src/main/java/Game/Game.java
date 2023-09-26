@@ -1,5 +1,8 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
@@ -32,8 +35,10 @@ public final class Game implements UserInputHandler {
   private final Collection<MouseDetect> mouseDetects = new ArrayList<>(1);
   private final Collection<MouseDetect> newMouseDetects = new ArrayList<>(1);
   private final Log.Timer timer = new Timer();
-  private long startTime = System.currentTimeMillis();
+  private long startTime;
   private int ticks = 0;
+  private World world;
+  private boolean paused = false;
 
   private Game() {
     userInputListener = new UserInputListener(this);
@@ -51,7 +56,7 @@ public final class Game implements UserInputHandler {
   public void init() {
     graphics.init();
     startTime = System.currentTimeMillis();
-    new World();
+    world = new World();
   }
 
   public void addTickable(TickDetect t) {
@@ -67,11 +72,22 @@ public final class Game implements UserInputHandler {
   }
 
   public void tick() {
-    timer.elapsed(true);
-    long timeTillTick = startTime + (long) tickIntervalMillis * ticks - System.currentTimeMillis();
-    if (timeTillTick > 0) {
+    userInputListener.handleEvents();
+    tickables.addAll(newTickables);
+    newTickables.clear();
+    keyDetects.addAll(newKeyDetects);
+    newKeyDetects.clear();
+    mouseDetects.addAll(newMouseDetects);
+    newMouseDetects.clear();
+
+    if (paused) {
       return;
     }
+    if (timer.elapsedNano(false) < tickIntervalMillis * 1000000) {
+      return;
+    }
+    timer.elapsed(true);
+
     ticks++;
     if (ticks % 60 == 0) {
       System.out.println(ticks + " in " + timer.saved + " ms");
@@ -86,20 +102,16 @@ public final class Game implements UserInputHandler {
         t.onGameTick(ticks);
       }
     }
-    userInputListener.handleEvents();
-    tickables.addAll(newTickables);
-    newTickables.clear();
-    keyDetects.addAll(newKeyDetects);
-    newKeyDetects.clear();
-    mouseDetects.addAll(newMouseDetects);
-    newMouseDetects.clear();
+    world.onGameTick(ticks);
     timer.saved += timer.elapsed(true);
   }
 
   public void graphicsUpdate(double dt) {
     graphics.redraw(dt);
-    ImGui.showDemoWindow();
     userInputListener.endFrame();
+    if(paused){
+      world.showPauseMenu();
+    }
   }
 
   public SpriteBatching getSpriteBatching(String name) {
@@ -159,6 +171,9 @@ public final class Game implements UserInputHandler {
   public void onKeyPress(int key, int action, int mods) {
     if (action == GLFW_REPEAT) {
       return;
+    }
+    if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
+      paused = !paused;
     }
     //Util.testBit(mods, GLFW_MOD_SHIFT)
     var iter = keyDetects.iterator();

@@ -4,6 +4,7 @@ import Game.Buffs.Buff;
 import general.Constants;
 import general.Data;
 import general.Log;
+import imgui.ImGui;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +43,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Game game = Game.get();
     game.addMouseDetect(this);
     game.addKeyDetect(this);
-    game.addTickable(this);
     mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000, 7);
     mobsList = new ArrayList<>(1024);
     projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000, 8);
@@ -131,6 +131,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     mobsList.add(e);
   }
 
+  // TODO: this runs in the graphics thread, hoping that's fine
+  public void showPauseMenu(){
+    ImGui.showDemoWindow();
+  }
+
   @Override
   public void onKeyPress(int key, int action, int mods) {
     if (!currentTool.WasDeleted()) {
@@ -161,7 +166,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public void onGameTick(int tick) {
-
     this.tick++;
 
     tickEntities(mobsGrid, mobsList);

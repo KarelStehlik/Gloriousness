@@ -80,7 +80,7 @@ public class UserInputListener {
     dy = Constants.screenSize.y - newY - lastY;
     dragging = Arrays.asList(buttonsPressed, 5).contains(true);
     if (game != null) {
-      game.onMouseMove(newX, Constants.screenSize.y - newY);
+      events.add(() -> game.onMouseMove(newX, Constants.screenSize.y - newY));
     }
   }
 
@@ -103,7 +103,6 @@ public class UserInputListener {
     scrollX = xOffset;
     scrollY = yOffset;
     if (game != null) {
-
       events.add(() -> game.onScroll(xOffset, yOffset));
     }
   }
