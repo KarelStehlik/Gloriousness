@@ -42,8 +42,6 @@ public final class Graphics {
 
   public void redraw(double dt) {
     Data.updateShaders();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for (SpriteBatching bs : SpriteBatchings) {
       bs.draw();

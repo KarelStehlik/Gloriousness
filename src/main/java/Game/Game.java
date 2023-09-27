@@ -1,7 +1,6 @@
 package Game;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
@@ -11,7 +10,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
 import general.Log;
 import general.Log.Timer;
-import imgui.ImGui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -109,7 +107,7 @@ public final class Game implements UserInputHandler {
   public void graphicsUpdate(double dt) {
     graphics.redraw(dt);
     userInputListener.endFrame();
-    if(paused){
+    if (paused) {
       world.showPauseMenu();
     }
   }

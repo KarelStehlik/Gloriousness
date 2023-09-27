@@ -1,10 +1,17 @@
 package Game;
 
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.glBlendFunc;
+import static org.lwjgl.opengles.GLES20.GL_ONE;
+import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
+
 import Game.Buffs.Buff;
 import general.Constants;
 import general.Data;
 import general.Log;
 import imgui.ImGui;
+import imgui.type.ImBoolean;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +45,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 1234567890;
+  private boolean fuckified = false;
 
   public World() {
     Game game = Game.get();
@@ -131,9 +139,22 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     mobsList.add(e);
   }
 
-  // TODO: this runs in the graphics thread, hoping that's fine
-  public void showPauseMenu(){
-    ImGui.showDemoWindow();
+  // TODO: imgui runs in the graphics thread, careful changing game variables
+  public void showPauseMenu() {
+    //ImGui.showDemoWindow();
+    ImGui.begin("Options");
+    if (ImGui.collapsingHeader("Some placeholder options")) {
+      ImBoolean fuck = new ImBoolean(fuckified);
+      if (ImGui.checkbox("Some bullshit setting", fuck)) {
+        fuckified = fuck.get();
+        if (fuckified) {
+          glBlendFunc(GL_SRC_COLOR, GL_ONE);
+        } else {
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+      }
+    }
+    ImGui.end();
   }
 
   @Override
