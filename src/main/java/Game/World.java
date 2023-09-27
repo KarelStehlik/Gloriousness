@@ -84,6 +84,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       explosionVisual(x, y, 100, true, "Explosion1-0");
+      player.addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE, p ->p.stats.cd*=.95f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,

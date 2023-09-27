@@ -1,2 +1,2 @@
 BasicMob % size=20.0|speed=5|health=100|value=1 %
-Player   %% speed=1|health=100|cd=5|projSize=10|projSpeed=30|projPierce=100|projDuration=3|projPower=100
+Player   %% speed=1|health=100|cd=999|projSize=10|projSpeed=30|projPierce=100|projDuration=3|projPower=100

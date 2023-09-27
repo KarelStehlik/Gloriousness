@@ -22,7 +22,7 @@ def toClassText(input):
     overrideBaseStats = "  public static final class Stats extends BaseStats {\n    @Override\n" + initBase+ "    public Stats(){init();}\n  }\n"
 
     startExtra = "  public static final class ExtraStats {\n"
-    endExtra = "  }\n  public final ExtraStats extraStats = new ExtraStats();"
+    endExtra = "  }"
     extra = startExtra + declaration + "\n\n" + initExtra + "\n\n    public ExtraStats() {init();}\n" + endExtra
 
     all = f"// generated stats\n{extra}\n\n{overrideBaseStats}  // end of generated stats"
@@ -85,5 +85,8 @@ def main():
 
 # handleStatsText("Player|speed=1|health=100|cd=5|projSize=100|projSpeed=30|projPierce=100|projDuration=3|projPower=100")
 
-
-main()
+if __name__=="__main__":
+    if os.path.exists("build_log.txt") and os.path.getmtime("build_log.txt") >= os.path.getmtime("stats"):
+        print("skipped: no stat changes")
+    else:
+        main()

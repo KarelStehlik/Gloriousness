@@ -14,31 +14,25 @@ public class BasicTurret extends Turret {
   public static final class ExtraStats {
 
 
-    public ExtraStats() {
-      init();
-    }
-
     public void init() {
-
+      
     }
+
+    public ExtraStats() {init();}
   }
 
   public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
     @Override
     public void init() {
-      power = 100f;
-      range = 500f;
-      pierce = 100f;
-      cd = 1f;
-      projectileDuration = 2f;
-      bulletSize = 50f;
-      speed = 10f;
+      power=100f;
+      range=500f;
+      pierce=100f;
+      cd=1f;
+      projectileDuration=2f;
+      bulletSize=50f;
+      speed=10f;
     }
+    public Stats(){init();}
   }
   // end of generated stats
 }

@@ -5,6 +5,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
+import Game.Buffs.Buff;
+import Game.Buffs.BuffHandler;
 import general.Data;
 import general.Util;
 import windowStuff.Sprite;
@@ -15,12 +17,12 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
   public final ExtraStats stats;
-  public final ExtraStats extraStats = new ExtraStats();
   private final UserInputListener input;
   private final Sprite sprite;
   private final BulletLauncher bulletLauncher;
   protected double healthPart;
   private float vx, vy;
+  private final BuffHandler<Player> buffHandler;
 
   public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world);
@@ -43,6 +45,11 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
         }
     );
     onStatsUpdate();
+    buffHandler=new BuffHandler<>(this);
+  }
+
+  public void addBuff(Buff<Player> eff) {
+    buffHandler.add(eff);
   }
 
   @Override
@@ -126,42 +133,35 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   // generated stats
   public static final class ExtraStats {
-
-    public float speed = 1f;
-    public float health = 100f;
-    public float cd = 5f;
-    public float projSize = 10f;
-    public float projSpeed = 30f;
-    public float projPierce = 100f;
-    public float projDuration = 3f;
-    public float projPower = 100f;
-
-    public ExtraStats() {
-      init();
-    }
+    public float speed=1f;
+    public float health=100f;
+    public float cd=999f;
+    public float projSize=10f;
+    public float projSpeed=30f;
+    public float projPierce=100f;
+    public float projDuration=3f;
+    public float projPower=100f;
 
     public void init() {
-      speed = 1f;
-      health = 100f;
-      cd = 5f;
-      projSize = 10f;
-      projSpeed = 30f;
-      projPierce = 100f;
-      projDuration = 3f;
-      projPower = 100f;
+      speed=1f;
+      health=100f;
+      cd=999f;
+      projSize=10f;
+      projSpeed=30f;
+      projPierce=100f;
+      projDuration=3f;
+      projPower=100f;
     }
+
+    public ExtraStats() {init();}
   }
 
   public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
     @Override
     public void init() {
-
+      
     }
+    public Stats(){init();}
   }
   // end of generated stats
 }

@@ -3,7 +3,6 @@ import os
 
 TEXSIZE = 4096
 
-
 class Animation:  # contains images that may be swapped between frequently. this must be saved in one texture.
     def __init__(self):
         self.images = []
@@ -132,14 +131,9 @@ class TestSetup:
         file = open(f"image coordinates/T{n_textures}.txt", "w")
         file.write(text[1::])
 
-
 animations = {}
-for e in os.listdir("final images"):
-    os.remove(f"final images/{e}")
-for e in os.listdir("image coordinates"):
-    os.remove(f"image coordinates/{e}")
 files = []
-
+n_textures = 0
 
 def add(fromFolder, e):
     if e.startswith("ANIM_"):
@@ -163,39 +157,50 @@ def add(fromFolder, e):
         img.pixelCount = img.size[0] * img.size[1]
         files.append(img)
 
+def main():
+    global n_textures
+    for e in os.listdir("final images"):
+        os.remove(f"final images/{e}")
+    for e in os.listdir("image coordinates"):
+        os.remove(f"image coordinates/{e}")
 
-for e in os.listdir("rawImages"):
-    add("rawImages/", e)
-for e in os.listdir("fonts"):
-    add("fonts/", e)
+    for e in os.listdir("rawImages"):
+        add("rawImages/", e)
+    for e in os.listdir("convert/fonts"):
+        add("convert/fonts/", e)
 
-files.sort(key=lambda image: max(image.size[0], image.size[1]), reverse=True)
-n_textures = 0
-print(str([e.name for e in files]).replace("\'", "\""))
+    files.sort(key=lambda image: max(image.size[0], image.size[1]), reverse=True)
+    print(str([e.name for e in files]).replace("\'", "\""))
 
-while files or animations:
-    # create a new image
-    setup = TestSetup()
+    while files or animations:
+        # create a new image
+        setup = TestSetup()
 
-    # loop through all animations, see if they fit on the image
-    anims = sorted(animations.items(), key=lambda a: a[1].size, reverse=True)
+        # loop through all animations, see if they fit on the image
+        anims = sorted(animations.items(), key=lambda a: a[1].size, reverse=True)
 
-    # loop through all standalone textures, see if they fit on the image
-    i = 0
-    while i < len(files):
-        e = files[i]
-        for poi in setup.POIs:
-            if setup.can_add(*poi, *e.size):
-                # it's fine to modify POIs here, because if we do, we break the loop iterating over them
-                setup.add(e, poi)
-                files.pop(i)
-                i -= 1
-                break
-        i += 1
+        # loop through all standalone textures, see if they fit on the image
+        i = 0
+        while i < len(files):
+            e = files[i]
+            for poi in setup.POIs:
+                if setup.can_add(*poi, *e.size):
+                    # it's fine to modify POIs here, because if we do, we break the loop iterating over them
+                    setup.add(e, poi)
+                    files.pop(i)
+                    i -= 1
+                    break
+            i += 1
 
-    for key, value in anims:
-        if setup.try_add_animation(value):
-            animations.pop(key)
+        for key, value in anims:
+            if setup.try_add_animation(value):
+                animations.pop(key)
 
-    setup.save()
-    n_textures += 1
+        setup.save()
+        n_textures += 1
+
+if __name__ == "__main__":
+    if os.path.exists("final images") and os.path.getmtime("convert/fonts") <= os.path.getmtime("final images") >= os.path.getmtime("rawImages"):
+        print("skipped: no new images")
+    else:
+        main()

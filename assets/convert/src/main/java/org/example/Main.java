@@ -12,16 +12,21 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import javax.imageio.ImageIO;
 
 public final class Main {
-  private static final Font font = new Font("Calibri", Font.PLAIN, 64);
+  private static final Font font = new Font("Calibri", Font.PLAIN, 32);
   private static FontMetrics fm;
   private static int height;
   private static int ascent;
 
   public static void main(String[] arg) throws IOException {
+    FileTime now = FileTime.fromMillis(System.currentTimeMillis());
+    Files.setLastModifiedTime(Paths.get("fonts"), now);
+
     String key = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789/*-+{}[]()<>?!|.,:'\"_%$#@&=~ \n";
 
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
