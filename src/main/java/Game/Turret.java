@@ -1,5 +1,6 @@
 package Game;
 
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import windowStuff.Sprite;
@@ -25,6 +26,10 @@ public class Turret extends GameObject implements TickDetect {
     launcher.move(x, y);
     Game.get().addTickable(this);
     onStatsUpdate();
+  }
+
+  public static void create(World world, int X, int Y, BulletLauncher launcher,  BaseStats newStats){
+    Log.write("Warning: non-overridden turret create");
   }
 
   @Override

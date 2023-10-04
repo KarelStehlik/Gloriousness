@@ -1,5 +1,7 @@
 package Game;
 
+import general.Log;
+
 public class BasicTurret extends Turret {
 
   public final ExtraStats extraStats = new ExtraStats();
@@ -8,6 +10,11 @@ public class BasicTurret extends Turret {
   protected BasicTurret(World world, int X, int Y, BulletLauncher launcher) {
     super(world, X, Y, "none", launcher, new Stats());
     onStatsUpdate();
+  }
+
+
+  public static void create(World world, int X, int Y, BulletLauncher launcher,  BaseStats newStats){
+    Log.write("Warning: non-overridden turret create");
   }
 
   // generated stats
