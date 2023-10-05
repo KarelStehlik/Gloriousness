@@ -48,6 +48,11 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     buffHandler=new BuffHandler<>(this);
   }
 
+  @Override
+  public void clearStats(){
+    stats.init();
+  }
+
   public void addBuff(Buff<Player> eff) {
     buffHandler.add(eff);
   }

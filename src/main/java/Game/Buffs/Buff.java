@@ -17,12 +17,16 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
   private final Modifier<T> mod;
   private int remainingDuration;
   private boolean hasEnded = false;
+  private final int id;
+  private static int ID=0;
 
   public Buff(int priority, int durationMillis, int triggerEvent, Modifier<T> effect) {
     this.priority = priority;
     remainingDuration = durationMillis;
     this.triggerEvent = triggerEvent;
     mod = effect;
+    id=ID;
+    ID++;
   }
 
   public int getRemainingDuration() {
@@ -48,12 +52,15 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
 
   @Override
   public int compareTo(Buff o) {
-    return priority - o.priority;
+    if(priority == o.priority){
+      return id-o.id;
+    }
+    return priority-o.priority;
   }
 
   @Override
   public boolean equals(Object o) {
-    return o instanceof Buff && compareTo((Buff) o) == 0;
+    return false;
   }
 
 

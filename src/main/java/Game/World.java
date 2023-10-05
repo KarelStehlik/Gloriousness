@@ -47,6 +47,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private double money = 1234567890;
   private boolean fuckified = false;
 
+  private final UpgradeGiver upgrades = new UpgradeGiver(this);
+
   public World() {
     Game game = Game.get();
     game.addMouseDetect(this);
@@ -264,7 +266,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private void run(int tickId) {
-      mobsToSpawn += tickId / 10f;
+      if(tickId%200==30){
+        upgrades.gib(4);
+      }
+      mobsToSpawn += tickId / 1000000000f;
       while (mobsToSpawn >= 1) {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);

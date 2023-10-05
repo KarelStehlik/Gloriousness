@@ -1,6 +1,8 @@
 package Game.Buffs;
 
 import Game.GameObject;
+import general.Log;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +25,7 @@ public class BuffHandler<T extends GameObject> {
 
   public void updateStats() {
     target.clearStats();
+    Log.write("number of buffs: "+buffs.get(Buff.TRIGGER_ON_UPDATE).size());
     for (Iterator<Buff<T>> iterator = buffs.get(Buff.TRIGGER_ON_UPDATE).iterator();
         iterator.hasNext(); ) {
       Buff<T> eff = iterator.next();
@@ -36,7 +39,9 @@ public class BuffHandler<T extends GameObject> {
   }
 
   public void add(Buff<T> e) {
+    Log.write(buffs.get(e.triggerEvent).size());
     buffs.get(e.triggerEvent).add(e);
+    Log.write(buffs.get(e.triggerEvent).size());
     if (e.triggerEvent == Buff.TRIGGER_ON_UPDATE) {
       updateStats();
     }
@@ -47,6 +52,7 @@ public class BuffHandler<T extends GameObject> {
 
   // TODO : optimize this shit
   public void tick() {
+    if(1==1)return;
     for (Iterator<Buff<T>> iterator = buffs.get(Buff.TRIGGER_ON_TICK).iterator();
         iterator.hasNext() && !deleted; ) {
       Buff<T> eff = iterator.next();
