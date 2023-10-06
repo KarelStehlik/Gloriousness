@@ -46,6 +46,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private int health = Constants.StartingHealth;
   private double money = 1234567890;
   private boolean fuckified = false;
+  private int wave = 0;
+  private boolean waveRunning=true;
 
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
 
@@ -94,6 +96,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
+    beginWave();
   }
 
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
@@ -198,7 +201,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     tickEntities(projectilesGrid, projectilesList);
 
     player.onGameTick(tick);
-    mobSpawner.run(tick);
+    if(waveRunning) {
+      mobSpawner.run();
+    }
   }
 
   @Override
@@ -257,29 +262,44 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     this.currentTool = currentTool;
   }
 
+  public void endWave(){
+    upgrades.gib(wave);
+    waveRunning=false;
+  }
+  public void beginWave(){
+    wave++;
+    waveRunning=true;
+    mobSpawner.onBeginWave(wave);
+  }
+
   private class MobSpawner {
 
     private float mobsToSpawn = 0;
 
-    private static float scaling(int tickId) {
-      return 1 + (Math.max(tickId, 10) - 10) / 100f;
+    private static float scaling(int wave) {
+      return 1 + wave/5f;
     }
 
-    private void run(int tickId) {
-      if(tickId%200==30){
-        upgrades.gib(4);
-      }
-      mobsToSpawn += tickId / 1000000000f;
-      while (mobsToSpawn >= 1) {
+    private void onBeginWave(int wave){
+      mobsToSpawn = 20 * wave;
+    }
+
+    private void run() {
+      while (mobsToSpawn > 0) {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);
+        final float hpScaling = scaling(wave);
+        final float spdScaling = (float) Math.pow(scaling(wave), 0.3);
         e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
             m -> {
-              m.baseStats.health *= scaling(tickId);
-              m.baseStats.speed *= (float) Math.pow(scaling(tickId), 0.3);
+              m.baseStats.health *= hpScaling;
+              m.baseStats.speed *= spdScaling;
             }
         ));
         addEnemy(e);
+      }
+      if(mobsList.isEmpty()){
+        endWave();
       }
     }
   }

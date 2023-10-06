@@ -21,8 +21,9 @@ public class UpgradeGiver {
         }
     }
     private void optionPicked(int id){
-        world.getPlayer().addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,p->p.stats.projSpeed*=2));
+        world.getPlayer().addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,p->p.stats.cd/=2));
         clearOptions();
+        world.beginWave();
     }
     public void gib(int gloriousness){
         clearOptions();
