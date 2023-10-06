@@ -270,6 +270,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     wave++;
     waveRunning=true;
     mobSpawner.onBeginWave(wave);
+    Game.get().addTickable(new Animation(new Sprite("Cancelbutton",20).addToBs(bs).setSize(500,500),3));
   }
 
   private class MobSpawner {
