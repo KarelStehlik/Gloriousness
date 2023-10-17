@@ -15,10 +15,9 @@ def toClassText(input):
     hasBase = len(baseStats) != 0
     print(className, baseStats)
 
-    initExtra = "    public void init() {\n"+"      "*hasExtra + "f;\n      ".join(extraStats) + "f;" * hasExtra + "\n    }"
+    initExtra = "      " + "f;\n      ".join(extraStats) + "f;"
     declaration = "\n    public float " + "f;\n    public float ".join(extraStats) + "f;"
-
-    overrideBaseStats = "      " * hasBase + "f;\n      ".join(baseStats) + "f;" * hasBase + "\n    }"
+    overrideBaseStats = "      " + "f;\n      ".join(baseStats) + "f;"
 
     endExtra = "  }"
 
@@ -29,7 +28,9 @@ def toClassText(input):
       init();
     ]
 {declaration * hasExtra}
-{initExtra}
+    public void init() [
+{initExtra * hasExtra}
+    ]
   ]
 
   public static final class Stats extends BaseStats [
@@ -40,7 +41,8 @@ def toClassText(input):
 
     @Override
     public void init() [
-{overrideBaseStats}
+{overrideBaseStats * hasBase}
+    ]
   ]
   // end of generated stats'''.replace("[","{").replace("]","}")
     return className, all
@@ -103,7 +105,7 @@ def main():
 # handleStatsText("Player|speed=1|health=100|cd=5|projSize=100|projSpeed=30|projPierce=100|projDuration=3|projPower=100")
 
 if __name__=="__main__":
-    if False and os.path.exists("build_log.txt") and os.path.getmtime("build_log.txt") > max(os.path.getmtime("stats/"+filename) for filename in os.listdir("stats")):
+    if os.path.exists("build_log.txt") and os.path.getmtime("build_log.txt") > max(os.path.getmtime("stats/"+filename) for filename in os.listdir("stats")):
         print("skipped: no stat changes")
     else:
         main()
