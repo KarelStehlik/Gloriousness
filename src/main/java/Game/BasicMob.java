@@ -12,7 +12,6 @@ public class BasicMob extends TdMob {
   // generated stats
   public static final class ExtraStats {
 
-
     public ExtraStats() {
       init();
     }

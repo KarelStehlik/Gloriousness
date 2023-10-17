@@ -4,7 +4,7 @@ import os
 
 def toClassText(input):
     input = input.replace(" ", "")
-    className, baseStats, extraStats = input.split("%")
+    className, baseStats, extraStats = input.replace("="," = ").split("%")
     baseStats = baseStats.split("|")
     extraStats = extraStats.split("|")
 
@@ -15,17 +15,34 @@ def toClassText(input):
     hasBase = len(baseStats) != 0
     print(className, baseStats)
 
-    initExtra = "    public void init() {\n      " + "f;\n      ".join(extraStats) + "f;" * hasExtra + "\n    }"
-    declaration = "    public float " * hasExtra + "f;\n    public float ".join(extraStats) + "f;" * hasExtra
+    initExtra = "    public void init() {\n"+"      "*hasExtra + "f;\n      ".join(extraStats) + "f;" * hasExtra + "\n    }"
+    declaration = "\n    public float " + "f;\n    public float ".join(extraStats) + "f;"
 
-    initBase = "    public void init() {\n      " + "f;\n      ".join(baseStats) + "f;" * hasBase + "\n    }\n"
-    overrideBaseStats = "  public static final class Stats extends BaseStats {\n    @Override\n" + initBase+ "    public Stats(){init();}\n  }\n"
+    overrideBaseStats = "      " * hasBase + "f;\n      ".join(baseStats) + "f;" * hasBase + "\n    }"
 
-    startExtra = "  public static final class ExtraStats {\n"
     endExtra = "  }"
-    extra = startExtra + "\n\n    public ExtraStats() {init();}\n" + declaration + "\n\n" + initExtra + endExtra
 
-    all = f"// generated stats\n{extra}\n\n{overrideBaseStats}  // end of generated stats"
+    all = f'''// generated stats
+  public static final class ExtraStats [
+
+    public ExtraStats() [
+      init();
+    ]
+{declaration * hasExtra}
+{initExtra}
+  ]
+
+  public static final class Stats extends BaseStats [
+
+    public Stats() [
+      init();
+    ]
+
+    @Override
+    public void init() [
+{overrideBaseStats}
+  ]
+  // end of generated stats'''.replace("[","{").replace("]","}")
     return className, all
 
 
@@ -86,7 +103,7 @@ def main():
 # handleStatsText("Player|speed=1|health=100|cd=5|projSize=100|projSpeed=30|projPierce=100|projDuration=3|projPower=100")
 
 if __name__=="__main__":
-    if os.path.exists("build_log.txt") and os.path.getmtime("build_log.txt") > max(os.path.getmtime("stats/"+filename) for filename in os.listdir("stats")):
+    if False and os.path.exists("build_log.txt") and os.path.getmtime("build_log.txt") > max(os.path.getmtime("stats/"+filename) for filename in os.listdir("stats")):
         print("skipped: no stat changes")
     else:
         main()

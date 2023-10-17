@@ -18,9 +18,9 @@ public class BasicTurret extends Turret {
     Log.write("Warning: non-overridden turret create");
   }
 
-  // generated stats
+  
+// generated stats
   public static final class ExtraStats {
-
 
     public ExtraStats() {
       init();
