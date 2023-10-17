@@ -90,7 +90,7 @@ public class UpgradeGiver {
           (b, a) -> this._picked(a), this::getText);
     }
 
-      private void _picked(int action) {
+    private void _picked(int action) {
       if (action == 0) {
         return;
       }

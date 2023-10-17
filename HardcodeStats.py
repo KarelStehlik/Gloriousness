@@ -23,7 +23,7 @@ def toClassText(input):
 
     startExtra = "  public static final class ExtraStats {\n"
     endExtra = "  }"
-    extra = startExtra + declaration + "\n\n" + initExtra + "\n\n    public ExtraStats() {init();}\n" + endExtra
+    extra = startExtra + "\n\n    public ExtraStats() {init();}\n" + declaration + "\n\n" + initExtra + endExtra
 
     all = f"// generated stats\n{extra}\n\n{overrideBaseStats}  // end of generated stats"
     return className, all

@@ -138,35 +138,42 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   // generated stats
   public static final class ExtraStats {
-    public float speed=1f;
-    public float health=100f;
-    public float cd=999f;
-    public float projSize=10f;
-    public float projSpeed=30f;
-    public float projPierce=100f;
-    public float projDuration=.81f;
-    public float projPower=100f;
 
-    public void init() {
-      speed=1f;
-      health=100f;
-      cd=999f;
-      projSize=10f;
-      projSpeed=30f;
-      projPierce=100f;
-      projDuration=.81f;
-      projPower=100f;
+    public float speed = 1f;
+    public float health = 100f;
+    public float cd = 999f;
+    public float projSize = 10f;
+    public float projSpeed = 30f;
+    public float projPierce = 100f;
+    public float projDuration = .81f;
+    public float projPower = 100f;
+
+    public ExtraStats() {
+      init();
     }
 
-    public ExtraStats() {init();}
+    public void init() {
+      speed = 1f;
+      health = 100f;
+      cd = 999f;
+      projSize = 10f;
+      projSpeed = 30f;
+      projPierce = 100f;
+      projDuration = .81f;
+      projPower = 100f;
+    }
   }
 
   public static final class Stats extends BaseStats {
+
+    public Stats() {
+      init();
+    }
+
     @Override
     public void init() {
-      
+
     }
-    public Stats(){init();}
   }
   // end of generated stats
 }
