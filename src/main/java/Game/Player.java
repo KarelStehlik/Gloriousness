@@ -144,7 +144,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     public float projSize=10f;
     public float projSpeed=30f;
     public float projPierce=100f;
-    public float projDuration=3f;
+    public float projDuration=.85f;
     public float projPower=100f;
 
     public void init() {
@@ -154,7 +154,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
       projSize=10f;
       projSpeed=30f;
       projPierce=100f;
-      projDuration=3f;
+      projDuration=.85f;
       projPower=100f;
     }
 

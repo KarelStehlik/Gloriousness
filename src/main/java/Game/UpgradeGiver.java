@@ -15,6 +15,7 @@ public class UpgradeGiver {
     public UpgradeGiver(World w){
         world=w;
     }
+
     private void clearOptions(){
         for(Button b : buttons){
             b.delete();
@@ -31,7 +32,7 @@ public class UpgradeGiver {
             int finalI = i;
             Button B = new Button(world.getBs(),
                     new Sprite("Button",10).setSize(BUTTON_WIDTH, BUTTON_HEIGHT).setPosition(LEFT, BOTTOM+i*BUTTON_OFFSET),
-                    (b, a)->optionPicked(finalI),null);
+                    (b, a)->optionPicked(finalI),()->"Doubles your attack speed KEKW");
             buttons.add(B);
             Game.get().addMouseDetect(B);
         }

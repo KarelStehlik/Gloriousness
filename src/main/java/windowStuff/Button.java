@@ -101,7 +101,6 @@ public class Button implements MouseDetect {
 
   @FunctionalInterface
   public interface MouseoverText {
-
     String get();
   }
 }

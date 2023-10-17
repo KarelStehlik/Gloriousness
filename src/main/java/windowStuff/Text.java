@@ -175,6 +175,7 @@ public class Text {
       symbol.delete();
     }
     symbols.clear();
+    background.delete();
     deleted = true;
   }
 
