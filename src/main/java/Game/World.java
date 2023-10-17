@@ -41,15 +41,14 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Text resourceTracker;
   private final MobSpawner mobSpawner = new MobSpawner();
   private final Log.Timer t = new Log.Timer();
+  private final UpgradeGiver upgrades = new UpgradeGiver(this);
   private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 1234567890;
   private boolean fuckified = false;
   private int wave = 0;
-  private boolean waveRunning=true;
-
-  private final UpgradeGiver upgrades = new UpgradeGiver(this);
+  private boolean waveRunning = true;
 
   public World() {
     Game game = Game.get();
@@ -88,7 +87,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       explosionVisual(x, y, 100, true, "Explosion1-0");
-      player.addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE, p ->p.stats.cd*=.95f));
+      player.addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
+          p -> p.stats.cd *= .95f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
@@ -201,7 +201,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     tickEntities(projectilesGrid, projectilesList);
 
     player.onGameTick(tick);
-    if(waveRunning) {
+    if (waveRunning) {
       mobSpawner.run();
     }
   }
@@ -262,16 +262,17 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     this.currentTool = currentTool;
   }
 
-  public void endWave(){
+  public void endWave() {
     upgrades.gib(wave);
-    waveRunning=false;
+    waveRunning = false;
   }
-  public void beginWave(){
+
+  public void beginWave() {
     wave++;
-    waveRunning=true;
+    waveRunning = true;
     mobSpawner.onBeginWave(wave);
-    Text s =  new Text("Wave "+wave,"Calibri",2000,0,Constants.screenSize.y/2,10,500,bs);
-    Game.get().addTickable(new CallAfterDuration(s::delete,1000));
+    Text s = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500, bs);
+    Game.get().addTickable(new CallAfterDuration(s::delete, 1000));
   }
 
   private class MobSpawner {
@@ -279,10 +280,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private float mobsToSpawn = 0;
 
     private static float scaling(int wave) {
-      return 1 + wave/5f;
+      return 1 + wave / 5f;
     }
 
-    private void onBeginWave(int wave){
+    private void onBeginWave(int wave) {
       mobsToSpawn = 20 * wave;
     }
 
@@ -300,7 +301,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         ));
         addEnemy(e);
       }
-      if(mobsList.isEmpty()){
+      if (mobsList.isEmpty()) {
         endWave();
       }
     }

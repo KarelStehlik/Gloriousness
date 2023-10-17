@@ -13,7 +13,8 @@ public class BasicTurret extends Turret {
   }
 
 
-  public static void create(World world, int X, int Y, BulletLauncher launcher,  BaseStats newStats){
+  public static void create(World world, int X, int Y, BulletLauncher launcher,
+      BaseStats newStats) {
     Log.write("Warning: non-overridden turret create");
   }
 
@@ -21,25 +22,31 @@ public class BasicTurret extends Turret {
   public static final class ExtraStats {
 
 
-    public void init() {
-      
+    public ExtraStats() {
+      init();
     }
 
-    public ExtraStats() {init();}
+    public void init() {
+
+    }
   }
 
   public static final class Stats extends BaseStats {
+
+    public Stats() {
+      init();
+    }
+
     @Override
     public void init() {
-      power=100f;
-      range=500f;
-      pierce=100f;
-      cd=1f;
-      projectileDuration=2f;
-      bulletSize=50f;
-      speed=10f;
+      power = 100f;
+      range = 500f;
+      pierce = 100f;
+      cd = 1f;
+      projectileDuration = 2f;
+      bulletSize = 50f;
+      speed = 10f;
     }
-    public Stats(){init();}
   }
   // end of generated stats
 }

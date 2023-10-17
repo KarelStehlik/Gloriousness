@@ -140,6 +140,7 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
   public void callForEachCircle(int x, int y, int radius, collideFunction<T> F) {
     idOfSearch++;
 
+    radius = Math.min(radius, 5000);
     int bottom = Math.max((y - radius >> squareSizePow2) - bottomSquares, 0);
     int left = Math.max((x - radius >> squareSizePow2) - leftSquares, 0);
     int top = Math.min((y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);

@@ -58,8 +58,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   public void takeDamage(float amount, DamageType type) {
-    float resistance = 1;
-    healthPart -= amount * resistance / baseStats.health;
+    double resistance = 1;
+    double eDamage = amount * resistance / baseStats.health;
+    healthPart -= eDamage;
     if (healthPart <= 0 && exists) {
       world.setMoney(world.getMoney() + baseStats.value);
       onDeath();

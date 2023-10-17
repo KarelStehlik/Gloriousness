@@ -12,20 +12,20 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
   public static final int POSSIBLE_TRIGGERS_COUNT = 3;
   public static final Modifier<GameObject> doNothing = target -> {
   };
+  private static int ID = 0;
   public final int priority;
   public final int triggerEvent;
   private final Modifier<T> mod;
+  private final int id;
   private int remainingDuration;
   private boolean hasEnded = false;
-  private final int id;
-  private static int ID=0;
 
   public Buff(int priority, int durationMillis, int triggerEvent, Modifier<T> effect) {
     this.priority = priority;
     remainingDuration = durationMillis;
     this.triggerEvent = triggerEvent;
     mod = effect;
-    id=ID;
+    id = ID;
     ID++;
   }
 
@@ -52,10 +52,10 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
 
   @Override
   public int compareTo(Buff o) {
-    if(priority == o.priority){
-      return id-o.id;
+    if (priority == o.priority) {
+      return id - o.id;
     }
-    return priority-o.priority;
+    return priority - o.priority;
   }
 
   @Override
