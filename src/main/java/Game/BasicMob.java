@@ -22,15 +22,13 @@ public class BasicMob extends TdMob {
 
   public static final class Stats extends BaseStats {
     @Override
-    public Stats() {
-      init();
-    }
-  }
     public void init() {
       size=20.0f;
       speed=5f;
       health=100f;
       value=1f;
     }
+    public Stats(){init();}
+  }
   // end of generated stats
 }

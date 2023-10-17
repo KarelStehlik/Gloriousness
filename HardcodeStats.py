@@ -8,8 +8,8 @@ def toClassText(input):
     baseStats = baseStats.split("|")
     extraStats = extraStats.split("|")
 
-    if baseStats == [""]: baseStats = []
-    if extraStats == [""]: extraStats = []
+    if baseStats==[""]:baseStats=[]
+    if extraStats==[""]:extraStats=[]
 
     hasExtra = len(extraStats) != 0
     hasBase = len(baseStats) != 0
@@ -19,7 +19,7 @@ def toClassText(input):
     declaration = "    public float " * hasExtra + "f;\n    public float ".join(extraStats) + "f;" * hasExtra
 
     initBase = "    public void init() {\n      " + "f;\n      ".join(baseStats) + "f;" * hasBase + "\n    }\n"
-    overrideBaseStats = "  public static final class Stats extends BaseStats {\n    @Override\n"+"    public Stats() {\n      init();\n    }\n  }\n" + initBase
+    overrideBaseStats = "  public static final class Stats extends BaseStats {\n    @Override\n" + initBase+ "    public Stats(){init();}\n  }\n"
 
     startExtra = "  public static final class ExtraStats {\n"
     endExtra = "  }"
@@ -85,9 +85,8 @@ def main():
 
 # handleStatsText("Player|speed=1|health=100|cd=5|projSize=100|projSpeed=30|projPierce=100|projDuration=3|projPower=100")
 
-if __name__ == "__main__":
-    if os.path.exists("build_log.txt") and (os.path.getmtime("build_log.txt") > max(
-            os.path.getmtime("stats/" + filename) for filename in os.listdir("stats"))):
+if __name__=="__main__":
+    if os.path.exists("build_log.txt") and os.path.getmtime("build_log.txt") > max(os.path.getmtime("stats/"+filename) for filename in os.listdir("stats")):
         print("skipped: no stat changes")
     else:
         main()

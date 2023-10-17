@@ -31,10 +31,6 @@ public class BasicTurret extends Turret {
 
   public static final class Stats extends BaseStats {
     @Override
-    public Stats() {
-      init();
-    }
-  }
     public void init() {
       power=100f;
       range=500f;
@@ -44,5 +40,7 @@ public class BasicTurret extends Turret {
       bulletSize=50f;
       speed=10f;
     }
+    public Stats(){init();}
+  }
   // end of generated stats
 }
