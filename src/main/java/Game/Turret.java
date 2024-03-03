@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Buffs.BuffHandler;
 import general.Log;
 import general.Util;
 import java.awt.Point;
@@ -13,6 +14,7 @@ public class Turret extends GameObject implements TickDetect {
   private final Sprite sprite;
   protected float health;
   private float vx, vy;
+  private final BuffHandler<Turret> buffHandler;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
       BaseStats newStats) {
@@ -26,11 +28,7 @@ public class Turret extends GameObject implements TickDetect {
     launcher.move(x, y);
     Game.get().addTickable(this);
     onStatsUpdate();
-  }
-
-  public static void create(World world, int X, int Y, BulletLauncher launcher,
-      BaseStats newStats) {
-    Log.write("Warning: non-overridden turret create");
+    buffHandler = new BuffHandler<>(this);
   }
 
   @Override
@@ -53,6 +51,7 @@ public class Turret extends GameObject implements TickDetect {
       target = world.getMobsGrid()
           .getFirst(new Point((int) x, (int) y), (int) baseStats.range);
     }
+    buffHandler.tick();
   }
 
   @Override

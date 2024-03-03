@@ -280,7 +280,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private float mobsToSpawn = 0;
 
     private static float scaling(int wave) {
-      return 1 + wave / 5f;
+      return (float)Math.pow(1 + wave / 5f, 1.4);
     }
 
     private void onBeginWave(int wave) {
@@ -292,7 +292,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);
         final float hpScaling = scaling(wave);
-        final float spdScaling = (float) Math.pow(scaling(wave), 0.3);
+        final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
         e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
             m -> {
               m.baseStats.health *= hpScaling;

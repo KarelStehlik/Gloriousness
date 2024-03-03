@@ -13,6 +13,7 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
   public static final Modifier<GameObject> doNothing = target -> {
   };
   private static int ID = 0;
+
   public final int priority;
   public final int triggerEvent;
   private final Modifier<T> mod;
@@ -27,6 +28,10 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
     mod = effect;
     id = ID;
     ID++;
+  }
+
+  public Buff<T> copy(){
+    return new Buff<T>(priority,remainingDuration,triggerEvent,mod);
   }
 
   public int getRemainingDuration() {

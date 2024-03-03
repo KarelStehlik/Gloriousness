@@ -78,7 +78,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
     grid.add(this);
     miscTickActions();
     sprite.setPosition(x, y);
-
   }
 
   @Override
