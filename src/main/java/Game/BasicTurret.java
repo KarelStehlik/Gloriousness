@@ -12,12 +12,6 @@ public class BasicTurret extends Turret {
     onStatsUpdate();
   }
 
-
-  public static void create(World world, int X, int Y, BulletLauncher launcher,
-      BaseStats newStats) {
-    Log.write("Warning: non-overridden turret create");
-  }
-
   
 // generated stats
   public static final class ExtraStats {

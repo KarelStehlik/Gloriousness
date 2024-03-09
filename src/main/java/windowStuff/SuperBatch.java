@@ -144,7 +144,7 @@ public class SuperBatch implements SpriteBatching {
       int drawEnd = drawStart + 1;
 
       while (drawEnd < batches.size() && batches.get(drawEnd).texture.equals(texture)
-          && batches.get(drawEnd).shader == shader) {
+          && batches.get(drawEnd).shader.equals(shader)) {
         spriteCount += batches.get(drawEnd).squishSize();
         drawEnd++;
       }
@@ -175,10 +175,10 @@ public class SuperBatch implements SpriteBatching {
 
       glDrawElements(GL_TRIANGLES, 6 * spriteCount, GL_UNSIGNED_INT, 0);
 
-      shader.detach();
+      /*shader.detach();
       glBindVertexArray(0);
       glBindBuffer(GL_ARRAY_BUFFER, 0);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
 
       drawStart = drawEnd;
     }

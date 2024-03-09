@@ -44,6 +44,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
           world.explosionVisual(proj.x, proj.y, proj.getPower(), false, "Explosion2-0");
         }
     );
+    bulletLauncher.setSpread(60);
     onStatsUpdate();
     buffHandler = new BuffHandler<>(this);
   }
@@ -116,8 +117,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     if (input.isMousePressed(0)) {
       float dist = (float) Math.hypot(input.getX() - x, input.getY() - y);
       while (bulletLauncher.canAttack()) {
-        bulletLauncher.attack(Util.get_rotation(input.getX() - x, input.getY() - y)
-            + Data.gameMechanicsRng.nextFloat() * 60 - 30);
+        bulletLauncher.attack(Util.get_rotation(input.getX() - x, input.getY() - y);
       }
     }
     x = Math.max(width / 2f, Math.min(1920 - width / 2f, x + vx));

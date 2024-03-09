@@ -70,7 +70,21 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     TurretGenerator test = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l),
         "ph", 100).
         addOnMobCollide((proj, mob) -> mob.takeDamage(proj.getPower(), DamageType.PHYSICAL));
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, test, test, test, test,
+
+    TurretGenerator testDotTurret = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l),
+        "Button", 100).
+        addOnMobCollide((proj, mob) ->
+            {
+              Sprite s = new Sprite("fire",3).addToBs(bs).setSize(20,20).setPosition(mob.x,mob.y);
+              mob.addBuff(new Buff<TdMob>(1, 2000, Buff.TRIGGER_ON_TICK,
+                  tar -> {tar.takeDamage(2, DamageType.TRUE);s.setPosition(tar.x,tar.y);}));
+              mob.addBuff(new Buff<TdMob>(1, 2000, Buff.TRIGGER_ON_REMOVE,
+                  tar -> s.delete()));
+            }
+        );
+    test.getTemplateLauncher().setSpread(45f);
+
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, test, test, test,
         test, test, test, test, test, test, test, test, test, test, test, test, test, test,
         test, test, test, test, test,};
 
@@ -278,6 +292,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private class MobSpawner {
 
     private float mobsToSpawn = 0;
+    private float mobsPerTick=1;
+    private float targetMobsToSpawn=0;
 
     private static float scaling(int wave) {
       return (float)Math.pow(1 + wave / 5f, 1.4);
@@ -285,13 +301,16 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private void onBeginWave(int wave) {
       mobsToSpawn = 20 * wave;
+      targetMobsToSpawn = mobsToSpawn;
+      mobsPerTick=0.03f * wave;
     }
 
     private void run() {
-      while (mobsToSpawn > 0) {
+      targetMobsToSpawn-=mobsPerTick;
+      while (mobsToSpawn > targetMobsToSpawn && mobsToSpawn>0) {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);
-        final float hpScaling = scaling(wave);
+        final float hpScaling = scaling(wave)*1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
         e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
             m -> {
@@ -301,7 +320,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         ));
         addEnemy(e);
       }
-      if (mobsList.isEmpty()) {
+      if (mobsList.isEmpty() && mobsToSpawn==0) {
         endWave();
       }
     }

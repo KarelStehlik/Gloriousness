@@ -1,6 +1,7 @@
 package Game;
 
 import Game.Projectile.OnCollideComponent;
+import general.Data;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +23,16 @@ public class BulletLauncher {
   private float duration;
   private float x, y;
   private float cooldown;
+
+  public float getSpread() {
+    return spread;
+  }
+
+  public void setSpread(float spread) {
+    this.spread = spread;
+  }
+
+  private float spread = 0;
   private float remainingCooldown;
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
@@ -53,6 +64,7 @@ public class BulletLauncher {
     size = og.size;
     power = og.power;
     duration = og.duration;
+    spread=og.spread;
     x = og.x;
     y = og.y;
     cooldown = og.cooldown;
@@ -115,7 +127,8 @@ public class BulletLauncher {
   }
 
   public void attack(float angle) {
-    Projectile p = new Projectile(world, image, x, y, speed, angle, width, height, pierce, size,
+    float deviation = (Data.gameMechanicsRng.nextFloat()-.5f)*spread;
+    Projectile p = new Projectile(world, image, x, y, speed, angle+deviation, width, height, pierce, size,
         duration, power);
     world.getProjectilesList().add(p);
     for (var collide : playerCollides) {
