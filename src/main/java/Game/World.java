@@ -69,17 +69,16 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     mapData = Data.getMapData(mapName);
 
     TurretGenerator test = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l),
-        "ph", 100).
+        "kk", 100).
         addOnMobCollide(BasicCollides.damage);
 
     TurretGenerator testDotTurret = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l, "Button"),
-        "Button", 100).
+        "Explosion1-0", 100).
         addOnMobCollide(BasicCollides.fire);
     test.getTemplateLauncher().setSpread(45f);
 
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, test, test, test,
-        test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-        test, test, test, test, test,};
+        test,};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton(5)).toArray(Button[]::new),

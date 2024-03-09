@@ -303,6 +303,7 @@ public class Sprite implements AbstractSprite {
     private final double startTime;
     private final int end;
     private final int first;
+    private boolean loop = false;
 
     public BasicAnimation(String name,float duration){
       this(Graphics.getLoadedImages().getImageId(name),duration);
@@ -320,14 +321,21 @@ public class Sprite implements AbstractSprite {
       this.first = first;
     }
 
+    public BasicAnimation loop(){
+      loop=true;
+      return this;
+    }
+
     @Override
     public void update() {
       int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
+      if(loop){
+        frame %= length;
+      }
       hasUnsavedChanges = true;
       if (frame > length) {
         imageId = end;
-        animation = () -> {
-        };
+        animation = () -> {};
         onAnimationEnd();
       } else {
         imageId = first + frame;

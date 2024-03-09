@@ -136,6 +136,11 @@ public class SuperBatch implements SpriteBatching {
       spritesToAdd.clear();
     }
 
+    for (Batch b : batches) {
+      Log.write(b.sprites.size());
+    }
+    Log.write("-");
+
     int drawStart = 0;
     while (drawStart < batches.size()) {
       String texture = batches.get(drawStart).texture;

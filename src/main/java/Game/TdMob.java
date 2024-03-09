@@ -163,8 +163,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
       System.out.println(imageId);
       System.out.println(newTexture);
       System.out.println(Arrays.toString(coo));*/
-      sprite.playAnimation(sprite.new BasicAnimation("Explosion1-0",1));
-      //sprite.setHidden(true);
+      sprite.playAnimation(sprite.new BasicAnimation("Explosion1-0",1).loop());
+      sprite.setHidden(true);
     }
 
     private void tick(){
@@ -174,10 +174,11 @@ public abstract class TdMob extends GameObject implements TickDetect {
         damage+=ig.damagePerTick;
         ig.duration-=Game.tickIntervalMillis;
       }
+      sprite.setSize(ignites.size(), ignites.size());
       takeDamage(damage, DamageType.TRUE);
       ignites.removeIf(ig->ig.duration<=0);
       if(ignites.isEmpty()){
-        //sprite.setHidden(true);
+        sprite.setHidden(true);
       }
     }
     public void add(float damagePerTick, float duration){
