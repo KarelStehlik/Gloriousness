@@ -12,6 +12,11 @@ public class BasicTurret extends Turret {
     onStatsUpdate();
   }
 
+  protected BasicTurret(World world, int X, int Y, BulletLauncher launcher, String imageName) {
+    super(world, X, Y, imageName, launcher, new Stats());
+    onStatsUpdate();
+  }
+
   
 // generated stats
   public static final class ExtraStats {

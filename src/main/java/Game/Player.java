@@ -38,11 +38,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
         30, 30, 50, 30, 3, 100, stats.cd);
     bulletLauncher.addMobCollide(
-        (proj, target) -> {
-          world.aoeDamage((int) proj.x, (int) proj.y, (int) proj.getPower(), proj.getPower(),
-              DamageType.TRUE);
-          world.explosionVisual(proj.x, proj.y, proj.getPower(), false, "Explosion2-0");
-        }
+        BasicCollides.explode
     );
     bulletLauncher.setSpread(60);
     onStatsUpdate();
@@ -117,7 +113,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     if (input.isMousePressed(0)) {
       float dist = (float) Math.hypot(input.getX() - x, input.getY() - y);
       while (bulletLauncher.canAttack()) {
-        bulletLauncher.attack(Util.get_rotation(input.getX() - x, input.getY() - y);
+        bulletLauncher.attack(Util.get_rotation(input.getX() - x, input.getY() - y));
       }
     }
     x = Math.max(width / 2f, Math.min(1920 - width / 2f, x + vx));

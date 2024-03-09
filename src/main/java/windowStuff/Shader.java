@@ -23,6 +23,7 @@ import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
+import general.Log;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
@@ -132,8 +133,8 @@ public class Shader {
   }
 
   public void uploadTexture(String name, int slot) {
-    int varLocation = glGetUniformLocation(shaderID, name);
     use();
+    int varLocation = glGetUniformLocation(shaderID, name);
     glUniform1f(varLocation, slot);
   }
 

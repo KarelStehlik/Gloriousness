@@ -71,7 +71,6 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
 
   @FunctionalInterface
   public interface Modifier<T> {
-
     void modify(T target);
   }
 }

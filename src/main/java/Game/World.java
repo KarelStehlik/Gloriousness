@@ -59,6 +59,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000, 8);
     projectilesList = new ArrayList<>(128);
     bs = game.getSpriteBatching("main");
+    BasicCollides.init(this);
     getBs().getCamera().moveTo(0, -0, 20);
     player = new Player(this);
     String mapName = Data.listMaps()[0];
@@ -69,19 +70,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator test = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l),
         "ph", 100).
-        addOnMobCollide((proj, mob) -> mob.takeDamage(proj.getPower(), DamageType.PHYSICAL));
+        addOnMobCollide(BasicCollides.damage);
 
-    TurretGenerator testDotTurret = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l),
+    TurretGenerator testDotTurret = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l, "Button"),
         "Button", 100).
-        addOnMobCollide((proj, mob) ->
-            {
-              Sprite s = new Sprite("fire",3).addToBs(bs).setSize(20,20).setPosition(mob.x,mob.y);
-              mob.addBuff(new Buff<TdMob>(1, 2000, Buff.TRIGGER_ON_TICK,
-                  tar -> {tar.takeDamage(2, DamageType.TRUE);s.setPosition(tar.x,tar.y);}));
-              mob.addBuff(new Buff<TdMob>(1, 2000, Buff.TRIGGER_ON_REMOVE,
-                  tar -> s.delete()));
-            }
-        );
+        addOnMobCollide(BasicCollides.fire);
     test.getTemplateLauncher().setSpread(45f);
 
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, test, test, test,
@@ -111,6 +104,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
     beginWave();
+    endWave();
   }
 
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {

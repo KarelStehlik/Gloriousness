@@ -7,8 +7,13 @@ import general.Data;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import windowStuff.AbstractSprite;
+import windowStuff.Graphics;
 import windowStuff.Sprite;
+import windowStuff.SpriteBatching;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
@@ -47,6 +52,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.addToBs(world.getBs());
     exists = true;
     buffHandler = new BuffHandler<>(this);
+    ignite = new IgniteSet(world.getBs());
   }
 
   public TrackProgress getProgress() {
@@ -55,6 +61,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   public void addBuff(Buff<TdMob> eff) {
     buffHandler.add(eff);
+  }
+
+  public BuffHandler<TdMob> getBuffHandler(){
+    return buffHandler;
   }
 
   public void takeDamage(float amount, DamageType type) {
@@ -74,6 +84,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   @Override
   public void onGameTick(int tick) {
     buffHandler.tick();
+    ignite.tick();
     runAI();
     grid.add(this);
     miscTickActions();
@@ -85,6 +96,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.delete();
     exists = false;
     buffHandler.delete();
+    ignite.delete();
   }
 
   @Override
@@ -127,6 +139,55 @@ public abstract class TdMob extends GameObject implements TickDetect {
   public Rectangle getHitbox() {
     return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
         height);
+  }
+
+  public final IgniteSet ignite;
+
+  public class IgniteSet{
+    private static class Ignite{
+      protected float damagePerTick, duration;
+      protected Ignite(float dmg, float dur){
+        damagePerTick=dmg;
+        duration=dur;
+      }
+    }
+    private final List<Ignite> ignites = new ArrayList<>(1);
+    private final Sprite sprite;
+
+    protected IgniteSet(SpriteBatching bs){
+      sprite = new Sprite("Explosion1-5", 1).addToBs(bs).setSize(50, 50).setPosition(x,y);
+
+      /*int imageId = Graphics.getLoadedImages().getImageId("Explosion1-0");
+      String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
+      var coo = Graphics.getLoadedImages().getImageCoordinates(imageId);
+      System.out.println(imageId);
+      System.out.println(newTexture);
+      System.out.println(Arrays.toString(coo));*/
+      sprite.playAnimation(sprite.new BasicAnimation("Explosion1-0",1));
+      //sprite.setHidden(true);
+    }
+
+    private void tick(){
+      sprite.setPosition(x,y);
+      float damage = 0;
+      for (Ignite ig: ignites) {
+        damage+=ig.damagePerTick;
+        ig.duration-=Game.tickIntervalMillis;
+      }
+      takeDamage(damage, DamageType.TRUE);
+      ignites.removeIf(ig->ig.duration<=0);
+      if(ignites.isEmpty()){
+        //sprite.setHidden(true);
+      }
+    }
+    public void add(float damagePerTick, float duration){
+      ignites.add(new Ignite(damagePerTick,duration));
+      sprite.setHidden(false);
+    }
+    private void delete(){
+      sprite.delete();
+      ignites.clear();
+    }
   }
 
   public static class BaseStats {
