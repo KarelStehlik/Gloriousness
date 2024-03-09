@@ -29,15 +29,15 @@ public class GlBufferWrapper {
   }
 
   public GlBufferWrapper(int type) {
-    this(1024, type);
+    this(1, type);
   }
 
   public void alloc(int newSize, int usage) {
     bind();
     while (size < newSize) {
       size *= 2;
-      glBufferData(type, size, usage);
     }
+    glBufferData(type, size, usage);
   }
 
   private void passBuffer() {

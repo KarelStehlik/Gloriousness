@@ -35,7 +35,7 @@ public final class Game implements UserInputHandler {
   private final Log.Timer timer = new Timer();
   private long startTime;
   private int ticks = 0;
-  private TestWorld world;
+  private World world;
   private boolean paused = false;
 
   private Game() {
@@ -54,7 +54,7 @@ public final class Game implements UserInputHandler {
   public void init() {
     graphics.init();
     startTime = System.currentTimeMillis();
-    world = new TestWorld();
+    world = new World();
   }
 
   public void addTickable(TickDetect t) {

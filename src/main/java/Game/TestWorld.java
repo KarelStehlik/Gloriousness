@@ -9,13 +9,7 @@ public class TestWorld implements TickDetect, MouseDetect, KeyboardDetect {
   public TestWorld() {
     SpriteBatching bs =  Game.get().getSpriteBatching("main");
     new Sprite("b", 4).addToBs(bs);
-    new Sprite("b", 4).addToBs(bs);
-    new Sprite("b", 4).addToBs(bs);
-    new Sprite("b", 4).addToBs(bs);
-    new Sprite("b", 4).addToBs(bs);
-    new Sprite("b", 4).addToBs(bs);
-    new Sprite("b", 4).addToBs(bs);
-    new Sprite("b", 4).addToBs(bs);
+    new Sprite("Explosion1-0", 4).addToBs(bs);
     //new Sprite("b", 4).addToBs(bs);
   }
 

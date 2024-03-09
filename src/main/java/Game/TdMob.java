@@ -155,7 +155,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     private final Sprite sprite;
 
     protected IgniteSet(SpriteBatching bs){
-      sprite = new Sprite("Explosion1-5", 1).addToBs(bs).setSize(50, 50).setPosition(x,y);
+      sprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50).setPosition(x,y);
+      sprite.setRotation(180);
 
       /*int imageId = Graphics.getLoadedImages().getImageId("Explosion1-0");
       String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
@@ -163,7 +164,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
       System.out.println(imageId);
       System.out.println(newTexture);
       System.out.println(Arrays.toString(coo));*/
-      sprite.playAnimation(sprite.new BasicAnimation("Explosion1-0",1).loop());
+      sprite.playAnimation(sprite.new BasicAnimation("Fireball-0",1).loop());
       sprite.setHidden(true);
     }
 
@@ -174,7 +175,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
         damage+=ig.damagePerTick;
         ig.duration-=Game.tickIntervalMillis;
       }
-      sprite.setSize(ignites.size(), ignites.size());
+      float power = damage / baseStats.health * 1000;
+      sprite.setSize(power* baseStats.size, power* baseStats.size);
       takeDamage(damage, DamageType.TRUE);
       ignites.removeIf(ig->ig.duration<=0);
       if(ignites.isEmpty()){

@@ -73,12 +73,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         addOnMobCollide(BasicCollides.damage);
 
     TurretGenerator testDotTurret = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l, "Button"),
-        "Explosion1-0", 100).
+        "Button", 100).
         addOnMobCollide(BasicCollides.fire);
     test.getTemplateLauncher().setSpread(45f);
 
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, test, test, test,
-        test,};
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton(5)).toArray(Button[]::new),
@@ -103,7 +102,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
     beginWave();
-    endWave();
+    //endWave();
   }
 
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
