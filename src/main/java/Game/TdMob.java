@@ -7,16 +7,12 @@ import general.Data;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.Iterator;
-import java.util.TreeSet;
 import windowStuff.AbstractSprite;
 import windowStuff.Sprite;
-import windowStuff.SpriteBatching;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
   public final BaseStats baseStats;
-  public final IgniteSet ignite;
   protected final AbstractSprite sprite;
   protected final float rotation;
   protected final SquareGrid<TdMob> grid;
@@ -51,7 +47,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.addToBs(world.getBs());
     exists = true;
     buffHandler = new BuffHandler<>(this);
-    ignite = new IgniteSet(world.getBs());
   }
 
   public TrackProgress getProgress() {
@@ -83,7 +78,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
   @Override
   public void onGameTick(int tick) {
     buffHandler.tick();
-    ignite.tick();
     runAI();
     grid.add(this);
     miscTickActions();
@@ -95,7 +89,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.delete();
     exists = false;
     buffHandler.delete();
-    ignite.delete();
   }
 
   @Override
@@ -171,75 +164,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
         return o.distanceToNext - distanceToNext;
       }
       return checkpoint - o.checkpoint;
-    }
-  }
-
-  public class IgniteSet {
-    private final TreeSet<Ignite> ignites = new TreeSet<>();
-    private final Sprite fireSprite;
-    private float age = 0;
-    private float dpTick = 0;
-
-    protected IgniteSet(SpriteBatching bs) {
-      fireSprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50).setPosition(x, y);
-      fireSprite.setRotation(180);
-      fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 1).loop());
-      fireSprite.setHidden(true);
-    }
-
-    private void tick() {
-      age += Game.tickIntervalMillis;
-
-      for (Iterator<Ignite> iterator = ignites.iterator(); iterator.hasNext(); ) {
-        Ignite ig = iterator.next();
-        if (ig.expiryTime > age) {
-          break;
-        }
-        iterator.remove();
-        dpTick -= ig.damagePerTick;
-      }
-
-      float power = dpTick / baseStats.health * 1000;
-      fireSprite.setSize(power * baseStats.size, power * baseStats.size);
-      fireSprite.setPosition(x, y + power * baseStats.size * .4f);
-      takeDamage(dpTick, DamageType.TRUE);
-      if (ignites.isEmpty()) {
-        fireSprite.setHidden(true);
-      }
-    }
-
-    public void add(float damagePerTick, float duration) {
-      ignites.add(new Ignite(damagePerTick, age + duration));
-      fireSprite.setHidden(false);
-      this.dpTick += damagePerTick;
-    }
-
-    private void delete() {
-      fireSprite.delete();
-      ignites.clear();
-    }
-
-    private static class Ignite implements Comparable<Ignite> {
-
-      private static long staticId = 0;
-      protected final float damagePerTick, expiryTime;
-      private final long id;
-
-      protected Ignite(float dmg, float dur) {
-        damagePerTick = dmg;
-        expiryTime = dur;
-        id = staticId;
-        staticId++;
-      }
-
-      @Override
-      public int compareTo(Ignite o) {
-        int floatComp = Float.compare(expiryTime, o.expiryTime);
-        if (floatComp != 0) {
-          return floatComp;
-        }
-        return Long.compare(id, o.id);
-      }
     }
   }
 

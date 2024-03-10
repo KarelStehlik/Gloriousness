@@ -1,92 +1,31 @@
 package Game.Buffs;
 
 import Game.GameObject;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BuffHandler<T extends GameObject> {
-
-  private final List<TreeSet<Buff<T>>> buffs = new ArrayList<>(Buff.POSSIBLE_TRIGGERS_COUNT);
-  private final List<Buff<T>> buffsWithDuration = new ArrayList<>(5);
   private final T target;
-  private boolean deleted = false;
+  private final Map<Class<? extends Buff>,BuffAggregator<T>> buffTypes = new HashMap<>(1);
 
   public BuffHandler(T target) {
     this.target = target;
-    for (int i = 0; i < Buff.POSSIBLE_TRIGGERS_COUNT; i++) {
-      buffs.add(new TreeSet<>());
-    }
   }
 
-  private void updateStats() {
-    target.clearStats();
-    for (Iterator<Buff<T>> iterator = buffs.get(Buff.TRIGGER_ON_UPDATE).iterator();
-        iterator.hasNext(); ) {
-      Buff<T> eff = iterator.next();
-      if (eff.hasEnded()) {
-        iterator.remove();
-      } else {
-        eff.trigger(target);
-      }
-    }
-    target.onStatsUpdate();
+  public void add(Buff<T> newBuff) {
+    var aggr = buffTypes.computeIfAbsent(newBuff.getClass(), Id->newBuff.makeAggregator());
+    aggr.add(newBuff, target);
   }
 
-  public void add(Buff<T> e) {
-    buffs.get(e.triggerEvent).add(e);
-    if (e.triggerEvent == Buff.TRIGGER_ON_UPDATE) {
-      updateStats();
-    }
-    if (e.getRemainingDuration() != Buff.INFINITE_DURATION) {
-      buffsWithDuration.add(e);
-    }
-  }
-
-  // TODO : optimize this shit
   public void tick() {
-    for (Iterator<Buff<T>> iterator = buffs.get(Buff.TRIGGER_ON_TICK).iterator();
-        iterator.hasNext() && !deleted; ) {
-      Buff<T> eff = iterator.next();
-      if (eff.hasEnded()) {
-        iterator.remove();
-      } else {
-        eff.trigger(target);
-      }
-    }
-
-    boolean mustUpdateStats = false;
-    for (Iterator<Buff<T>> iterator = buffsWithDuration.iterator();
-        iterator.hasNext() && !deleted; ) {
-      Buff<T> eff = iterator.next();
-      eff.tick();
-      if (eff.hasEnded()) {
-        iterator.remove();
-        if (eff.triggerEvent == Buff.TRIGGER_ON_REMOVE) {
-          eff.trigger(target);
-        }
-        mustUpdateStats |= eff.triggerEvent == Buff.TRIGGER_ON_UPDATE;
-      }
-    }
-    if (mustUpdateStats && !deleted) {
-      updateStats();
+    for(var buffs : buffTypes.values()){
+      buffs.tick(target);
     }
   }
 
   public void delete() {
-    if (deleted) {
-      return;
+    for(var buffs : buffTypes.values()){
+      buffs.delete(target);
     }
-    for (Buff<T> buff : buffs.get(Buff.TRIGGER_ON_REMOVE)) {
-      buff.trigger(target);
-    }
-    for (Set<Buff<T>> category : buffs) {
-      category.clear();
-    }
-    buffs.clear();
-    buffsWithDuration.clear();
-    deleted = true;
   }
 }

@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengles.GLES20.GL_ONE;
 import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 
-import Game.Buffs.Buff;
+import Game.Buffs.StatBuff;
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -100,8 +100,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       explosionVisual(x, y, 100, true, "Explosion1-0");
-      player.addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
-          p -> p.stats.cd *= .95f));
+      player.addBuff(new StatBuff<Player>( 0,2000000,
+          p -> p.stats.cd *= .5f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
@@ -311,7 +311,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         TdMob e = new BasicMob(World.this);
         final float hpScaling = scaling(wave) * 1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
-        e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
+        e.addBuff(new StatBuff<TdMob>(0, Float.POSITIVE_INFINITY,
             mob -> {
               mob.baseStats.health *= hpScaling;
               mob.baseStats.speed *= spdScaling;

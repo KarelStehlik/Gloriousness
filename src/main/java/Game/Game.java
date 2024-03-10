@@ -33,6 +33,11 @@ public final class Game implements UserInputHandler {
   private final Collection<MouseDetect> mouseDetects = new ArrayList<>(1);
   private final Collection<MouseDetect> newMouseDetects = new ArrayList<>(1);
   private final Log.Timer timer = new Timer();
+
+  public int getTicks() {
+    return ticks;
+  }
+
   private int ticks = 0;
   private World world;
   private boolean paused = false;

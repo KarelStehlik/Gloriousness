@@ -1,6 +1,6 @@
 package Game;
 
-import Game.Buffs.Buff;
+import Game.Buffs.StatBuff;
 import general.Data;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class UpgradeGiver {
 
   private void optionPicked(int id) {
     world.getPlayer().addBuff(
-        new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE, p -> p.stats.cd /= 2));
+        new StatBuff<Player>(0, Float.POSITIVE_INFINITY, p -> p.stats.cd /= 2));
     clearOptions();
     world.beginWave();
   }
@@ -47,7 +47,7 @@ public class UpgradeGiver {
 
     @Override
     void picked() {
-      world.getPlayer().addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
+      world.getPlayer().addBuff(new StatBuff<Player>( 0, Float.POSITIVE_INFINITY,
           p -> p.stats.projPower *= 2));
     }
 
@@ -66,7 +66,7 @@ public class UpgradeGiver {
 
     @Override
     void picked() {
-      world.getPlayer().addBuff(new Buff<Player>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
+      world.getPlayer().addBuff(new StatBuff<Player>( 0, Float.POSITIVE_INFINITY,
           p -> p.stats.cd /= 2));
     }
 

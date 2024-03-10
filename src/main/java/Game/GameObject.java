@@ -8,6 +8,15 @@ public class GameObject {
   public final int id;
   private final Rectangle hitbox;
   public long lastChecked = -9223372036854775807L;
+
+  public float getX() {
+    return x;
+  }
+
+  public float getY() {
+    return y;
+  }
+
   protected float x, y;
   protected int width, height;
   protected World world;
