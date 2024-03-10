@@ -21,7 +21,7 @@ public class BuffHandler<T extends GameObject> {
     }
   }
 
-  public void updateStats() {
+  private void updateStats() {
     target.clearStats();
     for (Iterator<Buff<T>> iterator = buffs.get(Buff.TRIGGER_ON_UPDATE).iterator();
         iterator.hasNext(); ) {

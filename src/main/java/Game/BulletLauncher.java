@@ -13,7 +13,16 @@ public class BulletLauncher {
   private final Collection<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
   private final World world;
-  private final String image;
+
+  public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
+
+  private String image;
   private float speed;
   private int width;
   private int height;

@@ -175,11 +175,11 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   public class IgniteSet {
-
     private final TreeSet<Ignite> ignites = new TreeSet<>();
     private final Sprite fireSprite;
     private float age = 0;
     private float dpTick = 0;
+
     protected IgniteSet(SpriteBatching bs) {
       fireSprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50).setPosition(x, y);
       fireSprite.setRotation(180);
@@ -241,5 +241,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
         return Long.compare(id, o.id);
       }
     }
+  }
+
+  @Override
+  public void clearStats(){
+    baseStats.init();
   }
 }
