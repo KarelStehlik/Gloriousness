@@ -72,7 +72,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         "kk", 100).
         addOnMobCollide(BasicCollides.damage);
 
-    TurretGenerator testDotTurret = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l, "Button"),
+    TurretGenerator testDotTurret = new TurretGenerator(this,
+        (x, y, l) -> new BasicTurret(this, x, y, l, "Button"),
         "Button", 100).
         addOnMobCollide(BasicCollides.fire);
     test.getTemplateLauncher().setSpread(45f);
@@ -284,25 +285,25 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private class MobSpawner {
 
     private float mobsToSpawn = 0;
-    private float mobsPerTick=1;
-    private float targetMobsToSpawn=0;
+    private float mobsPerTick = 1;
+    private float targetMobsToSpawn = 0;
 
     private static float scaling(int wave) {
-      return (float)Math.pow(1 + wave / 5f, 1.4);
+      return (float) Math.pow(1 + wave / 5f, 1.4);
     }
 
     private void onBeginWave(int wave) {
       mobsToSpawn = 20 * wave;
       targetMobsToSpawn = mobsToSpawn;
-      mobsPerTick=0.03f * wave;
+      mobsPerTick = 0.03f * wave;
     }
 
     private void run() {
-      targetMobsToSpawn-=mobsPerTick;
-      while (mobsToSpawn > targetMobsToSpawn && mobsToSpawn>0) {
+      targetMobsToSpawn -= mobsPerTick;
+      while (mobsToSpawn > targetMobsToSpawn && mobsToSpawn > 0) {
         mobsToSpawn--;
         TdMob e = new BasicMob(World.this);
-        final float hpScaling = scaling(wave)*1000;
+        final float hpScaling = scaling(wave) * 1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
         e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
             m -> {
@@ -312,7 +313,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         ));
         addEnemy(e);
       }
-      if (mobsList.isEmpty() && mobsToSpawn==0) {
+      if (mobsList.isEmpty() && mobsToSpawn == 0) {
         endWave();
       }
     }

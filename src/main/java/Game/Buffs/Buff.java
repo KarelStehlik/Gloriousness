@@ -30,8 +30,8 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
     ID++;
   }
 
-  public Buff<T> copy(){
-    return new Buff<T>(priority,remainingDuration,triggerEvent,mod);
+  public Buff<T> copy() {
+    return new Buff<T>(priority, remainingDuration, triggerEvent, mod);
   }
 
   public int getRemainingDuration() {
@@ -71,6 +71,7 @@ public class Buff<T extends GameObject> implements Comparable<Buff<T>> {
 
   @FunctionalInterface
   public interface Modifier<T> {
+
     void modify(T target);
   }
 }

@@ -3,7 +3,6 @@ package windowStuff;
 import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import static org.lwjgl.opengles.GLES20.GL_ARRAY_BUFFER;
 
-import Game.BasicCollides;
 import general.Constants;
 import general.Data;
 import general.Util;
@@ -305,8 +304,8 @@ public class Sprite implements AbstractSprite {
     private final int first;
     private boolean loop = false;
 
-    public BasicAnimation(String name,float duration){
-      this(Graphics.getLoadedImages().getImageId(name),duration);
+    public BasicAnimation(String name, float duration) {
+      this(Graphics.getLoadedImages().getImageId(name), duration);
     }
 
     public BasicAnimation(int first, float duration) {
@@ -321,21 +320,22 @@ public class Sprite implements AbstractSprite {
       this.first = first;
     }
 
-    public BasicAnimation loop(){
-      loop=true;
+    public BasicAnimation loop() {
+      loop = true;
       return this;
     }
 
     @Override
     public void update() {
       int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
-      if(loop){
+      if (loop) {
         frame %= length;
       }
       hasUnsavedChanges = true;
       if (frame > length) {
         imageId = end;
-        animation = () -> {};
+        animation = () -> {
+        };
         onAnimationEnd();
       } else {
         imageId = first + frame;

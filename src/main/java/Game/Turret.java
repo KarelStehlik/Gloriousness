@@ -1,7 +1,6 @@
 package Game;
 
 import Game.Buffs.BuffHandler;
-import general.Log;
 import general.Util;
 import java.awt.Point;
 import windowStuff.Sprite;
@@ -12,9 +11,9 @@ public class Turret extends GameObject implements TickDetect {
   public final BaseStats baseStats;
   protected final BulletLauncher bulletLauncher;
   private final Sprite sprite;
+  private final BuffHandler<Turret> buffHandler;
   protected float health;
   private float vx, vy;
-  private final BuffHandler<Turret> buffHandler;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
       BaseStats newStats) {

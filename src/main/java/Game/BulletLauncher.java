@@ -23,15 +23,6 @@ public class BulletLauncher {
   private float duration;
   private float x, y;
   private float cooldown;
-
-  public float getSpread() {
-    return spread;
-  }
-
-  public void setSpread(float spread) {
-    this.spread = spread;
-  }
-
   private float spread = 0;
   private float remainingCooldown;
 
@@ -53,7 +44,6 @@ public class BulletLauncher {
     this.cooldown = cooldownMs;
     this.remainingCooldown = cooldownMs;
   }
-
   public BulletLauncher(BulletLauncher og) {
     world = og.world;
     image = og.image;
@@ -64,13 +54,21 @@ public class BulletLauncher {
     size = og.size;
     power = og.power;
     duration = og.duration;
-    spread=og.spread;
+    spread = og.spread;
     x = og.x;
     y = og.y;
     cooldown = og.cooldown;
     playerCollides.addAll(og.playerCollides);
     mobCollides.addAll(og.mobCollides);
     projectileCollides.addAll(og.projectileCollides);
+  }
+
+  public float getSpread() {
+    return spread;
+  }
+
+  public void setSpread(float spread) {
+    this.spread = spread;
   }
 
   public void tickCooldown() {
@@ -127,8 +125,9 @@ public class BulletLauncher {
   }
 
   public void attack(float angle) {
-    float deviation = (Data.gameMechanicsRng.nextFloat()-.5f)*spread;
-    Projectile p = new Projectile(world, image, x, y, speed, angle+deviation, width, height, pierce, size,
+    float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
+    Projectile p = new Projectile(world, image, x, y, speed, angle + deviation, width, height,
+        pierce, size,
         duration, power);
     world.getProjectilesList().add(p);
     for (var collide : playerCollides) {

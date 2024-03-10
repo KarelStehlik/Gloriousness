@@ -1,7 +1,5 @@
 package Game;
 
-import general.Log;
-
 public class BasicTurret extends Turret {
 
   public final ExtraStats extraStats = new ExtraStats();
@@ -17,8 +15,8 @@ public class BasicTurret extends Turret {
     onStatsUpdate();
   }
 
-  
-// generated stats
+
+  // generated stats
   public static final class ExtraStats {
 
     public ExtraStats() {

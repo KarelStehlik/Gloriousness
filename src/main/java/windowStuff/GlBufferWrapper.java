@@ -7,7 +7,6 @@ import static org.lwjgl.opengl.GL15C.nglBufferSubData;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
 import general.Constants;
-import general.Log;
 import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 

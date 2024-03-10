@@ -7,7 +7,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
-import general.Data;
 import general.Util;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
@@ -132,13 +131,9 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     }
   }
 
-  
-// generated stats
-  public static final class ExtraStats {
 
-    public ExtraStats() {
-      init();
-    }
+  // generated stats
+  public static final class ExtraStats {
 
     public float speed = 1f;
     public float health = 100f;
@@ -148,6 +143,10 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     public float projPierce = 100f;
     public float projDuration = .81f;
     public float projPower = 100f;
+    public ExtraStats() {
+      init();
+    }
+
     public void init() {
       speed = 1f;
       health = 100f;

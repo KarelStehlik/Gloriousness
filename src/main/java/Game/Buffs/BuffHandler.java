@@ -76,10 +76,10 @@ public class BuffHandler<T extends GameObject> {
   }
 
   public void delete() {
-    if(deleted){
+    if (deleted) {
       return;
     }
-    for(Buff<T> buff: buffs.get(Buff.TRIGGER_ON_REMOVE)){
+    for (Buff<T> buff : buffs.get(Buff.TRIGGER_ON_REMOVE)) {
       buff.trigger(target);
     }
     for (Set<Buff<T>> category : buffs) {
