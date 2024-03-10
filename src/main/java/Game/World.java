@@ -100,7 +100,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       explosionVisual(x, y, 100, true, "Explosion1-0");
-      player.addBuff(new StatBuff<Player>( 0,2000000,
+      player.addBuff(new StatBuff<Player>(0, 2000000,
           p -> p.stats.cd *= .5f));
     }, null));
 
@@ -284,7 +284,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     wave++;
     waveRunning = true;
     mobSpawner.onBeginWave(wave);
-    Text text = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500, bs);
+    Text text = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500,
+        bs);
     Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
   }
 

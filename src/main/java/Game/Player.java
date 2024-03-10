@@ -143,6 +143,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     public float projPierce = 100f;
     public float projDuration = .81f;
     public float projPower = 100f;
+
     public ExtraStats() {
       init();
     }

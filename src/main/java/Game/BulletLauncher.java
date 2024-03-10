@@ -13,15 +13,6 @@ public class BulletLauncher {
   private final Collection<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
   private final World world;
-
-  public String getImage() {
-    return image;
-  }
-
-  public void setImage(String image) {
-    this.image = image;
-  }
-
   private String image;
   private float speed;
   private int width;
@@ -34,7 +25,6 @@ public class BulletLauncher {
   private float cooldown;
   private float spread = 0;
   private float remainingCooldown;
-
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
       int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
@@ -70,6 +60,14 @@ public class BulletLauncher {
     playerCollides.addAll(og.playerCollides);
     mobCollides.addAll(og.mobCollides);
     projectileCollides.addAll(og.projectileCollides);
+  }
+
+  public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
   }
 
   public float getSpread() {

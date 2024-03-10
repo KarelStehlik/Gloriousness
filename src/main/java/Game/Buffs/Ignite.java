@@ -1,23 +1,22 @@
 package Game.Buffs;
 
+import Game.DamageType;
 import Game.Game;
-import general.Log;
+import Game.TdMob;
 import java.util.Iterator;
 import java.util.TreeSet;
 import windowStuff.Sprite;
-import Game.TdMob;
-import Game.DamageType;
 
-public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>>{
+public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
   private static long staticId = 0;
-  private final long id;
   protected final float damagePerTick, expiryTime;
+  private final long id;
 
 
   public Ignite(float dmg, float dur) {
     damagePerTick = dmg;
-    expiryTime = Game.get().getTicks()+dur/Game.tickIntervalMillis;
+    expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
     id = staticId;
     staticId++;
   }
@@ -36,7 +35,8 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>>{
     return new Aggregator();
   }
 
-  public class Aggregator implements BuffAggregator<T>{
+  public class Aggregator implements BuffAggregator<T> {
+
     private final TreeSet<Ignite<T>> ignites = new TreeSet<>();
     private final Sprite fireSprite;
     private float dpTick = 0;
@@ -47,6 +47,20 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>>{
       fireSprite.setRotation(180);
       fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 1).loop());
       fireSprite.setHidden(true);
+    }
+
+    private void delete() {
+      fireSprite.delete();
+      ignites.clear();
+    }
+
+    @Override
+    public void add(Buff<T> b, T target) {
+      assert b instanceof Ignite<T>;
+      ignites.add((Ignite<T>) b);
+      dpTick += ((Ignite<TdMob>) b).damagePerTick;
+      //fireSprite.setPosition(target.getX(), target.getY());
+      fireSprite.setHidden(false);
     }
 
     @Override
@@ -69,20 +83,6 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>>{
       if (ignites.isEmpty()) {
         fireSprite.setHidden(true);
       }
-    }
-
-    private void delete() {
-      fireSprite.delete();
-      ignites.clear();
-    }
-
-    @Override
-    public void add(Buff<T> b, T target) {
-      assert b instanceof Ignite<T>;
-      ignites.add((Ignite<T>)b);
-      dpTick+=((Ignite<TdMob>) b).damagePerTick;
-      //fireSprite.setPosition(target.getX(), target.getY());
-      fireSprite.setHidden(false);
     }
 
     @Override

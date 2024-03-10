@@ -8,19 +8,9 @@ public class GameObject {
   public final int id;
   private final Rectangle hitbox;
   public long lastChecked = -9223372036854775807L;
-
-  public float getX() {
-    return x;
-  }
-
-  public float getY() {
-    return y;
-  }
-
   protected float x, y;
   protected int width, height;
   protected World world;
-
   protected GameObject(float X, float Y, int W, int H, World w) {
     x = X;
     y = Y;
@@ -30,6 +20,14 @@ public class GameObject {
     hitbox = new Rectangle((int) (x - width / 2), (int) (y + height / 2), width, height);
     id = idGen;
     idGen++;
+  }
+
+  public float getX() {
+    return x;
+  }
+
+  public float getY() {
+    return y;
   }
 
   Rectangle getHitbox() {
