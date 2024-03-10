@@ -7,11 +7,9 @@ import general.Data;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Iterator;
+import java.util.TreeSet;
 import windowStuff.AbstractSprite;
-import windowStuff.Graphics;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
 
@@ -144,48 +142,61 @@ public abstract class TdMob extends GameObject implements TickDetect {
   public final IgniteSet ignite;
 
   public class IgniteSet{
-    private static class Ignite{
-      protected float damagePerTick, duration;
+    private static class Ignite implements Comparable<Ignite>{
+      protected final float damagePerTick, expiryTime;
+      private static long ID=0;
+      private final long id;
       protected Ignite(float dmg, float dur){
         damagePerTick=dmg;
-        duration=dur;
+        expiryTime =dur;
+        id=ID;
+        ID++;
+      }
+      @Override
+      public int compareTo(Ignite o) {
+        int floatComp=Float.compare(expiryTime, o.expiryTime);
+        if(floatComp!=0){
+          return floatComp;
+        }
+        return Long.compare(id,o.id);
       }
     }
-    private final List<Ignite> ignites = new ArrayList<>(1);
+    private final TreeSet<Ignite> ignites = new TreeSet<>();
     private final Sprite sprite;
+    private float age = 0;
+    private float damagePerTick = 0;
 
     protected IgniteSet(SpriteBatching bs){
       sprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50).setPosition(x,y);
       sprite.setRotation(180);
-
-      /*int imageId = Graphics.getLoadedImages().getImageId("Explosion1-0");
-      String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
-      var coo = Graphics.getLoadedImages().getImageCoordinates(imageId);
-      System.out.println(imageId);
-      System.out.println(newTexture);
-      System.out.println(Arrays.toString(coo));*/
       sprite.playAnimation(sprite.new BasicAnimation("Fireball-0",1).loop());
       sprite.setHidden(true);
     }
 
     private void tick(){
       sprite.setPosition(x,y);
-      float damage = 0;
-      for (Ignite ig: ignites) {
-        damage+=ig.damagePerTick;
-        ig.duration-=Game.tickIntervalMillis;
+      age += Game.tickIntervalMillis;
+
+      for (Iterator<Ignite> iterator = ignites.iterator(); iterator.hasNext(); ) {
+        Ignite ig = iterator.next();
+        if(ig.expiryTime > age){
+          break;
+        }
+        iterator.remove();
+        damagePerTick -= ig.damagePerTick;
       }
-      float power = damage / baseStats.health * 1000;
+
+      float power = damagePerTick / baseStats.health * 1000;
       sprite.setSize(power* baseStats.size, power* baseStats.size);
-      takeDamage(damage, DamageType.TRUE);
-      ignites.removeIf(ig->ig.duration<=0);
+      takeDamage(damagePerTick, DamageType.TRUE);
       if(ignites.isEmpty()){
         sprite.setHidden(true);
       }
     }
     public void add(float damagePerTick, float duration){
-      ignites.add(new Ignite(damagePerTick,duration));
+      ignites.add(new Ignite(damagePerTick,age+duration));
       sprite.setHidden(false);
+      this.damagePerTick += damagePerTick;
     }
     private void delete(){
       sprite.delete();
