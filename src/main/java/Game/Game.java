@@ -33,7 +33,6 @@ public final class Game implements UserInputHandler {
   private final Collection<MouseDetect> mouseDetects = new ArrayList<>(1);
   private final Collection<MouseDetect> newMouseDetects = new ArrayList<>(1);
   private final Log.Timer timer = new Timer();
-  private long startTime;
   private int ticks = 0;
   private World world;
   private boolean paused = false;
@@ -53,7 +52,6 @@ public final class Game implements UserInputHandler {
 
   public void init() {
     graphics.init();
-    startTime = System.currentTimeMillis();
     world = new World();
   }
 
@@ -88,7 +86,7 @@ public final class Game implements UserInputHandler {
 
     ticks++;
     if (ticks % 60 == 0) {
-      System.out.println(ticks + " in " + timer.saved + " ms");
+      Log.write(ticks + " in " + timer.saved + " ms");
       timer.saved = 0;
     }
     var iter = tickables.iterator();
@@ -120,7 +118,7 @@ public final class Game implements UserInputHandler {
 
     SpriteBatching newBS = new SuperBatch();
 
-    System.out.println("creating new batch system: " + name);
+    Log.write("creating new batch system: " + name);
     graphics.addSpriteBatching(newBS);
     bs.put(name, newBS);
     return newBS;

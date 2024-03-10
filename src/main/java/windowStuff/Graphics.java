@@ -9,13 +9,14 @@ import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 
 import general.Constants;
 import general.Data;
+import general.Log;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.joml.Vector3f;
 
 public final class Graphics {
 
-  protected static GlBufferWrapper vbo;
+  static GlBufferWrapper vbo;
   private static ImageSet loadedImages;
   private final Collection<SpriteBatching> SpriteBatchings = new LinkedList<>();
 
@@ -30,7 +31,7 @@ public final class Graphics {
   public void init() {
     Data.init();
     vbo = new GlBufferWrapper(GL_ARRAY_BUFFER);
-    System.out.println(Constants.screenSize); // this is needed to load Constants
+    Log.write(Constants.screenSize); // this is needed to load Constants
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }

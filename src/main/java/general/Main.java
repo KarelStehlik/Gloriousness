@@ -9,7 +9,7 @@ public final class Main {
   }
 
   public static void main(String[] args) {
-    System.out.println(Version.getVersion());
+    Log.write(Version.getVersion());
     var win = Window.get();
     win.run();
   }

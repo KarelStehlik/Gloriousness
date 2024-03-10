@@ -103,7 +103,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
     beginWave();
-    //endWave();
   }
 
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
@@ -115,12 +114,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
           ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
       );
     }
-    Sprite s = new SingleAnimationSprite(image, .7f, x, y, size * 5, size * 5, 4, "basic").
+    Sprite sp = new SingleAnimationSprite(image, .7f, x, y, size * 5, size * 5, 4, "basic").
         addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
   }
 
   public void aoeDamage(int x, int y, int size, float damage, DamageType type) {
-    mobsGrid.callForEachCircle(x, y, size, m -> m.takeDamage(damage, type));
+    mobsGrid.callForEachCircle(x, y, size, mob -> mob.takeDamage(damage, type));
   }
 
   public int getHealth() {
@@ -278,8 +277,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     wave++;
     waveRunning = true;
     mobSpawner.onBeginWave(wave);
-    Text s = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500, bs);
-    Game.get().addTickable(new CallAfterDuration(s::delete, 1000));
+    Text text = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500, bs);
+    Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
   }
 
   private class MobSpawner {
@@ -292,10 +291,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       return (float) Math.pow(1 + wave / 5f, 1.4);
     }
 
-    private void onBeginWave(int wave) {
-      mobsToSpawn = 20 * wave;
+    private void onBeginWave(int waveNum) {
+      mobsToSpawn = 20 * waveNum;
       targetMobsToSpawn = mobsToSpawn;
-      mobsPerTick = 0.03f * wave;
+      mobsPerTick = 0.03f * waveNum;
     }
 
     private void run() {
@@ -306,9 +305,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         final float hpScaling = scaling(wave) * 1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
         e.addBuff(new Buff<TdMob>(0, Buff.INFINITE_DURATION, Buff.TRIGGER_ON_UPDATE,
-            m -> {
-              m.baseStats.health *= hpScaling;
-              m.baseStats.speed *= spdScaling;
+            mob -> {
+              mob.baseStats.health *= hpScaling;
+              mob.baseStats.speed *= spdScaling;
             }
         ));
         addEnemy(e);

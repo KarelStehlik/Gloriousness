@@ -206,7 +206,7 @@ public class SuperBatch implements SpriteBatching {
     }
   }
 
-  private class Batch implements Comparable<Batch> {
+  private static class Batch implements Comparable<Batch> {
 
     public final int layer;
     public final String texture;

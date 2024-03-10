@@ -177,14 +177,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
   public class IgniteSet {
 
     private final TreeSet<Ignite> ignites = new TreeSet<>();
-    private final Sprite sprite;
+    private final Sprite fireSprite;
     private float age = 0;
-    private float damagePerTick = 0;
+    private float dpTick = 0;
     protected IgniteSet(SpriteBatching bs) {
-      sprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50).setPosition(x, y);
-      sprite.setRotation(180);
-      sprite.playAnimation(sprite.new BasicAnimation("Fireball-0", 1).loop());
-      sprite.setHidden(true);
+      fireSprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50).setPosition(x, y);
+      fireSprite.setRotation(180);
+      fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 1).loop());
+      fireSprite.setHidden(true);
     }
 
     private void tick() {
@@ -196,40 +196,40 @@ public abstract class TdMob extends GameObject implements TickDetect {
           break;
         }
         iterator.remove();
-        damagePerTick -= ig.damagePerTick;
+        dpTick -= ig.damagePerTick;
       }
 
-      float power = damagePerTick / baseStats.health * 1000;
-      sprite.setSize(power * baseStats.size, power * baseStats.size);
-      sprite.setPosition(x, y + power * baseStats.size * .4f);
-      takeDamage(damagePerTick, DamageType.TRUE);
+      float power = dpTick / baseStats.health * 1000;
+      fireSprite.setSize(power * baseStats.size, power * baseStats.size);
+      fireSprite.setPosition(x, y + power * baseStats.size * .4f);
+      takeDamage(dpTick, DamageType.TRUE);
       if (ignites.isEmpty()) {
-        sprite.setHidden(true);
+        fireSprite.setHidden(true);
       }
     }
 
     public void add(float damagePerTick, float duration) {
       ignites.add(new Ignite(damagePerTick, age + duration));
-      sprite.setHidden(false);
-      this.damagePerTick += damagePerTick;
+      fireSprite.setHidden(false);
+      this.dpTick += damagePerTick;
     }
 
     private void delete() {
-      sprite.delete();
+      fireSprite.delete();
       ignites.clear();
     }
 
     private static class Ignite implements Comparable<Ignite> {
 
-      private static long ID = 0;
+      private static long staticId = 0;
       protected final float damagePerTick, expiryTime;
       private final long id;
 
       protected Ignite(float dmg, float dur) {
         damagePerTick = dmg;
         expiryTime = dur;
-        id = ID;
-        ID++;
+        id = staticId;
+        staticId++;
       }
 
       @Override
