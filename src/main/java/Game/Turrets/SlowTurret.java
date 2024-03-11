@@ -5,6 +5,7 @@ import Game.BulletLauncher;
 import Game.World;
 
 public class SlowTurret extends Turret {
+
   public final ExtraStats extraStats = new ExtraStats();
 
   public SlowTurret(World world, int X, int Y) {

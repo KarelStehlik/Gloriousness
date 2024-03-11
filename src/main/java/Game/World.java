@@ -87,7 +87,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         (x, y, l) -> new EmpoweringTurret(this, x, y),
         "Button", 100);
 
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret, testEmp};
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
+        testEmp};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton(5)).toArray(Button[]::new),

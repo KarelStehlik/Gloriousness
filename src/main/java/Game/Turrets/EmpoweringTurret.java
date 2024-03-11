@@ -4,7 +4,8 @@ import Game.BasicCollides;
 import Game.BulletLauncher;
 import Game.World;
 
-public class EmpoweringTurret extends Turret{
+public class EmpoweringTurret extends Turret {
+
   public final ExtraStats extraStats = new ExtraStats();
 
   public EmpoweringTurret(World world, int X, int Y) {
@@ -12,7 +13,7 @@ public class EmpoweringTurret extends Turret{
         new BulletLauncher(world, "fire"),
         new Stats());
     onStatsUpdate();
-    bulletLauncher.addProjectileCollide((p1,p2) -> p2.addMobCollide(BasicCollides.fire));
+    bulletLauncher.addProjectileCollide((p1, p2) -> p2.addMobCollide(BasicCollides.fire));
     bulletLauncher.setSpread(45);
   }
 

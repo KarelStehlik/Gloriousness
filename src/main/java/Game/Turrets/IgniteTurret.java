@@ -4,7 +4,8 @@ import Game.BasicCollides;
 import Game.BulletLauncher;
 import Game.World;
 
-public class IgniteTurret extends Turret{
+public class IgniteTurret extends Turret {
+
   public final ExtraStats extraStats = new ExtraStats();
 
   public IgniteTurret(World world, int X, int Y) {

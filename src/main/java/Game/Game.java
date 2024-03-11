@@ -36,6 +36,7 @@ public final class Game implements UserInputHandler {
   private int ticks = 0;
   private World world;
   private boolean paused = false;
+
   private Game() {
     userInputListener = new UserInputListener(this);
     graphics = new Graphics();

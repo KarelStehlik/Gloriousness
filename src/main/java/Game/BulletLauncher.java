@@ -46,8 +46,9 @@ public class BulletLauncher {
   }
 
   public BulletLauncher(World world, String projectileImage) {
-    this(world,projectileImage,0,0,0,0,0,0,0,0,0,0);
+    this(world, projectileImage, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   }
+
   public BulletLauncher(BulletLauncher og) {
     world = og.world;
     image = og.image;
