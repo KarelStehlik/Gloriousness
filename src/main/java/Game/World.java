@@ -7,6 +7,10 @@ import static org.lwjgl.opengles.GLES20.GL_ONE;
 import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 
 import Game.Buffs.StatBuff;
+import Game.Turrets.BasicTurret;
+import Game.Turrets.EmpoweringTurret;
+import Game.Turrets.IgniteTurret;
+import Game.Turrets.SlowTurret;
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -68,24 +72,22 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
-    TurretGenerator test = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y, l),
-        "kk", 100).
-        addOnMobCollide(BasicCollides.damage);
-    test.getTemplateLauncher().setSpread(45f);
+    TurretGenerator test = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y),
+        "kk", 100);
 
     TurretGenerator testDotTurret = new TurretGenerator(this,
-        (x, y, l) -> new BasicTurret(this, x, y, l, "Button"),
-        "Button", 100).
-        addOnMobCollide(BasicCollides.fire);
-    testDotTurret.getTemplateLauncher().setImage("fire");
-    testDotTurret.getTemplateLauncher().setSpread(30);
+        (x, y, l) -> new IgniteTurret(this, x, y),
+        "Button", 100);
 
     TurretGenerator testSlowTurret = new TurretGenerator(this,
-        (x, y, l) -> new BasicTurret(this, x, y, l, "Button"),
-        "Button", 100).
-        addOnMobCollide(BasicCollides.slow);
+        (x, y, l) -> new SlowTurret(this, x, y),
+        "Button", 100);
 
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret};
+    TurretGenerator testEmp = new TurretGenerator(this,
+        (x, y, l) -> new EmpoweringTurret(this, x, y),
+        "Button", 100);
+
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret, testEmp};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton(5)).toArray(Button[]::new),

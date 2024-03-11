@@ -1,20 +1,20 @@
-package Game;
+package Game.Turrets;
 
-public class BasicTurret extends Turret {
+import Game.BasicCollides;
+import Game.BulletLauncher;
+import Game.World;
 
+public class SlowTurret extends Turret {
   public final ExtraStats extraStats = new ExtraStats();
 
-
-  protected BasicTurret(World world, int X, int Y, BulletLauncher launcher) {
-    super(world, X, Y, "none", launcher, new Stats());
+  public SlowTurret(World world, int X, int Y) {
+    super(world, X, Y, "Button",
+        new BulletLauncher(world, "Freeze"),
+        new Stats());
     onStatsUpdate();
+    bulletLauncher.addMobCollide(BasicCollides.slow);
+    bulletLauncher.setSpread(10);
   }
-
-  protected BasicTurret(World world, int X, int Y, BulletLauncher launcher, String imageName) {
-    super(world, X, Y, imageName, launcher, new Stats());
-    onStatsUpdate();
-  }
-
 
   // generated stats
   public static final class ExtraStats {

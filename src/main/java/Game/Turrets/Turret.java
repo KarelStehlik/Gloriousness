@@ -1,6 +1,12 @@
-package Game;
+package Game.Turrets;
 
 import Game.Buffs.BuffHandler;
+import Game.BulletLauncher;
+import Game.Game;
+import Game.GameObject;
+import Game.TickDetect;
+import Game.World;
+import Game.TdMob;
 import general.Util;
 import java.awt.Point;
 import windowStuff.Sprite;
@@ -46,7 +52,7 @@ public class Turret extends GameObject implements TickDetect {
     TdMob target = world.getMobsGrid()
         .getFirst(new Point((int) x, (int) y), (int) baseStats.range);
     while (target != null && bulletLauncher.canAttack()) {
-      bulletLauncher.attack(Util.get_rotation(target.x - x, target.y - y));
+      bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
       target = world.getMobsGrid()
           .getFirst(new Point((int) x, (int) y), (int) baseStats.range);
     }

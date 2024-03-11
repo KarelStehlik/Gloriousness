@@ -171,7 +171,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   @FunctionalInterface
-  protected interface OnCollideComponent<T extends GameObject> {
+  public interface OnCollideComponent<T extends GameObject> {
 
     void collide(Projectile proj, T target);
   }

@@ -25,6 +25,7 @@ public class BulletLauncher {
   private float cooldown;
   private float spread = 0;
   private float remainingCooldown;
+
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
       int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
@@ -42,6 +43,10 @@ public class BulletLauncher {
     this.y = y;
     this.cooldown = cooldownMs;
     this.remainingCooldown = cooldownMs;
+  }
+
+  public BulletLauncher(World world, String projectileImage) {
+    this(world,projectileImage,0,0,0,0,0,0,0,0,0,0);
   }
   public BulletLauncher(BulletLauncher og) {
     world = og.world;
@@ -101,8 +106,8 @@ public class BulletLauncher {
   }
 
   public void setSize(float size) {
-    width = (int) (width * size / this.size);
-    height = (int) (height * size / this.size);
+    width = (int) size;
+    height = (int) size;
     this.size = size;
   }
 
