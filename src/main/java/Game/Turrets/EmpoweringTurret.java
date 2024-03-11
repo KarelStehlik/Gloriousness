@@ -41,7 +41,7 @@ public class EmpoweringTurret extends Turret {
       power = new RefFloat(100);
       range = new RefFloat(500);
       pierce = new RefFloat(100);
-      cd = new RefFloat(1);
+      cd = new RefFloat(10);
       projectileDuration = new RefFloat(2);
       bulletSize = new RefFloat(50);
       speed = new RefFloat(10);

@@ -7,6 +7,8 @@ import java.util.TreeSet;
 
 public class StatBuff<T extends GameObject> implements Buff<T> {
 
+  public enum Type{ ADDED, INCREASED, MORE};
+
   private static long staticId = 0;
   private final long id;
   private final int priority;

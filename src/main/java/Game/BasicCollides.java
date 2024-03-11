@@ -8,7 +8,7 @@ public class BasicCollides {
   public static final Projectile.OnCollideComponent<TdMob> damage = (proj, mob) -> mob.takeDamage(
       proj.getPower(), DamageType.PHYSICAL);
   public static final Projectile.OnCollideComponent<TdMob> fire = (proj, mob) ->
-      mob.addBuff(new Ignite<TdMob>(2, 2000));
+      mob.addBuff(new Ignite<TdMob>(proj.getPower()*0.02f, 2000));
   public static final Projectile.OnCollideComponent<TdMob> slow = (proj, target) ->
       target.addBuff(new StatBuff<TdMob>(0, 2000, mob -> mob.baseStats.speed.multiply(0.995f)));
   private static World _world;
