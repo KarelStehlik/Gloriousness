@@ -7,6 +7,7 @@ import Game.GameObject;
 import Game.TdMob;
 import Game.TickDetect;
 import Game.World;
+import general.RefFloat;
 import general.Util;
 import java.awt.Point;
 import windowStuff.Sprite;
@@ -38,23 +39,23 @@ public class Turret extends GameObject implements TickDetect {
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setDuration(baseStats.projectileDuration);
-    bulletLauncher.setPierce((int) baseStats.pierce);
-    bulletLauncher.setPower(baseStats.power);
-    bulletLauncher.setSize(baseStats.bulletSize);
-    bulletLauncher.setSpeed(baseStats.speed);
-    bulletLauncher.setCooldown(baseStats.cd);
+    bulletLauncher.setDuration(baseStats.projectileDuration.get());
+    bulletLauncher.setPierce((int) baseStats.pierce.get());
+    bulletLauncher.setPower(baseStats.power.get());
+    bulletLauncher.setSize(baseStats.bulletSize.get());
+    bulletLauncher.setSpeed(baseStats.speed.get());
+    bulletLauncher.setCooldown(baseStats.cd.get());
   }
 
   @Override
   public void onGameTick(int tick) {
     bulletLauncher.tickCooldown();
     TdMob target = world.getMobsGrid()
-        .getFirst(new Point((int) x, (int) y), (int) baseStats.range);
+        .getFirst(new Point((int) x, (int) y), (int) baseStats.range.get());
     while (target != null && bulletLauncher.canAttack()) {
       bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
       target = world.getMobsGrid()
-          .getFirst(new Point((int) x, (int) y), (int) baseStats.range);
+          .getFirst(new Point((int) x, (int) y), (int) baseStats.range.get());
     }
     buffHandler.tick();
   }
@@ -71,13 +72,13 @@ public class Turret extends GameObject implements TickDetect {
 
   public static class BaseStats {
 
-    public float power;
-    public float range;
-    public float pierce;
-    public float cd;
-    public float projectileDuration;
-    public float bulletSize;
-    public float speed;
+    public RefFloat power;
+    public RefFloat range;
+    public RefFloat pierce;
+    public RefFloat cd;
+    public RefFloat projectileDuration;
+    public RefFloat bulletSize;
+    public RefFloat speed;
 
     public BaseStats() {
       init();

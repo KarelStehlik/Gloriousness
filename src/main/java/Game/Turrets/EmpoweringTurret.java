@@ -3,6 +3,7 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.BulletLauncher;
 import Game.World;
+import general.RefFloat;
 
 public class EmpoweringTurret extends Turret {
 
@@ -13,7 +14,7 @@ public class EmpoweringTurret extends Turret {
         new BulletLauncher(world, "fire"),
         new Stats());
     onStatsUpdate();
-    bulletLauncher.addProjectileCollide((p1, p2) -> p2.addMobCollide(BasicCollides.fire));
+    bulletLauncher.addProjectileCollide((p1, p2) -> p2.addMobCollide(BasicCollides.explode));
     bulletLauncher.setSpread(45);
   }
 
@@ -37,13 +38,13 @@ public class EmpoweringTurret extends Turret {
 
     @Override
     public void init() {
-      power = 100f;
-      range = 500f;
-      pierce = 100f;
-      cd = 1f;
-      projectileDuration = 2f;
-      bulletSize = 50f;
-      speed = 10f;
+      power = new RefFloat(100);
+      range = new RefFloat(500);
+      pierce = new RefFloat(100);
+      cd = new RefFloat(1);
+      projectileDuration = new RefFloat(2);
+      bulletSize = new RefFloat(50);
+      speed = new RefFloat(10);
     }
   }
   // end of generated stats

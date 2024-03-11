@@ -28,7 +28,7 @@ public class UpgradeGiver {
 
   private void optionPicked(int id) {
     world.getPlayer().addBuff(
-        new StatBuff<Player>(0, Float.POSITIVE_INFINITY, p -> p.stats.cd /= 2));
+        new StatBuff<Player>(0, Float.POSITIVE_INFINITY, p -> p.stats.cd.multiply(.5f)));
     clearOptions();
     world.beginWave();
   }
@@ -48,7 +48,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(0, Float.POSITIVE_INFINITY,
-          p -> p.stats.projPower *= 2));
+          p -> p.stats.projPower.multiply(2)));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(0, Float.POSITIVE_INFINITY,
-          p -> p.stats.cd /= 2));
+          p -> p.stats.cd.multiply(.5f)));
     }
 
     @Override

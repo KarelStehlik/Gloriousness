@@ -1,6 +1,9 @@
 import glob
 import os
 
+def refFloatify(string):
+    name,eq,num=string.split(" ")
+    return f"{name} {eq} new RefFloat({num});"
 
 def toClassText(input):
     input = input.replace(" ", "")
@@ -15,9 +18,12 @@ def toClassText(input):
     hasBase = len(baseStats) != 0
     print(className, baseStats)
 
-    initExtra = "      " + "f;\n      ".join(extraStats) + "f;"
-    declaration = "\n    public float " + "f;\n    public float ".join(extraStats) + "f;"
-    overrideBaseStats = "      " + "f;\n      ".join(baseStats) + "f;"
+    extraStats = [refFloatify(x) for x in extraStats]
+    baseStats = [refFloatify(x) for x in baseStats]
+
+    initExtra = "      " + "\n      ".join(extraStats)
+    declaration = "\n    public RefFloat " + "\n    public RefFloat ".join(extraStats)
+    overrideBaseStats = "      " + "\n      ".join(baseStats)
 
     endExtra = "  }"
 

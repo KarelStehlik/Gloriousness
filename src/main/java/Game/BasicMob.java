@@ -1,5 +1,7 @@
 package Game;
 
+import general.RefFloat;
+
 public class BasicMob extends TdMob {
 
   public final ExtraStats extraStats = new ExtraStats();
@@ -29,10 +31,10 @@ public class BasicMob extends TdMob {
 
     @Override
     public void init() {
-      size = 20.0f;
-      speed = 5f;
-      health = 100f;
-      value = 1f;
+      size = new RefFloat(20.0);
+      speed = new RefFloat(5);
+      health = new RefFloat(100);
+      value = new RefFloat(1);
     }
   }
   // end of generated stats

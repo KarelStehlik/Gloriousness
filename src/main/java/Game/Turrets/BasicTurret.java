@@ -3,6 +3,7 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.BulletLauncher;
 import Game.World;
+import general.RefFloat;
 
 public class BasicTurret extends Turret {
 
@@ -37,13 +38,13 @@ public class BasicTurret extends Turret {
 
     @Override
     public void init() {
-      power = 100f;
-      range = 500f;
-      pierce = 100f;
-      cd = 1f;
-      projectileDuration = 2f;
-      bulletSize = 50f;
-      speed = 10f;
+      power = new RefFloat(100);
+      range = new RefFloat(500);
+      pierce = new RefFloat(100);
+      cd = new RefFloat(1);
+      projectileDuration = new RefFloat(2);
+      bulletSize = new RefFloat(50);
+      speed = new RefFloat(10);
     }
   }
   // end of generated stats

@@ -7,6 +7,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
+import general.RefFloat;
 import general.Util;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
@@ -35,7 +36,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     Game.get().addKeyDetect(this);
     Game.get().addMouseDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        30, 30, 50, 30, 3, 100, stats.cd);
+        30, 30, 50, 30, 3, 100, stats.cd.get());
     bulletLauncher.addMobCollide(
         BasicCollides.explode
     );
@@ -50,12 +51,12 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setSize(stats.projSize);
-    bulletLauncher.setSpeed(stats.projSpeed);
-    bulletLauncher.setPierce((int) stats.projPierce);
-    bulletLauncher.setDuration(stats.projDuration);
-    bulletLauncher.setCooldown(stats.cd);
-    bulletLauncher.setPower(stats.projPower);
+    bulletLauncher.setSize(stats.projSize.get());
+    bulletLauncher.setSpeed(stats.projSpeed.get());
+    bulletLauncher.setPierce((int) stats.projPierce.get());
+    bulletLauncher.setDuration(stats.projDuration.get());
+    bulletLauncher.setCooldown(stats.cd.get());
+    bulletLauncher.setPower(stats.projPower.get());
   }
 
   @Override
@@ -65,7 +66,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
 
   public void takeDamage(float amount, DamageType type) {
     float resistance = 1;
-    healthPart -= amount * resistance / stats.health;
+    healthPart -= amount * resistance / stats.health.get();
     if (healthPart < 0) {
       world.endGame();
     }
@@ -135,28 +136,27 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   // generated stats
   public static final class ExtraStats {
 
-    public float speed = 1f;
-    public float health = 100f;
-    public float cd = 999f;
-    public float projSize = 10f;
-    public float projSpeed = 30f;
-    public float projPierce = 100f;
-    public float projDuration = .81f;
-    public float projPower = 100f;
-
+    public RefFloat speed = new RefFloat(1);
+    public RefFloat health = new RefFloat(100);
+    public RefFloat cd = new RefFloat(999);
+    public RefFloat projSize = new RefFloat(10);
+    public RefFloat projSpeed = new RefFloat(30);
+    public RefFloat projPierce = new RefFloat(100);
+    public RefFloat projDuration = new RefFloat(.81);
+    public RefFloat projPower = new RefFloat(100);
     public ExtraStats() {
       init();
     }
 
     public void init() {
-      speed = 1f;
-      health = 100f;
-      cd = 999f;
-      projSize = 10f;
-      projSpeed = 30f;
-      projPierce = 100f;
-      projDuration = .81f;
-      projPower = 100f;
+      speed = new RefFloat(1);
+      health = new RefFloat(100);
+      cd = new RefFloat(999);
+      projSize = new RefFloat(10);
+      projSpeed = new RefFloat(30);
+      projPierce = new RefFloat(100);
+      projDuration = new RefFloat(.81);
+      projPower = new RefFloat(100);
     }
   }
 
