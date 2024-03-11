@@ -50,7 +50,4 @@ public class GameObject {
 
   public void onStatsUpdate() {
   }
-
-  public void clearStats() {
-  }
 }

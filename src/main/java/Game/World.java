@@ -7,6 +7,7 @@ import static org.lwjgl.opengles.GLES20.GL_ONE;
 import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 
 import Game.Buffs.StatBuff;
+import Game.Buffs.StatBuff.Type;
 import Game.Turrets.BasicTurret;
 import Game.Turrets.EmpoweringTurret;
 import Game.Turrets.IgniteTurret;
@@ -103,8 +104,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       explosionVisual(x, y, 100, true, "Explosion1-0");
-      player.addBuff(new StatBuff<Player>(0, 2000000,
-          p -> p.stats.cd.multiply(.5f)));
+      player.addBuff(
+          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.stats.cd, 0.5f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
@@ -315,12 +316,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         TdMob e = new BasicMob(World.this);
         final float hpScaling = scaling(wave) * 1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
-        e.addBuff(new StatBuff<TdMob>(0, Float.POSITIVE_INFINITY,
-            mob -> {
-              mob.baseStats.health.multiply(hpScaling);
-              mob.baseStats.speed.multiply(spdScaling);
-            }
-        ));
+        e.addBuff(
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.baseStats.health, hpScaling));
+        e.addBuff(
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.baseStats.speed, spdScaling));
         addEnemy(e);
       }
       if (mobsList.isEmpty() && mobsToSpawn == 0) {

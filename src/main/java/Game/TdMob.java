@@ -134,11 +134,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
         height);
   }
 
-  @Override
-  public void clearStats() {
-    baseStats.init();
-  }
-
   public static class BaseStats {
 
     public RefFloat size;

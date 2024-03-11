@@ -1,6 +1,7 @@
 package Game;
 
 import Game.Buffs.StatBuff;
+import Game.Buffs.StatBuff.Type;
 import general.Data;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +27,9 @@ public class UpgradeGiver {
     }
   }
 
-  private void optionPicked(int id) {
-    world.getPlayer().addBuff(
-        new StatBuff<Player>(0, Float.POSITIVE_INFINITY, p -> p.stats.cd.multiply(.5f)));
-    clearOptions();
-    world.beginWave();
-  }
-
   public void gib(int gloriousness) {
     clearOptions();
-    for (int i = 0; i < gloriousness; i++) {
+    for (int i = 0; i < Math.min(gloriousness, 5); i++) {
       Button B = upgradeTypes[Data.gameMechanicsRng.nextInt(upgradeTypes.length)].genButton(
           world.getBs(), i);
       buttons.add(B);
@@ -47,8 +41,8 @@ public class UpgradeGiver {
 
     @Override
     void picked() {
-      world.getPlayer().addBuff(new StatBuff<Player>(0, Float.POSITIVE_INFINITY,
-          p -> p.stats.projPower.multiply(2)));
+      world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
+          world.getPlayer().stats.projPower, 2));
     }
 
     @Override
@@ -66,8 +60,8 @@ public class UpgradeGiver {
 
     @Override
     void picked() {
-      world.getPlayer().addBuff(new StatBuff<Player>(0, Float.POSITIVE_INFINITY,
-          p -> p.stats.cd.multiply(.5f)));
+      world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
+          world.getPlayer().stats.cd, .5f));
     }
 
     @Override

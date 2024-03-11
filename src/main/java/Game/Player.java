@@ -59,10 +59,6 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     bulletLauncher.setPower(stats.projPower.get());
   }
 
-  @Override
-  public void clearStats() {
-    stats.init();
-  }
 
   public void takeDamage(float amount, DamageType type) {
     float resistance = 1;
@@ -136,10 +132,6 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   // generated stats
   public static final class ExtraStats {
 
-    public ExtraStats() {
-      init();
-    }
-
     public RefFloat speed = new RefFloat(1);
     public RefFloat health = new RefFloat(100);
     public RefFloat cd = new RefFloat(999);
@@ -148,6 +140,10 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     public RefFloat projPierce = new RefFloat(100);
     public RefFloat projDuration = new RefFloat(.81);
     public RefFloat projPower = new RefFloat(100);
+    public ExtraStats() {
+      init();
+    }
+
     public void init() {
       speed = new RefFloat(1);
       health = new RefFloat(100);

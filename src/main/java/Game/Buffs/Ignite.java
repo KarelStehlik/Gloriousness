@@ -57,8 +57,9 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     @Override
     public void add(Buff<T> b, T target) {
       assert b instanceof Ignite<T>;
-      ignites.add((Ignite<T>) b);
-      dpTick += ((Ignite<TdMob>) b).damagePerTick;
+      Ignite<T> buff = (Ignite<T>) b;
+      ignites.add(buff);
+      dpTick += buff.damagePerTick;
       //fireSprite.setPosition(target.getX(), target.getY());
       fireSprite.setHidden(false);
     }
