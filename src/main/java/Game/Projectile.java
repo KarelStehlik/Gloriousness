@@ -1,6 +1,9 @@
 package Game;
 
+import Game.Buffs.Buff;
+import Game.Buffs.BuffHandler;
 import general.Util;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,11 +12,11 @@ import windowStuff.Sprite;
 public class Projectile extends GameObject implements TickDetect {
 
   private final Sprite sprite;
-  private final Collection<OnCollideComponent<Player>> playerCollides = new LinkedList<>();
+  private final Collection<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
   private final Collection<TdMob> alreadyHitMobs;
-  private final Collection<OnCollideComponent<TdMob>> mobCollides = new LinkedList<>();
+  private final Collection<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final Collection<Projectile> alreadyHitProjectiles;
-  private final Collection<OnCollideComponent<Projectile>> projectileCollides = new LinkedList<>();
+  private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
   protected int pierce;
   protected float size;
   private float speed;
@@ -23,6 +26,7 @@ public class Projectile extends GameObject implements TickDetect {
   private float rotation;
   private boolean alreadyHitPlayer = false;
   private float power;
+  private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power) {
@@ -40,6 +44,10 @@ public class Projectile extends GameObject implements TickDetect {
     alreadyHitMobs = new HashSet<>(pierce);
     alreadyHitProjectiles = new HashSet<>(pierce);
     this.power = power;
+  }
+
+  public void addBuff(Buff<Projectile> buff){
+    bh.add(buff);
   }
 
   public void multiplyPower(float mult) {
@@ -80,6 +88,7 @@ public class Projectile extends GameObject implements TickDetect {
   @Override
   public void onGameTick(int tick) {
     fly();
+    bh.tick();
     handleCollisions();
     world.getProjectilesGrid().add(this);
     duration -= Game.tickIntervalMillis;
@@ -167,7 +176,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   private void onDelete() {
-
+    bh.delete();
   }
 
   @FunctionalInterface

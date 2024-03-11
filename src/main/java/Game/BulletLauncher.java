@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Buffs.Modifier;
 import Game.Projectile.OnCollideComponent;
 import general.Data;
 import general.Util;
@@ -25,6 +26,12 @@ public class BulletLauncher {
   private float cooldown;
   private float spread = 0;
   private float remainingCooldown;
+
+  public void setProjectileModifier(Modifier<Projectile> projectileModifier) {
+    this.projectileModifier = projectileModifier;
+  }
+
+  private Modifier<Projectile> projectileModifier = p->{};
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
@@ -142,6 +149,7 @@ public class BulletLauncher {
     Projectile p = new Projectile(world, image, x, y, speed, angle + deviation, width, height,
         pierce, size,
         duration, power);
+    projectileModifier.mod(p);
     world.getProjectilesList().add(p);
     for (var collide : playerCollides) {
       p.addPlayerCollide(collide);

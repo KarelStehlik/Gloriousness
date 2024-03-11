@@ -1,7 +1,9 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
+import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
+import Game.Projectile;
 import Game.World;
 import general.RefFloat;
 
@@ -11,11 +13,16 @@ public class EmpoweringTurret extends Turret {
 
   public EmpoweringTurret(World world, int X, int Y) {
     super(world, X, Y, "Button",
-        new BulletLauncher(world, "fire"),
+        new BulletLauncher(world, "faura"),
         new Stats());
     onStatsUpdate();
-    bulletLauncher.addProjectileCollide((p1, p2) -> p2.addMobCollide(BasicCollides.explode));
+    bulletLauncher.addProjectileCollide(this::collide);
     bulletLauncher.setSpread(45);
+    bulletLauncher.setProjectileModifier(p->p.addBuff(new UniqueBuff<>(id,p1->{})));
+  }
+
+  private void collide(Projectile p1, Projectile p2){
+    p2.addBuff(new UniqueBuff<>(id,proj-> proj.addMobCollide(BasicCollides.explode)));
   }
 
   // generated stats
