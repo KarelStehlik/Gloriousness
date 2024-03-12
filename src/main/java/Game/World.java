@@ -59,6 +59,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Game game = Game.get();
     game.addMouseDetect(this);
     game.addKeyDetect(this);
+    BasicCollides.init(this);
     mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000,
         Optimization.MobGridSquareSize);
     mobsList = new ArrayList<>(1024);
