@@ -82,7 +82,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   protected void changePierce(int amount) {
     pierce += amount;
-    if (pierce < 0) {
+    if (pierce <= 0) {
       delete();
     }
   }
