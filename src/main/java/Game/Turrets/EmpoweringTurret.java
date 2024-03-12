@@ -15,7 +15,7 @@ public class EmpoweringTurret extends Turret {
 
   public EmpoweringTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "faura"),
+        new BulletLauncher(world, "Buff"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.addProjectileCollide(this::collide);

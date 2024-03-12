@@ -13,7 +13,7 @@ public class BasicTurret extends Turret {
 
   public BasicTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Egg"),
+        new BulletLauncher(world, "Dart"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);

@@ -13,7 +13,7 @@ public class SlowTurret extends Turret {
 
   public SlowTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Freeze"),
+        new BulletLauncher(world, "Winter"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.slow);

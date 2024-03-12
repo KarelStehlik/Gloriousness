@@ -13,7 +13,7 @@ public class IgniteTurret extends Turret {
 
   public IgniteTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "fire"),
+        new BulletLauncher(world, "Fireball-0"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.fire);
