@@ -8,7 +8,7 @@ import java.util.List;
 public class Text {
 
   private static final double textureHeight =
-      32d / 4096d; //the height of a glyph sub-texture, in uv coordinates
+      64d / 4096d; //the height of a glyph sub-texture, in uv coordinates
   private final int layer;
   private final String fontName;
   private final int maxWidth;
