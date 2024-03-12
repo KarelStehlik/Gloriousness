@@ -157,7 +157,6 @@ public class Projectile extends GameObject implements TickDetect {
     if (!mobCollides.isEmpty()) {
       world.getMobsGrid().callForEachCircle((int) x, (int) y, (int) (size / 2), this::collide);
     }
-    world.getProjectilesGrid().callForEachCircle((int) x, (int) y, (int) (size / 2), this::collide);
 
     if (!playerCollides.isEmpty()) {
       collide(world.getPlayer());
@@ -201,30 +200,23 @@ public class Projectile extends GameObject implements TickDetect {
     mobCollides.add(component);
   }
 
+  public void handleProjectileCollision() {
+    if (!projectileCollides.isEmpty()) {
+      world.getProjectilesGrid().callForEachCircle((int) x, (int) y, (int) (size / 2), this::collide);
+    }
+  }
+
   protected void collide(Projectile e) {
-    if (!active || !e.active || e.equals(this)) {
+    if (!active || !e.active || e.equals(this) || alreadyHitProjectiles.contains(e)) {
       return;
     }
-    if (!projectileCollides.isEmpty() && !alreadyHitProjectiles.contains(e)) {
-      alreadyHitProjectiles.add(e);
-      boolean collided = false;
-      for (var component : projectileCollides) {
-        collided |= component.collide(this, e);
-      }
-      if (collided) {
-        changePierce(-1);
-      }
+    alreadyHitProjectiles.add(e);
+    boolean collided = false;
+    for (var component : projectileCollides) {
+      collided |= component.collide(this, e);
     }
-    if (!e.projectileCollides.isEmpty() && active && e.active && !e.alreadyHitProjectiles.contains(
-        this)) {
-      e.alreadyHitProjectiles.add(this);
-      boolean collided = false;
-      for (var component : e.projectileCollides) {
-        collided |= component.collide(e, this);
-      }
-      if (collided) {
-        e.changePierce(-1);
-      }
+    if (collided) {
+      changePierce(-1);
     }
   }
 

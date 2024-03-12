@@ -214,28 +214,31 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
   }
 
-  private Timer timer = new Log.Timer();
+  //private Timer timer = new Log.Timer();
   @Override
   public void onGameTick(int tick) {
     this.tick++;
 
-    Log.write("start: "+timer.elapsedNano(true)/1000000);
+    //Log.write("start: "+timer.elapsedNano(true)/1000000);
 
     tickEntities(mobsGrid, mobsList);
     mobsGrid.filled();
 
-    Log.write("mobs: "+timer.elapsedNano(true)/1000000);
+    //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
 
     tickEntities(projectilesGrid, projectilesList);
+    for(var proj:projectilesList){
+      proj.handleProjectileCollision();
+    }
 
-    Log.write("projs: "+timer.elapsedNano(true)/1000000);
+    //Log.write("projs: "+timer.elapsedNano(true)/1000000);
 
     player.onGameTick(tick);
     if (waveRunning) {
       mobSpawner.run();
     }
 
-    Log.write("other: "+timer.elapsedNano(true)/1000000);
+    //Log.write("other: "+timer.elapsedNano(true)/1000000);
   }
 
   @Override
