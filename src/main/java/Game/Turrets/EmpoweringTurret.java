@@ -30,14 +30,14 @@ public class EmpoweringTurret extends Turret {
         image, 100);
   }
 
-  private boolean collide(Projectile p1, Projectile p2) {
-    final float pow = p1.getPower();
-    p2.addBuff(new UniqueBuff<>(id, proj2->addBuff(proj2, pow)));
-    return true;
+  private static void addBuff(Projectile p2, float pow) {
+    p2.addMobCollide((proj2, mob) -> BasicCollides.explodeFunc(proj2, pow));
   }
 
-  private static void addBuff(Projectile p2, float pow){
-    p2.addMobCollide((proj2,mob)->BasicCollides.explodeFunc(proj2, pow));
+  private boolean collide(Projectile p1, Projectile p2) {
+    final float pow = p1.getPower();
+    p2.addBuff(new UniqueBuff<>(id, proj2 -> addBuff(proj2, pow)));
+    return true;
   }
 
   // generated stats

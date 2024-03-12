@@ -36,6 +36,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public static final int WIDTH = 1920;
   public static final int HEIGHT = 1080;
+  private final Options options = new Options();
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
   private final List<TdMob> mobsList;
@@ -51,10 +52,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 1234567890;
-  private boolean fuckified = false;
   private int wave = 0;
   private boolean waveRunning = true;
-
   public World() {
     Game game = Game.get();
     game.addMouseDetect(this);
@@ -100,7 +99,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return;
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
-      explosionVisual(x, y, 100, true, "Explosion1-0");
+      for (int i = 0; i < (options.laggyGong ? 10000 : 1); i++) {
+        explosionVisual(x, y, 100, true, "Explosion1-0");
+      }
       player.addBuff(
           new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.stats.cd, 0.5f));
     }, null));
@@ -164,14 +165,19 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     //ImGui.showDemoWindow();
     ImGui.begin("Options");
     if (ImGui.collapsingHeader("Some placeholder options")) {
-      ImBoolean fuck = new ImBoolean(fuckified);
+      ImBoolean fuck = new ImBoolean(options.fuckified);
       if (ImGui.checkbox("Some bullshit setting", fuck)) {
-        fuckified = fuck.get();
-        if (fuckified) {
+        options.fuckified = fuck.get();
+        if (options.fuckified) {
           glBlendFunc(GL_SRC_COLOR, GL_ONE);
         } else {
           glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
+      }
+
+      ImBoolean gong = new ImBoolean(options.laggyGong);
+      if (ImGui.checkbox("Gong lag", gong)) {
+        options.laggyGong = gong.get();
       }
     }
     ImGui.end();
@@ -300,6 +306,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Text text = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500,
         bs);
     Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
+  }
+
+  private static class Options {
+
+    private boolean fuckified = false;
+    private boolean laggyGong = false;
   }
 
   private static class Optimization {

@@ -33,7 +33,7 @@ public class Projectile extends GameObject implements TickDetect {
       int W, int H, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
     sprite = new Sprite(image, X, Y, W, H, 1, "basic");
-    sprite.setRotation(rotation-90);
+    sprite.setRotation(rotation - 90);
     world.getBs().addSprite(sprite);
     this.pierce = pierce;
     this.speed = speed;
@@ -56,7 +56,7 @@ public class Projectile extends GameObject implements TickDetect {
 
     if (minx < 0) {
       p.move(p.x - 2 * minx, p.y);
-      p.setRotation(180-p.rotation);
+      p.setRotation(180 - p.rotation);
     }
     if (miny < 0) {
       p.move(p.x, p.y - 2 * miny);
@@ -64,7 +64,7 @@ public class Projectile extends GameObject implements TickDetect {
     }
     if (maxx > World.WIDTH) {
       p.move(2 * World.WIDTH - maxx - s, p.y);
-      p.setRotation(180-p.rotation);
+      p.setRotation(180 - p.rotation);
     }
     if (maxy > World.HEIGHT) {
       p.move(p.x, 2 * World.HEIGHT - maxy - s);
@@ -103,7 +103,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   public void setRotation(float rotation) {
     this.rotation = rotation;
-    sprite.setRotation(rotation-90);
+    sprite.setRotation(rotation - 90);
     vx = Util.cos(rotation) * speed;
     vy = Util.sin(rotation) * speed;
   }

@@ -18,20 +18,22 @@ public final class BasicCollides {
   };
   public static final Projectile.OnCollideComponent<TdMob> slow = (proj, target) ->
   {
-    target.addBuff(new StatBuff<TdMob>(Type.INCREASED, 2000, target.baseStats.speed, -proj.power.get()));
+    target.addBuff(
+        new StatBuff<TdMob>(Type.INCREASED, 2000, target.baseStats.speed, -proj.power.get()));
     return true;
   };
   private static World _world;
-  public static final Projectile.OnCollideComponent<TdMob> explode = (proj, target) -> explodeFunc(proj,proj.getPower());
+  public static final Projectile.OnCollideComponent<TdMob> explode = (proj, target) -> explodeFunc(
+      proj, proj.getPower());
 
-  public static boolean explodeFunc(Projectile proj, float power){
+  private BasicCollides() {
+  }
+
+  public static boolean explodeFunc(Projectile proj, float power) {
     _world.aoeDamage((int) proj.x, (int) proj.y, (int) power, power,
         DamageType.TRUE);
     _world.explosionVisual(proj.x, proj.y, power, false, "Explosion1-0");
     return true;
-  }
-
-  private BasicCollides() {
   }
 
   static void init(World world) {
