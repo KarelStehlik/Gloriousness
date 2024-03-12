@@ -56,19 +56,19 @@ public class Projectile extends GameObject implements TickDetect {
 
     if (minx < 0) {
       p.move(p.x - 2 * minx, p.y);
-      p.vx *= -1;
+      p.setRotation(180-p.rotation);
     }
     if (miny < 0) {
       p.move(p.x, p.y - 2 * miny);
-      p.vy *= -1;
+      p.setRotation(-p.rotation);
     }
     if (maxx > World.WIDTH) {
       p.move(2 * World.WIDTH - maxx - s, p.y);
-      p.vx *= -1;
+      p.setRotation(180-p.rotation);
     }
     if (maxy > World.HEIGHT) {
       p.move(p.x, 2 * World.HEIGHT - maxy - s);
-      p.vy *= -1;
+      p.setRotation(-p.rotation);
     }
   }
 
