@@ -4,6 +4,8 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.OnTickBuff;
+import Game.Buffs.StatBuff;
+import Game.Buffs.StatBuff.Type;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.Projectile;
@@ -29,7 +31,7 @@ public class EatingTurret extends Turret {
   }
 
   private void modProjectile(Projectile p){
-    eater e = new eater((int)extraStats.maxEat.get());
+    eater e = new eater((int)baseStats.pierce.get(), baseStats.power.get());
     p.addProjectileCollide((p1,p2)->e.eat(p2));
     p.addBuff(new UniqueBuff<>(EatImmuneTag, p1->{}));
     p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
@@ -38,20 +40,19 @@ public class EatingTurret extends Turret {
 
   private static class eater{
     final List<Projectile> eaten;
-    final int max;
-    eater(int maxEat){
-      max=maxEat;
+    final float powerMult;
+    eater(int maxEat, float powerMult){
       eaten = new ArrayList<>(maxEat);
+      this.powerMult=powerMult;
     }
     public boolean eat(Projectile other){
       if(!other.addBuff(new UniqueBuff<>(EatImmuneTag, p1->{}))){
         return false;
       }
-      if(eaten.size()<max){
-        eaten.add(other);
-        other.setActive(false);
-        other.setRotation(Data.gameMechanicsRng.nextFloat()*360);
-      }
+      eaten.add(other);
+      other.setActive(false);
+      other.setRotation(Data.gameMechanicsRng.nextFloat()*360);
+      other.addBuff(new StatBuff<Projectile>(Type.MORE,Float.POSITIVE_INFINITY,other.power,powerMult));
       return true;
     }
     public void perish(float x, float y){
@@ -69,9 +70,8 @@ public class EatingTurret extends Turret {
       init();
     }
 
-    public RefFloat maxEat = new RefFloat(100);
     public void init() {
-      maxEat = new RefFloat(100);
+
     }
   }
 
@@ -83,7 +83,7 @@ public class EatingTurret extends Turret {
 
     @Override
     public void init() {
-      power = new RefFloat(100);
+      power = new RefFloat(2);
       range = new RefFloat(500);
       pierce = new RefFloat(100);
       cd = new RefFloat(1000);

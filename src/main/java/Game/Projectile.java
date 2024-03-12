@@ -2,6 +2,7 @@ package Game;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
+import general.RefFloat;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class Projectile extends GameObject implements TickDetect {
   private boolean active=true;
   private float rotation;
   private boolean alreadyHitPlayer = false;
-  private float power;
+  public RefFloat power;
   private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
@@ -44,19 +45,15 @@ public class Projectile extends GameObject implements TickDetect {
     this.rotation = rotation;
     alreadyHitMobs = new HashSet<>(pierce);
     alreadyHitProjectiles = new HashSet<>(pierce);
-    this.power = power;
+    this.power = new RefFloat(power);
   }
 
   public boolean addBuff(Buff<Projectile> buff){
     return bh.add(buff);
   }
 
-  public void multiplyPower(float mult) {
-    power *= mult;
-  }
-
   public float getPower() {
-    return power;
+    return power.get();
   }
 
   protected void changePierce(int amount) {
