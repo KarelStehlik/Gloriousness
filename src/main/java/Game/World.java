@@ -75,24 +75,15 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
-    TurretGenerator test = new TurretGenerator(this, (x, y) -> new BasicTurret(this, x, y),
-        "kk", 100);
+    TurretGenerator test = BasicTurret.generator(this);
 
-    TurretGenerator testDotTurret = new TurretGenerator(this,
-        (x, y) -> new IgniteTurret(this, x, y),
-        "Button", 100);
+    TurretGenerator testDotTurret = IgniteTurret.generator(this);
 
-    TurretGenerator testSlowTurret = new TurretGenerator(this,
-        (x, y) -> new SlowTurret(this, x, y),
-        "Button", 100);
+    TurretGenerator testSlowTurret = SlowTurret.generator(this);
 
-    TurretGenerator testEmp = new TurretGenerator(this,
-        (x, y) -> new EmpoweringTurret(this, x, y),
-        "Button", 100);
+    TurretGenerator testEmp = EmpoweringTurret.generator(this);
 
-    TurretGenerator testEating = new TurretGenerator(this,
-        (x, y) -> new EatingTurret(this, x, y),
-        "Button", 100);
+    TurretGenerator testEating = EatingTurret.generator(this);
 
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
         testEmp, testEating};

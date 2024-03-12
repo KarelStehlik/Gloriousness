@@ -27,9 +27,11 @@ public class Sprite implements AbstractSprite {
   private int imageId;
   private Animation animation;
   private Short[] staticData;
+
   public Sprite(String imageName, int layer) {
     this(imageName, 0, 0, 100, 100, layer, "basic");
   }
+
   public Sprite(String imageName, float sizeX, float sizeY, int layer,
       String shader) {
     this(imageName, 0, 0, sizeX, sizeY, layer, shader);

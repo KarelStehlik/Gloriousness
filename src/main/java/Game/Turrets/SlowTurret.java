@@ -2,20 +2,28 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.BulletLauncher;
+import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
 
 public class SlowTurret extends Turret {
 
+  public static final String image = "Cancelbutton";
   public final ExtraStats extraStats = new ExtraStats();
 
   public SlowTurret(World world, int X, int Y) {
-    super(world, X, Y, "Button",
+    super(world, X, Y, image,
         new BulletLauncher(world, "Freeze"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.slow);
     bulletLauncher.setSpread(10);
+  }
+
+  public static TurretGenerator generator(World world) {
+    return new TurretGenerator(world,
+        (x, y) -> new SlowTurret(world, x, y),
+        image, 100);
   }
 
   // generated stats

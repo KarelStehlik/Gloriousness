@@ -55,7 +55,7 @@ public class Turret extends GameObject implements TickDetect {
       while (bulletLauncher.canAttack()) {
         bulletLauncher.attack(rotation);
       }
-      sprite.setRotation(rotation);
+      sprite.setRotation(rotation - 90);
     }
 
     buffHandler.tick();

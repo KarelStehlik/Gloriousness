@@ -33,7 +33,7 @@ public class TurretGenerator {
   public void select() {
     world.setCurrentTool(
         new PlaceObjectTool(world,
-            new Sprite("image", Turret.WIDTH, Turret.HEIGHT, 10, world.getBs()).setColors(
+            new Sprite(image, Turret.WIDTH, Turret.HEIGHT, 10, world.getBs()).setColors(
                 Util.getBaseColors(.6f)),
             this::generate)
     );
@@ -49,7 +49,7 @@ public class TurretGenerator {
   }
 
   @FunctionalInterface
-  interface Place {
+  public interface Place {
 
     void place(int x, int y);
   }

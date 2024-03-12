@@ -2,20 +2,28 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.BulletLauncher;
+import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
 
 public class IgniteTurret extends Turret {
 
+  public static final String image = "Meteor";
   public final ExtraStats extraStats = new ExtraStats();
 
   public IgniteTurret(World world, int X, int Y) {
-    super(world, X, Y, "Button",
+    super(world, X, Y, image,
         new BulletLauncher(world, "fire"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.fire);
     bulletLauncher.setSpread(45);
+  }
+
+  public static TurretGenerator generator(World world) {
+    return new TurretGenerator(world,
+        (x, y) -> new IgniteTurret(world, x, y),
+        image, 100);
   }
 
   // generated stats

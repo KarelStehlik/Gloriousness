@@ -4,15 +4,17 @@ import Game.BasicCollides;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.Projectile;
+import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
 
 public class EmpoweringTurret extends Turret {
 
+  public static final String image = "Farm21";
   public final ExtraStats extraStats = new ExtraStats();
 
   public EmpoweringTurret(World world, int X, int Y) {
-    super(world, X, Y, "Button",
+    super(world, X, Y, image,
         new BulletLauncher(world, "faura"),
         new Stats());
     onStatsUpdate();
@@ -20,6 +22,12 @@ public class EmpoweringTurret extends Turret {
     bulletLauncher.setSpread(45);
     bulletLauncher.setProjectileModifier(p -> p.addBuff(new UniqueBuff<>(id, p1 -> {
     })));
+  }
+
+  public static TurretGenerator generator(World world) {
+    return new TurretGenerator(world,
+        (x, y) -> new EmpoweringTurret(world, x, y),
+        image, 100);
   }
 
   private boolean collide(Projectile p1, Projectile p2) {

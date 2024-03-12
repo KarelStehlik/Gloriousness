@@ -22,7 +22,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     this.type = type;
     this.stat = stat;
     this.value = value;
-    id= Util.getUid();
+    id = Util.getUid();
   }
 
   private int compareByExpiry(StatBuff<T> b1, StatBuff<T> b2) {

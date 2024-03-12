@@ -8,6 +8,7 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.Projectile;
+import Game.TurretGenerator;
 import Game.World;
 import general.Data;
 import general.RefFloat;
@@ -17,16 +18,23 @@ import java.util.List;
 
 public class EatingTurret extends Turret {
 
+  public static final String image = "crab";
   static final long EatImmuneTag = Util.getUid();
   public final ExtraStats extraStats = new ExtraStats();
 
   public EatingTurret(World world, int X, int Y) {
-    super(world, X, Y, "Button",
+    super(world, X, Y, image,
         new BulletLauncher(world, "Shockwave"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.setSpread(45);
     bulletLauncher.setProjectileModifier(this::modProjectile);
+  }
+
+  public static TurretGenerator generator(World world) {
+    return new TurretGenerator(world,
+        (x, y) -> new EatingTurret(world, x, y),
+        image, 100);
   }
 
   private void modProjectile(Projectile p) {

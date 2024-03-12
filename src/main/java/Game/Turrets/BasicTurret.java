@@ -2,20 +2,28 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.BulletLauncher;
+import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
 
 public class BasicTurret extends Turret {
 
+  public static final String image = "Bowman";
   public final ExtraStats extraStats = new ExtraStats();
 
   public BasicTurret(World world, int X, int Y) {
-    super(world, X, Y, "none",
+    super(world, X, Y, image,
         new BulletLauncher(world, "Egg"),
         new Stats());
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     bulletLauncher.setSpread(45);
+  }
+
+  public static TurretGenerator generator(World world) {
+    return new TurretGenerator(world,
+        (x, y) -> new BasicTurret(world, x, y),
+        image, 100);
   }
 
   // generated stats

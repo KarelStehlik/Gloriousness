@@ -1,7 +1,5 @@
 package general;
 
-import java.awt.Rectangle;
-
 public final class Util {
 
   // number of table entries per degree
@@ -55,7 +53,7 @@ public final class Util {
   }
 
   public static long getUid() {
-    id ++;
+    id++;
     return id;
   }
 
