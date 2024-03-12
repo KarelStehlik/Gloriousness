@@ -93,14 +93,6 @@ public final class Util {
     return -arcSin[index];
   }
 
-  public static float arcCos(float a) {
-    return arcSin(a - 90);
-  }
-
-  public static boolean testBit(int input, int bit) {
-    return (input & (1 << (bit - 1))) != 0;
-  }
-
   public static float get_rotation(float x, float y) {
     float inv_hypot = 1 / (float) Math.sqrt(x * x + y * y);
     float asin = arcSin(Math.max(Math.min(y * inv_hypot, 1), -1));
@@ -142,11 +134,6 @@ public final class Util {
         0, 0, strength, 1,
         10, 10, strength, 1,
     };
-  }
-
-  public static boolean rectIntersect(Rectangle a, Rectangle b) {
-    return ((a.x > b.x + b.width) != (a.x + a.width > b.y)) &&
-        ((a.y > b.y + b.height) != (a.y + a.height > b.y));
   }
 
   public static float square(float x) {
