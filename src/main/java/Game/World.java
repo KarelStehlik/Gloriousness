@@ -16,7 +16,6 @@ import Game.Turrets.SlowTurret;
 import general.Constants;
 import general.Data;
 import general.Log;
-import general.Log.Timer;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
 import java.awt.Point;
@@ -227,7 +226,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
 
     tickEntities(projectilesGrid, projectilesList);
-    for(var proj:projectilesList){
+    for (var proj : projectilesList) {
       proj.handleProjectileCollision();
     }
 

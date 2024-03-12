@@ -92,7 +92,7 @@ public class EatingTurret extends Turret {
     public void init() {
       power = new RefFloat(2);
       range = new RefFloat(500);
-      pierce = new RefFloat(100);
+      pierce = new RefFloat(1000);
       cd = new RefFloat(1000);
       projectileDuration = new RefFloat(5);
       bulletSize = new RefFloat(200);
