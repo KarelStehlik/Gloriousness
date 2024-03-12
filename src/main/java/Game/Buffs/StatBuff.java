@@ -3,14 +3,13 @@ package Game.Buffs;
 import Game.Game;
 import Game.GameObject;
 import general.RefFloat;
+import general.Util;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
 public class StatBuff<T extends GameObject> implements Buff<T> {
-
-  private static long staticId = 0;
 
   private final Type type;
   private final RefFloat stat;
@@ -23,8 +22,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     this.type = type;
     this.stat = stat;
     this.value = value;
-    id = staticId;
-    staticId++;
+    id= Util.getUid();
   }
 
   private int compareByExpiry(StatBuff<T> b1, StatBuff<T> b2) {

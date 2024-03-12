@@ -1,11 +1,11 @@
 package Game;
 
+import general.Util;
 import java.awt.Rectangle;
 
 public class GameObject {
 
-  private static int idGen = Integer.MIN_VALUE;
-  public final int id;
+  public final long id;
   private final Rectangle hitbox;
   public long lastChecked = -9223372036854775807L;
   protected float x, y;
@@ -19,8 +19,7 @@ public class GameObject {
     height = H;
     world = w;
     hitbox = new Rectangle((int) (x - width / 2), (int) (y + height / 2), width, height);
-    id = idGen;
-    idGen++;
+    id = Util.getUid();
   }
 
   public float getX() {

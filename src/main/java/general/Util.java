@@ -30,7 +30,7 @@ public final class Util {
       0, 0, 0, 1,
       0, 0, 0, 1,
   };
-  private static int id = 0;
+  private static long id = 0;
 
   // static initializer block
   // fill the sine look-up table
@@ -54,8 +54,8 @@ public final class Util {
   private Util() {
   }
 
-  public static int getUid() {
-    id += 1;
+  public static long getUid() {
+    id ++;
     return id;
   }
 

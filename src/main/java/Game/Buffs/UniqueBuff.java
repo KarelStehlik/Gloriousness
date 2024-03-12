@@ -6,10 +6,10 @@ import java.util.HashSet;
 
 public class UniqueBuff<T extends GameObject> implements Buff<T> {
 
-  private final int id;
+  private final long id;
   private final Modifier<T> mod;
 
-  public UniqueBuff(int id, Modifier<T> effect) {
+  public UniqueBuff(long id, Modifier<T> effect) {
     this.id = id;
     mod = effect;
   }
@@ -21,7 +21,7 @@ public class UniqueBuff<T extends GameObject> implements Buff<T> {
 
   private class Aggregator implements BuffAggregator<T> {
 
-    private final Collection<Integer> alreadyApplied = new HashSet<>(1);
+    private final Collection<Long> alreadyApplied = new HashSet<>(1);
 
     @Override
     public boolean add(Buff<T> b, T target) {

@@ -2,13 +2,13 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
+import general.Util;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 public class DelayedTrigger<T extends GameObject> implements Buff<T>,
     Comparable<DelayedTrigger<T>> {
 
-  private static long staticId = 0;
   private final long id;
 
   private final float expiryTime;
@@ -18,8 +18,7 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
   public DelayedTrigger(float dur, Modifier<T> effect, boolean triggerOnDeath) {
     mod = effect;
     expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
-    id = staticId;
-    staticId++;
+    id = Util.getUid();
     onDeath = triggerOnDeath;
   }
 

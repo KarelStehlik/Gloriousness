@@ -3,13 +3,13 @@ package Game.Buffs;
 import Game.DamageType;
 import Game.Game;
 import Game.TdMob;
+import general.Util;
 import java.util.Iterator;
 import java.util.TreeSet;
 import windowStuff.Sprite;
 
 public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
-  private static long staticId = 0;
   protected final float damagePerTick, expiryTime;
   private final long id;
 
@@ -17,8 +17,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
   public Ignite(float dmg, float dur) {
     damagePerTick = dmg;
     expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
-    id = staticId;
-    staticId++;
+    id = Util.getUid();
   }
 
   @Override

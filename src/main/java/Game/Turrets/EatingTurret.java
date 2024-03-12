@@ -17,7 +17,7 @@ import java.util.List;
 
 public class EatingTurret extends Turret {
 
-  static final int EatImmuneTag = Util.getUid();
+  static final long EatImmuneTag = Util.getUid();
   public final ExtraStats extraStats = new ExtraStats();
 
   public EatingTurret(World world, int X, int Y) {

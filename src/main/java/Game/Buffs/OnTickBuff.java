@@ -2,12 +2,12 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
+import general.Util;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnTickBuff<T>> {
 
-  private static long staticId = 0;
   private final long id;
 
   private final float expiryTime;
@@ -16,8 +16,7 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
   public OnTickBuff(float dur, Modifier<T> effect) {
     mod = effect;
     expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
-    id = staticId;
-    staticId++;
+    id = Util.getUid();
   }
 
   @Override
