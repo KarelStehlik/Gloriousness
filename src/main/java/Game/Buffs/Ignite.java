@@ -45,7 +45,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
       var bs = Game.get().getSpriteBatching("main");
       fireSprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50);
       fireSprite.setRotation(180);
-      fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 1).loop());
+      fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 0.3f).loop());
       fireSprite.setHidden(true);
     }
 

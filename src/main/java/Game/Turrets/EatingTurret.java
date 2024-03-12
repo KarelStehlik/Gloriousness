@@ -94,7 +94,7 @@ public class EatingTurret extends Turret {
       range = new RefFloat(500);
       pierce = new RefFloat(1000);
       cd = new RefFloat(1000);
-      projectileDuration = new RefFloat(5);
+      projectileDuration = new RefFloat(8);
       bulletSize = new RefFloat(200);
       speed = new RefFloat(3.5);
     }

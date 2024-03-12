@@ -34,6 +34,10 @@ import windowStuff.Text;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
+  private static class Optimization{
+    private static final int MobGridSquareSize = 6;
+    private static final int ProjectileGridSquareSize = 6;
+  }
   public static final int WIDTH = 1920;
   public static final int HEIGHT = 1080;
   private final SpriteBatching bs;
@@ -60,9 +64,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Game game = Game.get();
     game.addMouseDetect(this);
     game.addKeyDetect(this);
-    mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000, 7);
+    mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000, Optimization.MobGridSquareSize);
     mobsList = new ArrayList<>(1024);
-    projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000, 8);
+    projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000, Optimization.ProjectileGridSquareSize);
     projectilesList = new ArrayList<>(128);
     bs = game.getSpriteBatching("main");
     BasicCollides.init(this);

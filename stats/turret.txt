@@ -2,4 +2,4 @@ turrets\basicTurret % power=100|range=500|pierce=100|cd=1|projectileDuration=2|b
 turrets\empoweringTurret % power=100|range=500|pierce=100|cd=10|projectileDuration=2|bulletSize=50|speed=10 %
 turrets\igniteTurret % power=100|range=500|pierce=100|cd=1|projectileDuration=2|bulletSize=50|speed=10 %
 turrets\slowTurret % power=100|range=500|pierce=100|cd=1|projectileDuration=2|bulletSize=50|speed=10 %
-turrets\eatingTurret % power=2|range=500|pierce=1000|cd=1000|projectileDuration=5|bulletSize=200|speed=3.5 %
+turrets\eatingTurret % power=2|range=500|pierce=1000|cd=1000|projectileDuration=8|bulletSize=200|speed=3.5 %
