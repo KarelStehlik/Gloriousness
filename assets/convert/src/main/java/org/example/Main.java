@@ -18,7 +18,7 @@ import java.nio.file.attribute.FileTime;
 import javax.imageio.ImageIO;
 
 public final class Main {
-  private static final Font font = new Font("Calibri", Font.PLAIN, 64);
+  private static final Font font = new Font("Calibri", Font.PLAIN, 128);
   private static FontMetrics fm;
   private static int height;
   private static int ascent;
