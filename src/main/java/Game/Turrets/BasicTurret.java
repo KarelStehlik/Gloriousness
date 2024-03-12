@@ -52,7 +52,7 @@ public class BasicTurret extends Turret {
       cd = new RefFloat(1);
       projectileDuration = new RefFloat(2);
       bulletSize = new RefFloat(50);
-      speed = new RefFloat(10);
+      speed = new RefFloat(15);
     }
   }
   // end of generated stats

@@ -31,8 +31,13 @@ public class EmpoweringTurret extends Turret {
   }
 
   private boolean collide(Projectile p1, Projectile p2) {
-    p2.addBuff(new UniqueBuff<>(id, proj -> proj.addMobCollide(BasicCollides.explode)));
+    final float pow = p1.getPower();
+    p2.addBuff(new UniqueBuff<>(id, proj2->addBuff(proj2, pow)));
     return true;
+  }
+
+  private static void addBuff(Projectile p2, float pow){
+    p2.addMobCollide((proj2,mob)->BasicCollides.explodeFunc(proj2, pow));
   }
 
   // generated stats
@@ -61,7 +66,7 @@ public class EmpoweringTurret extends Turret {
       cd = new RefFloat(10);
       projectileDuration = new RefFloat(2);
       bulletSize = new RefFloat(50);
-      speed = new RefFloat(10);
+      speed = new RefFloat(8);
     }
   }
   // end of generated stats

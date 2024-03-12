@@ -142,7 +142,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     public RefFloat projSize = new RefFloat(10);
     public RefFloat projSpeed = new RefFloat(30);
     public RefFloat projPierce = new RefFloat(100);
-    public RefFloat projDuration = new RefFloat(.81);
+    public RefFloat projDuration = new RefFloat(4);
     public RefFloat projPower = new RefFloat(100);
     public void init() {
       speed = new RefFloat(1);
@@ -151,7 +151,7 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
       projSize = new RefFloat(10);
       projSpeed = new RefFloat(30);
       projPierce = new RefFloat(100);
-      projDuration = new RefFloat(.81);
+      projDuration = new RefFloat(4);
       projPower = new RefFloat(100);
     }
   }

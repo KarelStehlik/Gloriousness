@@ -46,13 +46,13 @@ public class SlowTurret extends Turret {
 
     @Override
     public void init() {
-      power = new RefFloat(100);
+      power = new RefFloat(0.005);
       range = new RefFloat(500);
       pierce = new RefFloat(100);
       cd = new RefFloat(1);
       projectileDuration = new RefFloat(2);
       bulletSize = new RefFloat(50);
-      speed = new RefFloat(10);
+      speed = new RefFloat(7);
     }
   }
   // end of generated stats

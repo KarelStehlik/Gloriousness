@@ -67,6 +67,7 @@ public class EatingTurret extends Turret {
       other.setRotation(Data.gameMechanicsRng.nextFloat() * 360);
       other.addBuff(
           new StatBuff<Projectile>(Type.MORE, Float.POSITIVE_INFINITY, other.power, powerMult));
+      other.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
       return true;
     }
 
@@ -98,12 +99,12 @@ public class EatingTurret extends Turret {
 
     @Override
     public void init() {
-      power = new RefFloat(2);
+      power = new RefFloat(3);
       range = new RefFloat(500);
       pierce = new RefFloat(1000);
       cd = new RefFloat(1000);
       projectileDuration = new RefFloat(8);
-      bulletSize = new RefFloat(200);
+      bulletSize = new RefFloat(220);
       speed = new RefFloat(3.5);
     }
   }
