@@ -47,8 +47,8 @@ public class Projectile extends GameObject implements TickDetect {
     this.power = power;
   }
 
-  public void addBuff(Buff<Projectile> buff){
-    bh.add(buff);
+  public boolean addBuff(Buff<Projectile> buff){
+    return bh.add(buff);
   }
 
   public void multiplyPower(float mult) {
@@ -148,11 +148,14 @@ public class Projectile extends GameObject implements TickDetect {
         || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + size) / 4) {
       return;
     }
+    boolean collided = false;
     alreadyHitPlayer = true;
     for (var component : playerCollides) {
-      component.collide(this, e);
+      collided|=component.collide(this, e);
     }
-    changePierce(-1);
+    if(collided) {
+      changePierce(-1);
+    }
   }
 
   public void addPlayerCollide(OnCollideComponent<Player> component) {
@@ -164,10 +167,13 @@ public class Projectile extends GameObject implements TickDetect {
       return;
     }
     alreadyHitMobs.add(e);
+    boolean collided = false;
     for (var component : mobCollides) {
-      component.collide(this, e);
+      collided|=component.collide(this, e);
     }
-    changePierce(-1);
+    if(collided) {
+      changePierce(-1);
+    }
   }
 
   public void addMobCollide(OnCollideComponent<TdMob> component) {
@@ -180,17 +186,23 @@ public class Projectile extends GameObject implements TickDetect {
     }
     if(!projectileCollides.isEmpty() && !alreadyHitProjectiles.contains(e)){
       alreadyHitProjectiles.add(e);
+      boolean collided = false;
       for (var component : projectileCollides) {
-        component.collide(this, e);
+        collided |= component.collide(this, e);
       }
-      changePierce(-1);
+      if(collided) {
+        changePierce(-1);
+      }
     }
     if(!e.projectileCollides.isEmpty() && active && e.active && !e.alreadyHitProjectiles.contains(this)){
       e.alreadyHitProjectiles.add(this);
+      boolean collided = false;
       for (var component : e.projectileCollides) {
-        component.collide(e,this);
+        collided |= component.collide(e,this);
       }
-      e.changePierce(-1);
+      if(collided) {
+        e.changePierce(-1);
+      }
     }
   }
 
@@ -205,7 +217,7 @@ public class Projectile extends GameObject implements TickDetect {
   @FunctionalInterface
   public interface OnCollideComponent<T extends GameObject> {
 
-    void collide(Projectile proj, T target);
+    boolean collide(Projectile proj, T target);
   }
 
   public static void bounce(Projectile p){

@@ -13,9 +13,9 @@ public class BuffHandler<T extends GameObject> {
     this.target = target;
   }
 
-  public void add(Buff<T> newBuff) {
+  public boolean add(Buff<T> newBuff) {
     var aggr = buffTypes.computeIfAbsent(newBuff.getClass(), Id -> newBuff.makeAggregator());
-    aggr.add(newBuff, target);
+    return aggr.add(newBuff, target);
   }
 
   public void tick() {

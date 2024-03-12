@@ -49,10 +49,11 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
     }
 
     @Override
-    public void add(Buff<T> b, T target) {
+    public boolean add(Buff<T> b, T target) {
       assert b instanceof OnTickBuff<T>;
       var buff = (OnTickBuff<T>) b;
       effs.add(buff);
+      return true;
     }
 
     @Override

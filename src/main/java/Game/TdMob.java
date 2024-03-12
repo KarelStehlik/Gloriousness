@@ -54,8 +54,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     return progress;
   }
 
-  public void addBuff(Buff<TdMob> eff) {
-    buffHandler.add(eff);
+  public boolean addBuff(Buff<TdMob> eff) {
+    return buffHandler.add(eff);
   }
 
   public BuffHandler<TdMob> getBuffHandler() {

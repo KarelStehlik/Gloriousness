@@ -22,13 +22,15 @@ public class UniqueBuff <T extends GameObject> implements Buff<T>{
     private final Collection<Integer> alreadyApplied=new HashSet<>(1);
 
     @Override
-    public void add(Buff<T> b, T target) {
+    public boolean add(Buff<T> b, T target) {
       assert b instanceof UniqueBuff<T>;
       UniqueBuff<T> buff = (UniqueBuff<T>)b;
-      if(!alreadyApplied.contains(buff.id)){
-        alreadyApplied.add(buff.id);
-        buff.mod.mod(target);
+      if(alreadyApplied.contains(buff.id)){
+        return false;
       }
+      alreadyApplied.add(buff.id);
+      buff.mod.mod(target);
+      return true;
     }
 
     @Override

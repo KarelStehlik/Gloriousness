@@ -112,7 +112,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     Map<RefFloat, TotalModifier> modifiers = new HashMap<>(2);
 
     @Override
-    public void add(Buff<T> b, T target) {
+    public boolean add(Buff<T> b, T target) {
       assert b instanceof StatBuff<T>;
       StatBuff<T> buff = (StatBuff<T>) b;
       if (buff.expiry < Float.POSITIVE_INFINITY) {
@@ -121,6 +121,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       TotalModifier mod = modifiers.computeIfAbsent(buff.stat, TotalModifier::new);
       mod.add(buff);
       target.onStatsUpdate();
+      return true;
     }
 
     @Override

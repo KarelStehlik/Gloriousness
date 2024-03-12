@@ -7,6 +7,12 @@ import org.lwjgl.BufferUtils;
 
 public final class Util {
 
+  static int id=0;
+  public static int getUid(){
+    id+=1;
+    return id;
+  }
+
   // number of table entries per degree
   private static final int sinScale = 32;
   // float array that will store the sine values
