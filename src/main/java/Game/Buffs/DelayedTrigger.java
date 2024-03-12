@@ -1,27 +1,26 @@
 package Game.Buffs;
 
-import Game.DamageType;
 import Game.Game;
 import Game.GameObject;
 import java.util.Iterator;
 import java.util.TreeSet;
-import windowStuff.Sprite;
 
-public class DelayedTrigger<T extends GameObject> implements Buff<T>, Comparable<DelayedTrigger<T>>{
+public class DelayedTrigger<T extends GameObject> implements Buff<T>,
+    Comparable<DelayedTrigger<T>> {
 
   private static long staticId = 0;
   private final long id;
 
   private final float expiryTime;
   private final Modifier<T> mod;
-  private boolean onDeath;
+  private final boolean onDeath;
 
   public DelayedTrigger(float dur, Modifier<T> effect, boolean triggerOnDeath) {
-    mod=effect;
+    mod = effect;
     expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
     id = staticId;
     staticId++;
-    onDeath=triggerOnDeath;
+    onDeath = triggerOnDeath;
   }
 
   @Override
@@ -46,16 +45,6 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>, Comparable
     }
 
     @Override
-    public void delete(T target) {
-      for(var eff:effs){
-        if(eff.onDeath){
-          eff.mod.mod(target);
-        }
-      }
-      effs.clear();
-    }
-
-    @Override
     public boolean add(Buff<T> b, T target) {
       assert b instanceof DelayedTrigger<T>;
       var buff = (DelayedTrigger<T>) b;
@@ -75,6 +64,16 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>, Comparable
         iterator.remove();
         ig.mod.mod(target);
       }
-      }
     }
+
+    @Override
+    public void delete(T target) {
+      for (var eff : effs) {
+        if (eff.onDeath) {
+          eff.mod.mod(target);
+        }
+      }
+      effs.clear();
+    }
+  }
 }

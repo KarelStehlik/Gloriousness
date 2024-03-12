@@ -18,11 +18,12 @@ public class EmpoweringTurret extends Turret {
     onStatsUpdate();
     bulletLauncher.addProjectileCollide(this::collide);
     bulletLauncher.setSpread(45);
-    bulletLauncher.setProjectileModifier(p->p.addBuff(new UniqueBuff<>(id,p1->{})));
+    bulletLauncher.setProjectileModifier(p -> p.addBuff(new UniqueBuff<>(id, p1 -> {
+    })));
   }
 
-  private boolean collide(Projectile p1, Projectile p2){
-    p2.addBuff(new UniqueBuff<>(id,proj-> proj.addMobCollide(BasicCollides.explode)));
+  private boolean collide(Projectile p1, Projectile p2) {
+    p2.addBuff(new UniqueBuff<>(id, proj -> proj.addMobCollide(BasicCollides.explode)));
     return true;
   }
 

@@ -7,7 +7,6 @@ import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
@@ -18,17 +17,17 @@ public class Projectile extends GameObject implements TickDetect {
   private final Collection<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final Collection<Projectile> alreadyHitProjectiles;
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
+  private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
+  public RefFloat power;
   protected int pierce;
   protected float size;
   private float speed;
   private float vx, vy;
   private float duration;
   private boolean wasDeleted = false;
-  private boolean active=true;
+  private boolean active = true;
   private float rotation;
   private boolean alreadyHitPlayer = false;
-  public RefFloat power;
-  private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power) {
@@ -48,7 +47,32 @@ public class Projectile extends GameObject implements TickDetect {
     this.power = new RefFloat(power);
   }
 
-  public boolean addBuff(Buff<Projectile> buff){
+  public static void bounce(Projectile p) {
+    float s = p.size / 2;
+    float minx = p.x - s;
+    float miny = p.y - s;
+    float maxx = p.x + s;
+    float maxy = p.y + s;
+
+    if (minx < 0) {
+      p.move(p.x - 2 * minx, p.y);
+      p.vx *= -1;
+    }
+    if (miny < 0) {
+      p.move(p.x, p.y - 2 * miny);
+      p.vy *= -1;
+    }
+    if (maxx > World.WIDTH) {
+      p.move(2 * World.WIDTH - maxx - s, p.y);
+      p.vx *= -1;
+    }
+    if (maxy > World.HEIGHT) {
+      p.move(p.x, 2 * World.HEIGHT - maxy - s);
+      p.vy *= -1;
+    }
+  }
+
+  public boolean addBuff(Buff<Projectile> buff) {
     return bh.add(buff);
   }
 
@@ -86,7 +110,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   @Override
   public void onGameTick(int tick) {
-    if(!active){
+    if (!active) {
       return;
     }
     fly();
@@ -102,19 +126,19 @@ public class Projectile extends GameObject implements TickDetect {
   @Override
   public void delete() {
     onDelete();
-    active=false;
+    active = false;
     wasDeleted = true;
     sprite.delete();
-  }
-
-  public void setActive(boolean a){
-    active=a;
-    sprite.setHidden(!a);
   }
 
   @Override
   public final boolean WasDeleted() {
     return wasDeleted;
+  }
+
+  public void setActive(boolean a) {
+    active = a;
+    sprite.setHidden(!a);
   }
 
   private void fly() {
@@ -124,8 +148,8 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   @Override
-  public void move(float _x, float _y){
-    super.move(_x,_y);
+  public void move(float _x, float _y) {
+    super.move(_x, _y);
     sprite.setPosition(x, y);
   }
 
@@ -148,9 +172,9 @@ public class Projectile extends GameObject implements TickDetect {
     boolean collided = false;
     alreadyHitPlayer = true;
     for (var component : playerCollides) {
-      collided|=component.collide(this, e);
+      collided |= component.collide(this, e);
     }
-    if(collided) {
+    if (collided) {
       changePierce(-1);
     }
   }
@@ -166,9 +190,9 @@ public class Projectile extends GameObject implements TickDetect {
     alreadyHitMobs.add(e);
     boolean collided = false;
     for (var component : mobCollides) {
-      collided|=component.collide(this, e);
+      collided |= component.collide(this, e);
     }
-    if(collided) {
+    if (collided) {
       changePierce(-1);
     }
   }
@@ -181,23 +205,24 @@ public class Projectile extends GameObject implements TickDetect {
     if (!active || !e.active || e.equals(this)) {
       return;
     }
-    if(!projectileCollides.isEmpty() && !alreadyHitProjectiles.contains(e)){
+    if (!projectileCollides.isEmpty() && !alreadyHitProjectiles.contains(e)) {
       alreadyHitProjectiles.add(e);
       boolean collided = false;
       for (var component : projectileCollides) {
         collided |= component.collide(this, e);
       }
-      if(collided) {
+      if (collided) {
         changePierce(-1);
       }
     }
-    if(!e.projectileCollides.isEmpty() && active && e.active && !e.alreadyHitProjectiles.contains(this)){
+    if (!e.projectileCollides.isEmpty() && active && e.active && !e.alreadyHitProjectiles.contains(
+        this)) {
       e.alreadyHitProjectiles.add(this);
       boolean collided = false;
       for (var component : e.projectileCollides) {
-        collided |= component.collide(e,this);
+        collided |= component.collide(e, this);
       }
-      if(collided) {
+      if (collided) {
         e.changePierce(-1);
       }
     }
@@ -215,30 +240,5 @@ public class Projectile extends GameObject implements TickDetect {
   public interface OnCollideComponent<T extends GameObject> {
 
     boolean collide(Projectile proj, T target);
-  }
-
-  public static void bounce(Projectile p){
-    float s = p.size/2;
-    float minx = p.x-s;
-    float miny = p.y-s;
-    float maxx = p.x+s;
-    float maxy = p.y+s;
-
-    if(minx<0){
-      p.move(p.x - 2*minx, p.y);
-      p.vx*=-1;
-    }
-    if(miny<0){
-      p.move(p.x, p.y-2*miny);
-      p.vy*=-1;
-    }
-    if(maxx>World.WIDTH){
-      p.move(2*World.WIDTH-maxx-s, p.y);
-      p.vx*=-1;
-    }
-    if(maxy>World.HEIGHT){
-      p.move(p.x, 2*World.HEIGHT-maxy-s);
-      p.vy*=-1;
-    }
   }
 }

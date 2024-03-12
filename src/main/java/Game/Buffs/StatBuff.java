@@ -17,6 +17,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
   private final float value;
   private final long id;
   private final float expiry;
+
   public StatBuff(Type type, float duration, RefFloat stat, float value) {
     this.expiry = Game.get().getTicks() + duration / Game.tickIntervalMillis;
     this.type = type;

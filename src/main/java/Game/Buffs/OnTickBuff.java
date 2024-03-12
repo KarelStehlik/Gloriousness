@@ -1,13 +1,11 @@
 package Game.Buffs;
 
-import Game.DamageType;
 import Game.Game;
 import Game.GameObject;
 import java.util.Iterator;
 import java.util.TreeSet;
-import windowStuff.Sprite;
 
-public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnTickBuff<T>>{
+public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnTickBuff<T>> {
 
   private static long staticId = 0;
   private final long id;
@@ -16,7 +14,7 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
   private final Modifier<T> mod;
 
   public OnTickBuff(float dur, Modifier<T> effect) {
-    mod=effect;
+    mod = effect;
     expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
     id = staticId;
     staticId++;
@@ -44,11 +42,6 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
     }
 
     @Override
-    public void delete(T target) {
-      effs.clear();
-    }
-
-    @Override
     public boolean add(Buff<T> b, T target) {
       assert b instanceof OnTickBuff<T>;
       var buff = (OnTickBuff<T>) b;
@@ -64,11 +57,16 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
         OnTickBuff<T> ig = iterator.next();
         if (ig.expiryTime > time) {
           ig.mod.mod(target);
-        }else {
+        } else {
           iterator.remove();
           ig.mod.mod(target);
         }
       }
+    }
+
+    @Override
+    public void delete(T target) {
+      effs.clear();
     }
   }
 }

@@ -26,12 +26,8 @@ public class BulletLauncher {
   private float cooldown;
   private float spread = 0;
   private float remainingCooldown;
-
-  public void setProjectileModifier(Modifier<Projectile> projectileModifier) {
-    this.projectileModifier = projectileModifier;
-  }
-
-  private Modifier<Projectile> projectileModifier = p->{};
+  private Modifier<Projectile> projectileModifier = p -> {
+  };
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
@@ -73,6 +69,10 @@ public class BulletLauncher {
     playerCollides.addAll(og.playerCollides);
     mobCollides.addAll(og.mobCollides);
     projectileCollides.addAll(og.projectileCollides);
+  }
+
+  public void setProjectileModifier(Modifier<Projectile> projectileModifier) {
+    this.projectileModifier = projectileModifier;
   }
 
   public String getImage() {

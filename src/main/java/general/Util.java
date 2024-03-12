@@ -7,12 +7,6 @@ import org.lwjgl.BufferUtils;
 
 public final class Util {
 
-  static int id=0;
-  public static int getUid(){
-    id+=1;
-    return id;
-  }
-
   // number of table entries per degree
   private static final int sinScale = 32;
   // float array that will store the sine values
@@ -33,13 +27,13 @@ public final class Util {
       0, 0, .5f, 1,
       1, 1, .5f, 1,
   };
-
   private static final float[] noColors = new float[]{
       0, 0, 0, 1,
       0, 0, 0, 1,
       0, 0, 0, 1,
       0, 0, 0, 1,
   };
+  static int id = 0;
 
   // static initializer block
   // fill the sine look-up table
@@ -58,6 +52,11 @@ public final class Util {
     for (int i = 0; i < arcSin.length; i++) {
       arcSin[i] = (float) (Math.asin(i * step) * toDeg);
     }
+  }
+
+  public static int getUid() {
+    id += 1;
+    return id;
   }
 
   public static float sin(float a) {

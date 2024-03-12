@@ -1,7 +1,6 @@
 package Game.Turrets;
 
 
-import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
@@ -18,8 +17,8 @@ import java.util.List;
 
 public class EatingTurret extends Turret {
 
-  public final ExtraStats extraStats = new ExtraStats();
   static final int EatImmuneTag = Util.getUid();
+  public final ExtraStats extraStats = new ExtraStats();
 
   public EatingTurret(World world, int X, int Y) {
     super(world, X, Y, "Button",
@@ -30,34 +29,42 @@ public class EatingTurret extends Turret {
     bulletLauncher.setProjectileModifier(this::modProjectile);
   }
 
-  private void modProjectile(Projectile p){
-    eater e = new eater((int)baseStats.pierce.get(), baseStats.power.get());
-    p.addProjectileCollide((p1,p2)->e.eat(p2));
-    p.addBuff(new UniqueBuff<>(EatImmuneTag, p1->{}));
+  private void modProjectile(Projectile p) {
+    eater e = new eater((int) baseStats.pierce.get(), baseStats.power.get());
+    p.addProjectileCollide((p1, p2) -> e.eat(p2));
+    p.addBuff(new UniqueBuff<>(EatImmuneTag, p1 -> {
+    }));
     p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
-    p.addBuff(new DelayedTrigger<Projectile>(Float.POSITIVE_INFINITY,p1->e.perish(p1.getX(), p1.getY()),true));
+    p.addBuff(new DelayedTrigger<Projectile>(Float.POSITIVE_INFINITY,
+        p1 -> e.perish(p1.getX(), p1.getY()), true));
   }
 
-  private static class eater{
+  private static class eater {
+
     final List<Projectile> eaten;
     final float powerMult;
-    eater(int maxEat, float powerMult){
+
+    eater(int maxEat, float powerMult) {
       eaten = new ArrayList<>(maxEat);
-      this.powerMult=powerMult;
+      this.powerMult = powerMult;
     }
-    public boolean eat(Projectile other){
-      if(!other.addBuff(new UniqueBuff<>(EatImmuneTag, p1->{}))){
+
+    public boolean eat(Projectile other) {
+      if (!other.addBuff(new UniqueBuff<>(EatImmuneTag, p1 -> {
+      }))) {
         return false;
       }
       eaten.add(other);
       other.setActive(false);
-      other.setRotation(Data.gameMechanicsRng.nextFloat()*360);
-      other.addBuff(new StatBuff<Projectile>(Type.MORE,Float.POSITIVE_INFINITY,other.power,powerMult));
+      other.setRotation(Data.gameMechanicsRng.nextFloat() * 360);
+      other.addBuff(
+          new StatBuff<Projectile>(Type.MORE, Float.POSITIVE_INFINITY, other.power, powerMult));
       return true;
     }
-    public void perish(float x, float y){
-      for(var p : eaten){
-        p.move(x,y);
+
+    public void perish(float x, float y) {
+      for (var p : eaten) {
+        p.move(x, y);
         p.setActive(true);
       }
     }
