@@ -52,11 +52,14 @@ public class Turret extends GameObject implements TickDetect {
     bulletLauncher.tickCooldown();
     TdMob target = world.getMobsGrid()
         .getFirst(new Point((int) x, (int) y), (int) baseStats.range.get());
-    while (target != null && bulletLauncher.canAttack()) {
-      bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
-      target = world.getMobsGrid()
-          .getFirst(new Point((int) x, (int) y), (int) baseStats.range.get());
+    if(target!=null){
+      var rotation = Util.get_rotation(target.getX() - x, target.getY() - y);
+      while (bulletLauncher.canAttack()) {
+        bulletLauncher.attack(rotation);
+      }
+      sprite.setRotation(rotation);
     }
+
     buffHandler.tick();
   }
 

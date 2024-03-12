@@ -105,7 +105,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public final boolean WasDeleted() {
     return wasDeleted;
   }
 
