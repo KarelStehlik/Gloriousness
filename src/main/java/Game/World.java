@@ -9,6 +9,7 @@ import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Turrets.BasicTurret;
+import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
 import Game.Turrets.IgniteTurret;
 import Game.Turrets.SlowTurret;
@@ -33,8 +34,8 @@ import windowStuff.Text;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
-  private static final int WIDTH = 16384;
-  private static final int HEIGHT = 16384;
+  public static final int WIDTH = 1920;
+  public static final int HEIGHT = 1080;
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
   private final List<TdMob> mobsList;
@@ -88,8 +89,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         (x, y, l) -> new EmpoweringTurret(this, x, y),
         "Button", 100);
 
+    TurretGenerator testEating = new TurretGenerator(this,
+        (x, y, l) -> new EatingTurret(this, x, y),
+        "Button", 100);
+
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
-        testEmp};
+        testEmp, testEating};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton(5)).toArray(Button[]::new),

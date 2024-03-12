@@ -35,7 +35,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     return new Aggregator();
   }
 
-  public class Aggregator implements BuffAggregator<T> {
+  private class Aggregator implements BuffAggregator<T> {
 
     private final TreeSet<Ignite<T>> ignites = new TreeSet<>();
     private final Sprite fireSprite;
@@ -47,11 +47,6 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
       fireSprite.setRotation(180);
       fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 1).loop());
       fireSprite.setHidden(true);
-    }
-
-    private void delete() {
-      fireSprite.delete();
-      ignites.clear();
     }
 
     @Override
