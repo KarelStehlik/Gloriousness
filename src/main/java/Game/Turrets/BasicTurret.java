@@ -21,7 +21,7 @@ public class BasicTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,
+    return new TurretGenerator(world, "Basic",
         (x, y) -> new BasicTurret(world, x, y),
         image, 100);
   }

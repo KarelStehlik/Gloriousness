@@ -32,7 +32,7 @@ public class EatingTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,
+    return new TurretGenerator(world, "Eating",
         (x, y) -> new EatingTurret(world, x, y),
         image, 100);
   }

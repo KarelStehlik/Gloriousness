@@ -9,15 +9,17 @@ public class TurretGenerator {
 
   private static final float COST_SCALING = 1.2f;
   private final World world;
-  private final String image;
+  private final String image, label;
   private final Place type;
   private float cost;
 
-  public TurretGenerator(World world, Place placeFunction, String imageName, float cost) {
+  public TurretGenerator(World world, String label, Place placeFunction, String imageName,
+      float cost) {
     this.type = placeFunction;
     this.image = imageName;
     this.world = world;
     this.cost = cost;
+    this.label = label;
   }
 
   public boolean generate(int x, int y) {
@@ -45,7 +47,7 @@ public class TurretGenerator {
           if (button == 0 && action == 1) {
             this.select();
           }
-        }, () -> type + ": cost= " + (int) cost);
+        }, () -> label + ": cost= " + (int) cost);
   }
 
   @FunctionalInterface

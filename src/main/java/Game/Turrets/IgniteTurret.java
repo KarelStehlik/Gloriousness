@@ -21,7 +21,7 @@ public class IgniteTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,
+    return new TurretGenerator(world, "Flammenwerfer",
         (x, y) -> new IgniteTurret(world, x, y),
         image, 100);
   }

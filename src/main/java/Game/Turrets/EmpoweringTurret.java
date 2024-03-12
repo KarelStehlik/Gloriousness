@@ -25,7 +25,7 @@ public class EmpoweringTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,
+    return new TurretGenerator(world, "Empowering",
         (x, y) -> new EmpoweringTurret(world, x, y),
         image, 100);
   }

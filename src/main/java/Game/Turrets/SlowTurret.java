@@ -21,7 +21,7 @@ public class SlowTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,
+    return new TurretGenerator(world, "Ice",
         (x, y) -> new SlowTurret(world, x, y),
         image, 100);
   }
