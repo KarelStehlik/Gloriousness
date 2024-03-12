@@ -23,20 +23,21 @@ import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
+import general.Log;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.lwjgl.BufferUtils;
 
 public class Shader {
 
   private static final Pattern COMPILE = Pattern.compile(
       "#type ");
-  final String name;
   final int shaderID;
+  private final String name;
 
   public Shader(String path) {
 
@@ -57,7 +58,7 @@ public class Shader {
           }
         }
       } catch (IOException e) {
-        System.out.println("could not read file " + path);
+        Log.write("could not read file " + path);
         e.printStackTrace();
       }
 
@@ -70,8 +71,8 @@ public class Shader {
 
       if (glGetShaderi(vertexID, GL_COMPILE_STATUS) == GL_FALSE) {
         int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
-        System.out.println("V shader compile failed. " + name);
-        System.out.println(glGetShaderInfoLog(vertexID, len));
+        Log.write("V shader compile failed. " + name);
+        Log.write(glGetShaderInfoLog(vertexID, len));
         assert false : "";
       }
 
@@ -81,8 +82,8 @@ public class Shader {
 
       if (glGetShaderi(fragmentID, GL_COMPILE_STATUS) == GL_FALSE) {
         int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
-        System.out.println("F shader compile failed. " + name);
-        System.out.println(glGetShaderInfoLog(fragmentID, len));
+        Log.write("F shader compile failed. " + name);
+        Log.write(glGetShaderInfoLog(fragmentID, len));
         assert false : "";
       }
 
@@ -93,8 +94,8 @@ public class Shader {
 
       if (glGetProgrami(shaderID, GL_LINK_STATUS) == GL_FALSE) {
         int len = glGetProgrami(shaderID, GL_INFO_LOG_LENGTH);
-        System.out.println("Shader link failed. " + name);
-        System.out.println(glGetProgramInfoLog(shaderID, len));
+        Log.write("Shader link failed. " + name);
+        Log.write(glGetProgramInfoLog(shaderID, len));
         assert false : "";
       }
 
@@ -111,34 +112,41 @@ public class Shader {
     glUseProgram(0);
   }
 
-  private void uploadUniform(String name, Matrix4f inMatrix) {
-    int varLocation = glGetUniformLocation(shaderID, name);
+  private void uploadUniform(String uniformName, Matrix4fc inMatrix) {
+    int varLocation = glGetUniformLocation(shaderID, uniformName);
     use();
     FloatBuffer inMatrixBuffer = BufferUtils.createFloatBuffer(16);
     inMatrix.get(inMatrixBuffer);
     glUniformMatrix4fv(varLocation, false, inMatrixBuffer);
   }
 
-  public void uploadUniform(String name, int value) {
+  public void uploadUniform(String uniformName, int value) {
     use();
-    int varLocation = glGetUniformLocation(shaderID, name);
+    int varLocation = glGetUniformLocation(shaderID, uniformName);
     glUniform1i(varLocation, value);
   }
 
-  public void uploadUniform(String name, float value) {
-    int varLocation = glGetUniformLocation(shaderID, name);
+  public void uploadUniform(String uniformName, float value) {
+    int varLocation = glGetUniformLocation(shaderID, uniformName);
     use();
     glUniform1f(varLocation, value);
   }
 
-  public void uploadTexture(String name, int slot) {
+  public void uploadTexture(String uniformName, int slot) {
     use();
-    int varLocation = glGetUniformLocation(shaderID, name);
+    int varLocation = glGetUniformLocation(shaderID, uniformName);
     glUniform1f(varLocation, slot);
   }
 
   public void useCamera(Camera cam) {
     uploadUniform("projection", cam.getProjectionMatrix());
     uploadUniform("view", cam.getViewMatrix());
+  }
+
+  @Override
+  public String toString() {
+    return "Shader{"
+        + "name='" + name + '\''
+        + '}';
   }
 }

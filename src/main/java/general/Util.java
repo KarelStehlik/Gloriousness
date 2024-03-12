@@ -1,9 +1,6 @@
 package general;
 
 import java.awt.Rectangle;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import org.lwjgl.BufferUtils;
 
 public final class Util {
 
@@ -33,7 +30,7 @@ public final class Util {
       0, 0, 0, 1,
       0, 0, 0, 1,
   };
-  static int id = 0;
+  private static int id = 0;
 
   // static initializer block
   // fill the sine look-up table
@@ -52,6 +49,9 @@ public final class Util {
     for (int i = 0; i < arcSin.length; i++) {
       arcSin[i] = (float) (Math.asin(i * step) * toDeg);
     }
+  }
+
+  private Util() {
   }
 
   public static int getUid() {
@@ -88,28 +88,17 @@ public final class Util {
     if (a >= 0) {
       int index = (int) (a * arcSinScale);
       return arcSin[index];
-    } else {
-      int index = (int) (-a * arcSinScale);
-      return -arcSin[index];
     }
+    int index = (int) (-a * arcSinScale);
+    return -arcSin[index];
   }
 
   public static float arcCos(float a) {
     return arcSin(a - 90);
   }
 
-  public static FloatBuffer buffer(float[] input) {
-    FloatBuffer out = BufferUtils.createFloatBuffer(input.length);
-    return out.put(input);
-  }
-
   public static boolean testBit(int input, int bit) {
     return (input & (1 << (bit - 1))) != 0;
-  }
-
-  public static IntBuffer buffer(int[] input) {
-    IntBuffer out = BufferUtils.createIntBuffer(input.length);
-    return out.put(input);
   }
 
   public static float get_rotation(float x, float y) {

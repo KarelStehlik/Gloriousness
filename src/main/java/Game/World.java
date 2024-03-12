@@ -34,10 +34,6 @@ import windowStuff.Text;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
-  private static class Optimization{
-    private static final int MobGridSquareSize = 6;
-    private static final int ProjectileGridSquareSize = 6;
-  }
   public static final int WIDTH = 1920;
   public static final int HEIGHT = 1080;
   private final SpriteBatching bs;
@@ -50,7 +46,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final List<Point> mapData;
   private final Text resourceTracker;
   private final MobSpawner mobSpawner = new MobSpawner();
-  private final Log.Timer t = new Log.Timer();
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
   private Tool currentTool;
   private int tick = 0;
@@ -64,12 +59,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Game game = Game.get();
     game.addMouseDetect(this);
     game.addKeyDetect(this);
-    mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000, Optimization.MobGridSquareSize);
+    mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000,
+        Optimization.MobGridSquareSize);
     mobsList = new ArrayList<>(1024);
-    projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000, Optimization.ProjectileGridSquareSize);
+    projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000,
+        Optimization.ProjectileGridSquareSize);
     projectilesList = new ArrayList<>(128);
     bs = game.getSpriteBatching("main");
-    BasicCollides.init(this);
     getBs().getCamera().moveTo(0, -0, 20);
     player = new Player(this);
     String mapName = Data.listMaps()[0];
@@ -78,30 +74,30 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
-    TurretGenerator test = new TurretGenerator(this, (x, y, l) -> new BasicTurret(this, x, y),
+    TurretGenerator test = new TurretGenerator(this, (x, y) -> new BasicTurret(this, x, y),
         "kk", 100);
 
     TurretGenerator testDotTurret = new TurretGenerator(this,
-        (x, y, l) -> new IgniteTurret(this, x, y),
+        (x, y) -> new IgniteTurret(this, x, y),
         "Button", 100);
 
     TurretGenerator testSlowTurret = new TurretGenerator(this,
-        (x, y, l) -> new SlowTurret(this, x, y),
+        (x, y) -> new SlowTurret(this, x, y),
         "Button", 100);
 
     TurretGenerator testEmp = new TurretGenerator(this,
-        (x, y, l) -> new EmpoweringTurret(this, x, y),
+        (x, y) -> new EmpoweringTurret(this, x, y),
         "Button", 100);
 
     TurretGenerator testEating = new TurretGenerator(this,
-        (x, y, l) -> new EatingTurret(this, x, y),
+        (x, y) -> new EatingTurret(this, x, y),
         "Button", 100);
 
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
         testEmp, testEating};
 
     ButtonArray turretBar = new ButtonArray(2,
-        Arrays.stream(availableTurrets).map(tg -> tg.makeButton(5)).toArray(Button[]::new),
+        Arrays.stream(availableTurrets).map(tg -> tg.makeButton()).toArray(Button[]::new),
         new Sprite("Button", 4).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
         1, 1);
     game.addMouseDetect(turretBar);
@@ -312,6 +308,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Text text = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500,
         bs);
     Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
+  }
+
+  private static class Optimization {
+
+    private static final int MobGridSquareSize = 6;
+    private static final int ProjectileGridSquareSize = 6;
   }
 
   private class MobSpawner {

@@ -4,7 +4,7 @@ import Game.Buffs.Ignite;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 
-public class BasicCollides {
+public final class BasicCollides {
 
   public static final Projectile.OnCollideComponent<TdMob> damage = (proj, mob) -> {
     mob.takeDamage(
@@ -28,6 +28,9 @@ public class BasicCollides {
     _world.explosionVisual(proj.x, proj.y, proj.getPower(), false, "Explosion1-0");
     return true;
   };
+
+  private BasicCollides() {
+  }
 
   static void init(World world) {
     _world = world;

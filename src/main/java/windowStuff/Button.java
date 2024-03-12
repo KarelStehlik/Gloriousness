@@ -9,7 +9,6 @@ public class Button implements MouseDetect {
   private final MouseoverText mouseoverTextGenerator;
   private final Text mouseoverText;
   private boolean shown = true;
-  private SpriteBatching bs;
 
   public Button(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
       MouseoverText caption) {

@@ -8,38 +8,16 @@ import windowStuff.Sprite;
 public class TurretGenerator {
 
   private static final float COST_SCALING = 1.2f;
-  World world;
-  BulletLauncher templateLauncher;
-  String image;
-  float cost;
-  Place type;
+  private final World world;
+  private final String image;
+  private final Place type;
+  private float cost;
 
   public TurretGenerator(World world, Place placeFunction, String imageName, float cost) {
     this.type = placeFunction;
     this.image = imageName;
     this.world = world;
-    this.templateLauncher = new BulletLauncher(world, "Egg", 0, 0, 0,
-        50, 50, 0, 50, 0, 0, 0);
     this.cost = cost;
-  }
-
-  public BulletLauncher getTemplateLauncher() {
-    return templateLauncher;
-  }
-
-  public TurretGenerator addOnMobCollide(Projectile.OnCollideComponent<TdMob> collide) {
-    templateLauncher.addMobCollide(collide);
-    return this;
-  }
-
-  public TurretGenerator addOnProjectileCollide(Projectile.OnCollideComponent<Player> collide) {
-    templateLauncher.addPlayerCollide(collide);
-    return this;
-  }
-
-  public TurretGenerator addOnPlayerCollide(Projectile.OnCollideComponent<Projectile> collide) {
-    templateLauncher.addProjectileCollide(collide);
-    return this;
   }
 
   public boolean generate(int x, int y) {
@@ -48,7 +26,7 @@ public class TurretGenerator {
     }
     world.setMoney(world.getMoney() - cost);
     cost *= COST_SCALING;
-    type.place(x, y, new BulletLauncher(templateLauncher));
+    type.place(x, y);
     return true;
   }
 
@@ -61,7 +39,7 @@ public class TurretGenerator {
     );
   }
 
-  public Button makeButton(int layer) {
+  public Button makeButton() {
     return new Button(world.getBs(), new Sprite(image, 100, 100, 200, 200, 10, "basic"),
         (int button, int action) -> {
           if (button == 0 && action == 1) {
@@ -73,6 +51,6 @@ public class TurretGenerator {
   @FunctionalInterface
   interface Place {
 
-    void place(int x, int y, BulletLauncher l);
+    void place(int x, int y);
   }
 }

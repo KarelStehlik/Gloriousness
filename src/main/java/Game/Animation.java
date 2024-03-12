@@ -1,9 +1,7 @@
 package Game;
 
 import org.joml.Vector2f;
-import windowStuff.SingleAnimationSprite;
 import windowStuff.Sprite;
-import windowStuff.SpriteBatching;
 
 public class Animation implements TickDetect {
 
@@ -11,24 +9,13 @@ public class Animation implements TickDetect {
 
   private float scaling = 1;
   private float opacityScaling = 0;
+
   private Vector2f linearScaling = new Vector2f(0, 0);
   private float duration;
-
-  public Animation(String anim, SpriteBatching bs, float duration, float x, float y, float width,
-      float height, int layer) {
-    sprite = new SingleAnimationSprite(anim, duration, x, y, width, height, layer, "basic");
-
-    bs.addSprite(sprite);
-    this.duration = duration;
-  }
 
   public Animation(Sprite anim, float duration) {
     sprite = anim;
     this.duration = duration;
-  }
-
-  public float getOpacityScaling() {
-    return opacityScaling;
   }
 
   public Animation setOpacityScaling(float opacityScaling) {
@@ -67,5 +54,12 @@ public class Animation implements TickDetect {
   @Override
   public boolean WasDeleted() {
     return sprite.isDeleted();
+  }
+
+  @Override
+  public String toString() {
+    return "Animation{"
+        + "sprite=" + sprite
+        + '}';
   }
 }

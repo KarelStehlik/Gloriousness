@@ -19,8 +19,6 @@ public class Turret extends GameObject implements TickDetect {
   protected final BulletLauncher bulletLauncher;
   private final Sprite sprite;
   private final BuffHandler<Turret> buffHandler;
-  protected float health;
-  private float vx, vy;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
       BaseStats newStats) {
