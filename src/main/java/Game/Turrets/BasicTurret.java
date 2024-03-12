@@ -8,7 +8,7 @@ import general.RefFloat;
 
 public class BasicTurret extends Turret {
 
-  public static final String image = "Bowman";
+  public static final String image = "BasicTower";
   public final ExtraStats extraStats = new ExtraStats();
 
   public BasicTurret(World world, int X, int Y) {

@@ -8,7 +8,7 @@ import general.RefFloat;
 
 public class SlowTurret extends Turret {
 
-  public static final String image = "Cancelbutton";
+  public static final String image = "SlowTower";
   public final ExtraStats extraStats = new ExtraStats();
 
   public SlowTurret(World world, int X, int Y) {

@@ -8,7 +8,7 @@ import general.RefFloat;
 
 public class IgniteTurret extends Turret {
 
-  public static final String image = "Meteor";
+  public static final String image = "Flamethrower";
   public final ExtraStats extraStats = new ExtraStats();
 
   public IgniteTurret(World world, int X, int Y) {

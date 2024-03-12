@@ -14,7 +14,7 @@ import windowStuff.Sprite;
 
 public class Turret extends GameObject implements TickDetect {
 
-  public static final int HEIGHT = 100, WIDTH = 100;
+  public static final int HEIGHT = 150, WIDTH = 150;
   public final BaseStats baseStats;
   protected final BulletLauncher bulletLauncher;
   private final Sprite sprite;

@@ -10,7 +10,7 @@ import general.RefFloat;
 
 public class EmpoweringTurret extends Turret {
 
-  public static final String image = "Farm21";
+  public static final String image = "EmpoweringTower";
   public final ExtraStats extraStats = new ExtraStats();
 
   public EmpoweringTurret(World world, int X, int Y) {

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class EatingTurret extends Turret {
 
-  public static final String image = "crab";
+  public static final String image = "EatingTower";
   static final long EatImmuneTag = Util.getUid();
   public final ExtraStats extraStats = new ExtraStats();
 
