@@ -1,6 +1,7 @@
 package windowStuff;
 
 import general.Constants;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,16 +13,14 @@ public class Text {
   private final int layer;
   private final String fontName;
   private final int maxWidth;
-  private final String text;
   private final String shader;
   private final SpriteBatching bs;
   private final AbstractSprite background;
-  public int x, y;
+  private int x, y;
   private float fontSize;
   private float scale;
-  private List<Symbol> symbols;
+  private ArrayList<Symbol> symbols;
   private float[] colors = new float[]{0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
-  private boolean deleted = false;
   private boolean hidden = false;
   private int lineCount = 1;
 
@@ -36,12 +35,11 @@ public class Text {
     this.x = x;
     this.bs = bs;
     this.y = y;
-    text = value;
     this.maxWidth = width;
     fontName = font;
     this.layer = layer + 1;
     this.shader = shader;
-    symbols = new LinkedList<>();
+    symbols = new ArrayList<>(value.length());
     scale = (float) (fontSize / textureHeight);
 
     if (backgroundImage == null) {
@@ -94,7 +92,7 @@ public class Text {
   }
 
   public void setText(String value) {
-    List<Symbol> newSymbols = new LinkedList<>();
+    ArrayList<Symbol> newSymbols = new ArrayList<>(value.length());
     Iterator<Symbol> existing = symbols.listIterator();
     for (char c : value.toCharArray()) {
       if (existing.hasNext()) {
@@ -176,7 +174,6 @@ public class Text {
     }
     symbols.clear();
     background.delete();
-    deleted = true;
   }
 
   private class Symbol {
