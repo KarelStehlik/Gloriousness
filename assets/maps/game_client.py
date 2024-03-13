@@ -9,6 +9,7 @@ class Game:
 
     def __init__(self, mapname, batch):
         self.mapname = mapname
+        print(mapname)
         self.batch = batch
         self.background = pyglet.sprite.Sprite(images.data[mapname], x=constants.SCREEN_WIDTH / 2,
                                                y=constants.SCREEN_HEIGHT / 2, batch=batch, group=groups.g[0])

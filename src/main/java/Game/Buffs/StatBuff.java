@@ -7,6 +7,7 @@ import general.Util;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class StatBuff<T extends GameObject> implements Buff<T> {
@@ -44,7 +45,8 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
     final float ogValue;
     RefFloat target;
-    float added = 0, increased = 1, more = 1;
+    float added = 0, increased = 1;
+    double more = 1;
     //Map<Float, Integer> moreModifiers = new HashMap<>(1);
 
     TotalModifier(RefFloat target) {
@@ -53,7 +55,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     }
 
     void apply() {
-      target.set(Math.max((ogValue + added) * increased * more, 0));
+      target.set(Math.max((ogValue + added) * increased * (float)more, 0));
     }
 
     void addAdded(float value) {
@@ -106,7 +108,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
   private class Aggregator implements BuffAggregator<T> {
 
-    TreeSet<StatBuff<T>> buffsByExpiration = new TreeSet<>(StatBuff.this::compareByExpiry);
+    SortedSet<StatBuff<T>> buffsByExpiration = new TreeSet<>(StatBuff.this::compareByExpiry);
 
     Map<RefFloat, TotalModifier> modifiers = new HashMap<>(2);
 

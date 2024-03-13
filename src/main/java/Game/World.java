@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
@@ -39,9 +40,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Options options = new Options();
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
-  private final List<TdMob> mobsList;
+  private final ArrayList<TdMob> mobsList;
   private final SquareGrid<Projectile> projectilesGrid;
-  private final List<Projectile> projectilesList;
+  private final ArrayList<Projectile> projectilesList;
   private final Player player;
   private final Sprite mapSprite;
   private final List<Point> mapData;
@@ -68,7 +69,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     bs = game.getSpriteBatching("main");
     getBs().getCamera().moveTo(0, -0, 20);
     player = new Player(this);
+
     String mapName = Data.listMaps()[0];
+
     mapSprite = new Sprite(mapName, Constants.screenSize.x / 2f, Constants.screenSize.y / 2f,
         Constants.screenSize.x, Constants.screenSize.y, 0, "basic");
     bs.addSprite(mapSprite);
@@ -249,16 +252,21 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   }
 
   private <T extends GameObject & TickDetect> void tickEntities(SpacePartitioning<T> grid,
-      List<T> list) {
+      final ArrayList<T> list) {
     grid.clear();
 
-    for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
-      T e = iterator.next();
-      if (e.WasDeleted()) {
-        iterator.remove();
-      } else {
-        e.onGameTick(tick);
+    int undeleted=0;
+    for(int current = 0; current<list.size();current++){
+      if(current!=undeleted){
+        list.set(undeleted, list.get(current));
       }
+      if(!list.get(current).WasDeleted()){
+        list.get(current).onGameTick(tick);
+        undeleted++;
+      }
+    }
+    if (list.size() > undeleted) {
+      list.subList(undeleted, list.size()).clear();
     }
   }
 

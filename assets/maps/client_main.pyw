@@ -52,7 +52,7 @@ class mode_intro(mode):
             i=0
             for line in names.read().split("\n"):
                 self.buttons.append(
-                    client_utility.button(lambda: self.join(line), i,constants.SCREEN_HEIGHT *.33,
+                    client_utility.button(lambda l=line: self.join(l), i,constants.SCREEN_HEIGHT *.33,
                                           constants.SCREEN_WIDTH * .2, constants.SCREEN_HEIGHT *.3, batch,
                                           image = images.__getattr__(line)))
                 i+=constants.SCREEN_WIDTH * .2
@@ -72,6 +72,7 @@ class mode_intro(mode):
         [e.mouse_move(x, y) for e in self.buttons]
 
     def join(self, bg):
+        print(bg)
         self.end()
         self.win.start_game(game_stuff.Game(bg, self.batch))
 
