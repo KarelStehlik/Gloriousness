@@ -1,12 +1,15 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
+import Game.Buffs.OnTickBuff;
 import Game.BulletLauncher;
+import Game.Projectile;
+import Game.TdMob;
+import Game.TdMob.MoveAlongTrack;
 import Game.TurretGenerator;
-import Game.Turrets.IgniteTurret.ExtraStats;
-import Game.Turrets.IgniteTurret.Stats;
 import Game.World;
 import general.RefFloat;
+import java.awt.Point;
 
 public class Necromancer extends Turret{
   public static final String image = "Necromancer";
@@ -19,6 +22,20 @@ public class Necromancer extends Turret{
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.fire);
     bulletLauncher.setSpread(45);
+    bulletLauncher.setProjectileModifier(p->{
+      TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,world.getMapData(),new Point(0,0),baseStats.speed,Projectile::delete);
+      p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, mover::tick));
+    });
+  }
+
+  @Override
+  public void onStatsUpdate() {
+    bulletLauncher.setDuration(baseStats.projectileDuration.get());
+    bulletLauncher.setPierce((int) baseStats.pierce.get());
+    bulletLauncher.setPower(baseStats.power.get());
+    bulletLauncher.setSize(baseStats.bulletSize.get());
+    bulletLauncher.setSpeed(0);
+    bulletLauncher.setCooldown(baseStats.cd.get());
   }
 
   public static TurretGenerator generator(World world) {
@@ -51,7 +68,7 @@ public class Necromancer extends Turret{
       range = new RefFloat(500);
       pierce = new RefFloat(100);
       cd = new RefFloat(1);
-      projectileDuration = new RefFloat(2);
+      projectileDuration = new RefFloat(5);
       bulletSize = new RefFloat(50);
       speed = new RefFloat(20);
     }

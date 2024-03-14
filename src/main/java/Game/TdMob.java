@@ -121,7 +121,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     public boolean isDone(){
       return reverse? nextMapPoint<0 : nextMapPoint >= mapData.size();
     }
-    private void tick(T target) {
+    public void tick(T target) {
       if(isDone()){
         return;
       }

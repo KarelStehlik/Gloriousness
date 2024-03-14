@@ -3,7 +3,9 @@ package Game.Buffs;
 import Game.Game;
 import Game.GameObject;
 import general.Util;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnTickBuff<T>> {
@@ -35,7 +37,7 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
 
   private class Aggregator implements BuffAggregator<T> {
 
-    private final TreeSet<OnTickBuff<T>> effs = new TreeSet<>();
+    private final List<OnTickBuff<T>> effs = new ArrayList<>(1);
 
     protected Aggregator() {
     }
@@ -52,14 +54,17 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
     public void tick(T target) {
       float time = Game.get().getTicks();
 
-      for (Iterator<OnTickBuff<T>> iterator = effs.iterator(); iterator.hasNext(); ) {
-        OnTickBuff<T> ig = iterator.next();
-        if (ig.expiryTime > time) {
-          ig.mod.mod(target);
-        } else {
-          iterator.remove();
-          ig.mod.mod(target);
+      int current=0,undeleted=0;
+      for(; current<effs.size();current++){
+        OnTickBuff<T> buff = effs.get(current);
+        if (buff.expiryTime > time) {
+          effs.set(undeleted,buff);
+          undeleted++;
+          buff.mod.mod(target);
         }
+      }
+      if (effs.size() > undeleted) {
+        effs.subList(undeleted, effs.size()).clear();
       }
     }
 
