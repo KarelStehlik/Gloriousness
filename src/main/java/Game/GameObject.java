@@ -10,6 +10,7 @@ public class GameObject {
   public long lastChecked = -9223372036854775807L;
   protected float x, y;
   protected int width, height;
+  protected float rotation;
   protected World world;
 
   protected GameObject(float X, float Y, int W, int H, World w) {
@@ -32,6 +33,10 @@ public class GameObject {
 
   Rectangle getHitbox() {
     return hitbox;
+  }
+
+  public void setRotation(float f){
+    rotation=f;
   }
 
   public void move(float _x, float _y) {

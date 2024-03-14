@@ -12,6 +12,7 @@ import Game.Turrets.BasicTurret;
 import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
 import Game.Turrets.IgniteTurret;
+import Game.Turrets.Necromancer;
 import Game.Turrets.SlowTurret;
 import general.Constants;
 import general.Data;
@@ -87,8 +88,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator testEating = EatingTurret.generator(this);
 
+    TurretGenerator necro = Necromancer.generator(this);
+
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
-        testEmp, testEating};
+        testEmp, testEating, necro};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton()).toArray(Button[]::new),

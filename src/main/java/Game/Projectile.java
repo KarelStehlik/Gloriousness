@@ -101,6 +101,7 @@ public class Projectile extends GameObject implements TickDetect {
     return rotation;
   }
 
+  @Override
   public void setRotation(float rotation) {
     this.rotation = rotation;
     sprite.setRotation(rotation - 90);
