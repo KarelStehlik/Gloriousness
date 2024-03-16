@@ -27,12 +27,14 @@ public class BasicTurret extends Turret {
     var stats = new Stats();
     return new TurretGenerator(world, "Basic",
         (x, y) -> new BasicTurret(world, x, y),
-        image, stats.cost.get(), stats.size.get(),stats.spritesize.get());
+        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
   }
 
   private Upgrade up100() {
     return new Upgrade("Meteor", () -> "fuck",
-        () -> addBuff(new StatBuff<Turret>(Type.INCREASED, 5000, baseStats.bulletSize, 1)), 1000);
+        () -> addBuff(
+            new StatBuff<Turret>(Type.INCREASED, Float.POSITIVE_INFINITY, baseStats.bulletSize, 1)),
+        1000);
   }
 
   @Override

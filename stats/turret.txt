@@ -3,3 +3,4 @@ turrets\empoweringTurret % power=100|range=500|pierce=100|cd=10|projectileDurati
 turrets\igniteTurret % power=100|range=500|pierce=100|cd=1|projectileDuration=2|bulletSize=50|speed=20|cost=100|size=50|spritesize=150 %
 turrets\slowTurret % power=0.005|range=500|pierce=100|cd=1|projectileDuration=2|bulletSize=50|speed=7|cost=100|size=50|spritesize=150 %
 turrets\eatingTurret % power=3|range=500|pierce=1000|cd=1000|projectileDuration=8|bulletSize=220|speed=3.5|cost=100|size=50|spritesize=150 %
+turrets\necromancer % power=100|range=500|pierce=1000|cd=1|projectileDuration=20|bulletSize=60|speed=10|cost=100|size=50|spritesize=150 %

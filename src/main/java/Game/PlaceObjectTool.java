@@ -1,16 +1,18 @@
 package Game;
 
+import java.util.ArrayList;
+import java.util.List;
 import windowStuff.AbstractSprite;
 
 public class PlaceObjectTool extends Tool {
 
   private final onClick click;
-  private final AbstractSprite sprite;
+  private final List<AbstractSprite> sprites = new ArrayList<>(1);
 
   public PlaceObjectTool(World world, AbstractSprite sprite, onClick onclick) {
     super(world);
     click = onclick;
-    this.sprite = sprite;
+    sprites.add(sprite);
     sprite.setPosition(input.getX(), input.getY());
   }
 
@@ -35,7 +37,7 @@ public class PlaceObjectTool extends Tool {
 
   @Override
   public void onMouseMove(float newX, float newY) {
-    sprite.setPosition(newX, newY);
+    sprites.forEach(s -> s.setPosition(newX, newY));
   }
 
   @Override
@@ -43,9 +45,13 @@ public class PlaceObjectTool extends Tool {
 
   }
 
+  public void addSprite(AbstractSprite s) {
+    sprites.add(s);
+  }
+
   @Override
   public void delete() {
-    sprite.delete();
+    sprites.forEach(AbstractSprite::delete);
     super.delete();
   }
 

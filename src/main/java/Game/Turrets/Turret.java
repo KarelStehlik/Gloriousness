@@ -24,6 +24,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   private static final Upgrade maxUpgrades = new Upgrade("MaxUpgrades",
       () -> "here is a number. " + Game.get().getTicks(), () -> {
   }, Float.POSITIVE_INFINITY);
+  private static UpgradeMenu menu;
   public final BaseStats baseStats;
   protected final BulletLauncher bulletLauncher;
   protected final Sprite sprite;
@@ -32,7 +33,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
       BaseStats newStats) {
-    super((float) X, (float) Y, (int) newStats.size.get(), (int) newStats.size.get(), world);
+    super(X, Y, (int) newStats.size.get(), (int) newStats.size.get(), world);
     baseStats = newStats;
     sprite = new Sprite(imageName, newStats.spritesize.get(), newStats.spritesize.get(), 2);
     sprite.setPosition(x, y);
@@ -53,13 +54,11 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   protected abstract List<Upgrade> getUpgradePath3();
 
-  private static UpgradeMenu menu;
-
   private void openUpgradeMenu() {
-    if(menu != null){
+    if (menu != null) {
       menu.close();
     }
-    menu=new UpgradeMenu();
+    menu = new UpgradeMenu();
   }
 
   public boolean addBuff(Buff<Turret> b) {
@@ -149,6 +148,12 @@ public abstract class Turret extends GameObject implements TickDetect {
 
     UpgradeMenu() {
       SpriteBatching bs = Game.get().getSpriteBatching("main");
+      sprites.add(new Sprite("Shockwave", 1).
+          setSize(2 * baseStats.range.get(), 2 * baseStats.range.get()).
+          setPosition(x, y).
+          addToBs(bs).
+          setOpacity(0.3f)
+      );
       buttons.add(new Button(
           new Sprite("Cancelbutton", 5).addToBs(bs).setSize(200, 50).setPosition(200, 1000),
           (x, y) -> close()));

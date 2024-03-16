@@ -7,7 +7,6 @@ import Game.Projectile;
 import Game.TdMob;
 import Game.TdMob.MoveAlongTrack;
 import Game.TurretGenerator;
-import Game.Turrets.BasicTurret.Stats;
 import Game.World;
 import general.Data;
 import general.RefFloat;
@@ -43,7 +42,7 @@ public class Necromancer extends Turret {
     var stats = new BasicTurret.Stats();
     return new TurretGenerator(world, "Necromancer",
         (x, y) -> new Necromancer(world, x, y),
-        image,  stats.cost.get(), stats.size.get(),stats.spritesize.get());
+        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
   }
 
   @Override
@@ -102,11 +101,14 @@ public class Necromancer extends Turret {
     public void init() {
       power = new RefFloat(100);
       range = new RefFloat(500);
-      pierce = new RefFloat(100);
+      pierce = new RefFloat(1000);
       cd = new RefFloat(1);
-      projectileDuration = new RefFloat(5);
-      bulletSize = new RefFloat(50);
-      speed = new RefFloat(20);
+      projectileDuration = new RefFloat(20);
+      bulletSize = new RefFloat(60);
+      speed = new RefFloat(10);
+      cost = new RefFloat(100);
+      size = new RefFloat(50);
+      spritesize = new RefFloat(150);
     }
   }
   // end of generated stats

@@ -122,6 +122,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     private final Modifier<T> onFinish;
     private int nextMapPoint;
     private TrackProgress progress = new TrackProgress(0, 0);
+
     public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
         RefFloat speed, Modifier<T> end) {
       this.reverse = reverse;

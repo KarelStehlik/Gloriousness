@@ -54,6 +54,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Text resourceTracker;
   private final MobSpawner mobSpawner = new MobSpawner();
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
+  private final List<Turret> turrets = new ArrayList<>(1);
   private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
@@ -347,16 +348,16 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   public boolean canFitTurret(int x, int y, float size) {
     for (Iterator<Turret> iterator = turrets.iterator(); iterator.hasNext(); ) {
       Turret t = iterator.next();
-      if(t.WasDeleted()){
+      if (t.WasDeleted()) {
         iterator.remove();
-      }else if (Util.distanceSquared(x - t.x, y - t.y) < Util.square(size + t.baseStats.size.get())/4) {
+      } else if (Util.distanceSquared(x - t.x, y - t.y)
+          < Util.square(size + t.baseStats.size.get()) / 4) {
         return false;
       }
     }
     return true;
   }
 
-  private final List<Turret> turrets = new ArrayList<>(1);
   public void addTurret(Turret turret) {
     turrets.add(turret);
   }
