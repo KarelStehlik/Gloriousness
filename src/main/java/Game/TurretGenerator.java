@@ -23,10 +23,9 @@ public class TurretGenerator {
   }
 
   public boolean generate(int x, int y) {
-    if (world.getMoney() < cost) {
+    if (!world.tryPurchase(cost)) {
       return false;
     }
-    world.setMoney(world.getMoney() - cost);
     cost *= COST_SCALING;
     type.place(x, y);
     return true;

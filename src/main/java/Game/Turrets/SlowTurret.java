@@ -5,8 +5,25 @@ import Game.BulletLauncher;
 import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
+import java.util.List;
 
 public class SlowTurret extends Turret {
+
+
+  @Override
+  protected List<Upgrade> getUpgradePath1() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath2() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath3() {
+    return List.of();
+  }
 
   public static final String image = "SlowTower";
   public final ExtraStats extraStats = new ExtraStats();

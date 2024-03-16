@@ -8,6 +8,7 @@ import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
+import Game.TdMob.MoveAlongTrack;
 import Game.Turrets.BasicTurret;
 import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
@@ -17,6 +18,7 @@ import Game.Turrets.SlowTurret;
 import general.Constants;
 import general.Data;
 import general.Log;
+import general.RefFloat;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
 import java.awt.Point;
@@ -118,6 +120,25 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
     beginWave();
+    calcSpacPoints();
+  }
+
+  public boolean tryPurchase(float cost){
+    if(money<cost){
+      return false;
+    }
+    money-=cost;
+    return true;
+  }
+
+  public final List<Point> spacPoints = new ArrayList<>(500);
+  private void calcSpacPoints(){
+    GameObject fakeBloon = new GameObject(mapData.get(0).x, mapData.get(0).y,0,0,this);
+    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<GameObject>(false, mapData, new Point(0,0),new RefFloat(10),o->{});
+    while(!mover.isDone()){
+      spacPoints.add(new Point((int) fakeBloon.x, (int) fakeBloon.y));
+      mover.tick(fakeBloon);
+    }
   }
 
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {

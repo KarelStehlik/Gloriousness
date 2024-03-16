@@ -25,6 +25,13 @@ public class Button implements MouseDetect {
     }
   }
 
+  public Button(AbstractSprite sprite, ClickFunction foo) {
+    this.sprite = sprite;
+    this.onClick = foo;
+    mouseoverTextGenerator = null;
+    mouseoverText = null;
+  }
+
   public AbstractSprite getSprite() {
     return sprite;
   }

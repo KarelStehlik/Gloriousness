@@ -1,10 +1,15 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
+import Game.Buffs.StatBuff;
+import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.TurretGenerator;
 import Game.World;
+import Game.Game;
 import general.RefFloat;
+import java.util.List;
+import windowStuff.Button;
 
 public class BasicTurret extends Turret {
 
@@ -24,6 +29,25 @@ public class BasicTurret extends Turret {
     return new TurretGenerator(world, "Basic",
         (x, y) -> new BasicTurret(world, x, y),
         image, 100);
+  }
+
+  private Upgrade up100(){
+    return new Upgrade("Meteor",()->"fuck",()->addBuff(new StatBuff<Turret>(Type.INCREASED,5000,baseStats.bulletSize,1)),1000);
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath1() {
+    return List.of(up100());
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath2() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath3() {
+    return List.of();
   }
 
   // generated stats
