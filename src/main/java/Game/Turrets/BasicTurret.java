@@ -6,10 +6,8 @@ import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.TurretGenerator;
 import Game.World;
-import Game.Game;
 import general.RefFloat;
 import java.util.List;
-import windowStuff.Button;
 
 public class BasicTurret extends Turret {
 
@@ -31,8 +29,9 @@ public class BasicTurret extends Turret {
         image, 100);
   }
 
-  private Upgrade up100(){
-    return new Upgrade("Meteor",()->"fuck",()->addBuff(new StatBuff<Turret>(Type.INCREASED,5000,baseStats.bulletSize,1)),1000);
+  private Upgrade up100() {
+    return new Upgrade("Meteor", () -> "fuck",
+        () -> addBuff(new StatBuff<Turret>(Type.INCREASED, 5000, baseStats.bulletSize, 1)), 1000);
   }
 
   @Override

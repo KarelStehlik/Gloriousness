@@ -24,9 +24,7 @@ import imgui.type.ImBoolean;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
@@ -40,6 +38,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public static final int WIDTH = 1920;
   public static final int HEIGHT = 1080;
+  public final List<Point> spacPoints = new ArrayList<>(500);
   private final Options options = new Options();
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
@@ -58,6 +57,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private double money = 1234567890;
   private int wave = 0;
   private boolean waveRunning = true;
+
   public World() {
     Game game = Game.get();
     game.addMouseDetect(this);
@@ -123,19 +123,20 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     calcSpacPoints();
   }
 
-  public boolean tryPurchase(float cost){
-    if(money<cost){
+  public boolean tryPurchase(float cost) {
+    if (money < cost) {
       return false;
     }
-    money-=cost;
+    money -= cost;
     return true;
   }
 
-  public final List<Point> spacPoints = new ArrayList<>(500);
-  private void calcSpacPoints(){
-    GameObject fakeBloon = new GameObject(mapData.get(0).x, mapData.get(0).y,0,0,this);
-    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<GameObject>(false, mapData, new Point(0,0),new RefFloat(10),o->{});
-    while(!mover.isDone()){
+  private void calcSpacPoints() {
+    GameObject fakeBloon = new GameObject(mapData.get(0).x, mapData.get(0).y, 0, 0, this);
+    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<GameObject>(false, mapData,
+        new Point(0, 0), new RefFloat(10), o -> {
+    });
+    while (!mover.isDone()) {
       spacPoints.add(new Point((int) fakeBloon.x, (int) fakeBloon.y));
       mover.tick(fakeBloon);
     }
@@ -279,12 +280,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       final ArrayList<T> list) {
     grid.clear();
 
-    int undeleted=0;
-    for(int current = 0; current<list.size();current++){
-      if(current!=undeleted){
+    int undeleted = 0;
+    for (int current = 0; current < list.size(); current++) {
+      if (current != undeleted) {
         list.set(undeleted, list.get(current));
       }
-      if(!list.get(current).WasDeleted()){
+      if (!list.get(current).WasDeleted()) {
         list.get(current).onGameTick(tick);
         undeleted++;
       }

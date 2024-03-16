@@ -15,7 +15,34 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Necromancer extends Turret{
+public class Necromancer extends Turret {
+
+  public static final String image = "Necromancer";
+  public final ExtraStats extraStats = new ExtraStats();
+  private final List<Point> spawnPoints = new ArrayList<>(1);
+
+  public Necromancer(World world, int X, int Y) {
+    super(world, X, Y, image,
+        new BulletLauncher(world, "Zombie"),
+        new Stats());
+    onStatsUpdate();
+    bulletLauncher.addMobCollide(BasicCollides.fire);
+    bulletLauncher.setSpread(45);
+    updateRange();
+    bulletLauncher.setProjectileModifier(p -> {
+      Point initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0, spawnPoints.size()));
+      p.move(initPoint.x, initPoint.y);
+      TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,
+          world.getMapData(), new Point(0, 0), baseStats.speed, Projectile::delete);
+      p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, mover::tick));
+    });
+  }
+
+  public static TurretGenerator generator(World world) {
+    return new TurretGenerator(world, "Necromancer",
+        (x, y) -> new Necromancer(world, x, y),
+        image, 100);
+  }
 
   @Override
   protected List<Upgrade> getUpgradePath1() {
@@ -32,35 +59,6 @@ public class Necromancer extends Turret{
     return List.of();
   }
 
-  public static final String image = "Necromancer";
-  public final ExtraStats extraStats = new ExtraStats();
-  private final List<Point> spawnPoints = new ArrayList<>(1);
-
-  public Necromancer(World world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "Zombie"),
-        new Stats());
-    onStatsUpdate();
-    bulletLauncher.addMobCollide(BasicCollides.fire);
-    bulletLauncher.setSpread(45);
-    updateRange();
-    bulletLauncher.setProjectileModifier(p->{
-      Point initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0,spawnPoints.size()));
-      p.move(initPoint.x,initPoint.y);
-      TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,world.getMapData(),new Point(0,0),baseStats.speed,Projectile::delete);
-      p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, mover::tick));
-    });
-  }
-
-  private void updateRange(){
-    spawnPoints.clear();
-    for(Point p : world.spacPoints){
-      if(Util.distanceSquared(p.x-x, p.y-y) < baseStats.range.get()*baseStats.range.get()){
-        spawnPoints.add(p);
-      }
-    }
-  }
-
   @Override
   public void onStatsUpdate() {
     bulletLauncher.setDuration(baseStats.projectileDuration.get());
@@ -71,10 +69,13 @@ public class Necromancer extends Turret{
     bulletLauncher.setCooldown(baseStats.cd.get());
   }
 
-  public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world, "Necromancer",
-        (x, y) -> new Necromancer(world, x, y),
-        image, 100);
+  private void updateRange() {
+    spawnPoints.clear();
+    for (Point p : world.spacPoints) {
+      if (Util.distanceSquared(p.x - x, p.y - y) < baseStats.range.get() * baseStats.range.get()) {
+        spawnPoints.add(p);
+      }
+    }
   }
 
   // generated stats

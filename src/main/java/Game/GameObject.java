@@ -35,8 +35,8 @@ public class GameObject {
     return hitbox;
   }
 
-  public void setRotation(float f){
-    rotation=f;
+  public void setRotation(float f) {
+    rotation = f;
   }
 
   public void move(float _x, float _y) {

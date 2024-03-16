@@ -110,6 +110,12 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   @Override
+  public void move(float _x, float _y) {
+    super.move(_x, _y);
+    sprite.setPosition(x, y);
+  }
+
+  @Override
   public void onGameTick(int tick) {
     if (!active) {
       return;
@@ -146,12 +152,6 @@ public class Projectile extends GameObject implements TickDetect {
     move(x + vx, y + vy);
     handleCollisions();
     world.getProjectilesGrid().add(this);
-  }
-
-  @Override
-  public void move(float _x, float _y) {
-    super.move(_x, _y);
-    sprite.setPosition(x, y);
   }
 
   private void handleCollisions() {

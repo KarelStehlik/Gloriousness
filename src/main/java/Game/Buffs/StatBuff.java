@@ -55,7 +55,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     }
 
     void apply() {
-      target.set(Math.max((ogValue + added) * increased * (float)more, 0));
+      target.set(Math.max((ogValue + added) * increased * (float) more, 0));
     }
 
     void addAdded(float value) {

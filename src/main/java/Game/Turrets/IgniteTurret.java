@@ -9,21 +9,6 @@ import java.util.List;
 
 public class IgniteTurret extends Turret {
 
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
-
   public static final String image = "Flamethrower";
   public final ExtraStats extraStats = new ExtraStats();
 
@@ -40,6 +25,21 @@ public class IgniteTurret extends Turret {
     return new TurretGenerator(world, "Flammenwerfer",
         (x, y) -> new IgniteTurret(world, x, y),
         image, 100);
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath1() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath2() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath3() {
+    return List.of();
   }
 
   // generated stats

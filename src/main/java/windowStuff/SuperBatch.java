@@ -19,7 +19,6 @@ import static org.lwjgl.opengles.GLES20.GL_STREAM_DRAW;
 
 import general.Constants;
 import general.Data;
-import general.Log;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +28,10 @@ public class SuperBatch implements SpriteBatching {
   private final int ebo, vao;
   private final List<Batch> batches = new ArrayList<>(1);
   private final ImageSet images;
+  private final ArrayList<Sprite> spritesToRebatch = new ArrayList<>(1);
   private int eboSize = 1042;
   private Camera camera;
   private boolean visible = true;
-  private final ArrayList<Sprite> spritesToRebatch = new ArrayList<>(1);
 
   public SuperBatch() {
     this.images = Graphics.getLoadedImages();
@@ -117,7 +116,6 @@ public class SuperBatch implements SpriteBatching {
     for (Shader shader : Data.getAllShaders()) {
       shader.useCamera(camera);
     }
-
 
     for (Batch b : batches) {
       var spriterator = b.sprites.iterator();

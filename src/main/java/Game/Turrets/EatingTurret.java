@@ -18,21 +18,6 @@ import java.util.List;
 
 public class EatingTurret extends Turret {
 
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
-
   public static final String image = "EatingTower";
   static final long EatImmuneTag = Util.getUid();
   public final ExtraStats extraStats = new ExtraStats();
@@ -50,6 +35,21 @@ public class EatingTurret extends Turret {
     return new TurretGenerator(world, "Eating",
         (x, y) -> new EatingTurret(world, x, y),
         image, 100);
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath1() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath2() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath3() {
+    return List.of();
   }
 
   private void modProjectile(Projectile p) {

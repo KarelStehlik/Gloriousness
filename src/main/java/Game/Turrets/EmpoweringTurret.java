@@ -11,21 +11,6 @@ import java.util.List;
 
 public class EmpoweringTurret extends Turret {
 
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
-
   public static final String image = "EmpoweringTower";
   public final ExtraStats extraStats = new ExtraStats();
 
@@ -48,6 +33,21 @@ public class EmpoweringTurret extends Turret {
 
   private static void addBuff(Projectile p2, float pow) {
     p2.addMobCollide((proj2, mob) -> BasicCollides.explodeFunc(proj2, pow));
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath1() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath2() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath3() {
+    return List.of();
   }
 
   private boolean collide(Projectile p1, Projectile p2) {

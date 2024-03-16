@@ -1,8 +1,9 @@
 package windowStuff;
 
 import Game.MouseDetect;
+import Game.TickDetect;
 
-public class Button implements MouseDetect {
+public class Button implements MouseDetect, TickDetect {
 
   private final AbstractSprite sprite;
   private final ClickFunction onClick;
@@ -97,6 +98,14 @@ public class Button implements MouseDetect {
   @Override
   public boolean WasDeleted() {
     return sprite.isDeleted();
+  }
+
+  @Override
+  public void onGameTick(int tick) {
+    if (!shown || mouseoverText == null) {
+      return;
+    }
+    mouseoverText.setText(mouseoverTextGenerator.get());
   }
 
   @FunctionalInterface

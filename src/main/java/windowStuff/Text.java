@@ -21,12 +21,10 @@ public class Text {
   private float[] colors = new float[]{0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
   private boolean hidden = false;
   private int lineCount = 1;
-
   public Text(String value, String font, int width, int x, int y, int layer, float size,
       SpriteBatching bs) {
     this(value, font, width, x, y, layer, size, bs, "basic", null);
   }
-
   public Text(String value, String font, int width, int x, int y, int layer, float size,
       SpriteBatching bs, String shader, String backgroundImage) {
     fontSize = size;
@@ -53,6 +51,14 @@ public class Text {
       bs.addSprite(symbol.sprite);
     }
     arrange();
+  }
+
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
   }
 
   public void hide() {

@@ -1,8 +1,9 @@
 package windowStuff;
 
 import Game.MouseDetect;
+import Game.TickDetect;
 
-public class ButtonArray implements MouseDetect {
+public class ButtonArray implements MouseDetect, TickDetect {
 
   private final int columns;
   private final Button[] buttons;
@@ -85,5 +86,15 @@ public class ButtonArray implements MouseDetect {
   @Override
   public boolean WasDeleted() {
     return background.isDeleted();
+  }
+
+  @Override
+  public void onGameTick(int tick) {
+    if (!shown) {
+      return;
+    }
+    for (Button b : buttons) {
+      b.onGameTick(tick);
+    }
   }
 }
