@@ -12,18 +12,22 @@ public class TurretGenerator {
   private final String image, label;
   private final Place type;
   private float cost;
+  private float size;
+  private float visualSize;
 
   public TurretGenerator(World world, String label, Place placeFunction, String imageName,
-      float cost) {
+      float cost, float size, float visualSize) {
     this.type = placeFunction;
     this.image = imageName;
     this.world = world;
     this.cost = cost;
     this.label = label;
+    this.size=size;
+    this.visualSize=visualSize;
   }
 
   public boolean generate(int x, int y) {
-    if (!world.tryPurchase(cost)) {
+    if (!world.canFitTurret(x,y,size) || !world.tryPurchase(cost)) {
       return false;
     }
     cost *= COST_SCALING;
@@ -34,7 +38,7 @@ public class TurretGenerator {
   public void select() {
     world.setCurrentTool(
         new PlaceObjectTool(world,
-            new Sprite(image, Turret.WIDTH, Turret.HEIGHT, 10, world.getBs()).setColors(
+            new Sprite(image, visualSize, visualSize, 10, world.getBs()).setColors(
                 Util.getBaseColors(.6f)),
             this::generate)
     );

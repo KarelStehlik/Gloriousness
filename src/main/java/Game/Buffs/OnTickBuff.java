@@ -4,9 +4,7 @@ import Game.Game;
 import Game.GameObject;
 import general.Util;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
 public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnTickBuff<T>> {
 
@@ -54,11 +52,11 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
     public void tick(T target) {
       float time = Game.get().getTicks();
 
-      int current=0,undeleted=0;
-      for(; current<effs.size();current++){
+      int current = 0, undeleted = 0;
+      for (; current < effs.size(); current++) {
         OnTickBuff<T> buff = effs.get(current);
         if (buff.expiryTime > time) {
-          effs.set(undeleted,buff);
+          effs.set(undeleted, buff);
           undeleted++;
           buff.mod.mod(target);
         }

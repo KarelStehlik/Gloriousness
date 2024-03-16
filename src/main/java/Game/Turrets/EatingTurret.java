@@ -9,6 +9,7 @@ import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.Projectile;
 import Game.TurretGenerator;
+import Game.Turrets.BasicTurret.Stats;
 import Game.World;
 import general.Data;
 import general.RefFloat;
@@ -32,9 +33,10 @@ public class EatingTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
+    var stats = new BasicTurret.Stats();
     return new TurretGenerator(world, "Eating",
         (x, y) -> new EatingTurret(world, x, y),
-        image, 100);
+        image,  stats.cost.get(), stats.size.get(),stats.spritesize.get());
   }
 
   @Override
@@ -121,6 +123,9 @@ public class EatingTurret extends Turret {
       projectileDuration = new RefFloat(8);
       bulletSize = new RefFloat(220);
       speed = new RefFloat(3.5);
+      cost = new RefFloat(100);
+      size = new RefFloat(50);
+      spritesize = new RefFloat(150);
     }
   }
   // end of generated stats

@@ -10,7 +10,6 @@ import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Function;
 import windowStuff.AbstractSprite;
 import windowStuff.Sprite;
 
@@ -21,10 +20,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected final SquareGrid<TdMob> grid;
   protected final String name;
   private final BuffHandler<TdMob> buffHandler;
+  private final MoveAlongTrack<TdMob> movement;
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
-  private final MoveAlongTrack<TdMob> movement;
 
   public TdMob(World world, String name, String image, BaseStats newStats) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
@@ -42,8 +41,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.addToBs(world.getBs());
     exists = true;
     buffHandler = new BuffHandler<>(this);
-    movement=new MoveAlongTrack<TdMob>(false,world.getMapData(),new Point((int) x - world.getMapData().get(0).x,
-        (int) y - world.getMapData().get(0).y),baseStats.speed, t->t.passed());
+    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
+        new Point((int) x - world.getMapData().get(0).x,
+            (int) y - world.getMapData().get(0).y), baseStats.speed, t -> t.passed());
   }
 
   public TrackProgress getProgress() {
@@ -96,33 +96,52 @@ public abstract class TdMob extends GameObject implements TickDetect {
   private void miscTickActions() {
   }
 
-  public static class MoveAlongTrack <T extends GameObject>{
+  private void passed() {
+    delete();
+    world.changeHealth(-1);
+  }
+
+  @Override
+  public Rectangle getHitbox() {
+    return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
+        height);
+  }
+
+  @Override
+  public void setRotation(float f) {
+    super.setRotation(f);
+    sprite.setRotation(f);
+  }
+
+  public static class MoveAlongTrack<T extends GameObject> {
+
     private final boolean reverse;
+    private final List<? extends Point> mapData;
+    private final Point offset;
+    private final RefFloat speed;
+    private final Modifier<T> onFinish;
     private int nextMapPoint;
+    private TrackProgress progress = new TrackProgress(0, 0);
+    public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
+        RefFloat speed, Modifier<T> end) {
+      this.reverse = reverse;
+      this.nextMapPoint = reverse ? mapData.size() - 1 : 0;
+      this.mapData = mapData;
+      this.offset = offset;
+      this.speed = speed;
+      onFinish = end;
+    }
 
     public TrackProgress getProgress() {
       return progress;
     }
 
-    private TrackProgress progress = new TrackProgress(0,0);
-    private final List<? extends Point> mapData;
-    private final Point offset;
-    private final RefFloat speed;
-    private final Modifier<T> onFinish;
+    public boolean isDone() {
+      return reverse ? nextMapPoint < 0 : nextMapPoint >= mapData.size();
+    }
 
-    public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset, RefFloat speed, Modifier<T> end){
-      this.reverse=reverse;
-      this.nextMapPoint=reverse?mapData.size()-1:0;
-      this.mapData=mapData;
-      this.offset=offset;
-      this.speed=speed;
-      onFinish=end;
-    }
-    public boolean isDone(){
-      return reverse? nextMapPoint<0 : nextMapPoint >= mapData.size();
-    }
     public void tick(T target) {
-      if(isDone()){
+      if (isDone()) {
         return;
       }
       Point nextPoint = mapData.get(nextMapPoint);
@@ -132,8 +151,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
       if (approxDistance < speed.get()) {
         target.x = nextPoint.x + offset.x;
         target.y = nextPoint.y + offset.y;
-        nextMapPoint += reverse?-1:1;
-        if(isDone()){
+        nextMapPoint += reverse ? -1 : 1;
+        if (isDone()) {
           onFinish.mod(target);
         }
       } else {
@@ -146,23 +165,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
         target.setRotation(rotationToNextPoint - 90f);
       }
     }
-  }
-
-  @Override
-  public void setRotation(float f){
-    super.setRotation(f);
-    sprite.setRotation(f);
-  }
-
-  private void passed() {
-    delete();
-    world.changeHealth(-1);
-  }
-
-  @Override
-  public Rectangle getHitbox() {
-    return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
-        height);
   }
 
   public static class BaseStats {

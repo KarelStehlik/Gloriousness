@@ -3,6 +3,7 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.BulletLauncher;
 import Game.TurretGenerator;
+import Game.Turrets.BasicTurret.Stats;
 import Game.World;
 import general.RefFloat;
 import java.util.List;
@@ -22,9 +23,10 @@ public class IgniteTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
+    var stats = new BasicTurret.Stats();
     return new TurretGenerator(world, "Flammenwerfer",
         (x, y) -> new IgniteTurret(world, x, y),
-        image, 100);
+        image,  stats.cost.get(), stats.size.get(),stats.spritesize.get());
   }
 
   @Override
@@ -69,6 +71,9 @@ public class IgniteTurret extends Turret {
       projectileDuration = new RefFloat(2);
       bulletSize = new RefFloat(50);
       speed = new RefFloat(20);
+      cost = new RefFloat(100);
+      size = new RefFloat(50);
+      spritesize = new RefFloat(150);
     }
   }
   // end of generated stats

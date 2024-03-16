@@ -15,15 +15,18 @@ import Game.Turrets.EmpoweringTurret;
 import Game.Turrets.IgniteTurret;
 import Game.Turrets.Necromancer;
 import Game.Turrets.SlowTurret;
+import Game.Turrets.Turret;
 import general.Constants;
 import general.Data;
 import general.Log;
 import general.RefFloat;
+import general.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import org.joml.Vector2f;
 import windowStuff.Button;
@@ -339,6 +342,23 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Text text = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500,
         bs);
     Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
+  }
+
+  public boolean canFitTurret(int x, int y, float size) {
+    for (Iterator<Turret> iterator = turrets.iterator(); iterator.hasNext(); ) {
+      Turret t = iterator.next();
+      if(t.WasDeleted()){
+        iterator.remove();
+      }else if (Util.distanceSquared(x - t.x, y - t.y) < Util.square(size + t.baseStats.size.get())/4) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private final List<Turret> turrets = new ArrayList<>(1);
+  public void addTurret(Turret turret) {
+    turrets.add(turret);
   }
 
   private static class Options {

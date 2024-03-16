@@ -7,6 +7,7 @@ import Game.Projectile;
 import Game.TdMob;
 import Game.TdMob.MoveAlongTrack;
 import Game.TurretGenerator;
+import Game.Turrets.BasicTurret.Stats;
 import Game.World;
 import general.Data;
 import general.RefFloat;
@@ -39,9 +40,10 @@ public class Necromancer extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
+    var stats = new BasicTurret.Stats();
     return new TurretGenerator(world, "Necromancer",
         (x, y) -> new Necromancer(world, x, y),
-        image, 100);
+        image,  stats.cost.get(), stats.size.get(),stats.spritesize.get());
   }
 
   @Override

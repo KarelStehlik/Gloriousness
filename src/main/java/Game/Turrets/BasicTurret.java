@@ -24,9 +24,10 @@ public class BasicTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
+    var stats = new Stats();
     return new TurretGenerator(world, "Basic",
         (x, y) -> new BasicTurret(world, x, y),
-        image, 100);
+        image, stats.cost.get(), stats.size.get(),stats.spritesize.get());
   }
 
   private Upgrade up100() {
@@ -76,6 +77,9 @@ public class BasicTurret extends Turret {
       projectileDuration = new RefFloat(2);
       bulletSize = new RefFloat(50);
       speed = new RefFloat(15);
+      cost = new RefFloat(100);
+      size = new RefFloat(50);
+      spritesize = new RefFloat(150);
     }
   }
   // end of generated stats

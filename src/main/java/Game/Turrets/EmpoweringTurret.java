@@ -5,6 +5,7 @@ import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.Projectile;
 import Game.TurretGenerator;
+import Game.Turrets.BasicTurret.Stats;
 import Game.World;
 import general.RefFloat;
 import java.util.List;
@@ -26,9 +27,10 @@ public class EmpoweringTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
+    var stats = new BasicTurret.Stats();
     return new TurretGenerator(world, "Empowering",
         (x, y) -> new EmpoweringTurret(world, x, y),
-        image, 100);
+        image,  stats.cost.get(), stats.size.get(),stats.spritesize.get());
   }
 
   private static void addBuff(Projectile p2, float pow) {
@@ -83,6 +85,9 @@ public class EmpoweringTurret extends Turret {
       projectileDuration = new RefFloat(2);
       bulletSize = new RefFloat(50);
       speed = new RefFloat(8);
+      cost = new RefFloat(100);
+      size = new RefFloat(50);
+      spritesize = new RefFloat(150);
     }
   }
   // end of generated stats

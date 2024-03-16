@@ -21,7 +21,6 @@ import windowStuff.SpriteBatching;
 
 public abstract class Turret extends GameObject implements TickDetect {
 
-  public static final int HEIGHT = 150, WIDTH = 150;
   private static final Upgrade maxUpgrades = new Upgrade("MaxUpgrades",
       () -> "here is a number. " + Game.get().getTicks(), () -> {
   }, Float.POSITIVE_INFINITY);
@@ -33,9 +32,9 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
       BaseStats newStats) {
-    super(X, Y, WIDTH, HEIGHT, world);
+    super((float) X, (float) Y, (int) newStats.size.get(), (int) newStats.size.get(), world);
     baseStats = newStats;
-    sprite = new Sprite(imageName, WIDTH, HEIGHT, 2);
+    sprite = new Sprite(imageName, newStats.spritesize.get(), newStats.spritesize.get(), 2);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
@@ -45,6 +44,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     onStatsUpdate();
     buffHandler = new BuffHandler<>(this);
     Game.get().addMouseDetect(new Button(this.sprite, (mouseX, mouseY) -> openUpgradeMenu()));
+    world.addTurret(this);
   }
 
   protected abstract List<Upgrade> getUpgradePath1();
@@ -53,8 +53,13 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   protected abstract List<Upgrade> getUpgradePath3();
 
+  private static UpgradeMenu menu;
+
   private void openUpgradeMenu() {
-    new UpgradeMenu();
+    if(menu != null){
+      menu.close();
+    }
+    menu=new UpgradeMenu();
   }
 
   public boolean addBuff(Buff<Turret> b) {
@@ -125,6 +130,9 @@ public abstract class Turret extends GameObject implements TickDetect {
     public RefFloat projectileDuration;
     public RefFloat bulletSize;
     public RefFloat speed;
+    public RefFloat cost;
+    public RefFloat size;
+    public RefFloat spritesize;
 
     public BaseStats() {
       init();
@@ -181,7 +189,6 @@ public abstract class Turret extends GameObject implements TickDetect {
         case 2 -> path2Tier++;
         case 3 -> path3Tier++;
       }
-      close();
       openUpgradeMenu();
     }
 
