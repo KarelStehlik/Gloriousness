@@ -44,7 +44,7 @@ public final class Data {
 
   private static void loadMapData() {
     try {
-      String[] data = Files.readString(Paths.get(mapDataFile)).split("\n");
+      List<String> data = Files.readAllLines(Paths.get(mapDataFile));
 
       for (String map : data) {
         String[] split = map.split(" ");

@@ -15,7 +15,7 @@ public final class Constants {
 
   //gameplay
   public static final int StartingHealth = 100;
-  public static final int MobSpread = 50;
+  public static final int MobSpread = 10;
 
   static {
     IntBuffer b = BufferUtils.createIntBuffer(4);

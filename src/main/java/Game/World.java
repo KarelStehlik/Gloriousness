@@ -39,6 +39,7 @@ import windowStuff.Text;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
+  private static final int MAP=1;
   public static final int WIDTH = 1920;
   public static final int HEIGHT = 1080;
   public final List<Point> spacPoints = new ArrayList<>(500);
@@ -77,7 +78,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     getBs().getCamera().moveTo(0, -0, 20);
     player = new Player(this);
 
-    String mapName = Data.listMaps()[0];
+    String mapName = Data.listMaps()[MAP];
 
     mapSprite = new Sprite(mapName, Constants.screenSize.x / 2f, Constants.screenSize.y / 2f,
         Constants.screenSize.x, Constants.screenSize.y, 0, "basic");
