@@ -39,10 +39,10 @@ import windowStuff.Text;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
-  private static final int MAP=1;
   public static final int WIDTH = 1920;
   public static final int HEIGHT = 1080;
-  public final List<Point> spacPoints = new ArrayList<>(500);
+  private static final int MAP = 1;
+  public final List<TrackPoint> spacPoints = new ArrayList<>(500);
   private final Options options = new Options();
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
@@ -142,7 +142,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         new Point(0, 0), new RefFloat(10), o -> {
     });
     while (!mover.isDone()) {
-      spacPoints.add(new Point((int) fakeBloon.x, (int) fakeBloon.y));
+      spacPoints.add(new TrackPoint((int) fakeBloon.x, (int) fakeBloon.y,
+          mover.getProgress().getCheckpoint()));
       mover.tick(fakeBloon);
     }
   }
@@ -361,6 +362,18 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void addTurret(Turret turret) {
     turrets.add(turret);
+  }
+
+  public static class TrackPoint {
+
+    public float x, y;
+    public int node;
+
+    public TrackPoint(float x, float y, int node) {
+      this.x = x;
+      this.y = y;
+      this.node = node;
+    }
   }
 
   private static class Options {

@@ -12,8 +12,8 @@ public class TurretGenerator {
   private final Place type;
   private final float size;
   private final float visualSize;
-  private float cost;
   private final float range;
+  private float cost;
 
   public TurretGenerator(World world, String label, Place placeFunction, String imageName,
       float cost, float size, float visualSize, float range) {

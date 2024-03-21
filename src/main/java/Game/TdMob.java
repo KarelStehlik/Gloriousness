@@ -121,12 +121,22 @@ public abstract class TdMob extends GameObject implements TickDetect {
     private final RefFloat speed;
     private final Modifier<T> onFinish;
     private int nextMapPoint;
-    private TrackProgress progress = new TrackProgress(0, 0);
+    private TrackProgress progress = new TrackProgress(1, 9999);
 
     public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
         RefFloat speed, Modifier<T> end) {
       this.reverse = reverse;
       this.nextMapPoint = reverse ? mapData.size() - 1 : 0;
+      this.mapData = mapData;
+      this.offset = offset;
+      this.speed = speed;
+      onFinish = end;
+    }
+
+    public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
+        RefFloat speed, Modifier<T> end, int nextMapPoint) {
+      this.reverse = reverse;
+      this.nextMapPoint = nextMapPoint;
       this.mapData = mapData;
       this.offset = offset;
       this.speed = speed;
@@ -191,6 +201,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
     public TrackProgress(int newCheckpoint, int newDistance) {
       checkpoint = newCheckpoint;
       distanceToNext = newDistance;
+    }
+
+    public int getCheckpoint() {
+      return checkpoint;
+    }
+
+    public int getDistanceToNext() {
+      return distanceToNext;
     }
 
     @Override

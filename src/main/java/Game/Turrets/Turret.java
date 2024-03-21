@@ -154,8 +154,13 @@ public abstract class Turret extends GameObject implements TickDetect {
           addToBs(bs).
           setOpacity(0.3f)
       );
+      sprites.add(new Sprite("Button", 5).
+          setSize(220, 420).
+          setPosition(x, y).
+          addToBs(bs)
+      );
       buttons.add(new Button(
-          new Sprite("Cancelbutton", 5).addToBs(bs).setSize(200, 50).setPosition(200, 1000),
+          new Sprite("Cancelbutton", 5).addToBs(bs).setSize(200, 50).setPosition(x, y - 150),
           (x, y) -> close()));
 
       List<Upgrade> p1 = getUpgradePath1();
@@ -167,13 +172,13 @@ public abstract class Turret extends GameObject implements TickDetect {
       Upgrade u3 = path1Tier < p3.size() ? p3.get(path1Tier) : maxUpgrades;
 
       buttons.add(
-          new Button(bs, u1.makeSprite().setPosition(100, 100), (mx, my) -> buttonClicked(u1, 1),
+          new Button(bs, u1.makeSprite().setPosition(x, y - 50), (mx, my) -> buttonClicked(u1, 1),
               () -> u1.text.get() + " cost: " + u1.cost));
       buttons.add(
-          new Button(bs, u2.makeSprite().setPosition(100, 300), (mx, my) -> buttonClicked(u2, 2),
+          new Button(bs, u2.makeSprite().setPosition(x, y + 50), (mx, my) -> buttonClicked(u2, 2),
               () -> u2.text.get() + " cost: " + u2.cost));
       buttons.add(
-          new Button(bs, u3.makeSprite().setPosition(100, 500), (mx, my) -> buttonClicked(u3, 3),
+          new Button(bs, u3.makeSprite().setPosition(x, y + 150), (mx, my) -> buttonClicked(u3, 3),
               () -> u3.text.get() + " cost: " + u3.cost));
 
       buttons.forEach(Game.get()::addMouseDetect);
