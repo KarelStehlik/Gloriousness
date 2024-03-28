@@ -22,22 +22,28 @@ public class PlaceObjectTool extends Tool {
   }
 
   @Override
-  public void onMouseButton(int button, double x, double y, int action, int mods) {
-    if (button == 0 && action == 1 && click.click((int) x, (int) y)) {
+  public int getLayer() {
+    return 0;
+  }
+
+  @Override
+  public boolean onMouseButton(int button, double x, double y, int action, int mods) {
+    if (button == 0 && action == 1 && click.click((int) x, (int) y) || (button == 1 && action == 1)) {
       delete();
-    } else if (button == 1 && action == 1) {
-      delete();
+      return true;
     }
+    return false;
   }
 
   @Override
-  public void onScroll(double scroll) {
-
+  public boolean onScroll(double scroll) {
+    return false;
   }
 
   @Override
-  public void onMouseMove(float newX, float newY) {
+  public boolean onMouseMove(float newX, float newY) {
     sprites.forEach(s -> s.setPosition(newX, newY));
+    return false;
   }
 
   @Override

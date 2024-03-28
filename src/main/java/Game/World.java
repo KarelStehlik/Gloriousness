@@ -225,24 +225,32 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   }
 
   @Override
-  public void onMouseButton(int button, double x, double y, int action, int mods) {
+  public int getLayer() {
+    return -1;
+  }
+
+  @Override
+  public boolean onMouseButton(int button, double x, double y, int action, int mods) {
     if (!currentTool.WasDeleted()) {
       currentTool.onMouseButton(button, x, y, action, mods);
     }
+    return true;
   }
 
   @Override
-  public void onScroll(double scroll) {
+  public boolean onScroll(double scroll) {
     if (!currentTool.WasDeleted()) {
       currentTool.onScroll(scroll);
     }
+    return true;
   }
 
   @Override
-  public void onMouseMove(float newX, float newY) {
+  public boolean onMouseMove(float newX, float newY) {
     if (!currentTool.WasDeleted()) {
       currentTool.onMouseMove(newX, newY);
     }
+    return true;
   }
 
   //private Timer timer = new Log.Timer();

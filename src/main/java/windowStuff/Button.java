@@ -57,34 +57,42 @@ public class Button implements MouseDetect, TickDetect {
   }
 
   @Override
-  public void onMouseButton(int button, double x, double y, int action, int mods) {
+  public int getLayer() {
+    return sprite.getLayer();
+  }
+
+  @Override
+  public boolean onMouseButton(int button, double x, double y, int action, int mods) {
     if (!shown) {
-      return;
+      return false;
     }
-    if (x > sprite.getX() - sprite.getWidth() && x < sprite.getX() + sprite.getWidth() &&
+    if (action==1 && x > sprite.getX() - sprite.getWidth() && x < sprite.getX() + sprite.getWidth() &&
         y > sprite.getY() - sprite.getHeight() && y < sprite.getY() + sprite.getHeight()) {
       onClick.onClick(button, action);
+      return true;
     }
+    return false;
   }
 
   @Override
-  public void onScroll(double scroll) {
-
+  public boolean onScroll(double scroll) {
+    return false;
   }
 
   @Override
-  public void onMouseMove(float newX, float newY) {
+  public boolean onMouseMove(float newX, float newY) {
     if (!shown || mouseoverText == null) {
-      return;
+      return false;
     }
     if (newX > sprite.getX() - sprite.getWidth() && newX < sprite.getX() + sprite.getWidth() &&
         newY > sprite.getY() - sprite.getHeight() && newY < sprite.getY() + sprite.getHeight()) {
       mouseoverText.show();
       mouseoverText.setText(mouseoverTextGenerator.get());
       mouseoverText.move((int) newX, (int) newY);
-    } else {
-      mouseoverText.hide();
+      return false;
     }
+    mouseoverText.hide();
+    return false;
   }
 
   @Override

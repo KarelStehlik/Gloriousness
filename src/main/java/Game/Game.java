@@ -12,7 +12,9 @@ import general.Log;
 import general.Log.Timer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import windowStuff.Graphics;
 import windowStuff.SpriteBatching;
@@ -30,7 +32,7 @@ public final class Game implements UserInputHandler {
   private final Collection<TickDetect> newTickables = new ArrayList<>(1);
   private final Collection<KeyboardDetect> keyDetects = new ArrayList<>(1);
   private final Collection<KeyboardDetect> newKeyDetects = new ArrayList<>(1);
-  private final Collection<MouseDetect> mouseDetects = new ArrayList<>(1);
+  private final List<MouseDetect> mouseDetects = new ArrayList<>(1);
   private final Collection<MouseDetect> newMouseDetects = new ArrayList<>(1);
   private final Log.Timer timer = new Timer();
   private int ticks = 0;
@@ -77,8 +79,12 @@ public final class Game implements UserInputHandler {
     newTickables.clear();
     keyDetects.addAll(newKeyDetects);
     newKeyDetects.clear();
-    mouseDetects.addAll(newMouseDetects);
-    newMouseDetects.clear();
+    if(!newMouseDetects.isEmpty()){
+      mouseDetects.addAll(newMouseDetects);
+      newMouseDetects.clear();
+      mouseDetects.sort(Comparator.comparingInt(MouseDetect::getLayer).reversed());
+    }
+
 
     if (paused) {
       return;
@@ -136,7 +142,9 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        t.onMouseMove((float) newX, (float) newY);
+        if(t.onMouseMove((float) newX, (float) newY)){
+          return;
+        }
       }
     }
   }
@@ -149,7 +157,9 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        t.onMouseButton(button, userInputListener.getX(), userInputListener.getY(), action, mods);
+        if(t.onMouseButton(button, userInputListener.getX(), userInputListener.getY(), action, mods)){
+          return;
+        }
       }
     }
   }
@@ -162,7 +172,9 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        t.onScroll(xOffset);
+        if(t.onScroll(xOffset)){
+          return;
+        }
       }
     }
   }

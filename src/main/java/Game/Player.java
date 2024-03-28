@@ -12,7 +12,7 @@ import general.Util;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
 
-public class Player extends GameObject implements KeyboardDetect, MouseDetect, TickDetect {
+public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
@@ -34,7 +34,6 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
-    Game.get().addMouseDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
         30, 30, 50, 30, 3, 100, stats.cd.get());
     bulletLauncher.addMobCollide(
@@ -88,19 +87,6 @@ public class Player extends GameObject implements KeyboardDetect, MouseDetect, T
   @Override
   public boolean WasDeleted() {
     return false;
-  }
-
-  @Override
-  public void onMouseButton(int button, double x, double y, int action, int mods) {
-  }
-
-  @Override
-  public void onScroll(double scroll) {
-
-  }
-
-  @Override
-  public void onMouseMove(float newX, float newY) {
   }
 
   @Override

@@ -1,5 +1,6 @@
 package windowStuff;
 
+import Game.Game;
 import Game.MouseDetect;
 import Game.TickDetect;
 
@@ -46,9 +47,14 @@ public class ButtonArray implements MouseDetect, TickDetect {
   }
 
   @Override
-  public void onMouseButton(int button, double x, double y, int action, int mods) {
+  public int getLayer() {
+    return background.getLayer();
+  }
+
+  @Override
+  public boolean onMouseButton(int button, double x, double y, int action, int mods) {
     if (!shown) {
-      return;
+      return false;
     }
     if (x > background.getX() - background.getWidth()
         && x < background.getX() + background.getWidth() &&
@@ -57,22 +63,33 @@ public class ButtonArray implements MouseDetect, TickDetect {
       for (Button b : buttons) {
         b.onMouseButton(button, x, y, action, mods);
       }
+      return true;
     }
+    return false;
   }
 
   @Override
-  public void onScroll(double scroll) {
-
+  public boolean onScroll(double scroll) {
+    float x = Game.get().getUserInputListener().getX();
+    float y = Game.get().getUserInputListener().getX();
+    return x > background.getX() - background.getWidth()
+        && x < background.getX() + background.getWidth() &&
+        y > background.getY() - background.getHeight()
+        && y < background.getY() + background.getHeight();
   }
 
   @Override
-  public void onMouseMove(float newX, float newY) {
+  public boolean onMouseMove(float newX, float newY) {
     if (!shown) {
-      return;
+      return false;
     }
     for (Button b : buttons) {
       b.onMouseMove(newX, newY);
     }
+    return newX > background.getX() - background.getWidth()
+        && newX < background.getX() + background.getWidth() &&
+        newY > background.getY() - background.getHeight()
+        && newY < background.getY() + background.getHeight();
   }
 
   @Override
