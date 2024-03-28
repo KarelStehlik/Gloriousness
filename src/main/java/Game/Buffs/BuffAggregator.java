@@ -9,4 +9,8 @@ public interface BuffAggregator<T extends GameObject> {
   void tick(T target);
 
   void delete(T target);
+
+  // to make a new aggregator for child bloons when popped.
+  // Spreads stuff like scaling, maybe throws away some other stuff.
+  BuffAggregator<T> copyForChild(T newTarget);
 }

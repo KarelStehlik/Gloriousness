@@ -24,12 +24,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
+  protected final World world;
 
   public TdMob(World world, String name, String image, BaseStats newStats) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-            Constants.MobSpread), 150, 150, world);
+            Constants.MobSpread), 0, 0, world);
+    this.world=world;
     baseStats = newStats;
     healthPart = 1;
     this.name = name;
@@ -44,6 +46,27 @@ public abstract class TdMob extends GameObject implements TickDetect {
     movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
         new Point((int) x - world.getMapData().get(0).x,
             (int) y - world.getMapData().get(0).y), baseStats.speed, t -> t.passed());
+  }
+
+  public TdMob(World world, String name, String image, BaseStats newStats, TdMob parent, int spread) {
+    super(parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),
+        parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),
+        0, 0, world);
+    this.world=world;
+    baseStats = newStats;
+    healthPart = 1;
+    this.name = name;
+    setSize((int) (2 * baseStats.size.get()), (int) (2 * baseStats.size.get()));
+    grid = world.getMobsGrid();
+    rotation = Data.gameMechanicsRng.nextFloat(5) - 2.5f;
+    sprite = new Sprite(image, x, y, width, height, 1, "basic");
+    //sprite = new NoSprite();
+    sprite.addToBs(world.getBs());
+    exists = true;
+    buffHandler = new BuffHandler<>(this);
+    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
+        new Point((int) (x - parent.x),
+            (int) (y - parent.y)), baseStats.speed, t -> t.passed(), parent.movement.getProgress());
   }
 
   public TrackProgress getProgress() {
@@ -135,12 +158,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
     public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
         RefFloat speed, Modifier<T> end, int nextMapPoint) {
-      this.reverse = reverse;
+      this(reverse, mapData, offset, speed, end);
       this.nextMapPoint = nextMapPoint;
-      this.mapData = mapData;
-      this.offset = offset;
-      this.speed = speed;
-      onFinish = end;
+    }
+
+    public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
+        RefFloat speed, Modifier<T> end, TrackProgress progress) {
+      this(reverse, mapData, offset, speed, end);
+      this.progress=progress;
     }
 
     public TrackProgress getProgress() {
