@@ -82,9 +82,9 @@ def findAndUpdate(statsText):
     if text is None:
         return -2
 
-    #with open(path, "w") as file:
-    print(text)
-        #file.write(text)
+    with open(path, "w") as file:
+    #print(text)
+        file.write(text)
 
     return 1
 

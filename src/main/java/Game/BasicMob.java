@@ -14,6 +14,10 @@ public class BasicMob extends TdMob {
   public BasicMob(TdMob parent, int spread) {
     super(parent.world, "Basic", "Golem", new Stats(),parent, spread);
   }
+  @Override
+  public void onDeath(){
+    world.addEnemy(new BasicMob(this,50));
+  }
 
   // generated stats
   public static final class ExtraStats {
@@ -25,11 +29,6 @@ public class BasicMob extends TdMob {
     public void init() {
 
     }
-  }
-
-  @Override
-  public void onDeath(){
-    world.addEnemy(new BasicMob(this,50));
   }
 
   public static final class Stats extends BaseStats {
