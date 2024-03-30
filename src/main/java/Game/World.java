@@ -9,6 +9,7 @@ import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.TdMob.MoveAlongTrack;
+import Game.TdMob.Stats;
 import Game.Turrets.BasicTurret;
 import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
@@ -116,7 +117,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         explosionVisual(x, y, 100, true, "Explosion1-0");
       }
       player.addBuff(
-          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.stats.cd, 0.5f));
+          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.extraStats,Player.ExtraStats.cd, 0.5f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
@@ -138,8 +139,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   private void calcSpacPoints() {
     GameObject fakeBloon = new GameObject(mapData.get(0).x, mapData.get(0).y, 0, 0, this);
+    float[] speed = new float[1];
+    speed[0]=1;
     TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<GameObject>(false, mapData,
-        new Point(0, 0), new RefFloat(10), o -> {
+        new Point(0, 0), speed, 0, o -> {
     });
     while (!mover.isDone()) {
       spacPoints.add(new TrackPoint((int) fakeBloon.x, (int) fakeBloon.y,
@@ -420,9 +423,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         final float hpScaling = scaling(wave) * 1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
         e.addBuff(
-            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.baseStats.health, hpScaling));
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health, hpScaling));
         e.addBuff(
-            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.baseStats.speed, spdScaling));
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health, spdScaling));
         addEnemy(e);
       }
       if (mobsList.isEmpty() && mobsToSpawn == 0) {

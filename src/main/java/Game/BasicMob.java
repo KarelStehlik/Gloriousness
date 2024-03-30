@@ -4,15 +4,13 @@ import general.RefFloat;
 
 public class BasicMob extends TdMob {
 
-  public final ExtraStats extraStats = new ExtraStats();
-
 
   public BasicMob(World world) {
-    super(world, "Basic", "Golem", new Stats());
+    super(world, "Basic", "Golem");
   }
 
   public BasicMob(TdMob parent, int spread) {
-    super(parent.world, "Basic", "Golem", new Stats(),parent, spread);
+    super(parent.world, "Basic", "Golem",parent, spread);
   }
   @Override
   public void onDeath(){
@@ -20,30 +18,14 @@ public class BasicMob extends TdMob {
   }
 
   // generated stats
-  public static final class ExtraStats {
+  public final float[] extraStats = new float[0];
 
-    public ExtraStats() {
-      init();
-    }
-
-    public void init() {
-
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-      size = new RefFloat(20.0);
-      speed = new RefFloat(5);
-      health = new RefFloat(100);
-      value = new RefFloat(1);
-    }
+  @Override
+  public void clearStats(){
+    stats[Stats.size] = 20f;
+    stats[Stats.speed] = 5f;
+    stats[Stats.health] = 100f;
+    stats[Stats.value] = 1f;
   }
   // end of generated stats
 }

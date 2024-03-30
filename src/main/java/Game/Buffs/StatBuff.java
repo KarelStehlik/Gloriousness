@@ -13,15 +13,17 @@ import java.util.TreeSet;
 public class StatBuff<T extends GameObject> implements Buff<T> {
 
   private final Type type;
-  private final RefFloat stat;
+  private final float[] stats;
+  private final int statModified;
   private final float value;
   private final long id;
   private final float expiry;
 
-  public StatBuff(Type type, float duration, RefFloat stat, float value) {
+  public StatBuff(Type type, float duration, float[] stats, int statModified, float value) {
     this.expiry = Game.get().getTicks() + duration / Game.tickIntervalMillis;
     this.type = type;
-    this.stat = stat;
+    this.stats = stats;
+    this.statModified=statModified;
     this.value = value;
     id = Util.getUid();
   }
@@ -44,18 +46,20 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
   private static class TotalModifier {
 
     final float ogValue;
-    RefFloat target;
+    final int target;
+    final float[] stats;
     float added = 0, increased = 1;
     double more = 1;
     //Map<Float, Integer> moreModifiers = new HashMap<>(1);
 
-    TotalModifier(RefFloat target) {
+    TotalModifier(float[] stats, int target) {
       this.target = target;
-      ogValue = target.get();
+      this.stats=stats;
+      ogValue = stats[target];
     }
 
     void apply() {
-      target.set(Math.max((ogValue + added) * increased * (float) more, 0));
+      stats[target]= Math.max((ogValue + added) * increased * (float) more, 0);
     }
 
     void addAdded(float value) {
@@ -101,7 +105,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     }
 
     void delete() {
-      target.set(ogValue);
+      stats[target]= ogValue;
       //moreModifiers.clear();
     }
   }
@@ -110,7 +114,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
     SortedSet<StatBuff<T>> buffsByExpiration = new TreeSet<>(StatBuff.this::compareByExpiry);
 
-    Map<RefFloat, TotalModifier> modifiers = new HashMap<>(2);
+    Map<Integer, TotalModifier> modifiers = new HashMap<>(2);
 
     @Override
     public boolean add(Buff<T> b, T target) {
@@ -119,7 +123,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       if (buff.expiry < Float.POSITIVE_INFINITY) {
         buffsByExpiration.add(buff);
       }
-      TotalModifier mod = modifiers.computeIfAbsent(buff.stat, TotalModifier::new);
+      TotalModifier mod = modifiers.computeIfAbsent(buff.statModified, s ->new TotalModifier(stats, statModified));
       mod.add(buff);
       target.onStatsUpdate();
       return true;
@@ -135,7 +139,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
           break;
         }
         iterator.remove();
-        modifiers.get(buff.stat).remove(buff);
+        modifiers.get(buff.statModified).remove(buff);
         changed = true;
       }
       if (changed) {

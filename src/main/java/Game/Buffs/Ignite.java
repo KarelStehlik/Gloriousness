@@ -3,6 +3,7 @@ package Game.Buffs;
 import Game.DamageType;
 import Game.Game;
 import Game.TdMob;
+import Game.TdMob.Stats;
 import general.Util;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -72,10 +73,10 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
         dpTick -= ig.damagePerTick;
       }
 
-      float power = dpTick / target.baseStats.health.get() * 1000;
-      fireSprite.setSize(power * target.baseStats.size.get(), power * target.baseStats.size.get());
+      float power = dpTick / target.stats[Stats.health] * 1000;
+      fireSprite.setSize(power * target.stats[Stats.size], power * target.stats[Stats.size]);
       fireSprite.setPosition(target.getX(),
-          target.getY() + power * target.baseStats.size.get() * .4f);
+          target.getY() + power * target.stats[Stats.size] * .4f);
       target.takeDamage(dpTick, DamageType.TRUE);
       if (ignites.isEmpty()) {
         fireSprite.setHidden(true);

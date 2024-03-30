@@ -3,6 +3,7 @@ package Game;
 import Game.Buffs.Ignite;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
+import Game.TdMob.Stats;
 
 public final class BasicCollides {
 
@@ -19,7 +20,7 @@ public final class BasicCollides {
   public static final Projectile.OnCollideComponent<TdMob> slow = (proj, target) ->
   {
     target.addBuff(
-        new StatBuff<TdMob>(Type.INCREASED, 2000, target.baseStats.speed, -proj.power.get()));
+        new StatBuff<TdMob>(Type.INCREASED, 2000, target.stats, Stats.speed, -proj.power.get()));
     return true;
   };
   private static World _world;
