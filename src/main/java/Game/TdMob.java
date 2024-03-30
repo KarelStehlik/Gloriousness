@@ -5,7 +5,6 @@ import Game.Buffs.BuffHandler;
 import Game.Buffs.Modifier;
 import general.Constants;
 import general.Data;
-import general.RefFloat;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,22 +14,23 @@ import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
+  public final float[] stats = new float[4];
   protected final AbstractSprite sprite;
   protected final SquareGrid<TdMob> grid;
   protected final String name;
+  protected final World world;
   private final BuffHandler<TdMob> buffHandler;
   private final MoveAlongTrack<TdMob> movement;
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
-  protected final World world;
 
   public TdMob(World world, String name, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread), 0, 0, world);
-    this.world=world;
+    this.world = world;
     clearStats();
     healthPart = 1;
     this.name = name;
@@ -51,7 +51,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     super(parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),
         parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),
         0, 0, world);
-    this.world=world;
+    this.world = world;
     clearStats();
     healthPart = 1;
     this.name = name;
@@ -65,7 +65,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     buffHandler = new BuffHandler<>(this);
     movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
         new Point((int) (x - parent.x + parent.movement.offset.x),
-            (int) (y - parent.y+ parent.movement.offset.y)), stats, Stats.speed, t -> t.passed(), parent.movement.getProgress());
+            (int) (y - parent.y + parent.movement.offset.y)), stats, Stats.speed, t -> t.passed(),
+        parent.movement.getProgress());
   }
 
   public TrackProgress getProgress() {
@@ -135,6 +136,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.setRotation(f);
   }
 
+  public abstract void clearStats();
+
   public static class MoveAlongTrack<T extends GameObject> {
 
     private final boolean reverse;
@@ -153,7 +156,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
       this.mapData = mapData;
       this.offset = offset;
       this.speedStat = speedStat;
-      this.stats=stats;
+      this.stats = stats;
       onFinish = end;
     }
 
@@ -166,8 +169,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
         float[] stats, int speedStat, Modifier<T> end, TrackProgress progress) {
       this(reverse, mapData, offset, stats, speedStat, end);
-      this.progress=progress;
-      nextMapPoint= progress.checkpoint;
+      this.progress = progress;
+      nextMapPoint = progress.checkpoint;
     }
 
     public TrackProgress getProgress() {
@@ -206,14 +209,15 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   public static final class Stats {
-    private Stats(){};
-    public static final int size=0;
-    public static final int  speed=1;
-    public static final int  health=2;
-    public static final int  value=3;
+
+    public static final int size = 0;
+
+    public static final int speed = 1;
+    public static final int health = 2;
+    public static final int value = 3;
+    private Stats() {
+    }
   }
-  public final float[] stats = new float[4];
-  public abstract void clearStats();
 
   public static class TrackProgress implements Comparable<TrackProgress> {
 

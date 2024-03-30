@@ -20,7 +20,6 @@ import Game.Turrets.Turret;
 import general.Constants;
 import general.Data;
 import general.Log;
-import general.RefFloat;
 import general.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
@@ -117,7 +116,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         explosionVisual(x, y, 100, true, "Explosion1-0");
       }
       player.addBuff(
-          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.extraStats,Player.ExtraStats.cd, 0.5f));
+          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.extraStats,
+              Player.ExtraStats.cd, 0.5f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
@@ -140,7 +140,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private void calcSpacPoints() {
     GameObject fakeBloon = new GameObject(mapData.get(0).x, mapData.get(0).y, 0, 0, this);
     float[] speed = new float[1];
-    speed[0]=1;
+    speed[0] = 1;
     TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<GameObject>(false, mapData,
         new Point(0, 0), speed, 0, o -> {
     });
@@ -423,9 +423,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         final float hpScaling = scaling(wave) * 1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
         e.addBuff(
-            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health, hpScaling));
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health,
+                hpScaling));
         e.addBuff(
-            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health, spdScaling));
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health,
+                spdScaling));
         addEnemy(e);
       }
       if (mobsList.isEmpty() && mobsToSpawn == 0) {

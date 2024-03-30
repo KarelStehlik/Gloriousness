@@ -33,10 +33,12 @@ public class BasicTurret extends Turret {
 
   private Upgrade up100() {
     return new Upgrade("Meteor", () -> "fuck",
-        () -> {addBuff(
-            new StatBuff<Turret>(Type.INCREASED, Float.POSITIVE_INFINITY, baseStats.bulletSize, 1));
+        () -> {
+          addBuff(
+              new StatBuff<Turret>(Type.INCREASED, Float.POSITIVE_INFINITY, baseStats.bulletSize,
+                  1));
           Log.write("ff");
-    },1000);
+        }, 1000);
   }
 
   @Override

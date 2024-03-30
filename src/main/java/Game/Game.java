@@ -79,12 +79,11 @@ public final class Game implements UserInputHandler {
     newTickables.clear();
     keyDetects.addAll(newKeyDetects);
     newKeyDetects.clear();
-    if(!newMouseDetects.isEmpty()){
+    if (!newMouseDetects.isEmpty()) {
       mouseDetects.addAll(newMouseDetects);
       newMouseDetects.clear();
       mouseDetects.sort(Comparator.comparingInt(MouseDetect::getLayer).reversed());
     }
-
 
     if (paused) {
       return;
@@ -142,7 +141,7 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        if(t.onMouseMove((float) newX, (float) newY)){
+        if (t.onMouseMove((float) newX, (float) newY)) {
           return;
         }
       }
@@ -157,7 +156,8 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        if(t.onMouseButton(button, userInputListener.getX(), userInputListener.getY(), action, mods)){
+        if (t.onMouseButton(button, userInputListener.getX(), userInputListener.getY(), action,
+            mods)) {
           return;
         }
       }
@@ -172,7 +172,7 @@ public final class Game implements UserInputHandler {
       if (t.WasDeleted()) {
         iter.remove();
       } else {
-        if(t.onScroll(xOffset)){
+        if (t.onScroll(xOffset)) {
           return;
         }
       }

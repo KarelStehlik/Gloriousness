@@ -28,7 +28,8 @@ public class PlaceObjectTool extends Tool {
 
   @Override
   public boolean onMouseButton(int button, double x, double y, int action, int mods) {
-    if (button == 0 && action == 1 && click.click((int) x, (int) y) || (button == 1 && action == 1)) {
+    if (button == 0 && action == 1 && click.click((int) x, (int) y) || (button == 1
+        && action == 1)) {
       delete();
       return true;
     }

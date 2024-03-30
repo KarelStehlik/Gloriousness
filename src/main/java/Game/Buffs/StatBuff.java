@@ -2,7 +2,6 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
-import general.RefFloat;
 import general.Util;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +22,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     this.expiry = Game.get().getTicks() + duration / Game.tickIntervalMillis;
     this.type = type;
     this.stats = stats;
-    this.statModified=statModified;
+    this.statModified = statModified;
     this.value = value;
     id = Util.getUid();
   }
@@ -54,12 +53,12 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
     TotalModifier(float[] stats, int target) {
       this.target = target;
-      this.stats=stats;
+      this.stats = stats;
       ogValue = stats[target];
     }
 
     void apply() {
-      stats[target]= Math.max((ogValue + added) * increased * (float) more, 0);
+      stats[target] = Math.max((ogValue + added) * increased * (float) more, 0);
     }
 
     void addAdded(float value) {
@@ -105,7 +104,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     }
 
     void delete() {
-      stats[target]= ogValue;
+      stats[target] = ogValue;
       //moreModifiers.clear();
     }
   }
@@ -123,7 +122,8 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       if (buff.expiry < Float.POSITIVE_INFINITY) {
         buffsByExpiration.add(buff);
       }
-      TotalModifier mod = modifiers.computeIfAbsent(buff.statModified, s ->new TotalModifier(stats, statModified));
+      TotalModifier mod = modifiers.computeIfAbsent(buff.statModified,
+          s -> new TotalModifier(stats, statModified));
       mod.add(buff);
       target.onStatsUpdate();
       return true;

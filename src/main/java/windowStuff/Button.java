@@ -66,7 +66,8 @@ public class Button implements MouseDetect, TickDetect {
     if (!shown) {
       return false;
     }
-    if (action==1 && x > sprite.getX() - sprite.getWidth() && x < sprite.getX() + sprite.getWidth() &&
+    if (action == 1 && x > sprite.getX() - sprite.getWidth()
+        && x < sprite.getX() + sprite.getWidth() &&
         y > sprite.getY() - sprite.getHeight() && y < sprite.getY() + sprite.getHeight()) {
       onClick.onClick(button, action);
       return true;

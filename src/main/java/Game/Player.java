@@ -7,8 +7,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
-import Game.Turrets.Turret.BaseStats;
-import general.RefFloat;
 import general.Util;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
@@ -17,6 +15,9 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
+  public final float[] baseStats = new float[0];
+  // generated stats
+  public final float[] extraStats = new float[8];
   private final UserInputListener input;
   private final Sprite sprite;
   private final BulletLauncher bulletLauncher;
@@ -57,7 +58,6 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     bulletLauncher.setCooldown(extraStats[ExtraStats.cd]);
     bulletLauncher.setPower(extraStats[ExtraStats.projPower]);
   }
-
 
   public void takeDamage(float amount, DamageType type) {
     float resistance = 1;
@@ -104,33 +104,29 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     sprite.setPosition(x, y);
   }
 
-  public final float[] baseStats=new float[0];
+  public void clearStats() {
+    extraStats[ExtraStats.speed] = 1f;
+    extraStats[ExtraStats.health] = 100f;
+    extraStats[ExtraStats.cd] = 999f;
+    extraStats[ExtraStats.projSize] = 10f;
+    extraStats[ExtraStats.projSpeed] = 30f;
+    extraStats[ExtraStats.projPierce] = 100f;
+    extraStats[ExtraStats.projDuration] = 4f;
+    extraStats[ExtraStats.projPower] = 100f;
+  }
 
-
-  // generated stats
-  public final float[] extraStats = new float[8];
   public static final class ExtraStats {
 
-    private ExtraStats() {}
     public static final int speed = 0;
     public static final int health = 1;
-    public static final int cd =2;
+    public static final int cd = 2;
     public static final int projSize = 3;
     public static final int projSpeed = 4;
     public static final int projPierce = 5;
     public static final int projDuration = 6;
     public static final int projPower = 7;
-  }
-
-  public void clearStats(){
-      extraStats[ExtraStats.speed] = 1f;
-    extraStats[ExtraStats.health] = 100f;
-    extraStats[ExtraStats.cd] = 999f;
-    extraStats[ExtraStats.projSize ]= 10f;
-    extraStats[ExtraStats.projSpeed ]= 30f;
-    extraStats[ExtraStats.projPierce ]= 100f;
-    extraStats[ExtraStats.projDuration ]= 4f;
-    extraStats[ExtraStats.projPower] = 100f;
+    private ExtraStats() {
+    }
   }
   // end of generated stats
 }
