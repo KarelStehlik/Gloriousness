@@ -7,6 +7,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
+import Game.Turrets.Turret.Stats;
 import general.Util;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
@@ -15,18 +16,12 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
-  private final float[] stats = new float[8];
   private final UserInputListener input;
   private final Sprite sprite;
   private final BulletLauncher bulletLauncher;
   private final BuffHandler<Player> buffHandler;
   protected double healthPart;
   private float vx, vy;
-
-  @Override
-  public float[] getStats(){
-    return stats;
-  }
 
   public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world);
@@ -39,7 +34,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        30, 30, 50, 30, 3, 100, stats[ExtraStats.cd]);
+        30, 30, 50, 30, 3, 100, stats[Stats.cd]);
     bulletLauncher.addMobCollide(
         BasicCollides.explode
     );
@@ -54,17 +49,17 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setSize(stats[ExtraStats.projSize]);
-    bulletLauncher.setSpeed(stats[ExtraStats.projSpeed]);
-    bulletLauncher.setPierce((int) stats[ExtraStats.projPierce]);
-    bulletLauncher.setDuration(stats[ExtraStats.projDuration]);
-    bulletLauncher.setCooldown(stats[ExtraStats.cd]);
-    bulletLauncher.setPower(stats[ExtraStats.projPower]);
+    bulletLauncher.setSize(stats[Stats.projSize]);
+    bulletLauncher.setSpeed(stats[Stats.projSpeed]);
+    bulletLauncher.setPierce((int) stats[Stats.projPierce]);
+    bulletLauncher.setDuration(stats[Stats.projDuration]);
+    bulletLauncher.setCooldown(stats[Stats.cd]);
+    bulletLauncher.setPower(stats[Stats.projPower]);
   }
 
   public void takeDamage(float amount, DamageType type) {
     float resistance = 1;
-    healthPart -= amount * resistance / stats[ExtraStats.health];
+    healthPart -= amount * resistance / stats[Stats.health];
     if (healthPart < 0) {
       world.endGame();
     }
@@ -107,47 +102,26 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     sprite.setPosition(x, y);
   }
 
+
+
   // generated stats
-  public static final class ExtraStats {
+  @Override
+  public int getStatsCount(){return 8;}
 
-    public ExtraStats() {
-      init();
-    }
-
-    public RefFloat speed = new RefFloat(1);
-    public RefFloat health = new RefFloat(100);
-    public RefFloat cd = new RefFloat(999);
-    public RefFloat projSize = new RefFloat(10);
-    public RefFloat projSpeed = new RefFloat(30);
-    public RefFloat projPierce = new RefFloat(100);
-    public RefFloat projDuration = new RefFloat(4);
-    public RefFloat projPower = new RefFloat(100);
-    public void init() {
-      speed = new RefFloat(1);
-      health = new RefFloat(100);
-      cd = new RefFloat(999);
-      projSize = new RefFloat(10);
-      projSpeed = new RefFloat(30);
-      projPierce = new RefFloat(100);
-      projDuration = new RefFloat(4);
-      projPower = new RefFloat(100);
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-
-    }
+  @Override
+  public void clearStats() {
+      stats[Stats.speed] = 1f;
+      stats[Stats.health] = 100f;
+      stats[Stats.cd] = 999f;
+      stats[Stats.projSize] = 10f;
+      stats[Stats.projSpeed] = 30f;
+      stats[Stats.projPierce] = 100f;
+      stats[Stats.projDuration] = 4f;
+      stats[Stats.projPower] = 100f;
   }
   // end of generated stats
 
-  public static final class ExtraStats {
+  public static final class Stats {
 
     public static final int speed = 0;
     public static final int health = 1;
@@ -157,7 +131,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     public static final int projPierce = 5;
     public static final int projDuration = 6;
     public static final int projPower = 7;
-    private ExtraStats() {
+    private Stats() {
     }
   }
 }

@@ -3,6 +3,7 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
+import Game.Player.ExtraStats;
 import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
@@ -12,12 +13,10 @@ import java.util.List;
 public class EmpoweringTurret extends Turret {
 
   public static final String image = "EmpoweringTower";
-  public final ExtraStats extraStats = new ExtraStats();
 
   public EmpoweringTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Buff"),
-        new Stats());
+        new BulletLauncher(world, "Buff"));
     onStatsUpdate();
     bulletLauncher.addProjectileCollide(this::collide);
     bulletLauncher.setSpread(45);
@@ -57,37 +56,20 @@ public class EmpoweringTurret extends Turret {
     return true;
   }
 
+
   // generated stats
-  public static final class ExtraStats {
-
-    public ExtraStats() {
-      init();
-    }
-
-    public void init() {
-
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-      power = new RefFloat(100);
-      range = new RefFloat(500);
-      pierce = new RefFloat(100);
-      cd = new RefFloat(10);
-      projectileDuration = new RefFloat(2);
-      bulletSize = new RefFloat(50);
-      speed = new RefFloat(8);
-      cost = new RefFloat(100);
-      size = new RefFloat(50);
-      spritesize = new RefFloat(150);
-    }
+  @Override
+  public void clearStats() {
+      stats[Stats.power] = 100f;
+      stats[Stats.range] = 500f;
+      stats[Stats.pierce] = 100f;
+      stats[Stats.cd] = 10f;
+      stats[Stats.projectileDuration] = 2f;
+      stats[Stats.bulletSize] = 50f;
+      stats[Stats.speed] = 8f;
+      stats[Stats.cost] = 100f;
+      stats[Stats.size] = 50f;
+      stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

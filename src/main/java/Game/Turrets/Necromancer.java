@@ -19,13 +19,11 @@ import java.util.List;
 public class Necromancer extends Turret {
 
   public static final String image = "Necromancer";
-  public final ExtraStats extraStats = new ExtraStats();
   private final List<TrackPoint> spawnPoints = new ArrayList<>(1);
 
   public Necromancer(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Zombie"),
-        new Stats());
+        new BulletLauncher(world, "Zombie"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.fire);
     bulletLauncher.setSpread(45);
@@ -34,7 +32,7 @@ public class Necromancer extends Turret {
       TrackPoint initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0, spawnPoints.size()));
       p.move(initPoint.x, initPoint.y);
       TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,
-          world.getMapData(), new Point(0, 0), baseStats.speed, Projectile::delete,
+          world.getMapData(), new Point(0, 0), stats,Stats.speed, Projectile::delete,
           Math.max(initPoint.node - 1, 0));
       p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, mover::tick));
     });
@@ -64,54 +62,37 @@ public class Necromancer extends Turret {
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setDuration(baseStats.projectileDuration.get());
-    bulletLauncher.setPierce((int) baseStats.pierce.get());
-    bulletLauncher.setPower(baseStats.power.get());
-    bulletLauncher.setSize(baseStats.bulletSize.get());
+    bulletLauncher.setDuration(stats[Stats.projectileDuration]);
+    bulletLauncher.setPierce((int) stats[Stats.pierce]);
+    bulletLauncher.setPower(stats[Stats.power]);
+    bulletLauncher.setSize(stats[Stats.bulletSize]);
     bulletLauncher.setSpeed(0);
-    bulletLauncher.setCooldown(baseStats.cd.get());
+    bulletLauncher.setCooldown(stats[Stats.cd]);
   }
 
   private void updateRange() {
     spawnPoints.clear();
     for (TrackPoint p : world.spacPoints) {
-      if (Util.distanceSquared(p.x - x, p.y - y) < baseStats.range.get() * baseStats.range.get()) {
+      if (Util.distanceSquared(p.x - x, p.y - y) < stats[Stats.range] * stats[Stats.range]) {
         spawnPoints.add(p);
       }
     }
   }
 
+
   // generated stats
-  public static final class ExtraStats {
-
-    public ExtraStats() {
-      init();
-    }
-
-    public void init() {
-
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-      power = new RefFloat(100);
-      range = new RefFloat(500);
-      pierce = new RefFloat(1000);
-      cd = new RefFloat(1);
-      projectileDuration = new RefFloat(20);
-      bulletSize = new RefFloat(60);
-      speed = new RefFloat(10);
-      cost = new RefFloat(100);
-      size = new RefFloat(50);
-      spritesize = new RefFloat(150);
-    }
+  @Override
+  public void clearStats() {
+      stats[Stats.power] = 100f;
+      stats[Stats.range] = 500f;
+      stats[Stats.pierce] = 1000f;
+      stats[Stats.cd] = 1f;
+      stats[Stats.projectileDuration] = 20f;
+      stats[Stats.bulletSize] = 60f;
+      stats[Stats.speed] = 10f;
+      stats[Stats.cost] = 100f;
+      stats[Stats.size] = 50f;
+      stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

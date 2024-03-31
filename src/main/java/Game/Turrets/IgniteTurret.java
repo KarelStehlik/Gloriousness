@@ -2,6 +2,7 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.BulletLauncher;
+import Game.Player.ExtraStats;
 import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
@@ -10,12 +11,10 @@ import java.util.List;
 public class IgniteTurret extends Turret {
 
   public static final String image = "Flamethrower";
-  public final ExtraStats extraStats = new ExtraStats();
 
   public IgniteTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Fireball-0"),
-        new Stats());
+        new BulletLauncher(world, "Fireball-0"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.fire);
     bulletLauncher.setSpread(45);
@@ -43,37 +42,20 @@ public class IgniteTurret extends Turret {
     return List.of();
   }
 
+
   // generated stats
-  public static final class ExtraStats {
-
-    public ExtraStats() {
-      init();
-    }
-
-    public void init() {
-
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-      power = new RefFloat(100);
-      range = new RefFloat(500);
-      pierce = new RefFloat(100);
-      cd = new RefFloat(1);
-      projectileDuration = new RefFloat(2);
-      bulletSize = new RefFloat(50);
-      speed = new RefFloat(20);
-      cost = new RefFloat(100);
-      size = new RefFloat(50);
-      spritesize = new RefFloat(150);
-    }
+  @Override
+  public void clearStats() {
+      stats[Stats.power] = 100f;
+      stats[Stats.range] = 500f;
+      stats[Stats.pierce] = 100f;
+      stats[Stats.cd] = 1f;
+      stats[Stats.projectileDuration] = 2f;
+      stats[Stats.bulletSize] = 50f;
+      stats[Stats.speed] = 20f;
+      stats[Stats.cost] = 100f;
+      stats[Stats.size] = 50f;
+      stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

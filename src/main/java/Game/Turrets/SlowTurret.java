@@ -2,6 +2,7 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.BulletLauncher;
+import Game.Player.ExtraStats;
 import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
@@ -11,19 +12,17 @@ public class SlowTurret extends Turret {
 
 
   public static final String image = "SlowTower";
-  public final ExtraStats extraStats = new ExtraStats();
 
   public SlowTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Winter"),
-        new Stats());
+        new BulletLauncher(world, "Winter"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.slow);
     bulletLauncher.setSpread(10);
   }
 
   public static TurretGenerator generator(World world) {
-    var stats = new BasicTurret.Stats();
+    var stats = new Stats();
     return new TurretGenerator(world, "Ice",
         (x, y) -> new SlowTurret(world, x, y),
         image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
@@ -44,37 +43,21 @@ public class SlowTurret extends Turret {
     return List.of();
   }
 
+
+
   // generated stats
-  public static final class ExtraStats {
-
-    public ExtraStats() {
-      init();
-    }
-
-    public void init() {
-
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-      power = new RefFloat(0.005);
-      range = new RefFloat(500);
-      pierce = new RefFloat(100);
-      cd = new RefFloat(1);
-      projectileDuration = new RefFloat(2);
-      bulletSize = new RefFloat(50);
-      speed = new RefFloat(7);
-      cost = new RefFloat(100);
-      size = new RefFloat(50);
-      spritesize = new RefFloat(150);
-    }
+  @Override
+  public void clearStats() {
+      stats[Stats.power] = 0.005f;
+      stats[Stats.range] = 500f;
+      stats[Stats.pierce] = 100f;
+      stats[Stats.cd] = 1f;
+      stats[Stats.projectileDuration] = 2f;
+      stats[Stats.bulletSize] = 50f;
+      stats[Stats.speed] = 7f;
+      stats[Stats.cost] = 100f;
+      stats[Stats.size] = 50f;
+      stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

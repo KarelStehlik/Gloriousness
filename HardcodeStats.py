@@ -3,7 +3,7 @@ import os
 
 def refFloatify(string):
     name,eq,num=string.split(" ")
-    return f"{name} {eq} new RefFloat({num});"
+    return f"stats[Stats.{name}] = {num}f;"
 
 def toClassText(input):
     input = input.replace(" ", "")
@@ -21,37 +21,14 @@ def toClassText(input):
     extraStats = [refFloatify(x) for x in extraStats]
     baseStats = [refFloatify(x) for x in baseStats]
 
-    initExtra = "      " + "\n      ".join(extraStats)
-    declaration = "\n    public RefFloat " + "\n    public RefFloat ".join(extraStats)
-    overrideBaseStats = "      " + "\n      ".join(baseStats)
+    statsAssign = "      " + "\n      ".join(baseStats+extraStats)
+    init="  @Override\n  public void clearStats() {\n"+statsAssign+"\n  }\n"
 
-    endExtra = "  }"
+    start = hasExtra * (
+'''  @Override
+  public int getStatsCount(){return ''' + str(len(extraStats)+len(baseStats)) + ";}\n\n")
 
-    all = f'''// generated stats
-  public static final class ExtraStats [
-
-    public ExtraStats() [
-      init();
-    ]
-{declaration * hasExtra}
-    public void init() [
-{initExtra * hasExtra}
-    ]
-  ]
-
-  public static final class Stats extends BaseStats [
-
-    public Stats() [
-      init();
-    ]
-
-    @Override
-    public void init() [
-{overrideBaseStats * hasBase}
-    ]
-  ]
-  // end of generated stats'''.replace("[","{").replace("]","}")
-    return className, all
+    return className, "// generated stats\n"+start+init+"  // end of generated stats"
 
 
 def replaceStats(input, newStats):

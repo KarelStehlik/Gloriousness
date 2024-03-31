@@ -20,12 +20,10 @@ public class EatingTurret extends Turret {
 
   public static final String image = "EatingTower";
   static final long EatImmuneTag = Util.getUid();
-  public final ExtraStats extraStats = new ExtraStats();
 
   public EatingTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Shockwave"),
-        new Stats());
+        new BulletLauncher(world, "Shockwave"));
     onStatsUpdate();
     bulletLauncher.setSpread(45);
     bulletLauncher.setProjectileModifier(this::modProjectile);
@@ -54,7 +52,7 @@ public class EatingTurret extends Turret {
   }
 
   private void modProjectile(Projectile p) {
-    eater e = new eater((int) baseStats.pierce.get(), baseStats.power.get());
+    eater e = new eater((int) stats[Stats.pierce], stats[Stats.power]);
     p.addProjectileCollide((p1, p2) -> e.eat(p2));
     p.addBuff(new UniqueBuff<>(EatImmuneTag, p1 -> {
     }));
@@ -95,37 +93,20 @@ public class EatingTurret extends Turret {
     }
   }
 
+
   // generated stats
-  public static final class ExtraStats {
-
-    public ExtraStats() {
-      init();
-    }
-
-    public void init() {
-
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-      power = new RefFloat(3);
-      range = new RefFloat(500);
-      pierce = new RefFloat(1000);
-      cd = new RefFloat(1000);
-      projectileDuration = new RefFloat(8);
-      bulletSize = new RefFloat(220);
-      speed = new RefFloat(3.5);
-      cost = new RefFloat(100);
-      size = new RefFloat(50);
-      spritesize = new RefFloat(150);
-    }
+  @Override
+  public void clearStats() {
+      stats[Stats.power] = 3f;
+      stats[Stats.range] = 500f;
+      stats[Stats.pierce] = 1000f;
+      stats[Stats.cd] = 1000f;
+      stats[Stats.projectileDuration] = 8f;
+      stats[Stats.bulletSize] = 220f;
+      stats[Stats.speed] = 3.5f;
+      stats[Stats.cost] = 100f;
+      stats[Stats.size] = 50f;
+      stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

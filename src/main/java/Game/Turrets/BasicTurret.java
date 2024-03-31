@@ -57,16 +57,16 @@ public class BasicTurret extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-      stats[Stats.power] = 100;
-    stats[Stats.range] =  500;
-    stats[Stats.pierce] = 100;
-    stats[Stats.cd] = 1;
-    stats[Stats.projectileDuration ]= 2;
-    stats[Stats.bulletSize ]= 50;
-    stats[Stats.speed] = 15;
-    stats[Stats.cost ]= 100;
-    stats[Stats.size]= 50;
-    stats[Stats.spritesize ]= 150;
+      stats[Stats.power] = 100f;
+      stats[Stats.range] = 500f;
+      stats[Stats.pierce] = 100f;
+      stats[Stats.cd] = 1f;
+      stats[Stats.projectileDuration] = 2f;
+      stats[Stats.bulletSize] = 50f;
+      stats[Stats.speed] = 15f;
+      stats[Stats.cost] = 100f;
+      stats[Stats.size] = 50f;
+      stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }
