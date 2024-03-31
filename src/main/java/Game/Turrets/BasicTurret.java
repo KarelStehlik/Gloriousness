@@ -22,7 +22,7 @@ public class BasicTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,image, "Basic",()->new BasicTurret(world,-1000,-1000));
+    return new TurretGenerator(world, image, "Basic", () -> new BasicTurret(world, -1000, -1000));
   }
 
   private Upgrade up100() {
@@ -53,16 +53,16 @@ public class BasicTurret extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-      stats[Stats.power] = 100f;
-      stats[Stats.range] = 500f;
-      stats[Stats.pierce] = 100f;
-      stats[Stats.cd] = 1f;
-      stats[Stats.projectileDuration] = 2f;
-      stats[Stats.bulletSize] = 50f;
-      stats[Stats.speed] = 15f;
-      stats[Stats.cost] = 100f;
-      stats[Stats.size] = 50f;
-      stats[Stats.spritesize] = 150f;
+    stats[Stats.power] = 100f;
+    stats[Stats.range] = 500f;
+    stats[Stats.pierce] = 100f;
+    stats[Stats.cd] = 1f;
+    stats[Stats.projectileDuration] = 2f;
+    stats[Stats.bulletSize] = 50f;
+    stats[Stats.speed] = 15f;
+    stats[Stats.cost] = 100f;
+    stats[Stats.size] = 50f;
+    stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

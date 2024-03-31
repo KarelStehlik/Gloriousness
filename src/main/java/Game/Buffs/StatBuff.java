@@ -119,7 +119,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
         buffsByExpiration.add(buff);
       }
       TotalModifier mod = modifiers.computeIfAbsent(buff.statModified,
-          s -> new TotalModifier(target.getStats(),statModified));
+          s -> new TotalModifier(target.getStats(), statModified));
       mod.add(buff, target);
       target.onStatsUpdate();
       return true;
@@ -145,7 +145,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
     @Override
     public void delete(T target) {
-      modifiers.values().forEach(m->m.delete(target));
+      modifiers.values().forEach(m -> m.delete(target));
       modifiers.clear();
       buffsByExpiration.clear();
     }

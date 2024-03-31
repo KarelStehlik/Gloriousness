@@ -14,9 +14,6 @@ import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  @Override
-  protected int getStatsCount(){return 4;}
-
   protected final AbstractSprite sprite;
   protected final SquareGrid<TdMob> grid;
   protected final String name;
@@ -26,7 +23,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
-
   public TdMob(World world, String name, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
@@ -69,6 +65,26 @@ public abstract class TdMob extends GameObject implements TickDetect {
         new Point((int) (x - parent.x + parent.movement.offset.x),
             (int) (y - parent.y + parent.movement.offset.y)), stats, Stats.speed, t -> t.passed(),
         parent.movement.getProgress());
+  }
+
+  @Override
+  protected int getStatsCount() {
+    return 4;
+  }
+
+  @Override
+  public abstract void clearStats();
+
+  @Override
+  public Rectangle getHitbox() {
+    return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
+        height);
+  }
+
+  @Override
+  public void setRotation(float f) {
+    super.setRotation(f);
+    sprite.setRotation(f);
   }
 
   public TrackProgress getProgress() {
@@ -125,21 +141,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
     delete();
     world.changeHealth(-1);
   }
-
-  @Override
-  public Rectangle getHitbox() {
-    return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
-        height);
-  }
-
-  @Override
-  public void setRotation(float f) {
-    super.setRotation(f);
-    sprite.setRotation(f);
-  }
-
-  @Override
-  public abstract void clearStats();
 
   public static class MoveAlongTrack<T extends GameObject> {
 
@@ -218,6 +219,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     public static final int speed = 1;
     public static final int health = 2;
     public static final int value = 3;
+
     private Stats() {
     }
   }

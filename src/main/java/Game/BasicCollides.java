@@ -20,7 +20,8 @@ public final class BasicCollides {
   public static final Projectile.OnCollideComponent<TdMob> slow = (proj, target) ->
   {
     target.addBuff(
-        new StatBuff<TdMob>(Type.INCREASED, 2000, Stats.speed, -proj.stats[Projectile.Stats.power]));
+        new StatBuff<TdMob>(Type.INCREASED, 2000, Stats.speed,
+            -proj.stats[Projectile.Stats.power]));
     return true;
   };
   private static World _world;

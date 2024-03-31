@@ -9,7 +9,6 @@ import Game.GameObject;
 import Game.TdMob;
 import Game.TickDetect;
 import Game.World;
-import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -30,14 +29,15 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected final Sprite rangeDisplay;
   private final BuffHandler<Turret> buffHandler;
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
-  protected boolean notYetPlaced=true;
+  protected boolean notYetPlaced = true;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
-    super(X, Y, 0,0, world);
-    setSize((int)stats[Turret.Stats.size], (int)stats[Turret.Stats.size]);
+    super(X, Y, 0, 0, world);
+    setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
     clearStats();
 
-    sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize], 2);
+    sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize],
+        2);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
@@ -56,18 +56,14 @@ public abstract class Turret extends GameObject implements TickDetect {
     world.addTurret(this);
   }
 
-  @Override
-  public void move(float _x, float _y){
-    super.move(_x,_y);
-    sprite.setPosition(_x,_y);
-    rangeDisplay.setPosition(_x,_y);
-    bulletLauncher.move(_x,_y);
-  }
-
-  public void place(){
+  public void place() {
     notYetPlaced = false;
     rangeDisplay.setHidden(true);
-    Button butt = new Button(this.sprite, (mouseX, mouseY) -> {if(!notYetPlaced){openUpgradeMenu();}});
+    Button butt = new Button(this.sprite, (mouseX, mouseY) -> {
+      if (!notYetPlaced) {
+        openUpgradeMenu();
+      }
+    });
     Game.get().addMouseDetect(butt);
   }
 
@@ -89,18 +85,10 @@ public abstract class Turret extends GameObject implements TickDetect {
   }
 
   @Override
-  public void onStatsUpdate() {
-    bulletLauncher.setDuration(stats[Turret.Stats.projectileDuration]);
-    bulletLauncher.setPierce((int) stats[Turret.Stats.pierce]);
-    bulletLauncher.setPower(stats[Turret.Stats.power]);
-    bulletLauncher.setSize(stats[Turret.Stats.bulletSize]);
-    bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
-    bulletLauncher.setCooldown(stats[Turret.Stats.cd]);
-  }
-
-  @Override
   public void onGameTick(int tick) {
-    if(notYetPlaced)return;
+    if (notYetPlaced) {
+      return;
+    }
     bulletLauncher.tickCooldown();
     TdMob target = world.getMobsGrid()
         .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
@@ -130,6 +118,29 @@ public abstract class Turret extends GameObject implements TickDetect {
     return notYetPlaced;
   }
 
+  @Override
+  protected int getStatsCount() {
+    return 10;
+  }
+
+  @Override
+  public void move(float _x, float _y) {
+    super.move(_x, _y);
+    sprite.setPosition(_x, _y);
+    rangeDisplay.setPosition(_x, _y);
+    bulletLauncher.move(_x, _y);
+  }
+
+  @Override
+  public void onStatsUpdate() {
+    bulletLauncher.setDuration(stats[Turret.Stats.projectileDuration]);
+    bulletLauncher.setPierce((int) stats[Turret.Stats.pierce]);
+    bulletLauncher.setPower(stats[Turret.Stats.power]);
+    bulletLauncher.setSize(stats[Turret.Stats.bulletSize]);
+    bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
+    bulletLauncher.setCooldown(stats[Turret.Stats.cd]);
+  }
+
   protected static class Upgrade {
 
     protected final float cost;
@@ -149,22 +160,18 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
   }
 
-  @Override
-  protected int getStatsCount(){
-    return 10;
-  }
   public static class Stats {
 
-    public static final int power=0;
-    public static final int  range=1;
-    public static final int  pierce=2;
-    public static final int  cd=3;
-    public static final int  projectileDuration=4;
-    public static final int  bulletSize=5;
-    public static final int  speed=6;
-    public static final int  cost=7;
-    public static final int  size=8;
-    public static final int  spritesize=9;
+    public static final int power = 0;
+    public static final int range = 1;
+    public static final int pierce = 2;
+    public static final int cd = 3;
+    public static final int projectileDuration = 4;
+    public static final int bulletSize = 5;
+    public static final int speed = 6;
+    public static final int cost = 7;
+    public static final int size = 8;
+    public static final int spritesize = 9;
 
     private Stats() {
     }

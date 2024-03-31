@@ -7,7 +7,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
-import Game.Turrets.Turret.Stats;
 import general.Util;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;
@@ -45,16 +44,6 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   public boolean addBuff(Buff<Player> eff) {
     return buffHandler.add(eff);
-  }
-
-  @Override
-  public void onStatsUpdate() {
-    bulletLauncher.setSize(stats[Stats.projSize]);
-    bulletLauncher.setSpeed(stats[Stats.projSpeed]);
-    bulletLauncher.setPierce((int) stats[Stats.projPierce]);
-    bulletLauncher.setDuration(stats[Stats.projDuration]);
-    bulletLauncher.setCooldown(stats[Stats.cd]);
-    bulletLauncher.setPower(stats[Stats.projPower]);
   }
 
   public void takeDamage(float amount, DamageType type) {
@@ -102,22 +91,32 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     sprite.setPosition(x, y);
   }
 
-
-
   // generated stats
   @Override
-  public int getStatsCount(){return 8;}
+  public int getStatsCount() {
+    return 8;
+  }
 
   @Override
   public void clearStats() {
-      stats[Stats.speed] = 1f;
-      stats[Stats.health] = 100f;
-      stats[Stats.cd] = 999f;
-      stats[Stats.projSize] = 10f;
-      stats[Stats.projSpeed] = 30f;
-      stats[Stats.projPierce] = 100f;
-      stats[Stats.projDuration] = 4f;
-      stats[Stats.projPower] = 100f;
+    stats[Stats.speed] = 1f;
+    stats[Stats.health] = 100f;
+    stats[Stats.cd] = 999f;
+    stats[Stats.projSize] = 10f;
+    stats[Stats.projSpeed] = 30f;
+    stats[Stats.projPierce] = 100f;
+    stats[Stats.projDuration] = 4f;
+    stats[Stats.projPower] = 100f;
+  }
+
+  @Override
+  public void onStatsUpdate() {
+    bulletLauncher.setSize(stats[Stats.projSize]);
+    bulletLauncher.setSpeed(stats[Stats.projSpeed]);
+    bulletLauncher.setPierce((int) stats[Stats.projPierce]);
+    bulletLauncher.setDuration(stats[Stats.projDuration]);
+    bulletLauncher.setCooldown(stats[Stats.cd]);
+    bulletLauncher.setPower(stats[Stats.projPower]);
   }
   // end of generated stats
 
@@ -131,6 +130,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     public static final int projPierce = 5;
     public static final int projDuration = 6;
     public static final int projPower = 7;
+
     private Stats() {
     }
   }

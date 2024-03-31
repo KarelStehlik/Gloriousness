@@ -1,8 +1,5 @@
 package Game;
 
-import Game.Turrets.Turret;
-import Game.Turrets.Turret.Stats;
-
 public class BasicMob extends TdMob {
 
   public BasicMob(World world) {
@@ -13,19 +10,18 @@ public class BasicMob extends TdMob {
     super(parent.world, "Basic", "Golem", parent, spread);
   }
 
-  @Override
-  public void onDeath() {
-    world.addEnemy(new BasicMob(this, 50));
-  }
-
-
   // generated stats
   @Override
   public void clearStats() {
-      stats[Stats.size] = 20.0f;
-      stats[Stats.speed] = 5f;
-      stats[Stats.health] = 100f;
-      stats[Stats.value] = 1f;
+    stats[Stats.size] = 20.0f;
+    stats[Stats.speed] = 5f;
+    stats[Stats.health] = 100f;
+    stats[Stats.value] = 1f;
+  }
+
+  @Override
+  public void onDeath() {
+    world.addEnemy(new BasicMob(this, 50));
   }
   // end of generated stats
 }

@@ -8,9 +8,9 @@ import windowStuff.AbstractSprite;
 public class PlaceObjectTool extends Tool {
 
   private final onClick click;
+  private final List<AbstractSprite> sprites = new ArrayList<>(1);
   private onMove move;
   private voidf onDelete;
-  private final List<AbstractSprite> sprites = new ArrayList<>(1);
 
   public PlaceObjectTool(World world, AbstractSprite sprite, onClick onclick) {
     super(world);
@@ -19,12 +19,13 @@ public class PlaceObjectTool extends Tool {
     sprite.setPosition(input.getX(), input.getY());
   }
 
-  public PlaceObjectTool setOnMove(onMove m){
-    move=m;
+  public PlaceObjectTool setOnMove(onMove m) {
+    move = m;
     return this;
   }
-  public PlaceObjectTool setOnDelete(voidf d){
-    onDelete=d;
+
+  public PlaceObjectTool setOnDelete(voidf d) {
+    onDelete = d;
     return this;
   }
 
@@ -40,7 +41,7 @@ public class PlaceObjectTool extends Tool {
 
   @Override
   public boolean onMouseButton(int button, double x, double y, int action, int mods) {
-    if ((button == 0 && action == 1 && click.click((int) x, (int) y) )|| (button == 1
+    if ((button == 0 && action == 1 && click.click((int) x, (int) y)) || (button == 1
         && action == 1)) {
       delete();
       return true;
@@ -56,7 +57,7 @@ public class PlaceObjectTool extends Tool {
   @Override
   public boolean onMouseMove(float newX, float newY) {
     sprites.forEach(s -> s.setPosition(newX, newY));
-    if(move!=null){
+    if (move != null) {
       move.move(newX, newY);
     }
     return false;
@@ -75,7 +76,7 @@ public class PlaceObjectTool extends Tool {
   public void delete() {
     Log.write("de");
     sprites.forEach(AbstractSprite::delete);
-    if(onDelete != null) {
+    if (onDelete != null) {
       onDelete.trigger();
     }
     super.delete();

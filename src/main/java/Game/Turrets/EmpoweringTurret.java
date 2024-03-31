@@ -6,7 +6,6 @@ import Game.BulletLauncher;
 import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
-import general.RefFloat;
 import java.util.List;
 
 public class EmpoweringTurret extends Turret {
@@ -24,7 +23,8 @@ public class EmpoweringTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,image, "Empowering",()->new EmpoweringTurret(world,-1000,-1000));
+    return new TurretGenerator(world, image, "Empowering",
+        () -> new EmpoweringTurret(world, -1000, -1000));
   }
 
   private static void addBuff(Projectile p2, float pow) {
@@ -56,16 +56,16 @@ public class EmpoweringTurret extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-      stats[Stats.power] = 100f;
-      stats[Stats.range] = 500f;
-      stats[Stats.pierce] = 100f;
-      stats[Stats.cd] = 10f;
-      stats[Stats.projectileDuration] = 2f;
-      stats[Stats.bulletSize] = 50f;
-      stats[Stats.speed] = 8f;
-      stats[Stats.cost] = 100f;
-      stats[Stats.size] = 50f;
-      stats[Stats.spritesize] = 150f;
+    stats[Stats.power] = 100f;
+    stats[Stats.range] = 500f;
+    stats[Stats.pierce] = 100f;
+    stats[Stats.cd] = 10f;
+    stats[Stats.projectileDuration] = 2f;
+    stats[Stats.bulletSize] = 50f;
+    stats[Stats.speed] = 8f;
+    stats[Stats.cost] = 100f;
+    stats[Stats.size] = 50f;
+    stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

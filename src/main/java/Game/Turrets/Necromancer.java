@@ -10,7 +10,6 @@ import Game.TurretGenerator;
 import Game.World;
 import Game.World.TrackPoint;
 import general.Data;
-import general.RefFloat;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -32,14 +31,15 @@ public class Necromancer extends Turret {
       TrackPoint initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0, spawnPoints.size()));
       p.move(initPoint.x, initPoint.y);
       TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,
-          world.getMapData(), new Point(0, 0), stats,Stats.speed, Projectile::delete,
+          world.getMapData(), new Point(0, 0), stats, Stats.speed, Projectile::delete,
           Math.max(initPoint.node - 1, 0));
       p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, mover::tick));
     });
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,image, "Necromancer",()->new Necromancer(world,-1000,-1000));
+    return new TurretGenerator(world, image, "Necromancer",
+        () -> new Necromancer(world, -1000, -1000));
   }
 
   @Override
@@ -80,16 +80,16 @@ public class Necromancer extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-      stats[Stats.power] = 100f;
-      stats[Stats.range] = 500f;
-      stats[Stats.pierce] = 1000f;
-      stats[Stats.cd] = 1f;
-      stats[Stats.projectileDuration] = 20f;
-      stats[Stats.bulletSize] = 60f;
-      stats[Stats.speed] = 10f;
-      stats[Stats.cost] = 100f;
-      stats[Stats.size] = 50f;
-      stats[Stats.spritesize] = 150f;
+    stats[Stats.power] = 100f;
+    stats[Stats.range] = 500f;
+    stats[Stats.pierce] = 1000f;
+    stats[Stats.cd] = 1f;
+    stats[Stats.projectileDuration] = 20f;
+    stats[Stats.bulletSize] = 60f;
+    stats[Stats.speed] = 10f;
+    stats[Stats.cost] = 100f;
+    stats[Stats.size] = 50f;
+    stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }
