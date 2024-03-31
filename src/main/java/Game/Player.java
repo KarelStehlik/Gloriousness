@@ -108,6 +108,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     stats[Stats.projDuration] = 4f;
     stats[Stats.projPower] = 100f;
   }
+  // end of generated stats
 
   @Override
   public void onStatsUpdate() {
@@ -118,7 +119,6 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     bulletLauncher.setCooldown(stats[Stats.cd]);
     bulletLauncher.setPower(stats[Stats.projPower]);
   }
-  // end of generated stats
 
   public static final class Stats {
 

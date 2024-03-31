@@ -18,10 +18,10 @@ public class BasicMob extends TdMob {
     stats[Stats.health] = 100f;
     stats[Stats.value] = 1f;
   }
+  // end of generated stats
 
   @Override
   public void onDeath() {
     world.addEnemy(new BasicMob(this, 50));
   }
-  // end of generated stats
 }
