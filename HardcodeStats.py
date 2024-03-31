@@ -21,12 +21,12 @@ def toClassText(input):
     extraStats = [refFloatify(x) for x in extraStats]
     baseStats = [refFloatify(x) for x in baseStats]
 
-    statsAssign = "      " + "\n      ".join(baseStats+extraStats)
+    statsAssign = "    " + "\n    ".join(baseStats+extraStats)
     init="  @Override\n  public void clearStats() {\n"+statsAssign+"\n  }\n"
 
     start = hasExtra * (
 '''  @Override
-  public int getStatsCount(){return ''' + str(len(extraStats)+len(baseStats)) + ";}\n\n")
+  public int getStatsCount() {\n    return ''' + str(len(extraStats)+len(baseStats)) + ";\n  }\n\n")
 
     return className, "// generated stats\n"+start+init+"  // end of generated stats"
 

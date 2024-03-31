@@ -23,6 +23,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
+
   public TdMob(World world, String name, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),

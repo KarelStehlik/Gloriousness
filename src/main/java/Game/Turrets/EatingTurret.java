@@ -71,6 +71,7 @@ public class EatingTurret extends Turret {
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
   }
+  // end of generated stats
 
   private static class eater {
 
@@ -104,5 +105,4 @@ public class EatingTurret extends Turret {
       }
     }
   }
-  // end of generated stats
 }
