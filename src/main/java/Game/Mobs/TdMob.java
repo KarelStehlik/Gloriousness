@@ -1,8 +1,13 @@
-package Game;
+package Game.Mobs;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
 import Game.Buffs.Modifier;
+import Game.DamageType;
+import Game.GameObject;
+import Game.SquareGrid;
+import Game.TickDetect;
+import Game.World;
 import general.Constants;
 import general.Data;
 import general.Util;
@@ -192,23 +197,21 @@ public abstract class TdMob extends GameObject implements TickDetect {
         return;
       }
       Point nextPoint = mapData.get(nextMapPoint);
-      int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.x) + Math.abs(
-          nextPoint.y + offset.y - target.y));
+      int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.getX()) + Math.abs(
+          nextPoint.y + offset.y - target.getY()));
       progress = new TrackProgress(nextMapPoint, approxDistance);
       if (approxDistance < stats[speedStat]) {
-        target.x = nextPoint.x + offset.x;
-        target.y = nextPoint.y + offset.y;
+        target.move(nextPoint.x + offset.x, nextPoint.y + offset.y);
         nextMapPoint += reverse ? -1 : 1;
         if (isDone()) {
           onFinish.mod(target);
         }
       } else {
-        float rotationToNextPoint = Util.get_rotation(nextPoint.x + offset.x - target.x,
-            nextPoint.y + offset.y - target.y);
+        float rotationToNextPoint = Util.get_rotation(nextPoint.x + offset.x - target.getX(),
+            nextPoint.y + offset.y - target.getY());
         float vx = stats[speedStat] * Util.cos(rotationToNextPoint);
         float vy = stats[speedStat] * Util.sin(rotationToNextPoint);
-        target.x = target.x + vx;
-        target.y = target.y + vy;
+        target.move(target.getX() + vx, target.getY() + vy);
         target.setRotation(rotationToNextPoint - 90f);
       }
     }

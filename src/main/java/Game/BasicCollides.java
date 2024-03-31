@@ -3,7 +3,8 @@ package Game;
 import Game.Buffs.Ignite;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.TdMob.Stats;
+import Game.Mobs.TdMob;
+import Game.Mobs.TdMob.Stats;
 
 public final class BasicCollides {
 

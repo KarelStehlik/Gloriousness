@@ -1,6 +1,7 @@
 package Game;
 
-import Game.TdMob.TrackProgress;
+import Game.Mobs.TdMob;
+import Game.Mobs.TdMob.TrackProgress;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;

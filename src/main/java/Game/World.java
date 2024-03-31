@@ -8,8 +8,10 @@ import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.TdMob.MoveAlongTrack;
-import Game.TdMob.Stats;
+import Game.Mobs.BasicMob;
+import Game.Mobs.TdMob;
+import Game.Mobs.TdMob.MoveAlongTrack;
+import Game.Mobs.TdMob.Stats;
 import Game.Turrets.BasicTurret;
 import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;

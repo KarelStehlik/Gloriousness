@@ -6,7 +6,7 @@ import Game.Buffs.VoidFunc;
 import Game.BulletLauncher;
 import Game.Game;
 import Game.GameObject;
-import Game.TdMob;
+import Game.Mobs.TdMob;
 import Game.TickDetect;
 import Game.World;
 import general.Util;

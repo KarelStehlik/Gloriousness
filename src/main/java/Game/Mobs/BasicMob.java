@@ -1,4 +1,6 @@
-package Game;
+package Game.Mobs;
+
+import Game.World;
 
 public class BasicMob extends TdMob {
 

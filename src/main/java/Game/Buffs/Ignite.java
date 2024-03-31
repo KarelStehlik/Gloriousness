@@ -2,8 +2,8 @@ package Game.Buffs;
 
 import Game.DamageType;
 import Game.Game;
-import Game.TdMob;
-import Game.TdMob.Stats;
+import Game.Mobs.TdMob;
+import Game.Mobs.TdMob.Stats;
 import general.Util;
 import java.util.Iterator;
 import java.util.TreeSet;

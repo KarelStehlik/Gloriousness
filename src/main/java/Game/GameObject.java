@@ -43,7 +43,7 @@ public class GameObject {
     return y;
   }
 
-  Rectangle getHitbox() {
+  protected Rectangle getHitbox() {
     return hitbox;
   }
 
