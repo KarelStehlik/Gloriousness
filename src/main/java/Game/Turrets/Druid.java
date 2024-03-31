@@ -36,7 +36,7 @@ public class Druid extends Turret {
   private void modProjectile(Projectile p) {
     p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
 
-    final RefFloat triggers = new RefFloat(3);
+    final RefFloat triggers = new RefFloat(stats[ExtraStats.respawns]);
 
     p.addMobCollide((proj, mob) -> {
       mob.takeDamage(proj.getPower(), DamageType.TRUE);
@@ -123,8 +123,7 @@ public class Druid extends Turret {
     private ExtraStats(){}
     public static final int respawns = 10;
   }
-
-  @Override
+      @Override
   public void clearStats() {
     stats[Stats.power] = 3f;
     stats[Stats.range] = 500f;

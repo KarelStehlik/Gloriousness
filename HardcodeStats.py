@@ -1,9 +1,9 @@
 import glob
 import os
 
-def refFloatify(string):
+def refFloatify(string, statclass):
     name,eq,num=string.split(" ")
-    return f"stats[Stats.{name}] = {num}f;"
+    return f"stats[{statclass}.{name}] = {num}f;"
 
 def toClassText(input):
     input = input.replace(" ", "")
@@ -18,15 +18,23 @@ def toClassText(input):
     hasBase = len(baseStats) != 0
     print(className, baseStats)
 
-    extraStats = [refFloatify(x) for x in extraStats]
-    baseStats = [refFloatify(x) for x in baseStats]
+    extraNames = [s.split(" ")[0] for s in extraStats]
+    extraStats = [refFloatify(x, "ExtraStats") for x in extraStats]
+    baseStats = [refFloatify(x, "Stats") for x in baseStats]
 
     statsAssign = "    " + "\n    ".join(baseStats+extraStats)
     init="  @Override\n  public void clearStats() {\n"+statsAssign+"\n  }\n"
 
     start = hasExtra * (
 '''  @Override
-  public int getStatsCount() {\n    return ''' + str(len(extraStats)+len(baseStats)) + ";\n  }\n\n")
+  public int getStatsCount() {\n    return ''' + str(len(extraStats)+len(baseStats)) + ";\n  }\n" +
+    '''
+  public static final class ExtraStats{
+    private ExtraStats(){}\n    '''+
+    "\n   ".join("public static final int "+name+" = "+str(len(baseStats)+i)+";" for i,name in enumerate(extraNames))+
+    '''
+  }
+    ''')
 
     return className, "// generated stats\n"+start+init+"  // end of generated stats"
 

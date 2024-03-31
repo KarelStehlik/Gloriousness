@@ -91,12 +91,12 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     sprite.setPosition(x, y);
   }
 
-  // generated stats
   @Override
   public int getStatsCount() {
     return 8;
   }
 
+  // generated stats
   @Override
   public void clearStats() {
     stats[Stats.speed] = 1f;
