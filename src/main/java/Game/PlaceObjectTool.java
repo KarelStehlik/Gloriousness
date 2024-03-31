@@ -7,6 +7,7 @@ import windowStuff.AbstractSprite;
 public class PlaceObjectTool extends Tool {
 
   private final onClick click;
+  private onMove move;
   private final List<AbstractSprite> sprites = new ArrayList<>(1);
 
   public PlaceObjectTool(World world, AbstractSprite sprite, onClick onclick) {
@@ -14,6 +15,11 @@ public class PlaceObjectTool extends Tool {
     click = onclick;
     sprites.add(sprite);
     sprite.setPosition(input.getX(), input.getY());
+  }
+
+  public PlaceObjectTool setOnMove(onMove m){
+    move=m;
+    return this;
   }
 
   @Override
@@ -44,6 +50,9 @@ public class PlaceObjectTool extends Tool {
   @Override
   public boolean onMouseMove(float newX, float newY) {
     sprites.forEach(s -> s.setPosition(newX, newY));
+    if(move!=null){
+      move.move(newX, newY);
+    }
     return false;
   }
 
@@ -66,5 +75,11 @@ public class PlaceObjectTool extends Tool {
   public interface onClick {
 
     boolean click(int x, int y); //returns false if the click didn't count
+  }
+
+  @FunctionalInterface
+  public interface onMove {
+
+    void move(float x, float y);
   }
 }

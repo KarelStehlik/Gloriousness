@@ -30,10 +30,7 @@ public class EatingTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    var stats = new BasicTurret.Stats();
-    return new TurretGenerator(world, "Eating",
-        (x, y) -> new EatingTurret(world, x, y),
-        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
+    return new TurretGenerator(world,image, "Eating",()->new EatingTurret(world,-1000,-1000));
   }
 
   @Override

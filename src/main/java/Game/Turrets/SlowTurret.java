@@ -2,7 +2,6 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.BulletLauncher;
-import Game.Player.ExtraStats;
 import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
@@ -22,10 +21,7 @@ public class SlowTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    var stats = new Stats();
-    return new TurretGenerator(world, "Ice",
-        (x, y) -> new SlowTurret(world, x, y),
-        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
+    return new TurretGenerator(world,image, "Slowing",()->new SlowTurret(world,-1000,-1000));
   }
 
   @Override

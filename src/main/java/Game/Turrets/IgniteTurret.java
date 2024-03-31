@@ -2,7 +2,6 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.BulletLauncher;
-import Game.Player.ExtraStats;
 import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
@@ -21,10 +20,7 @@ public class IgniteTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    var stats = new BasicTurret.Stats();
-    return new TurretGenerator(world, "Flammenwerfer",
-        (x, y) -> new IgniteTurret(world, x, y),
-        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
+    return new TurretGenerator(world,image, "Fire",()->new IgniteTurret(world,-1000,-1000));
   }
 
   @Override

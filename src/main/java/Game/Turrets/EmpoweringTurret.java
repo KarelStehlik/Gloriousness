@@ -3,7 +3,6 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
-import Game.Player.ExtraStats;
 import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
@@ -25,10 +24,7 @@ public class EmpoweringTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    var stats = new BasicTurret.Stats();
-    return new TurretGenerator(world, "Empowering",
-        (x, y) -> new EmpoweringTurret(world, x, y),
-        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
+    return new TurretGenerator(world,image, "Empowering",()->new EmpoweringTurret(world,-1000,-1000));
   }
 
   private static void addBuff(Projectile p2, float pow) {

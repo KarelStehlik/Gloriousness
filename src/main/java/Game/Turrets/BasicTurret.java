@@ -15,25 +15,21 @@ public class BasicTurret extends Turret {
 
   public BasicTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Dart"),
-        new Stats());
+        new BulletLauncher(world, "Dart"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     bulletLauncher.setSpread(45);
   }
 
   public static TurretGenerator generator(World world) {
-    var stats = new Stats();
-    return new TurretGenerator(world, "Basic",
-        (x, y) -> new BasicTurret(world, x, y),
-        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
+    return new TurretGenerator(world,image, "Basic",()->new BasicTurret(world,-1000,-1000));
   }
 
   private Upgrade up100() {
     return new Upgrade("Meteor", () -> "fuck",
         () -> {
           addBuff(
-              new StatBuff<Turret>(Type.INCREASED, Float.POSITIVE_INFINITY, baseStats.bulletSize,
+              new StatBuff<Turret>(Type.INCREASED, Float.POSITIVE_INFINITY, Stats.bulletSize,
                   1));
           Log.write("ff");
         }, 1000);

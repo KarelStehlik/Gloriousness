@@ -39,10 +39,7 @@ public class Necromancer extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    var stats = new BasicTurret.Stats();
-    return new TurretGenerator(world, "Necromancer",
-        (x, y) -> new Necromancer(world, x, y),
-        image, stats.cost.get(), stats.size.get(), stats.spritesize.get(), stats.range.get());
+    return new TurretGenerator(world,image, "Necromancer",()->new Necromancer(world,-1000,-1000));
   }
 
   @Override

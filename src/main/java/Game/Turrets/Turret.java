@@ -26,23 +26,45 @@ public abstract class Turret extends GameObject implements TickDetect {
   private static UpgradeMenu menu;
   protected final BulletLauncher bulletLauncher;
   protected final Sprite sprite;
+  protected final Sprite rangeDisplay;
   private final BuffHandler<Turret> buffHandler;
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
+  protected boolean notYetPlaced=true;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0,0, world);
     setSize((int)stats[Turret.Stats.size], (int)stats[Turret.Stats.size]);
+
     sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize], 2);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
+
+    rangeDisplay = new Sprite("Shockwave", 1).
+        setSize(2 * stats[Turret.Stats.range], 2 * stats[Turret.Stats.range]).
+        setPosition(x, y).
+        addToBs(world.getBs()).
+        setOpacity(0.3f);
+
     bulletLauncher = launcher;
     launcher.move(x, y);
     Game.get().addTickable(this);
     onStatsUpdate();
     buffHandler = new BuffHandler<>(this);
-    Game.get().addMouseDetect(new Button(this.sprite, (mouseX, mouseY) -> openUpgradeMenu()));
+    Game.get().addMouseDetect(new Button(this.sprite, (mouseX, mouseY) -> {if(!notYetPlaced){openUpgradeMenu();}}));
     world.addTurret(this);
+  }
+
+  @Override
+  public void move(float _x, float _y){
+    super.move(_x,_y);
+    sprite.setPosition(_x,_y);
+    rangeDisplay.setPosition(_x,_y);
+  }
+
+  public void place(){
+    notYetPlaced = false;
+    rangeDisplay.setHidden(true);
   }
 
   protected abstract List<Upgrade> getUpgradePath1();
@@ -74,6 +96,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   @Override
   public void onGameTick(int tick) {
+    if(notYetPlaced)return;
     bulletLauncher.tickCooldown();
     TdMob target = world.getMobsGrid()
         .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
@@ -91,6 +114,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   @Override
   public void delete() {
     sprite.delete();
+    rangeDisplay.delete();
   }
 
   @Override
@@ -146,12 +170,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
     UpgradeMenu() {
       SpriteBatching bs = Game.get().getSpriteBatching("main");
-      sprites.add(new Sprite("Shockwave", 1).
-          setSize(2 * stats[Turret.Stats.range], 2 * stats[Turret.Stats.range]).
-          setPosition(x, y).
-          addToBs(bs).
-          setOpacity(0.3f)
-      );
+      rangeDisplay.setHidden(false);
       sprites.add(new Sprite("Button", 5).
           setSize(220, 420).
           setPosition(x, y).
@@ -203,6 +222,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     void close() {
       sprites.forEach(Sprite::delete);
       buttons.forEach(Button::delete);
+      rangeDisplay.setHidden(true);
     }
   }
 }
