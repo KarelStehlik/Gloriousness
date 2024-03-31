@@ -27,16 +27,17 @@ def toClassText(input):
 
     start = hasExtra * (
 '''  @Override
-  public int getStatsCount() {\n    return ''' + str(len(extraStats)+len(baseStats)) + ";\n  }\n" +
-    '''
-  public static final class ExtraStats{
-    private ExtraStats(){}\n    '''+
-    "\n   ".join("public static final int "+name+" = "+str(len(baseStats)+i)+";" for i,name in enumerate(extraNames))+
-    '''
-  }
-    ''')
+  public int getStatsCount() {\n    return ''' + str(len(extraStats)+len(baseStats)) + ";\n  }\n\n")
 
-    return className, "// generated stats\n"+start+init+"  // end of generated stats"
+    extraS=hasExtra*('''
+  public static final class ExtraStats {\n
+    '''+
+    "\n   ".join("public static final int "+name+" = "+str(len(baseStats)+i)+";" for i,name in enumerate(extraNames))+
+    '''\n
+    private ExtraStats() {\n    }
+  }\n''')
+
+    return className, "// generated stats\n"+start+init+extraS+"  // end of generated stats"
 
 
 def replaceStats(input, newStats):
