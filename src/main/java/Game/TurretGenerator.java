@@ -19,10 +19,10 @@ public class TurretGenerator {
     this.image = image;
     this.label = label;
     this.func = make;
+    pending=func.make();
   }
 
   public boolean generate(int x, int y) {
-    Log.write("pad");
     if (!world.canFitTurret(x, y, pending.stats[Stats.size]) || !world.tryPurchase(
         pending.stats[Stats.cost])) {
       return false;
@@ -38,14 +38,13 @@ public class TurretGenerator {
         new NoSprite(),
         this::generate);
     world.setCurrentTool(tool);
-    pending = func.make();
+
     tool.
-        setOnMove(pending::move).
-        setOnDelete(() -> {
+        setOnMove(pending::move).setOnDelete(()->{
           if (pending.isNotYetPlaced()) {
             pending.delete();
-            this.pending = null;
           }
+          pending = func.make();
         });
   }
 
@@ -55,7 +54,7 @@ public class TurretGenerator {
           if (button == 0 && action == 1) {
             this.select();
           }
-        }, () -> label + ": cost= " + 50);
+        }, () -> label + ": cost= " + (int)pending.stats[Stats.cost]);
   }
 
   @FunctionalInterface

@@ -10,6 +10,7 @@ import Game.TurretGenerator;
 import Game.World;
 import Game.World.TrackPoint;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ public class Necromancer extends Turret {
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.fire);
     bulletLauncher.setSpread(45);
-    updateRange();
     bulletLauncher.setProjectileModifier(p -> {
       TrackPoint initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0, spawnPoints.size()));
       p.move(initPoint.x, initPoint.y);
@@ -35,6 +35,30 @@ public class Necromancer extends Turret {
           Math.max(initPoint.node - 1, 0));
       p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, mover::tick));
     });
+  }
+
+  @Override
+  public void onGameTick(int tick) {
+    if (notYetPlaced || spawnPoints.isEmpty()) {
+      return;
+    }
+    bulletLauncher.tickCooldown();
+    TdMob target = world.getMobsGrid()
+        .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+    if (target != null) {
+      setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
+    }
+    while (bulletLauncher.canAttack()) {
+      bulletLauncher.attack(rotation);
+    }
+
+    buffHandler.tick();
+  }
+
+  @Override
+  public void place(){
+    super.place();
+    updateRange();
   }
 
   public static TurretGenerator generator(World world) {
@@ -69,7 +93,9 @@ public class Necromancer extends Turret {
 
   private void updateRange() {
     spawnPoints.clear();
+    Log.write(stats[Stats.range] * stats[Stats.range]);
     for (TrackPoint p : world.spacPoints) {
+      Log.write(""+(p.x - x)+" " +(p.y - y));
       if (Util.distanceSquared(p.x - x, p.y - y) < stats[Stats.range] * stats[Stats.range]) {
         spawnPoints.add(p);
       }

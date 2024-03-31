@@ -27,7 +27,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected final BulletLauncher bulletLauncher;
   protected final Sprite sprite;
   protected final Sprite rangeDisplay;
-  private final BuffHandler<Turret> buffHandler;
+  protected final BuffHandler<Turret> buffHandler;
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
   protected boolean notYetPlaced = true;
 
@@ -97,10 +97,16 @@ public abstract class Turret extends GameObject implements TickDetect {
       while (bulletLauncher.canAttack()) {
         bulletLauncher.attack(rotation);
       }
-      sprite.setRotation(rotation - 90);
+      setRotation(rotation);
     }
 
     buffHandler.tick();
+  }
+
+  @Override
+  public void setRotation(float f) {
+    rotation = f;
+    sprite.setRotation(f - 90);
   }
 
   @Override

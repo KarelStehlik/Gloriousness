@@ -74,7 +74,6 @@ public class PlaceObjectTool extends Tool {
 
   @Override
   public void delete() {
-    Log.write("de");
     sprites.forEach(AbstractSprite::delete);
     if (onDelete != null) {
       onDelete.trigger();
