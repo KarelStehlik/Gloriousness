@@ -76,20 +76,6 @@ public class Druid extends Turret {
     return List.of();
   }
 
-  // generated stats
-  @Override
-  public void clearStats() {
-    stats[Stats.power] = 100f;
-    stats[Stats.range] = 500f;
-    stats[Stats.pierce] = 5;
-    stats[Stats.cd] = 1000f;
-    stats[Stats.projectileDuration] = 100f;
-    stats[Stats.bulletSize] = 150f;
-    stats[Stats.speed] = 15f;
-    stats[Stats.cost] = 100f;
-    stats[Stats.size] = 50f;
-    stats[Stats.spritesize] = 150f;
-  }
 
   class RespawningProjectile implements TickDetect {
 
@@ -126,6 +112,31 @@ public class Druid extends Turret {
     public boolean WasDeleted() {
       return sprite.WasDeleted();
     }
+  }
+  // generated stats
+  @Override
+  public int getStatsCount() {
+    return 11;
+  }
+
+  public static final class ExtraStats{
+    private ExtraStats(){}
+    public static final int respawns = 10;
+  }
+
+  @Override
+  public void clearStats() {
+    stats[Stats.power] = 3f;
+    stats[Stats.range] = 500f;
+    stats[Stats.pierce] = 5f;
+    stats[Stats.cd] = 1000f;
+    stats[Stats.projectileDuration] = 8f;
+    stats[Stats.bulletSize] = 220f;
+    stats[Stats.speed] = 3.5f;
+    stats[Stats.cost] = 100f;
+    stats[Stats.size] = 50f;
+    stats[Stats.spritesize] = 150f;
+    stats[ExtraStats.respawns] = 5f;
   }
   // end of generated stats
 }
