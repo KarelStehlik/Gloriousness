@@ -13,6 +13,14 @@ public class BuffHandler<T extends GameObject> {
     this.target = target;
   }
 
+  public BuffHandler<T> copyForChild(T newTarget) {
+    var copy = new BuffHandler<T>(newTarget);
+    for (var kvp : buffTypes.entrySet()) {
+      copy.buffTypes.put(kvp.getKey(), kvp.getValue().copyForChild(newTarget));
+    }
+    return copy;
+  }
+
   public boolean add(Buff<T> newBuff) {
     var aggr = buffTypes.computeIfAbsent(newBuff.getClass(), Id -> newBuff.makeAggregator());
     return aggr.add(newBuff, target);

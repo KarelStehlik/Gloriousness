@@ -37,6 +37,32 @@ public class Necromancer extends Turret {
     });
   }
 
+  public static TurretGenerator generator(World world) {
+    return new TurretGenerator(world, image, "Necromancer",
+        () -> new Necromancer(world, -1000, -1000));
+  }
+
+  @Override
+  public void place() {
+    super.place();
+    updateRange();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath1() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath2() {
+    return List.of();
+  }
+
+  @Override
+  protected List<Upgrade> getUpgradePath3() {
+    return List.of();
+  }
+
   @Override
   public void onGameTick(int tick) {
     if (notYetPlaced || spawnPoints.isEmpty()) {
@@ -56,32 +82,6 @@ public class Necromancer extends Turret {
   }
 
   @Override
-  public void place(){
-    super.place();
-    updateRange();
-  }
-
-  public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world, image, "Necromancer",
-        () -> new Necromancer(world, -1000, -1000));
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
-
-  @Override
   public void onStatsUpdate() {
     bulletLauncher.setDuration(stats[Stats.projectileDuration]);
     bulletLauncher.setPierce((int) stats[Stats.pierce]);
@@ -95,7 +95,6 @@ public class Necromancer extends Turret {
     spawnPoints.clear();
     Log.write(stats[Stats.range] * stats[Stats.range]);
     for (TrackPoint p : world.spacPoints) {
-      Log.write(""+(p.x - x)+" " +(p.y - y));
       if (Util.distanceSquared(p.x - x, p.y - y) < stats[Stats.range] * stats[Stats.range]) {
         spawnPoints.add(p);
       }

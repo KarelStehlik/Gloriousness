@@ -104,12 +104,6 @@ public abstract class Turret extends GameObject implements TickDetect {
   }
 
   @Override
-  public void setRotation(float f) {
-    rotation = f;
-    sprite.setRotation(f - 90);
-  }
-
-  @Override
   public void delete() {
     sprite.delete();
     rangeDisplay.delete();
@@ -127,6 +121,12 @@ public abstract class Turret extends GameObject implements TickDetect {
   @Override
   protected int getStatsCount() {
     return 10;
+  }
+
+  @Override
+  public void setRotation(float f) {
+    rotation = f;
+    sprite.setRotation(f - 90);
   }
 
   @Override

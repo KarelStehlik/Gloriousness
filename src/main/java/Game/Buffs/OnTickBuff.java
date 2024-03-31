@@ -12,11 +12,28 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
 
   private final float expiryTime;
   private final Modifier<T> mod;
+  private final boolean spreads;
 
   public OnTickBuff(float dur, Modifier<T> effect) {
+    this(dur, effect, true);
+  }
+
+  public OnTickBuff(float dur, Modifier<T> effect, boolean spreadsToChildren) {
     mod = effect;
     expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
     id = Util.getUid();
+    spreads = spreadsToChildren;
+  }
+
+  private OnTickBuff(long id, float expiryTime, Modifier<T> mod, boolean spreads) {
+    this.id = id;
+    this.expiryTime = expiryTime;
+    this.mod = mod;
+    this.spreads = spreads;
+  }
+
+  private OnTickBuff<T> copy() {
+    return new OnTickBuff<T>(Util.getUid(), expiryTime, mod, spreads);
   }
 
   @Override
@@ -69,6 +86,15 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
     @Override
     public void delete(T target) {
       effs.clear();
+    }
+
+    @Override
+    public BuffAggregator<T> copyForChild(T newTarget) {
+      Aggregator copy = new Aggregator();
+      for (var eff : effs) {
+        copy.add(eff.copy(), newTarget);
+      }
+      return copy;
     }
   }
 }

@@ -52,6 +52,10 @@ public final class Util {
   private Util() {
   }
 
+  public static float clamp(float value, float min, float max) {
+    return value < min ? min : value > max ? max : value;
+  }
+
   public static long getUid() {
     id++;
     return id;

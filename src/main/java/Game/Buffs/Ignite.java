@@ -21,6 +21,16 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     id = Util.getUid();
   }
 
+  private Ignite(float damagePerTick, float expiryTime, long id) {
+    this.damagePerTick = damagePerTick;
+    this.expiryTime = expiryTime;
+    this.id = id;
+  }
+
+  public Ignite<T> copy() {
+    return new Ignite<T>(damagePerTick, expiryTime, Util.getUid());
+  }
+
   @Override
   public int compareTo(Ignite o) {
     int floatComp = Float.compare(expiryTime, o.expiryTime);
@@ -88,6 +98,15 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     public void delete(T target) {
       ignites.clear();
       fireSprite.delete();
+    }
+
+    @Override
+    public BuffAggregator<T> copyForChild(T newTarget) {
+      Aggregator copy = new Aggregator();
+      for (Ignite<T> ig : ignites) {
+        copy.add(ig.copy(), newTarget);
+      }
+      return copy;
     }
   }
 }

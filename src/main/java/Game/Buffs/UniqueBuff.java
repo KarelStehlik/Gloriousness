@@ -23,6 +23,13 @@ public class UniqueBuff<T extends GameObject> implements Buff<T> {
 
     private final Collection<Long> alreadyApplied = new HashSet<>(1);
 
+    Aggregator(Aggregator og) {
+      alreadyApplied.addAll(og.alreadyApplied);
+    }
+
+    Aggregator() {
+    }
+
     @Override
     public boolean add(Buff<T> b, T target) {
       assert b instanceof UniqueBuff<T>;
@@ -43,6 +50,11 @@ public class UniqueBuff<T extends GameObject> implements Buff<T> {
     @Override
     public void delete(T target) {
       alreadyApplied.clear();
+    }
+
+    @Override
+    public BuffAggregator<T> copyForChild(T newTarget) {
+      return new Aggregator(this);
     }
   }
 }

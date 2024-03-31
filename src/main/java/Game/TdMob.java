@@ -61,7 +61,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     //sprite = new NoSprite();
     sprite.addToBs(world.getBs());
     exists = true;
-    buffHandler = new BuffHandler<>(this);
+    buffHandler = parent.buffHandler.copyForChild(this);
     movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
         new Point((int) (x - parent.x + parent.movement.offset.x),
             (int) (y - parent.y + parent.movement.offset.y)), stats, Stats.speed, t -> t.passed(),
@@ -159,7 +159,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
       this.reverse = reverse;
       this.nextMapPoint = reverse ? mapData.size() - 1 : 0;
       this.mapData = mapData;
-      this.offset = offset;
+      this.offset = new Point((int) Util.clamp(offset.x, -Constants.MobSpread, Constants.MobSpread),
+          (int) Util.clamp(offset.y, -Constants.MobSpread, Constants.MobSpread));
       this.speedStat = speedStat;
       this.stats = stats;
       onFinish = end;

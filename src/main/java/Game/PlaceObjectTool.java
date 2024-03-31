@@ -1,6 +1,5 @@
 package Game;
 
-import general.Log;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.AbstractSprite;

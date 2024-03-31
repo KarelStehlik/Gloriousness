@@ -25,6 +25,18 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     id = Util.getUid();
   }
 
+  private StatBuff(Type type, int statModified, float value, long id, float expiry) {
+    this.type = type;
+    this.statModified = statModified;
+    this.value = value;
+    this.id = id;
+    this.expiry = expiry;
+  }
+
+  public StatBuff<T> copy() {
+    return new StatBuff<T>(type, statModified, value, Util.getUid(), expiry);
+  }
+
   private int compareByExpiry(StatBuff<T> b1, StatBuff<T> b2) {
     if (Float.compare(b1.expiry, b2.expiry) != 0) {
       return Float.compare(b1.expiry, b2.expiry);
@@ -115,9 +127,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     public boolean add(Buff<T> b, T target) {
       assert b instanceof StatBuff<T>;
       StatBuff<T> buff = (StatBuff<T>) b;
-      if (buff.expiry < Float.POSITIVE_INFINITY) {
-        buffsByExpiration.add(buff);
-      }
+      buffsByExpiration.add(buff);
       TotalModifier mod = modifiers.computeIfAbsent(buff.statModified,
           s -> new TotalModifier(target.getStats(), statModified));
       mod.add(buff, target);
@@ -148,6 +158,15 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       modifiers.values().forEach(m -> m.delete(target));
       modifiers.clear();
       buffsByExpiration.clear();
+    }
+
+    @Override
+    public BuffAggregator<T> copyForChild(T newTarget) {
+      Aggregator copy = new Aggregator();
+      for (var eff : buffsByExpiration) {
+        copy.add(eff.copy(), newTarget);
+      }
+      return copy;
     }
   }
 }

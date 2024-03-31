@@ -13,13 +13,33 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
 
   private final float expiryTime;
   private final Modifier<T> mod;
-  private final boolean onDeath;
+  private final boolean onDeath, spreads;
 
   public DelayedTrigger(float dur, Modifier<T> effect, boolean triggerOnDeath) {
+    this(dur, effect, triggerOnDeath, true);
+  }
+
+  public DelayedTrigger(float dur, Modifier<T> effect, boolean triggerOnDeath,
+      boolean spreadsToChildren) {
     mod = effect;
     expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
     id = Util.getUid();
     onDeath = triggerOnDeath;
+    spreads = spreadsToChildren;
+  }
+
+  private DelayedTrigger(long id, float expiryTime, Modifier<T> mod, boolean onDeath,
+      boolean spreads) {
+    this.id = id;
+    this.expiryTime = expiryTime;
+    this.mod = mod;
+    this.onDeath = onDeath;
+    this.spreads = spreads;
+  }
+
+  private DelayedTrigger<T> copy() {
+    return new DelayedTrigger<T>(Util.getUid(), this.expiryTime, this.mod, this.onDeath,
+        this.spreads);
   }
 
   @Override
@@ -73,6 +93,17 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
         }
       }
       effs.clear();
+    }
+
+    @Override
+    public BuffAggregator<T> copyForChild(T newTarget) {
+      Aggregator copy = new Aggregator();
+      for (var eff : effs) {
+        if (!eff.onDeath && eff.spreads) {
+          copy.add(eff.copy(), newTarget);
+        }
+      }
+      return copy;
     }
   }
 }

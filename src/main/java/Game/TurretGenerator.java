@@ -19,7 +19,7 @@ public class TurretGenerator {
     this.image = image;
     this.label = label;
     this.func = make;
-    pending=func.make();
+    pending = func.make();
   }
 
   public boolean generate(int x, int y) {
@@ -40,7 +40,7 @@ public class TurretGenerator {
     world.setCurrentTool(tool);
 
     tool.
-        setOnMove(pending::move).setOnDelete(()->{
+        setOnMove(pending::move).setOnDelete(() -> {
           if (pending.isNotYetPlaced()) {
             pending.delete();
           }
@@ -54,7 +54,7 @@ public class TurretGenerator {
           if (button == 0 && action == 1) {
             this.select();
           }
-        }, () -> label + ": cost= " + (int)pending.stats[Stats.cost]);
+        }, () -> label + ": cost= " + (int) pending.stats[Stats.cost]);
   }
 
   @FunctionalInterface
