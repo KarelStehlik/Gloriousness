@@ -8,11 +8,9 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.Projectile;
-import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
-import general.RefFloat;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +29,7 @@ public class EatingTurret extends Turret {
   }
 
   public static TurretGenerator generator(World world) {
-    return new TurretGenerator(world,image, "Eating",()->new EatingTurret(world,-1000,-1000));
+    return new TurretGenerator(world, image, "Eating", () -> new EatingTurret(world, -1000, -1000));
   }
 
   @Override
@@ -59,6 +57,21 @@ public class EatingTurret extends Turret {
         p1 -> e.perish(p1.getX(), p1.getY()), true));
   }
 
+  // generated stats
+  @Override
+  public void clearStats() {
+    stats[Stats.power] = 3f;
+    stats[Stats.range] = 500f;
+    stats[Stats.pierce] = 1000f;
+    stats[Stats.cd] = 1000f;
+    stats[Stats.projectileDuration] = 8f;
+    stats[Stats.bulletSize] = 220f;
+    stats[Stats.speed] = 3.5f;
+    stats[Stats.cost] = 100f;
+    stats[Stats.size] = 50f;
+    stats[Stats.spritesize] = 150f;
+  }
+
   private static class eater {
 
     final List<Projectile> eaten;
@@ -78,7 +91,8 @@ public class EatingTurret extends Turret {
       other.setActive(false);
       other.setRotation(Data.gameMechanicsRng.nextFloat() * 360);
       other.addBuff(
-          new StatBuff<Projectile>(Type.MORE, Float.POSITIVE_INFINITY, Projectile.Stats.power, powerMult));
+          new StatBuff<Projectile>(Type.MORE, Float.POSITIVE_INFINITY, Projectile.Stats.power,
+              powerMult));
       other.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
       return true;
     }
@@ -89,22 +103,6 @@ public class EatingTurret extends Turret {
         p.setActive(true);
       }
     }
-  }
-
-
-  // generated stats
-  @Override
-  public void clearStats() {
-      stats[Stats.power] = 3f;
-      stats[Stats.range] = 500f;
-      stats[Stats.pierce] = 1000f;
-      stats[Stats.cd] = 1000f;
-      stats[Stats.projectileDuration] = 8f;
-      stats[Stats.bulletSize] = 220f;
-      stats[Stats.speed] = 3.5f;
-      stats[Stats.cost] = 100f;
-      stats[Stats.size] = 50f;
-      stats[Stats.spritesize] = 150f;
   }
   // end of generated stats
 }

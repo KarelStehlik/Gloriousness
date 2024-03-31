@@ -6,17 +6,13 @@ import java.awt.Rectangle;
 public class GameObject {
 
   public final long id;
+  protected final float[] stats = new float[getStatsCount()];
   private final Rectangle hitbox;
   public long lastChecked = -9223372036854775807L;
   protected float x, y;
   protected int width, height;
   protected float rotation;
   protected World world;
-
-  protected int getStatsCount(){return 0;}
-  protected final float[] stats = new float[getStatsCount()];
-  public float[] getStats(){return stats;}
-  public void clearStats(){};
 
   protected GameObject(float X, float Y, int W, int H, World w) {
     x = X;
@@ -26,6 +22,17 @@ public class GameObject {
     world = w;
     hitbox = new Rectangle((int) (x - width / 2), (int) (y + height / 2), width, height);
     id = Util.getUid();
+  }
+
+  protected int getStatsCount() {
+    return 0;
+  }
+
+  public float[] getStats() {
+    return stats;
+  }
+
+  public void clearStats() {
   }
 
   public float getX() {

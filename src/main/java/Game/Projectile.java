@@ -2,7 +2,6 @@ package Game;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
-import general.RefFloat;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,18 +23,6 @@ public class Projectile extends GameObject implements TickDetect {
   private float rotation;
   private boolean alreadyHitPlayer = false;
 
-  @Override
-  protected int getStatsCount(){
-    return 5;
-  }
-  public static class Stats{
-    public static final int pierce=0;
-    public static final int speed=1;
-    public static final int size=2;
-    public static final int duration=3;
-    public static final int power=4;
-  }
-
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
@@ -43,7 +30,7 @@ public class Projectile extends GameObject implements TickDetect {
     sprite.setRotation(rotation - 90);
     world.getBs().addSprite(sprite);
     stats[Stats.pierce] = pierce;
-    stats[Stats.speed ]= speed;
+    stats[Stats.speed] = speed;
     vx = Util.cos(rotation) * speed;
     vy = Util.sin(rotation) * speed;
     stats[Stats.size] = size;
@@ -51,7 +38,7 @@ public class Projectile extends GameObject implements TickDetect {
     this.rotation = rotation;
     alreadyHitMobs = new HashSet<>(pierce);
     alreadyHitProjectiles = new HashSet<>(pierce);
-    stats[Stats.power ]= power;
+    stats[Stats.power] = power;
   }
 
   public static void bounce(Projectile p) {
@@ -77,6 +64,11 @@ public class Projectile extends GameObject implements TickDetect {
       p.move(p.x, 2 * World.HEIGHT - maxy - s);
       p.setRotation(-p.rotation);
     }
+  }
+
+  @Override
+  protected int getStatsCount() {
+    return 5;
   }
 
   public boolean addBuff(Buff<Projectile> buff) {
@@ -163,7 +155,8 @@ public class Projectile extends GameObject implements TickDetect {
 
   private void handleCollisions() {
     if (!mobCollides.isEmpty()) {
-      world.getMobsGrid().callForEachCircle((int) x, (int) y, (int) (stats[Stats.size] / 2), this::collide);
+      world.getMobsGrid()
+          .callForEachCircle((int) x, (int) y, (int) (stats[Stats.size] / 2), this::collide);
     }
 
     if (!playerCollides.isEmpty()) {
@@ -241,5 +234,14 @@ public class Projectile extends GameObject implements TickDetect {
   public interface OnCollideComponent<T extends GameObject> {
 
     boolean collide(Projectile proj, T target);
+  }
+
+  public static class Stats {
+
+    public static final int pierce = 0;
+    public static final int speed = 1;
+    public static final int size = 2;
+    public static final int duration = 3;
+    public static final int power = 4;
   }
 }
