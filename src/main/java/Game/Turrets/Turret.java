@@ -9,6 +9,7 @@ import Game.GameObject;
 import Game.TdMob;
 import Game.TickDetect;
 import Game.World;
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0,0, world);
     setSize((int)stats[Turret.Stats.size], (int)stats[Turret.Stats.size]);
+    clearStats();
 
     sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize], 2);
     sprite.setPosition(x, y);
@@ -51,7 +53,6 @@ public abstract class Turret extends GameObject implements TickDetect {
     Game.get().addTickable(this);
     onStatsUpdate();
     buffHandler = new BuffHandler<>(this);
-    Game.get().addMouseDetect(new Button(this.sprite, (mouseX, mouseY) -> {if(!notYetPlaced){openUpgradeMenu();}}));
     world.addTurret(this);
   }
 
@@ -60,11 +61,14 @@ public abstract class Turret extends GameObject implements TickDetect {
     super.move(_x,_y);
     sprite.setPosition(_x,_y);
     rangeDisplay.setPosition(_x,_y);
+    bulletLauncher.move(_x,_y);
   }
 
   public void place(){
     notYetPlaced = false;
     rangeDisplay.setHidden(true);
+    Button butt = new Button(this.sprite, (mouseX, mouseY) -> {if(!notYetPlaced){openUpgradeMenu();}});
+    Game.get().addMouseDetect(butt);
   }
 
   protected abstract List<Upgrade> getUpgradePath1();
@@ -120,6 +124,10 @@ public abstract class Turret extends GameObject implements TickDetect {
   @Override
   public boolean WasDeleted() {
     return sprite.isDeleted();
+  }
+
+  public boolean isNotYetPlaced() {
+    return notYetPlaced;
   }
 
   protected static class Upgrade {

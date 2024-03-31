@@ -2,7 +2,7 @@ package Game;
 
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.Player.ExtraStats;
+import Game.Player.Stats;
 import general.Data;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
-          world.getPlayer().stats, ExtraStats.projPower, 2));
+          Stats.projPower, 2));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
-          world.getPlayer().stats, ExtraStats.cd, .5f));
+          Player.Stats.cd, .5f));
     }
 
     @Override

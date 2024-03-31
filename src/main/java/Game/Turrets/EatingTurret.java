@@ -8,6 +8,7 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.Projectile;
+import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
@@ -77,7 +78,7 @@ public class EatingTurret extends Turret {
       other.setActive(false);
       other.setRotation(Data.gameMechanicsRng.nextFloat() * 360);
       other.addBuff(
-          new StatBuff<Projectile>(Type.MORE, Float.POSITIVE_INFINITY, other.power, powerMult));
+          new StatBuff<Projectile>(Type.MORE, Float.POSITIVE_INFINITY, Projectile.Stats.power, powerMult));
       other.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
       return true;
     }

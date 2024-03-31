@@ -73,10 +73,10 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
         dpTick -= ig.damagePerTick;
       }
 
-      float power = dpTick / target.stats[Stats.health] * 1000;
-      fireSprite.setSize(power * target.stats[Stats.size], power * target.stats[Stats.size]);
+      float power = dpTick / target.getStats()[Stats.health] * 1000;
+      fireSprite.setSize(power * target.getStats()[Stats.size], power * target.getStats()[Stats.size]);
       fireSprite.setPosition(target.getX(),
-          target.getY() + power * target.stats[Stats.size] * .4f);
+          target.getY() + power * target.getStats()[Stats.size] * .4f);
       target.takeDamage(dpTick, DamageType.TRUE);
       if (ignites.isEmpty()) {
         fireSprite.setHidden(true);

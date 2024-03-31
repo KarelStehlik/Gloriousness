@@ -2,6 +2,7 @@ package Game;
 
 import Game.Turrets.Turret;
 import Game.Turrets.Turret.Stats;
+import general.Log;
 import general.Util;
 import windowStuff.Button;
 import windowStuff.NoSprite;
@@ -22,19 +23,29 @@ public class TurretGenerator {
   }
 
   public boolean generate(int x, int y) {
+    Log.write("pad");
     if (!world.canFitTurret(x, y, pending.stats[Stats.size]) || !world.tryPurchase(pending.stats[Stats.cost])) {
       return false;
     }
+
     pending.place();
     return true;
   }
 
   public void select() {
-    pending=func.make();
+    Log.write(this.label);
     var tool = new PlaceObjectTool(world,
         new NoSprite(),
-        this::generate).setOnMove(pending::move);
+        this::generate);
     world.setCurrentTool(tool);
+    pending=func.make();
+    tool.
+        setOnMove(pending::move).
+        setOnDelete(()->{if(pending.isNotYetPlaced()) {
+          pending.delete();
+          this.pending=null;
+        }
+        });
   }
 
   public Button makeButton() {

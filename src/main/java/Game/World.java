@@ -116,8 +116,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         explosionVisual(x, y, 100, true, "Explosion1-0");
       }
       player.addBuff(
-          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.stats,
-              Player.ExtraStats.cd, 0.5f));
+          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, Player.Stats.cd, 0.5f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
@@ -363,8 +362,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       Turret t = iterator.next();
       if (t.WasDeleted()) {
         iterator.remove();
-      } else if (Util.distanceSquared(x - t.x, y - t.y)
-          < Util.square(size + t.baseStats.size.get()) / 4) {
+      } else if (!t.isNotYetPlaced() && Util.distanceSquared(x - t.x, y - t.y)
+          < Util.square(size + t.stats[Turret.Stats.size]) / 4) {
         return false;
       }
     }
@@ -423,10 +422,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         final float hpScaling = scaling(wave) * 1000;
         final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
         e.addBuff(
-            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health,
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, Stats.health,
                 hpScaling));
         e.addBuff(
-            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, e.stats, Stats.health,
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, Stats.health,
                 spdScaling));
         addEnemy(e);
       }
