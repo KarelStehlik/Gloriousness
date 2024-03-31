@@ -7,13 +7,11 @@ import Game.BulletLauncher;
 import Game.TurretGenerator;
 import Game.World;
 import general.Log;
-import general.RefFloat;
 import java.util.List;
 
 public class BasicTurret extends Turret {
 
   public static final String image = "BasicTower";
-  public final ExtraStats extraStats = new ExtraStats();
 
   public BasicTurret(World world, int X, int Y) {
     super(world, X, Y, image,
@@ -57,36 +55,18 @@ public class BasicTurret extends Turret {
   }
 
   // generated stats
-  public static final class ExtraStats {
-
-    public ExtraStats() {
-      init();
-    }
-
-    public void init() {
-
-    }
-  }
-
-  public static final class Stats extends BaseStats {
-
-    public Stats() {
-      init();
-    }
-
-    @Override
-    public void init() {
-      power = new RefFloat(100);
-      range = new RefFloat(500);
-      pierce = new RefFloat(100);
-      cd = new RefFloat(1);
-      projectileDuration = new RefFloat(2);
-      bulletSize = new RefFloat(50);
-      speed = new RefFloat(15);
-      cost = new RefFloat(100);
-      size = new RefFloat(50);
-      spritesize = new RefFloat(150);
-    }
+  @Override
+  public void clearStats() {
+      stats[Stats.power] = 100;
+    stats[Stats.range] =  500;
+    stats[Stats.pierce] = 100;
+    stats[Stats.cd] = 1;
+    stats[Stats.projectileDuration ]= 2;
+    stats[Stats.bulletSize ]= 50;
+    stats[Stats.speed] = 15;
+    stats[Stats.cost ]= 100;
+    stats[Stats.size]= 50;
+    stats[Stats.spritesize ]= 150;
   }
   // end of generated stats
 }

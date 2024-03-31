@@ -13,6 +13,11 @@ public class GameObject {
   protected float rotation;
   protected World world;
 
+  protected int getStatsCount(){return 0;}
+  protected final float[] stats = new float[getStatsCount()];
+  public float[] getStats(){return stats;}
+  public void clearStats(){};
+
   protected GameObject(float X, float Y, int W, int H, World w) {
     x = X;
     y = Y;

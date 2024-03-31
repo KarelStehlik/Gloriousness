@@ -2,10 +2,6 @@ package Game;
 
 public class BasicMob extends TdMob {
 
-
-  // generated stats
-  public final float[] extraStats = new float[0];
-
   public BasicMob(World world) {
     super(world, "Basic", "Golem");
   }
@@ -19,6 +15,7 @@ public class BasicMob extends TdMob {
     world.addEnemy(new BasicMob(this, 50));
   }
 
+  // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 20f;

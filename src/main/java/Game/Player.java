@@ -15,15 +15,18 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   private static final int HEIGHT = 200, WIDTH = 100;
   private static final float speed = 10;
-  public final float[] baseStats = new float[0];
-  // generated stats
-  public final float[] extraStats = new float[8];
+  private final float[] stats = new float[8];
   private final UserInputListener input;
   private final Sprite sprite;
   private final BulletLauncher bulletLauncher;
   private final BuffHandler<Player> buffHandler;
   protected double healthPart;
   private float vx, vy;
+
+  @Override
+  public float[] getStats(){
+    return stats;
+  }
 
   public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world);
@@ -36,7 +39,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        30, 30, 50, 30, 3, 100, extraStats[ExtraStats.cd]);
+        30, 30, 50, 30, 3, 100, stats[ExtraStats.cd]);
     bulletLauncher.addMobCollide(
         BasicCollides.explode
     );
@@ -51,17 +54,17 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setSize(extraStats[ExtraStats.projSize]);
-    bulletLauncher.setSpeed(extraStats[ExtraStats.projSpeed]);
-    bulletLauncher.setPierce((int) extraStats[ExtraStats.projPierce]);
-    bulletLauncher.setDuration(extraStats[ExtraStats.projDuration]);
-    bulletLauncher.setCooldown(extraStats[ExtraStats.cd]);
-    bulletLauncher.setPower(extraStats[ExtraStats.projPower]);
+    bulletLauncher.setSize(stats[ExtraStats.projSize]);
+    bulletLauncher.setSpeed(stats[ExtraStats.projSpeed]);
+    bulletLauncher.setPierce((int) stats[ExtraStats.projPierce]);
+    bulletLauncher.setDuration(stats[ExtraStats.projDuration]);
+    bulletLauncher.setCooldown(stats[ExtraStats.cd]);
+    bulletLauncher.setPower(stats[ExtraStats.projPower]);
   }
 
   public void takeDamage(float amount, DamageType type) {
     float resistance = 1;
-    healthPart -= amount * resistance / extraStats[ExtraStats.health];
+    healthPart -= amount * resistance / stats[ExtraStats.health];
     if (healthPart < 0) {
       world.endGame();
     }
@@ -104,16 +107,45 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     sprite.setPosition(x, y);
   }
 
-  public void clearStats() {
-    extraStats[ExtraStats.speed] = 1f;
-    extraStats[ExtraStats.health] = 100f;
-    extraStats[ExtraStats.cd] = 999f;
-    extraStats[ExtraStats.projSize] = 10f;
-    extraStats[ExtraStats.projSpeed] = 30f;
-    extraStats[ExtraStats.projPierce] = 100f;
-    extraStats[ExtraStats.projDuration] = 4f;
-    extraStats[ExtraStats.projPower] = 100f;
+  // generated stats
+  public static final class ExtraStats {
+
+    public ExtraStats() {
+      init();
+    }
+
+    public RefFloat speed = new RefFloat(1);
+    public RefFloat health = new RefFloat(100);
+    public RefFloat cd = new RefFloat(999);
+    public RefFloat projSize = new RefFloat(10);
+    public RefFloat projSpeed = new RefFloat(30);
+    public RefFloat projPierce = new RefFloat(100);
+    public RefFloat projDuration = new RefFloat(4);
+    public RefFloat projPower = new RefFloat(100);
+    public void init() {
+      speed = new RefFloat(1);
+      health = new RefFloat(100);
+      cd = new RefFloat(999);
+      projSize = new RefFloat(10);
+      projSpeed = new RefFloat(30);
+      projPierce = new RefFloat(100);
+      projDuration = new RefFloat(4);
+      projPower = new RefFloat(100);
+    }
   }
+
+  public static final class Stats extends BaseStats {
+
+    public Stats() {
+      init();
+    }
+
+    @Override
+    public void init() {
+
+    }
+  }
+  // end of generated stats
 
   public static final class ExtraStats {
 
@@ -128,5 +160,4 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     private ExtraStats() {
     }
   }
-  // end of generated stats
 }

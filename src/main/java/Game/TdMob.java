@@ -14,7 +14,9 @@ import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  public final float[] stats = new float[4];
+  @Override
+  protected int getStatsCount(){return 4;}
+
   protected final AbstractSprite sprite;
   protected final SquareGrid<TdMob> grid;
   protected final String name;
@@ -136,6 +138,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     sprite.setRotation(f);
   }
 
+  @Override
   public abstract void clearStats();
 
   public static class MoveAlongTrack<T extends GameObject> {

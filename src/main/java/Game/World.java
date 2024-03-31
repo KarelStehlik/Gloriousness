@@ -116,7 +116,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         explosionVisual(x, y, 100, true, "Explosion1-0");
       }
       player.addBuff(
-          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.extraStats,
+          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, player.stats,
               Player.ExtraStats.cd, 0.5f));
     }, null));
 

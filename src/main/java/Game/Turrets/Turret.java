@@ -9,7 +9,6 @@ import Game.GameObject;
 import Game.TdMob;
 import Game.TickDetect;
 import Game.World;
-import general.RefFloat;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -25,17 +24,15 @@ public abstract class Turret extends GameObject implements TickDetect {
       () -> "here is a number. " + Game.get().getTicks(), () -> {
   }, Float.POSITIVE_INFINITY);
   private static UpgradeMenu menu;
-  public final BaseStats baseStats;
   protected final BulletLauncher bulletLauncher;
   protected final Sprite sprite;
   private final BuffHandler<Turret> buffHandler;
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
 
-  protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher,
-      BaseStats newStats) {
-    super(X, Y, (int) newStats.size.get(), (int) newStats.size.get(), world);
-    baseStats = newStats;
-    sprite = new Sprite(imageName, newStats.spritesize.get(), newStats.spritesize.get(), 2);
+  protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
+    super(X, Y, 0,0, world);
+    setSize((int)stats[Turret.Stats.size], (int)stats[Turret.Stats.size]);
+    sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize], 2);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
@@ -67,19 +64,19 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setDuration(baseStats.projectileDuration.get());
-    bulletLauncher.setPierce((int) baseStats.pierce.get());
-    bulletLauncher.setPower(baseStats.power.get());
-    bulletLauncher.setSize(baseStats.bulletSize.get());
-    bulletLauncher.setSpeed(baseStats.speed.get());
-    bulletLauncher.setCooldown(baseStats.cd.get());
+    bulletLauncher.setDuration(stats[Turret.Stats.projectileDuration]);
+    bulletLauncher.setPierce((int) stats[Turret.Stats.pierce]);
+    bulletLauncher.setPower(stats[Turret.Stats.power]);
+    bulletLauncher.setSize(stats[Turret.Stats.bulletSize]);
+    bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
+    bulletLauncher.setCooldown(stats[Turret.Stats.cd]);
   }
 
   @Override
   public void onGameTick(int tick) {
     bulletLauncher.tickCooldown();
     TdMob target = world.getMobsGrid()
-        .getFirst(new Point((int) x, (int) y), (int) baseStats.range.get());
+        .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
     if (target != null) {
       var rotation = Util.get_rotation(target.getX() - x, target.getY() - y);
       while (bulletLauncher.canAttack()) {
@@ -120,25 +117,26 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
   }
 
-  public static class BaseStats {
+  @Override
+  protected int getStatsCount(){
+    return 10;
+  }
+  public static class Stats {
 
-    public RefFloat power;
-    public RefFloat range;
-    public RefFloat pierce;
-    public RefFloat cd;
-    public RefFloat projectileDuration;
-    public RefFloat bulletSize;
-    public RefFloat speed;
-    public RefFloat cost;
-    public RefFloat size;
-    public RefFloat spritesize;
+    public static final int power=0;
+    public static final int  range=1;
+    public static final int  pierce=2;
+    public static final int  cd=3;
+    public static final int  projectileDuration=4;
+    public static final int  bulletSize=5;
+    public static final int  speed=6;
+    public static final int  cost=7;
+    public static final int  size=8;
+    public static final int  spritesize=9;
 
-    public BaseStats() {
-      init();
+    private Stats() {
     }
 
-    public void init() {
-    }
   }
 
   private class UpgradeMenu {
@@ -149,7 +147,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     UpgradeMenu() {
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       sprites.add(new Sprite("Shockwave", 1).
-          setSize(2 * baseStats.range.get(), 2 * baseStats.range.get()).
+          setSize(2 * stats[Turret.Stats.range], 2 * stats[Turret.Stats.range]).
           setPosition(x, y).
           addToBs(bs).
           setOpacity(0.3f)

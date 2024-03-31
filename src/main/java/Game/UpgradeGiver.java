@@ -42,7 +42,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
-          world.getPlayer().extraStats, ExtraStats.projPower, 2));
+          world.getPlayer().stats, ExtraStats.projPower, 2));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
-          world.getPlayer().extraStats, ExtraStats.cd, .5f));
+          world.getPlayer().stats, ExtraStats.cd, .5f));
     }
 
     @Override

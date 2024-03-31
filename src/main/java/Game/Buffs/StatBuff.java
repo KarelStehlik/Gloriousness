@@ -12,16 +12,14 @@ import java.util.TreeSet;
 public class StatBuff<T extends GameObject> implements Buff<T> {
 
   private final Type type;
-  private final float[] stats;
   private final int statModified;
   private final float value;
   private final long id;
   private final float expiry;
 
-  public StatBuff(Type type, float duration, float[] stats, int statModified, float value) {
+  public StatBuff(Type type, float duration, int statModified, float value) {
     this.expiry = Game.get().getTicks() + duration / Game.tickIntervalMillis;
     this.type = type;
-    this.stats = stats;
     this.statModified = statModified;
     this.value = value;
     id = Util.getUid();
@@ -46,19 +44,17 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
     final float ogValue;
     final int target;
-    final float[] stats;
     float added = 0, increased = 1;
     double more = 1;
     //Map<Float, Integer> moreModifiers = new HashMap<>(1);
 
     TotalModifier(float[] stats, int target) {
       this.target = target;
-      this.stats = stats;
       ogValue = stats[target];
     }
 
-    void apply() {
-      stats[target] = Math.max((ogValue + added) * increased * (float) more, 0);
+    void apply(GameObject tar) {
+      tar.getStats()[target] = Math.max((ogValue + added) * increased * (float) more, 0);
     }
 
     void addAdded(float value) {
@@ -85,26 +81,26 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       more /= value;
     }
 
-    void add(StatBuff<?> b) {
+    void add(StatBuff<?> b, GameObject tar) {
       switch (b.type) {
         case MORE -> addMore(b.value);
         case ADDED -> addAdded(b.value);
         case INCREASED -> increase(b.value);
       }
-      apply();
+      apply(tar);
     }
 
-    void remove(StatBuff<?> b) {
+    void remove(StatBuff<?> b, GameObject tar) {
       switch (b.type) {
         case MORE -> removeMore(b.value);
         case ADDED -> addAdded(-b.value);
         case INCREASED -> increase(-b.value);
       }
-      apply();
+      apply(tar);
     }
 
-    void delete() {
-      stats[target] = ogValue;
+    void delete(GameObject tar) {
+      tar.getStats()[target] = ogValue;
       //moreModifiers.clear();
     }
   }
@@ -123,8 +119,8 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
         buffsByExpiration.add(buff);
       }
       TotalModifier mod = modifiers.computeIfAbsent(buff.statModified,
-          s -> new TotalModifier(stats, statModified));
-      mod.add(buff);
+          s -> new TotalModifier(target.getStats(),statModified));
+      mod.add(buff, target);
       target.onStatsUpdate();
       return true;
     }
@@ -139,7 +135,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
           break;
         }
         iterator.remove();
-        modifiers.get(buff.statModified).remove(buff);
+        modifiers.get(buff.statModified).remove(buff, target);
         changed = true;
       }
       if (changed) {
@@ -149,7 +145,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
     @Override
     public void delete(T target) {
-      modifiers.values().forEach(TotalModifier::delete);
+      modifiers.values().forEach(m->m.delete(target));
       modifiers.clear();
       buffsByExpiration.clear();
     }
