@@ -3,6 +3,7 @@ package Game;
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
 import Game.Mobs.TdMob;
+import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,6 +68,12 @@ public class Projectile extends GameObject implements TickDetect {
     }
   }
 
+  public void clearCollisions() {
+    alreadyHitPlayer = false;
+    alreadyHitProjectiles.clear();
+    alreadyHitMobs.clear();
+  }
+
   @Override
   protected int getStatsCount() {
     return 5;
@@ -84,6 +91,7 @@ public class Projectile extends GameObject implements TickDetect {
     stats[Stats.pierce] += amount;
     if (stats[Stats.pierce] <= 0) {
       delete();
+      Log.write("dee");
     }
   }
 
@@ -113,6 +121,13 @@ public class Projectile extends GameObject implements TickDetect {
   public void move(float _x, float _y) {
     super.move(_x, _y);
     sprite.setPosition(x, y);
+  }
+
+  @Override
+  public void onStatsUpdate() {
+    sprite.setSize(stats[Stats.size], stats[Stats.size]);
+    vx = Util.cos(rotation) * stats[Stats.speed];
+    vy = Util.sin(rotation) * stats[Stats.speed];
   }
 
   @Override

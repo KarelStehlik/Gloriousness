@@ -13,6 +13,7 @@ import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
 import Game.Mobs.TdMob.Stats;
 import Game.Turrets.BasicTurret;
+import Game.Turrets.Druid;
 import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
 import Game.Turrets.IgniteTurret;
@@ -99,8 +100,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator necro = Necromancer.generator(this);
 
+    TurretGenerator druid = Druid.generator(this);
+
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
-        testEmp, testEating, necro};
+        testEmp, testEating, necro, druid};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton()).toArray(Button[]::new),
@@ -123,6 +126,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
         0, 1050, 10, 40, bs);
+    resourceTracker.setColors(Util.getColors(1, 1, 1));
 
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
@@ -354,8 +358,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     wave++;
     waveRunning = true;
     mobSpawner.onBeginWave(wave);
-    Text text = new Text("Wave " + wave, "Calibri", 2000, 0, Constants.screenSize.y / 2, 10, 500,
-        bs);
+    Text text = new Text("Wave " + wave, "Calibri", 1800, 60, Constants.screenSize.y / 2, 10, 490,
+        bs, "colorCycle2", "Button");
+    text.setColors(Util.getCycle2colors(1));
     Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
   }
 
@@ -427,7 +432,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
             new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, Stats.health,
                 hpScaling));
         e.addBuff(
-            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, Stats.health,
+            new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, Stats.speed,
                 spdScaling));
         addEnemy(e);
       }

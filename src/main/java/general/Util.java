@@ -113,6 +113,15 @@ public final class Util {
     };
   }
 
+  public static float[] getColors(float r, float g, float b) {
+    return new float[]{
+        r, g, b, 1,
+        r, g, b, 1,
+        r, g, b, 1,
+        r, g, b, 1,
+    };
+  }
+
   public static float[] getCycleColors() {
     return cycleColors;
   }

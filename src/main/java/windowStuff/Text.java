@@ -1,6 +1,7 @@
 package windowStuff;
 
 import general.Constants;
+import general.Util;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -18,7 +19,7 @@ public class Text {
   private float fontSize;
   private float scale;
   private ArrayList<Symbol> symbols;
-  private float[] colors = new float[]{0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
+  private float[] colors = Util.getColors(1, 1, 1);
   private boolean hidden = false;
   private int lineCount = 1;
 
@@ -43,7 +44,7 @@ public class Text {
     if (backgroundImage == null) {
       background = new NoSprite();
     } else {
-      background = new Sprite(backgroundImage, width, fontSize, layer, "basic");
+      background = new Sprite(backgroundImage, width, fontSize, layer, shader);
       background.addToBs(bs);
     }
 
@@ -140,7 +141,7 @@ public class Text {
     for (var symbol : symbols) {
       symbol.move(symbol.sprite.getX() + dx, symbol.sprite.getY() + dy);
     }
-    background.setPosition(newX + maxWidth / 2f, newY - lineCount * fontSize / 2);
+    background.setPosition(newX + maxWidth / 2f, newY - lineCount * fontSize / 2 + fontSize * .1f);
     x = newX;
     y = newY;
   }
@@ -170,8 +171,8 @@ public class Text {
 
     lineCount = line;
 
-    background.setPosition(x + maxWidth / 2f, y - line * fontSize / 2);
-    background.setSize(maxWidth, (line + 1) * fontSize);
+    background.setPosition(x + maxWidth / 2f, y - line * fontSize / 2 + fontSize * .1f);
+    background.setSize(maxWidth, (line + 1.2f) * fontSize);
   }
 
   public void delete() {

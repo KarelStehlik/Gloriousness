@@ -129,7 +129,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       StatBuff<T> buff = (StatBuff<T>) b;
       buffsByExpiration.add(buff);
       TotalModifier mod = modifiers.computeIfAbsent(buff.statModified,
-          s -> new TotalModifier(target.getStats(), statModified));
+          s -> new TotalModifier(target.getStats(), buff.statModified));
       mod.add(buff, target);
       target.onStatsUpdate();
       return true;

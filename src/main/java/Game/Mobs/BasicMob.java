@@ -24,6 +24,6 @@ public class BasicMob extends TdMob {
 
   @Override
   public void onDeath() {
-    world.addEnemy(new BasicMob(this, 50));
+    //world.addEnemy(new BasicMob(this, 50));
   }
 }
