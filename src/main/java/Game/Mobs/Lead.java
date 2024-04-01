@@ -15,7 +15,6 @@ public class Lead extends TdMob {
   public Lead(TdMob parent) {
     super(parent.world, "BloonLead", parent, parent.getChildrenSpread());
   }
-  // end of generated stats
 
   // generated stats
   @Override
@@ -25,6 +24,7 @@ public class Lead extends TdMob {
     stats[Stats.health] = 2f;
     stats[Stats.value] = 1f;
   }
+  // end of generated stats
 
   @Override
   protected List<ChildSpawner> children() {

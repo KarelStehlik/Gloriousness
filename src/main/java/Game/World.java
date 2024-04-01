@@ -505,6 +505,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
       private final float cost;
       private final Spawner spawn;
+
       BloonSpawn(float cost, Spawner newBloon) {
         this.cost = cost;
         spawn = newBloon;

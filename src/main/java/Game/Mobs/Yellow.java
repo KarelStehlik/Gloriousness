@@ -14,7 +14,6 @@ public class Yellow extends TdMob {
   public Yellow(TdMob parent) {
     super(parent.world, "BloonYellow", parent, 50);
   }
-  // end of generated stats
 
   // generated stats
   @Override
@@ -24,6 +23,7 @@ public class Yellow extends TdMob {
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }
+  // end of generated stats
 
   @Override
   protected List<ChildSpawner> children() {

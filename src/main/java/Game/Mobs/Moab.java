@@ -19,7 +19,6 @@ public class Moab extends TdMob {
     sprite.setSize(getStats()[Stats.size] * 1.5f, getStats()[Stats.size] * 0.7f);
     sprite.setLayer(2);
   }
-  // end of generated stats
 
   // generated stats
   @Override
@@ -29,6 +28,7 @@ public class Moab extends TdMob {
     stats[Stats.health] = 100f;
     stats[Stats.value] = 100f;
   }
+  // end of generated stats
 
   @Override
   protected List<ChildSpawner> children() {

@@ -20,7 +20,6 @@ public class SmallMoab extends TdMob {
     sprite.setSize(getStats()[Stats.size] * 1.1f, getStats()[Stats.size] * 0.8f);
     sprite.setLayer(2);
   }
-  // end of generated stats
 
   // generated stats
   @Override
@@ -30,6 +29,7 @@ public class SmallMoab extends TdMob {
     stats[Stats.health] = 500f;
     stats[Stats.value] = 80f;
   }
+  // end of generated stats
 
   @Override
   protected List<ChildSpawner> children() {

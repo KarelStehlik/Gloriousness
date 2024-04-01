@@ -14,7 +14,6 @@ public class Black extends TdMob {
   public Black(TdMob parent) {
     super(parent.world, "BloonBlack", parent, parent.getChildrenSpread());
   }
-  // end of generated stats
 
   // generated stats
   @Override
@@ -24,6 +23,7 @@ public class Black extends TdMob {
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }
+  // end of generated stats
 
   @Override
   protected List<ChildSpawner> children() {

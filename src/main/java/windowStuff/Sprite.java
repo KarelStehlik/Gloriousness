@@ -101,6 +101,30 @@ public class Sprite implements AbstractSprite {
     return this;
   }
 
+  @Override
+  public Sprite setPosition(float X, float Y) {
+    setX(X);
+    setY(Y);
+    hasUnsavedChanges = true;
+    return this;
+  }
+
+  @Override
+  public Sprite scale(float multiplier) {
+    width *= multiplier;
+    height *= multiplier;
+    hasUnsavedChanges = true;
+    return this;
+  }
+
+  @Override
+  public Sprite setSize(float w, float h) {
+    width = w / 2;
+    height = h / 2;
+    hasUnsavedChanges = true;
+    return this;
+  }
+
   public float[] getColors() {
     return colors;
   }
@@ -149,30 +173,6 @@ public class Sprite implements AbstractSprite {
   public void setLayer(int layer) {
     mustBeRebatched = true;
     this.layer = layer;
-  }
-
-  @Override
-  public Sprite setPosition(float X, float Y) {
-    setX(X);
-    setY(Y);
-    hasUnsavedChanges = true;
-    return this;
-  }
-
-  @Override
-  public Sprite scale(float multiplier) {
-    width *= multiplier;
-    height *= multiplier;
-    hasUnsavedChanges = true;
-    return this;
-  }
-
-  @Override
-  public Sprite setSize(float w, float h) {
-    width = w / 2;
-    height = h / 2;
-    hasUnsavedChanges = true;
-    return this;
   }
 
   @Override

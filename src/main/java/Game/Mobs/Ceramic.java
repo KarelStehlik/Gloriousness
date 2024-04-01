@@ -14,7 +14,6 @@ public class Ceramic extends TdMob {
   public Ceramic(TdMob parent) {
     super(parent.world, "BloonCeramic", parent, parent.getChildrenSpread());
   }
-  // end of generated stats
 
   // generated stats
   @Override
@@ -24,6 +23,7 @@ public class Ceramic extends TdMob {
     stats[Stats.health] = 10f;
     stats[Stats.value] = 0f;
   }
+  // end of generated stats
 
   @Override
   protected List<ChildSpawner> children() {
