@@ -206,8 +206,8 @@ public abstract class Turret extends GameObject implements TickDetect {
       List<Upgrade> p3 = getUpgradePath3();
 
       Upgrade u1 = path1Tier < p1.size() ? p1.get(path1Tier) : maxUpgrades;
-      Upgrade u2 = path1Tier < p2.size() ? p2.get(path1Tier) : maxUpgrades;
-      Upgrade u3 = path1Tier < p3.size() ? p3.get(path1Tier) : maxUpgrades;
+      Upgrade u2 = path2Tier < p2.size() ? p2.get(path2Tier) : maxUpgrades;
+      Upgrade u3 = path3Tier < p3.size() ? p3.get(path3Tier) : maxUpgrades;
 
       buttons.add(
           new Button(bs, u1.makeSprite().setPosition(x, y - 50), (mx, my) -> buttonClicked(u1, 1),

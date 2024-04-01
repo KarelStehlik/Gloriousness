@@ -17,7 +17,7 @@ public class Pink extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 34.0f;
-    stats[Stats.speed] = 4.2f;
+    stats[Stats.speed] = 7f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }

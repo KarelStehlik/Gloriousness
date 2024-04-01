@@ -27,7 +27,7 @@ public class Necromancer extends Turret {
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.fire);
     bulletLauncher.setSpread(45);
-    bulletLauncher.setProjectileModifier(p -> {
+    bulletLauncher.addProjectileModifier(p -> {
       TrackPoint initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0, spawnPoints.size()));
       p.move(initPoint.x, initPoint.y);
       TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,
@@ -105,14 +105,14 @@ public class Necromancer extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.power] = 100f;
+    stats[Stats.power] = 1f;
     stats[Stats.range] = 500f;
-    stats[Stats.pierce] = 1000f;
-    stats[Stats.cd] = 1f;
+    stats[Stats.pierce] = 1f;
+    stats[Stats.cd] = 10f;
     stats[Stats.projectileDuration] = 20f;
-    stats[Stats.bulletSize] = 60f;
+    stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 10f;
-    stats[Stats.cost] = 100f;
+    stats[Stats.cost] = 200f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
   }

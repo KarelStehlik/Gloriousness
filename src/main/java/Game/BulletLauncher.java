@@ -7,6 +7,7 @@ import general.Data;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class BulletLauncher {
 
@@ -27,8 +28,7 @@ public class BulletLauncher {
   private float cooldown;
   private float spread = 0;
   private float remainingCooldown;
-  private Modifier<Projectile> projectileModifier = p -> {
-  };
+  private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
@@ -72,8 +72,8 @@ public class BulletLauncher {
     projectileCollides.addAll(og.projectileCollides);
   }
 
-  public void setProjectileModifier(Modifier<Projectile> projectileModifier) {
-    this.projectileModifier = projectileModifier;
+  public void addProjectileModifier(Modifier<Projectile> projectileModifier) {
+    projectileModifiers.add(projectileModifier);
   }
 
   public void setImage(String image) {
@@ -146,7 +146,9 @@ public class BulletLauncher {
     Projectile p = new Projectile(world, image, x, y, speed, angle + deviation, width, height,
         pierce, size,
         duration, power);
-    projectileModifier.mod(p);
+    for(var pm : projectileModifiers){
+      pm.mod(p);
+    }
     world.getProjectilesList().add(p);
     for (var collide : playerCollides) {
       p.addPlayerCollide(collide);

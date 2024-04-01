@@ -27,15 +27,19 @@ public final class BasicCollides {
   };
   private static World _world;
   public static final Projectile.OnCollideComponent<TdMob> explode = (proj, target) -> explodeFunc(
-      proj, proj.getPower());
+      (int)proj.x, (int)proj.y, proj.getPower(), proj.getPower());
 
   private BasicCollides() {
   }
 
-  public static boolean explodeFunc(Projectile proj, float power) {
-    _world.aoeDamage((int) proj.x, (int) proj.y, (int) power, power,
+  public static boolean explodeFunc(int x, int y, float power, float radius){
+    return explodeFunc(x,y,power,radius,"Explosion1-0");
+  }
+
+  public static boolean explodeFunc(int x, int y, float power, float radius, String animation) {
+    _world.aoeDamage(x, y, (int) radius, power,
         DamageType.TRUE);
-    _world.explosionVisual(proj.x, proj.y, power, false, "Explosion1-0");
+    _world.explosionVisual(x, y, radius, false, animation);
     return true;
   }
 

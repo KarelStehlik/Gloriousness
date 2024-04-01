@@ -18,7 +18,6 @@ public class BasicTurret extends Turret {
         new BulletLauncher(world, "Dart"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
-    bulletLauncher.setSpread(45);
   }
 
   public static TurretGenerator generator(World world) {
@@ -53,12 +52,12 @@ public class BasicTurret extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.power] = 100f;
+    stats[Stats.power] = 1f;
     stats[Stats.range] = 500f;
-    stats[Stats.pierce] = 100f;
-    stats[Stats.cd] = 1f;
+    stats[Stats.pierce] = 2f;
+    stats[Stats.cd] = 1400f;
     stats[Stats.projectileDuration] = 2f;
-    stats[Stats.bulletSize] = 50f;
+    stats[Stats.bulletSize] = 30f;
     stats[Stats.speed] = 15f;
     stats[Stats.cost] = 100f;
     stats[Stats.size] = 50f;

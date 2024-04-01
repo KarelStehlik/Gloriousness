@@ -37,7 +37,6 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     bulletLauncher.addMobCollide(
         BasicCollides.damage
     );
-    bulletLauncher.setSpread(0);
     onStatsUpdate();
     buffHandler = new BuffHandler<>(this);
   }
@@ -101,10 +100,10 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   public void clearStats() {
     stats[Stats.speed] = 1f;
     stats[Stats.health] = 100f;
-    stats[Stats.cd] = 400f;
+    stats[Stats.cd] = 1000f;
     stats[Stats.projSize] = 18f;
-    stats[Stats.projSpeed] = 30f;
-    stats[Stats.projPierce] = 1f;
+    stats[Stats.projSpeed] = 20f;
+    stats[Stats.projPierce] = 2f;
     stats[Stats.projDuration] = 4f;
     stats[Stats.projPower] = 1f;
   }

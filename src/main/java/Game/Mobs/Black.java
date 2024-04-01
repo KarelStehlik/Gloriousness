@@ -17,7 +17,7 @@ public class Black extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 34.0f;
-    stats[Stats.speed] = 1.3f;
+    stats[Stats.speed] = 3f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }

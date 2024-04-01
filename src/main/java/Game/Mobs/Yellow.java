@@ -17,7 +17,7 @@ public class Yellow extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 34.0f;
-    stats[Stats.speed] = 3.8f;
+    stats[Stats.speed] = 5f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }

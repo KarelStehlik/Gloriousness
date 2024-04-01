@@ -18,7 +18,7 @@ public class Lead extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 34.0f;
-    stats[Stats.speed] = 0.15f;
+    stats[Stats.speed] = 1f;
     stats[Stats.health] = 2f;
     stats[Stats.value] = 1f;
   }

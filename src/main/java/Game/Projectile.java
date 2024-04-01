@@ -2,22 +2,26 @@ package Game;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
+import Game.Buffs.Modifier;
 import Game.Mobs.TdMob;
+import Game.Turrets.Turret.Stats;
 import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
 
   private final Sprite sprite;
-  private final Collection<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
+  private final Collection<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
   private final Collection<TdMob> alreadyHitMobs;
-  private final Collection<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
+  private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
   private final Collection<Projectile> alreadyHitProjectiles;
-  private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
+  private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
+  private final Collection<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
   private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
   private float vx, vy;
   private boolean wasDeleted = false;
@@ -90,7 +94,12 @@ public class Projectile extends GameObject implements TickDetect {
   protected void changePierce(int amount) {
     stats[Stats.pierce] += amount;
     if (stats[Stats.pierce] <= 0) {
-      delete();
+      for(var eff: beforeDeath){
+        eff.mod(this);
+      }
+      if (stats[Stats.duration] <= 0 || stats[Stats.pierce]<=0) {
+        delete();
+      }
     }
   }
 
@@ -140,7 +149,12 @@ public class Projectile extends GameObject implements TickDetect {
     world.getProjectilesGrid().add(this);
     stats[Stats.duration] -= Game.tickIntervalMillis;
     if (stats[Stats.duration] <= 0) {
-      delete();
+      for(var eff: beforeDeath){
+        eff.mod(this);
+      }
+      if (stats[Stats.duration] <= 0 || stats[Stats.pierce]<=0) {
+        delete();
+      }
     }
   }
 
@@ -198,6 +212,10 @@ public class Projectile extends GameObject implements TickDetect {
     playerCollides.add(component);
   }
 
+  public void addBeforeDeath(Modifier<Projectile> component){
+    beforeDeath.add(component);
+  }
+
   protected void collide(TdMob e) {
     if (!active || wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)) {
       return;
@@ -214,6 +232,10 @@ public class Projectile extends GameObject implements TickDetect {
 
   public void addMobCollide(OnCollideComponent<TdMob> component) {
     mobCollides.add(component);
+  }
+
+  public void addMobCollide(OnCollideComponent<TdMob> component, int index) {
+    mobCollides.add(index,component);
   }
 
   public void handleProjectileCollision() {

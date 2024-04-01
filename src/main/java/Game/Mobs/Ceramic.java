@@ -17,9 +17,9 @@ public class Ceramic extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 34.0f;
-    stats[Stats.speed] = 3f;
+    stats[Stats.speed] = 3.8f;
     stats[Stats.health] = 10f;
-    stats[Stats.value] = 1f;
+    stats[Stats.value] = 0f;
   }
   // end of generated stats
 

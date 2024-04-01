@@ -17,8 +17,7 @@ public class EmpoweringTurret extends Turret {
         new BulletLauncher(world, "Buff"));
     onStatsUpdate();
     bulletLauncher.addProjectileCollide(this::collide);
-    bulletLauncher.setSpread(45);
-    bulletLauncher.setProjectileModifier(p -> p.addBuff(new UniqueBuff<>(id, p1 -> {
+    bulletLauncher.addProjectileModifier(p -> p.addBuff(new UniqueBuff<>(id, p1 -> {
     })));
   }
 
@@ -28,7 +27,7 @@ public class EmpoweringTurret extends Turret {
   }
 
   private static void addBuff(Projectile p2, float pow) {
-    p2.addMobCollide((proj2, mob) -> BasicCollides.explodeFunc(proj2, pow));
+    p2.addMobCollide((proj2, mob) -> BasicCollides.explodeFunc((int)proj2.getX(),(int)proj2.getY(), pow, pow));
   }
 
   @Override
@@ -58,12 +57,12 @@ public class EmpoweringTurret extends Turret {
   public void clearStats() {
     stats[Stats.power] = 100f;
     stats[Stats.range] = 500f;
-    stats[Stats.pierce] = 100f;
-    stats[Stats.cd] = 10f;
+    stats[Stats.pierce] = 1f;
+    stats[Stats.cd] = 1000f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 8f;
-    stats[Stats.cost] = 100f;
+    stats[Stats.cost] = 1000f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
   }

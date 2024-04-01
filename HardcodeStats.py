@@ -32,7 +32,7 @@ def toClassText(input):
     extraS=hasExtra*('''
   public static final class ExtraStats {\n
     '''+
-    "\n   ".join("public static final int "+name+" = "+str(len(baseStats)+i)+";" for i,name in enumerate(extraNames))+
+    "\n    ".join("public static final int "+name+" = "+str(len(baseStats)+i)+";" for i,name in enumerate(extraNames))+
     '''\n
     private ExtraStats() {\n    }
   }\n''')

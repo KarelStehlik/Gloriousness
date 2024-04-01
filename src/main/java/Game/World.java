@@ -69,7 +69,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
-  private double money = 1234567890;
+  private double money = 1000000;
   private int wave = 0;
   private boolean waveRunning = true;
 
@@ -127,8 +127,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
         explosionVisual(x, y, 100, true, "Explosion1-0");
       }
-      player.addBuff(
-          new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY, Player.Stats.cd, 0.5f));
     }, null));
 
     resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
@@ -172,7 +170,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
           ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
       );
     }
-    Sprite sp = new SingleAnimationSprite(image, .7f, x, y, size * 5, size * 5, 4, "basic").
+    Sprite sp = new SingleAnimationSprite(image, .7f, x, y, size *2, size * 2, 4, "basic").
         addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
   }
 
@@ -445,7 +443,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private BloonSpawn selectNectBloon(float toSpawn){
       for(var bs : bloons){
-        if(bs.cost<toSpawn && Data.gameMechanicsRng.nextFloat() < toSpawn/bs.cost/80){
+        if(bs.cost<toSpawn && Data.gameMechanicsRng.nextFloat() < toSpawn/bs.cost/bs.cost/100){
           return bs;
         }
       }
@@ -453,9 +451,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private final List<BloonSpawn> bloons = List.of(
-        new BloonSpawn(12, Ceramic::new),
-        new BloonSpawn(8, Lead::new),
-        new BloonSpawn(5, Black::new),
+        new BloonSpawn(30, Ceramic::new),
+        new BloonSpawn(15, Lead::new),
+        new BloonSpawn(7, Black::new),
         new BloonSpawn(4, Pink::new),
         new BloonSpawn(3.5f, Yellow::new),
         new BloonSpawn(2.8f, Green::new),
@@ -485,13 +483,15 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private void onBeginWave(int waveNum) {
-      mobsToSpawn = cheat? 1 : 20 * waveNum;
-      mobsPerTick = cheat? 1 : 0.03f * waveNum;
+      mobsToSpawn = cheat? 1 : 50 * waveNum;
+      mobsPerTick = cheat? 1 : 0.1f * waveNum;
       spawningProcess=0;
     }
 
     private void run() {
       spawningProcess+=Math.min(mobsPerTick, mobsToSpawn);
+      mobsToSpawn = Math.max(0, mobsToSpawn-mobsPerTick);
+      Log.conditional(""+mobsToSpawn+" "+spawningProcess+" "+(next==null?-1:next.cost),tick%60==0);
       if(mobsToSpawn+spawningProcess < bloons.get(bloons.size()-1).cost){
         if(mobsList.isEmpty()){
           endWave();
@@ -503,7 +503,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       while(next.cost <= spawningProcess){
         spawningProcess-=next.cost;
-        mobsToSpawn-=next.cost;
         add(next.spawn());
         next = selectNectBloon(mobsToSpawn);
       }

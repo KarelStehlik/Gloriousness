@@ -25,7 +25,7 @@ public class EatingTurret extends Turret {
         new BulletLauncher(world, "Shockwave"));
     onStatsUpdate();
     bulletLauncher.setSpread(45);
-    bulletLauncher.setProjectileModifier(this::modProjectile);
+    bulletLauncher.addProjectileModifier(this::modProjectile);
   }
 
   public static TurretGenerator generator(World world) {
@@ -64,10 +64,10 @@ public class EatingTurret extends Turret {
     stats[Stats.range] = 500f;
     stats[Stats.pierce] = 1000f;
     stats[Stats.cd] = 1000f;
-    stats[Stats.projectileDuration] = 8f;
+    stats[Stats.projectileDuration] = 10f;
     stats[Stats.bulletSize] = 220f;
     stats[Stats.speed] = 3.5f;
-    stats[Stats.cost] = 100f;
+    stats[Stats.cost] = 1000f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
   }
