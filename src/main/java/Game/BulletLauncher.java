@@ -16,6 +16,7 @@ public class BulletLauncher {
   private final Collection<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
   private final World world;
+  private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
   private String image;
   private float speed;
   private int width;
@@ -28,7 +29,6 @@ public class BulletLauncher {
   private float cooldown;
   private float spread = 0;
   private float remainingCooldown;
-  private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
       float projectileSpeed,
@@ -146,7 +146,7 @@ public class BulletLauncher {
     Projectile p = new Projectile(world, image, x, y, speed, angle + deviation, width, height,
         pierce, size,
         duration, power);
-    for(var pm : projectileModifiers){
+    for (var pm : projectileModifiers) {
       pm.mod(p);
     }
     world.getProjectilesList().add(p);

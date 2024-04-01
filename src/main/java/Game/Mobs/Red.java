@@ -5,13 +5,16 @@ import java.util.List;
 
 public class Red extends TdMob {
 
+  private static final List<ChildSpawner> spawns = List.of();
+
   public Red(World world) {
-    super(world,  "BloonRed");
+    super(world, "BloonRed");
   }
 
   public Red(TdMob parent) {
-    super(parent.world,"BloonRed", parent, parent.getChildrenSpread());
+    super(parent.world, "BloonRed", parent, parent.getChildrenSpread());
   }
+  // end of generated stats
 
   // generated stats
   @Override
@@ -21,9 +24,7 @@ public class Red extends TdMob {
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }
-  // end of generated stats
 
-  private static final List<ChildSpawner> spawns = List.of();
   @Override
   protected List<ChildSpawner> children() {
     return spawns;
