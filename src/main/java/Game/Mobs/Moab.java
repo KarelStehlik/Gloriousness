@@ -25,8 +25,7 @@ public class Moab extends TdMob {
   }
   // end of generated stats
 
-  private static final List<TdMob.ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,SmallMoab::new, SmallMoab::new,
-      SmallMoab::new, SmallMoab::new,SmallMoab::new, SmallMoab::new);
+  private static final List<TdMob.ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,SmallMoab::new, SmallMoab::new);
   @Override
   protected List<ChildSpawner> children() {
     return spawns;
