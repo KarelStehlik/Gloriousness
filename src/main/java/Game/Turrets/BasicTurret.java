@@ -1,9 +1,12 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
+import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
+import Game.Projectile;
+import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.Log;
@@ -27,10 +30,12 @@ public class BasicTurret extends Turret {
   private Upgrade up100() {
     return new Upgrade("Meteor", () -> "fuck",
         () -> {
-          addBuff(
-              new StatBuff<Turret>(Type.INCREASED, Float.POSITIVE_INFINITY, Stats.bulletSize,
-                  1));
-          Log.write("ff");
+          bulletLauncher.addProjectileModifier(p->{
+            var g = new Projectile.Guided(1000,7);
+            p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, g::tick));
+            p.addBuff(new StatBuff<Projectile>(Type.ADDED,Float.POSITIVE_INFINITY,Projectile.Stats.pierce,10000));
+            p.addBuff(new StatBuff<Projectile>(Type.ADDED,Float.POSITIVE_INFINITY,Projectile.Stats.duration,10000));
+          });
         }, 1000);
   }
 

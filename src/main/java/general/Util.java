@@ -97,11 +97,14 @@ public final class Util {
 
   public static float get_rotation(float x, float y) {
     float inv_hypot = 1 / (float) Math.sqrt(x * x + y * y);
-    float asin = arcSin(Math.max(Math.min(y * inv_hypot, 1), -1));
+    float asin = arcSin(clamp(y * inv_hypot, -1, 1));
     if (x >= 0) {
       return asin;
     }
-    return 180 - asin;
+    if(asin>0){
+      return 180-asin;
+    }
+    return -180 - asin;
   }
 
   public static float[] getRandomColors() {

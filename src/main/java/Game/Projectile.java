@@ -3,8 +3,12 @@ package Game;
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
 import Game.Buffs.Modifier;
+import Game.Buffs.StatBuff;
+import Game.Buffs.StatBuff.Type;
 import Game.Mobs.TdMob;
+import general.Log;
 import general.Util;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -90,7 +94,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void changePierce(int amount) {
-    stats[Stats.pierce] += amount;
+    addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED,Float.POSITIVE_INFINITY,Stats.pierce,amount));
     if (stats[Stats.pierce] <= 0) {
       for (var eff : beforeDeath) {
         eff.mod(this);
@@ -145,7 +149,7 @@ public class Projectile extends GameObject implements TickDetect {
     bh.tick();
     handleCollisions();
     world.getProjectilesGrid().add(this);
-    stats[Stats.duration] -= Game.tickIntervalMillis;
+    addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED,Float.POSITIVE_INFINITY,Stats.duration,-Game.tickIntervalMillis));
     if (stats[Stats.duration] <= 0) {
       for (var eff : beforeDeath) {
         eff.mod(this);
@@ -259,6 +263,38 @@ public class Projectile extends GameObject implements TickDetect {
 
   public void addProjectileCollide(OnCollideComponent<Projectile> component) {
     projectileCollides.add(component);
+  }
+
+  public static class Guided {
+    private TdMob targetedMob;
+    private final int range;
+    private final float strength;
+    public Guided(int range, float strength){
+      this.range=range;
+      this.strength=strength;
+    }
+    public void tick(Projectile target){
+      if(targetedMob==null||target.alreadyHitMobs.contains(targetedMob) || targetedMob.WasDeleted()){
+        targetedMob=null;
+      }
+      if(targetedMob == null){
+        targetedMob=target.world.getMobsGrid().getFirst(new Point((int) target.x, (int) target.y), range,
+            mob->!(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
+      }
+      if(targetedMob==null){
+        return;
+      }
+      float diff = target.rotation - Util.get_rotation(targetedMob.x-target.x,targetedMob.y-target.y);
+      diff=(diff+720)%360;
+      if(diff>180){
+        diff=diff-360;
+      }
+      if(diff>0){
+        target.setRotation(target.rotation-Math.min(strength,diff));
+      }else{
+        target.setRotation(target.rotation+Math.min(strength,-diff));
+      }
+    }
   }
 
   private void onDelete() {

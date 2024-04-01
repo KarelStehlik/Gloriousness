@@ -10,9 +10,11 @@ import Game.BulletLauncher;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;
+import Game.Projectile.Stats;
 import Game.TickDetect;
 import Game.TurretGenerator;
 import Game.World;
+import general.Log;
 import general.RefFloat;
 import general.Util;
 import java.util.List;
@@ -54,7 +56,7 @@ public class Druid extends Turret {
   private Upgrade up300() {
     return new Upgrade("Button", () -> "gains bonus duration when regrowing",
         () -> addBuff(
-            new StatBuff<Turret>(Type.ADDED, Float.POSITIVE_INFINITY, ExtraStats.bonusDuration, 6)),
+            new StatBuff<Turret>(Type.ADDED, Float.POSITIVE_INFINITY, ExtraStats.bonusDuration, 6000)),
         1500);
   }
 
@@ -203,12 +205,6 @@ public class Druid extends Turret {
     return List.of(up001(), up002(), up003(), up004(), up005());
   }
 
-  // generated stats
-  @Override
-  public int getStatsCount() {
-    return 16;
-  }
-
   private void regrow(RefFloat respawnsLeft, Projectile proj) {
     if (respawnsLeft.get() < 1) {
       return;
@@ -240,6 +236,12 @@ public class Druid extends Turret {
     p.addBeforeDeath(proj -> {
       regrow(respawnsLeft, proj);
     });
+  }
+
+  // generated stats
+  @Override
+  public int getStatsCount() {
+    return 16;
   }
 
   @Override

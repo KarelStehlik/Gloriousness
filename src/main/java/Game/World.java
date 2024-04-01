@@ -430,8 +430,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private class MobSpawner {
 
     private final List<BloonSpawn> bloons = List.of(
-        new BloonSpawn(80, Moab::new),
-        new BloonSpawn(50, SmallMoab::new),
+        new BloonSpawn(200, Moab::new),
+        new BloonSpawn(100, SmallMoab::new),
         new BloonSpawn(30, Ceramic::new),
         new BloonSpawn(15, Lead::new),
         new BloonSpawn(7, Black::new),
