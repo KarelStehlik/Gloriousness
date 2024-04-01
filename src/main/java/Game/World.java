@@ -172,7 +172,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
           ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
       );
     }
-    Sprite sp = new SingleAnimationSprite(image, .7f, x, y, size *2, size * 2, 4, "basic").
+    Sprite sp = new SingleAnimationSprite(image, .7f, x, y, size * 2, size * 2, 4, "basic").
         addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
   }
 
@@ -279,9 +279,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     this.tick++;
 
     //Log.write("start: "+timer.elapsedNano(true)/1000000);
-    if(mobSpawner.cheat){
-      for(int i=0;i<mobsList.size();i++){
-        mobsList.get(i).takeDamage(1000,DamageType.TRUE);
+    if (mobSpawner.cheat) {
+      for (int i = 0; i < mobsList.size(); i++) {
+        mobsList.get(i).takeDamage(1000, DamageType.TRUE);
       }
     }
     tickEntities(mobsGrid, mobsList);
@@ -379,7 +379,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     waveRunning = true;
     mobSpawner.onBeginWave(wave);
     Text text = new Text("Wave " + wave, "Calibri", 1800, 60, Constants.screenSize.y / 2, 10,
-        490 / (float)((int)Math.log10(wave) + 7) * 7,
+        490 / (float) ((int) Math.log10(wave) + 7) * 7,
         bs, "colorCycle2", "Button");
     text.setColors(Util.getCycle2colors(1));
     Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
@@ -428,34 +428,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   private class MobSpawner {
 
-    class BloonSpawn{
-      @FunctionalInterface
-      interface Spawner{
-        TdMob spawn(World w);
-      }
-      private final float cost;
-      private final Spawner spawn;
-      float getCost(){
-        return cost;
-      }
-      TdMob spawn(){
-        return spawn.spawn(World.this);
-      }
-      BloonSpawn(float cost, Spawner newBloon){
-        this.cost=cost;
-        spawn=newBloon;
-      }
-    }
-
-    private BloonSpawn selectNectBloon(float toSpawn){
-      for(var bs : bloons){
-        if(bs.cost<toSpawn && Data.gameMechanicsRng.nextFloat() < toSpawn/bs.cost/bs.cost/100){
-          return bs;
-        }
-      }
-      return bloons.get(bloons.size()-1);
-    }
-
     private final List<BloonSpawn> bloons = List.of(
         new BloonSpawn(80, Moab::new),
         new BloonSpawn(50, SmallMoab::new),
@@ -468,17 +440,27 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         new BloonSpawn(2, Blue::new),
         new BloonSpawn(1, Red::new)
     );
+    public boolean cheat = false;
     private float mobsToSpawn = 0;
     private float mobsPerTick = 1;
     private float spawningProcess = 0;
     private BloonSpawn next;
-    public boolean cheat = false;
 
-    private float scaling(int wave) {
-      return cheat?1:(float) Math.pow(1 + Math.max(wave,10)-10, 1.4);
+    private BloonSpawn selectNectBloon(float toSpawn) {
+      for (var bs : bloons) {
+        if (bs.cost < toSpawn
+            && Data.gameMechanicsRng.nextFloat() < toSpawn / bs.cost / bs.cost / 100) {
+          return bs;
+        }
+      }
+      return bloons.get(bloons.size() - 1);
     }
 
-    private void add(TdMob e){
+    private float scaling(int wave) {
+      return cheat ? 1 : (float) Math.pow(1 + Math.max(wave, 10) - 10, 1.4);
+    }
+
+    private void add(TdMob e) {
       final float hpScaling = scaling(wave);
       final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
       e.addBuff(
@@ -491,28 +473,54 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private void onBeginWave(int waveNum) {
-      mobsToSpawn = cheat? 1 : 50 * waveNum;
-      mobsPerTick = cheat? 1 : 0.1f * waveNum;
-      spawningProcess=0;
+      mobsToSpawn = cheat ? 1 : 50 * waveNum;
+      mobsPerTick = cheat ? 1 : 0.1f * waveNum;
+      spawningProcess = 0;
     }
 
     private void run() {
-      spawningProcess+=Math.min(mobsPerTick, mobsToSpawn);
-      mobsToSpawn = Math.max(0, mobsToSpawn-mobsPerTick);
-      Log.conditional(""+mobsToSpawn+" "+spawningProcess+" "+(next==null?-1:next.cost),tick%60==0);
-      if(mobsToSpawn+spawningProcess < bloons.get(bloons.size()-1).cost){
-        if(mobsList.isEmpty()){
+      spawningProcess += Math.min(mobsPerTick, mobsToSpawn);
+      mobsToSpawn = Math.max(0, mobsToSpawn - mobsPerTick);
+      Log.conditional(
+          "" + mobsToSpawn + " " + spawningProcess + " " + (next == null ? -1 : next.cost),
+          tick % 60 == 0);
+      if (mobsToSpawn + spawningProcess < bloons.get(bloons.size() - 1).cost) {
+        if (mobsList.isEmpty()) {
           endWave();
         }
         return;
       }
-      if(next == null) {
+      if (next == null) {
         next = selectNectBloon(mobsToSpawn);
       }
-      while(next.cost <= spawningProcess){
-        spawningProcess-=next.cost;
+      while (next.cost <= spawningProcess) {
+        spawningProcess -= next.cost;
         add(next.spawn());
         next = selectNectBloon(mobsToSpawn);
+      }
+    }
+
+    class BloonSpawn {
+
+      private final float cost;
+      private final Spawner spawn;
+      BloonSpawn(float cost, Spawner newBloon) {
+        this.cost = cost;
+        spawn = newBloon;
+      }
+
+      float getCost() {
+        return cost;
+      }
+
+      TdMob spawn() {
+        return spawn.spawn(World.this);
+      }
+
+      @FunctionalInterface
+      interface Spawner {
+
+        TdMob spawn(World w);
       }
     }
   }

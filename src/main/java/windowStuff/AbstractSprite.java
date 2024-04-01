@@ -16,8 +16,6 @@ public interface AbstractSprite {
 
   AbstractSprite setImage(String name);
 
-  void setLayer(int layer);
-
   AbstractSprite setPosition(float X, float Y);
 
   AbstractSprite scale(float multiplier);
@@ -37,6 +35,8 @@ public interface AbstractSprite {
   AbstractSprite setY(float y);
 
   int getLayer();
+
+  void setLayer(int layer);
 
   boolean isDeleted();
 

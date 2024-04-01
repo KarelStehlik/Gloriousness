@@ -5,17 +5,21 @@ import java.util.List;
 
 public class Moab extends TdMob {
 
+  private static final List<TdMob.ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,
+      SmallMoab::new, SmallMoab::new);
+
   public Moab(World world) {
-    super(world,  "BloonMoab");
-    sprite.setSize(getStats()[Stats.size]*1.5f, getStats()[Stats.size]*0.7f);
+    super(world, "BloonMoab");
+    sprite.setSize(getStats()[Stats.size] * 1.5f, getStats()[Stats.size] * 0.7f);
     sprite.setLayer(2);
   }
 
   public Moab(TdMob parent) {
-    super(parent.world,  "BloonMoab", parent, parent.getChildrenSpread());
-    sprite.setSize(getStats()[Stats.size]*1.5f, getStats()[Stats.size]*0.7f);
+    super(parent.world, "BloonMoab", parent, parent.getChildrenSpread());
+    sprite.setSize(getStats()[Stats.size] * 1.5f, getStats()[Stats.size] * 0.7f);
     sprite.setLayer(2);
   }
+  // end of generated stats
 
   // generated stats
   @Override
@@ -25,9 +29,7 @@ public class Moab extends TdMob {
     stats[Stats.health] = 100f;
     stats[Stats.value] = 100f;
   }
-  // end of generated stats
 
-  private static final List<TdMob.ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,SmallMoab::new, SmallMoab::new);
   @Override
   protected List<ChildSpawner> children() {
     return spawns;

@@ -6,13 +6,13 @@ import java.awt.Rectangle;
 public class GameObject {
 
   public final long id;
+  public final World world;
   protected final float[] stats = new float[getStatsCount()];
   private final Rectangle hitbox;
   public long lastChecked = -9223372036854775807L;
   protected float x, y;
   protected int width, height;
   protected float rotation;
-  public final World world;
 
   protected GameObject(float X, float Y, int W, int H, World w) {
     x = X;

@@ -61,7 +61,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
-          Player.Stats.cd, 1/1.2f));
+          Player.Stats.cd, 1 / 1.2f));
     }
 
     @Override

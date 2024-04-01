@@ -27,7 +27,9 @@ public class EmpoweringTurret extends Turret {
   }
 
   private static void addBuff(Projectile p2, float pow) {
-    p2.addMobCollide((proj2, mob) -> BasicCollides.explodeFunc((int)proj2.getX(),(int)proj2.getY(), pow, pow));
+    p2.addMobCollide(
+        (proj2, mob) -> BasicCollides.explodeFunc((int) proj2.getX(), (int) proj2.getY(), pow,
+            pow));
   }
 
   @Override

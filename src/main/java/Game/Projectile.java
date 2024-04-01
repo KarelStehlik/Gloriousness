@@ -4,8 +4,6 @@ import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
 import Game.Buffs.Modifier;
 import Game.Mobs.TdMob;
-import Game.Turrets.Turret.Stats;
-import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,10 +92,10 @@ public class Projectile extends GameObject implements TickDetect {
   protected void changePierce(int amount) {
     stats[Stats.pierce] += amount;
     if (stats[Stats.pierce] <= 0) {
-      for(var eff: beforeDeath){
+      for (var eff : beforeDeath) {
         eff.mod(this);
       }
-      if (stats[Stats.duration] <= 0 || stats[Stats.pierce]<=0) {
+      if (stats[Stats.duration] <= 0 || stats[Stats.pierce] <= 0) {
         delete();
       }
     }
@@ -149,10 +147,10 @@ public class Projectile extends GameObject implements TickDetect {
     world.getProjectilesGrid().add(this);
     stats[Stats.duration] -= Game.tickIntervalMillis;
     if (stats[Stats.duration] <= 0) {
-      for(var eff: beforeDeath){
+      for (var eff : beforeDeath) {
         eff.mod(this);
       }
-      if (stats[Stats.duration] <= 0 || stats[Stats.pierce]<=0) {
+      if (stats[Stats.duration] <= 0 || stats[Stats.pierce] <= 0) {
         delete();
       }
     }
@@ -212,7 +210,7 @@ public class Projectile extends GameObject implements TickDetect {
     playerCollides.add(component);
   }
 
-  public void addBeforeDeath(Modifier<Projectile> component){
+  public void addBeforeDeath(Modifier<Projectile> component) {
     beforeDeath.add(component);
   }
 
@@ -235,7 +233,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   public void addMobCollide(OnCollideComponent<TdMob> component, int index) {
-    mobCollides.add(index,component);
+    mobCollides.add(index, component);
   }
 
   public void handleProjectileCollision() {

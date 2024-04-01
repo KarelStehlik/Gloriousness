@@ -14,7 +14,6 @@ import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
-import windowStuff.AbstractSprite;
 import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
@@ -80,7 +79,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   @Override
   public void setRotation(float f) {
     super.setRotation(f);
-    sprite.setRotation(f+90);
+    sprite.setRotation(f + 90);
   }
 
   public TrackProgress getProgress() {
@@ -103,7 +102,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
       world.setMoney(world.getMoney() + stats[Stats.value]);
       onDeath();
 
-      spawnChildren((float)(-healthPart*stats[Stats.health]));
+      spawnChildren((float) (-healthPart * stats[Stats.health]));
 
       delete();
     }
@@ -112,17 +111,12 @@ public abstract class TdMob extends GameObject implements TickDetect {
   public void onDeath() {
   }
 
-  @FunctionalInterface
-  public interface ChildSpawner{
-    TdMob spawn(TdMob parent);
-  }
-
   protected abstract List<ChildSpawner> children();
 
-  private void spawnChildren(float overkill){
-    for(var spawner : children()){
+  private void spawnChildren(float overkill) {
+    for (var spawner : children()) {
       TdMob newBloon = spawner.spawn(this);
-      newBloon.takeDamage(overkill,DamageType.TRUE);
+      newBloon.takeDamage(overkill, DamageType.TRUE);
       world.addEnemy(newBloon);
     }
   }
@@ -155,6 +149,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
     spawnChildren(0);
     delete();
     world.changeHealth(-1);
+  }
+
+  protected abstract int getChildrenSpread();
+
+  @FunctionalInterface
+  public interface ChildSpawner {
+
+    TdMob spawn(TdMob parent);
   }
 
   public static class MoveAlongTrack<T extends GameObject> {
@@ -237,8 +239,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
     private Stats() {
     }
   }
-
-  protected abstract int getChildrenSpread();
 
   public static class TrackProgress implements Comparable<TrackProgress> {
 

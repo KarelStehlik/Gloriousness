@@ -27,13 +27,13 @@ public final class BasicCollides {
   };
   private static World _world;
   public static final Projectile.OnCollideComponent<TdMob> explode = (proj, target) -> explodeFunc(
-      (int)proj.x, (int)proj.y, proj.getPower(), proj.getPower());
+      (int) proj.x, (int) proj.y, proj.getPower(), proj.getPower());
 
   private BasicCollides() {
   }
 
-  public static boolean explodeFunc(int x, int y, float power, float radius){
-    return explodeFunc(x,y,power,radius,"Explosion1-0");
+  public static boolean explodeFunc(int x, int y, float power, float radius) {
+    return explodeFunc(x, y, power, radius, "Explosion1-0");
   }
 
   public static boolean explodeFunc(int x, int y, float power, float radius, String animation) {

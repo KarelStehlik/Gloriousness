@@ -5,17 +5,22 @@ import java.util.List;
 
 public class SmallMoab extends TdMob {
 
+  private static final List<TdMob.ChildSpawner> spawns = List.of(Ceramic::new, Ceramic::new,
+      Ceramic::new, Ceramic::new,
+      Ceramic::new, Ceramic::new, Ceramic::new, Ceramic::new);
+
   public SmallMoab(World world) {
-    super(world,  "BloonSmallMoab");
-    sprite.setSize(getStats()[Stats.size]*1.1f, getStats()[Stats.size]*0.8f);
+    super(world, "BloonSmallMoab");
+    sprite.setSize(getStats()[Stats.size] * 1.1f, getStats()[Stats.size] * 0.8f);
     sprite.setLayer(2);
   }
 
   public SmallMoab(TdMob parent) {
-    super(parent.world,  "BloonSmallMoab", parent, parent.getChildrenSpread());
-    sprite.setSize(getStats()[Stats.size]*1.1f, getStats()[Stats.size]*0.8f);
+    super(parent.world, "BloonSmallMoab", parent, parent.getChildrenSpread());
+    sprite.setSize(getStats()[Stats.size] * 1.1f, getStats()[Stats.size] * 0.8f);
     sprite.setLayer(2);
   }
+  // end of generated stats
 
   // generated stats
   @Override
@@ -25,10 +30,7 @@ public class SmallMoab extends TdMob {
     stats[Stats.health] = 500f;
     stats[Stats.value] = 80f;
   }
-  // end of generated stats
 
-  private static final List<TdMob.ChildSpawner> spawns = List.of(Ceramic::new, Ceramic::new,Ceramic::new, Ceramic::new,
-      Ceramic::new, Ceramic::new,Ceramic::new, Ceramic::new);
   @Override
   protected List<ChildSpawner> children() {
     return spawns;
