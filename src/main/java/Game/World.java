@@ -71,7 +71,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
-  private double money = 1000000;
+  private double money = 0;
   private int wave = 0;
   private boolean waveRunning = true;
 
@@ -465,10 +465,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       final float hpScaling = scaling(wave);
       final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
       e.addBuff(
-          new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, Stats.health,
+          new StatBuff<TdMob>(Type.MORE, Stats.health,
               hpScaling));
       e.addBuff(
-          new StatBuff<TdMob>(Type.MORE, Float.POSITIVE_INFINITY, Stats.speed,
+          new StatBuff<TdMob>(Type.MORE, Stats.speed,
               spdScaling));
       addEnemy(e);
     }

@@ -6,7 +6,6 @@ import Game.Buffs.Modifier;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Mobs.TdMob;
-import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -94,7 +93,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void changePierce(int amount) {
-    addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED,Float.POSITIVE_INFINITY,Stats.pierce,amount));
+    addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Stats.pierce, amount));
     if (stats[Stats.pierce] <= 0) {
       for (var eff : beforeDeath) {
         eff.mod(this);
@@ -149,7 +148,7 @@ public class Projectile extends GameObject implements TickDetect {
     bh.tick();
     handleCollisions();
     world.getProjectilesGrid().add(this);
-    addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED,Float.POSITIVE_INFINITY,Stats.duration,-Game.tickIntervalMillis));
+    addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Stats.duration, -Game.tickIntervalMillis));
     if (stats[Stats.duration] <= 0) {
       for (var eff : beforeDeath) {
         eff.mod(this);
@@ -266,33 +265,39 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   public static class Guided {
+
     private TdMob targetedMob;
     private final int range;
     private final float strength;
-    public Guided(int range, float strength){
-      this.range=range;
-      this.strength=strength;
+
+    public Guided(int range, float strength) {
+      this.range = range;
+      this.strength = strength;
     }
-    public void tick(Projectile target){
-      if(targetedMob==null||target.alreadyHitMobs.contains(targetedMob) || targetedMob.WasDeleted()){
-        targetedMob=null;
+
+    public void tick(Projectile target) {
+      if (targetedMob == null || target.alreadyHitMobs.contains(targetedMob)
+          || targetedMob.WasDeleted()) {
+        targetedMob = null;
       }
-      if(targetedMob == null){
-        targetedMob=target.world.getMobsGrid().getFirst(new Point((int) target.x, (int) target.y), range,
-            mob->!(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
+      if (targetedMob == null) {
+        targetedMob = target.world.getMobsGrid()
+            .getFirst(new Point((int) target.x, (int) target.y), range,
+                mob -> !(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
       }
-      if(targetedMob==null){
+      if (targetedMob == null) {
         return;
       }
-      float diff = target.rotation - Util.get_rotation(targetedMob.x-target.x,targetedMob.y-target.y);
-      diff=(diff+720)%360;
-      if(diff>180){
-        diff=diff-360;
+      float diff =
+          target.rotation - Util.get_rotation(targetedMob.x - target.x, targetedMob.y - target.y);
+      diff = (diff + 720) % 360;
+      if (diff > 180) {
+        diff = diff - 360;
       }
-      if(diff>0){
-        target.setRotation(target.rotation-Math.min(strength,diff));
-      }else{
-        target.setRotation(target.rotation+Math.min(strength,-diff));
+      if (diff > 0) {
+        target.setRotation(target.rotation - Math.min(strength, diff));
+      } else {
+        target.setRotation(target.rotation + Math.min(strength, -diff));
       }
     }
   }

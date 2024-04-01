@@ -14,6 +14,10 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
   private final Modifier<T> mod;
   private final boolean spreads;
 
+  public OnTickBuff(Modifier<T> effect) {
+    this(Float.POSITIVE_INFINITY, effect, true);
+  }
+
   public OnTickBuff(float dur, Modifier<T> effect) {
     this(dur, effect, true);
   }

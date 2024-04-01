@@ -15,6 +15,10 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
   private final Modifier<T> mod;
   private final boolean onDeath, spreads;
 
+  public DelayedTrigger(Modifier<T> effect, boolean triggerOnDeath) {
+    this(Float.POSITIVE_INFINITY, effect, triggerOnDeath, true);
+  }
+
   public DelayedTrigger(float dur, Modifier<T> effect, boolean triggerOnDeath) {
     this(dur, effect, triggerOnDeath, true);
   }

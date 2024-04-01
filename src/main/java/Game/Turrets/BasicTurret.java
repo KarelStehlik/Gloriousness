@@ -6,10 +6,8 @@ import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.Projectile;
-import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
-import general.Log;
 import java.util.List;
 
 public class BasicTurret extends Turret {
@@ -30,11 +28,11 @@ public class BasicTurret extends Turret {
   private Upgrade up100() {
     return new Upgrade("Meteor", () -> "fuck",
         () -> {
-          bulletLauncher.addProjectileModifier(p->{
-            var g = new Projectile.Guided(1000,7);
-            p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, g::tick));
-            p.addBuff(new StatBuff<Projectile>(Type.ADDED,Float.POSITIVE_INFINITY,Projectile.Stats.pierce,10000));
-            p.addBuff(new StatBuff<Projectile>(Type.ADDED,Float.POSITIVE_INFINITY,Projectile.Stats.duration,10000));
+          bulletLauncher.addProjectileModifier(p -> {
+            var g = new Projectile.Guided(1000, 7);
+            p.addBuff(new OnTickBuff<Projectile>(g::tick));
+            p.addBuff(new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.pierce, 10000));
+            p.addBuff(new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.duration, 10000));
           });
         }, 1000);
   }

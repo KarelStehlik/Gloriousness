@@ -2,14 +2,12 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
-import general.Log;
 import general.Util;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import Game.Projectile;
 
 public class StatBuff<T extends GameObject> implements Buff<T> {
 
@@ -18,6 +16,10 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
   private final float value;
   private final long id;
   private final float expiry;
+
+  public StatBuff(Type type, int statModified, float value) {
+    this(type, Float.POSITIVE_INFINITY, statModified, value);
+  }
 
   public StatBuff(Type type, float duration, int statModified, float value) {
     this.expiry = Game.get().getTicks() + duration / Game.tickIntervalMillis;
@@ -58,7 +60,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
 
     final float ogValue;
     public final int target;
-    float added = 0, increased = 1, finallyAdded=0;
+    float added = 0, increased = 1, finallyAdded = 0;
     double more = 1;
     //Map<Float, Integer> moreModifiers = new HashMap<>(1);
 
@@ -67,23 +69,26 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       ogValue = stats[target];
     }
 
-    TotalModifier(float ogValue, int target, float added, float increased, double more, float finallyAdded) {
+    TotalModifier(float ogValue, int target, float added, float increased, double more,
+        float finallyAdded) {
       this.ogValue = ogValue;
       this.target = target;
       this.added = added;
       this.increased = increased;
       this.more = more;
-      this.finallyAdded=finallyAdded;
+      this.finallyAdded = finallyAdded;
     }
 
-    TotalModifier copy(GameObject newTarget){
-      var co = new TotalModifier(newTarget.getStats()[target],target, added,increased,more, finallyAdded);
+    TotalModifier copy(GameObject newTarget) {
+      var co = new TotalModifier(newTarget.getStats()[target], target, added, increased, more,
+          finallyAdded);
       co.apply(newTarget);
       return co;
     }
 
     void apply(GameObject tar) {
-      tar.getStats()[target] = Math.max((ogValue + added) * increased * (float) more + finallyAdded, 0);
+      tar.getStats()[target] = Math.max((ogValue + added) * increased * (float) more + finallyAdded,
+          0);
     }
 
     void addAdded(float value) {
@@ -150,7 +155,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     public boolean add(Buff<T> b, T target) {
       assert b instanceof StatBuff<T>;
       StatBuff<T> buff = (StatBuff<T>) b;
-      if(buff.expiry != Float.POSITIVE_INFINITY) {
+      if (buff.expiry != Float.POSITIVE_INFINITY) {
         buffsByExpiration.add(buff);
       }
       TotalModifier mod = modifiers.computeIfAbsent(buff.statModified,
@@ -190,10 +195,9 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       Aggregator copy = new Aggregator();
       for (var eff : buffsByExpiration) {
         copy.buffsByExpiration.add(eff.copy());
-        Log.write(eff);
       }
       for (var eff : modifiers.entrySet()) {
-        copy.modifiers.put(eff.getKey() , eff.getValue().copy(newTarget));
+        copy.modifiers.put(eff.getKey(), eff.getValue().copy(newTarget));
       }
       return copy;
     }

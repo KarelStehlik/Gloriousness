@@ -101,8 +101,8 @@ public final class Util {
     if (x >= 0) {
       return asin;
     }
-    if(asin>0){
-      return 180-asin;
+    if (asin > 0) {
+      return 180 - asin;
     }
     return -180 - asin;
   }

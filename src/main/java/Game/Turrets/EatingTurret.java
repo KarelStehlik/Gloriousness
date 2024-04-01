@@ -52,8 +52,8 @@ public class EatingTurret extends Turret {
     p.addProjectileCollide((p1, p2) -> e.eat(p2));
     p.addBuff(new UniqueBuff<>(EatImmuneTag, p1 -> {
     }));
-    p.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
-    p.addBuff(new DelayedTrigger<Projectile>(Float.POSITIVE_INFINITY,
+    p.addBuff(new OnTickBuff<Projectile>(Projectile::bounce));
+    p.addBuff(new DelayedTrigger<Projectile>(
         p1 -> e.perish(p1.getX(), p1.getY()), true));
   }
 
@@ -92,9 +92,9 @@ public class EatingTurret extends Turret {
       other.setActive(false);
       other.setRotation(Data.gameMechanicsRng.nextFloat() * 360);
       other.addBuff(
-          new StatBuff<Projectile>(Type.MORE, Float.POSITIVE_INFINITY, Projectile.Stats.power,
+          new StatBuff<Projectile>(Type.MORE, Projectile.Stats.power,
               powerMult));
-      other.addBuff(new OnTickBuff<Projectile>(Float.POSITIVE_INFINITY, Projectile::bounce));
+      other.addBuff(new OnTickBuff<Projectile>(Projectile::bounce));
       return true;
     }
 
