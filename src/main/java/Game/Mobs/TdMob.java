@@ -21,55 +21,45 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   protected final AbstractSprite sprite;
   protected final SquareGrid<TdMob> grid;
-  protected final String name;
-  protected final World world;
   private final BuffHandler<TdMob> buffHandler;
   private final MoveAlongTrack<TdMob> movement;
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
 
-  public TdMob(World world, String name, String image) {
+  public TdMob(World world, String image) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread), 0, 0, world);
-    this.world = world;
     clearStats();
     healthPart = 1;
-    this.name = name;
     setSize((int) (2 * stats[Stats.size]), (int) (2 * stats[Stats.size]));
     grid = world.getMobsGrid();
-    rotation = Data.gameMechanicsRng.nextFloat(5) - 2.5f;
     sprite = new Sprite(image, x, y, width, height, 1, "basic");
-    //sprite = new NoSprite();
     sprite.addToBs(world.getBs());
     exists = true;
     buffHandler = new BuffHandler<>(this);
-    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
+    movement = new MoveAlongTrack<>(false, world.getMapData(),
         new Point((int) x - world.getMapData().get(0).x,
-            (int) y - world.getMapData().get(0).y), stats, Stats.speed, t -> t.passed());
+            (int) y - world.getMapData().get(0).y), stats, Stats.speed, TdMob::passed);
   }
 
-  public TdMob(World world, String name, String image, TdMob parent, int spread) {
+  public TdMob(World world, String image, TdMob parent, int spread) {
     super(parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),
         parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),
         0, 0, world);
-    this.world = world;
     clearStats();
     healthPart = 1;
-    this.name = name;
     setSize((int) (2 * stats[Stats.size]), (int) (2 * stats[Stats.size]));
     grid = world.getMobsGrid();
-    rotation = Data.gameMechanicsRng.nextFloat(5) - 2.5f;
     sprite = new Sprite(image, x, y, width, height, 1, "basic");
-    //sprite = new NoSprite();
     sprite.addToBs(world.getBs());
     exists = true;
     buffHandler = parent.buffHandler.copyForChild(this);
-    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
+    movement = new MoveAlongTrack<>(false, world.getMapData(),
         new Point((int) (x - parent.x + parent.movement.offset.x),
-            (int) (y - parent.y + parent.movement.offset.y)), stats, Stats.speed, t -> t.passed(),
+            (int) (y - parent.y + parent.movement.offset.y)), stats, Stats.speed, TdMob::passed,
         parent.movement.getProgress());
   }
 
@@ -90,7 +80,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   @Override
   public void setRotation(float f) {
     super.setRotation(f);
-    sprite.setRotation(f);
+    sprite.setRotation(f+90);
   }
 
   public TrackProgress getProgress() {
@@ -109,14 +99,32 @@ public abstract class TdMob extends GameObject implements TickDetect {
     double resistance = 1;
     double eDamage = amount * resistance / stats[Stats.health];
     healthPart -= eDamage;
-    if (healthPart <= 0 && exists) {
+    if (healthPart <= 0.0000001 && exists) {
       world.setMoney(world.getMoney() + stats[Stats.value]);
       onDeath();
+
+      spawnChildren((float)(-healthPart*stats[Stats.health]));
+
       delete();
     }
   }
 
   public void onDeath() {
+  }
+
+  @FunctionalInterface
+  public interface ChildSpawner{
+    TdMob spawn(TdMob parent);
+  }
+
+  protected abstract List<ChildSpawner> children();
+
+  private void spawnChildren(float overkill){
+    for(var spawner : children()){
+      TdMob newBloon = spawner.spawn(this);
+      newBloon.takeDamage(overkill,DamageType.TRUE);
+      world.addEnemy(newBloon);
+    }
   }
 
   @Override
@@ -228,6 +236,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     private Stats() {
     }
   }
+
+  protected abstract int getChildrenSpread();
 
   public static class TrackProgress implements Comparable<TrackProgress> {
 

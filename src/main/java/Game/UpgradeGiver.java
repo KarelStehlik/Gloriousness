@@ -41,13 +41,13 @@ public class UpgradeGiver {
 
     @Override
     void picked() {
-      world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
-          Stats.projPower, 2));
+      world.getPlayer().addBuff(new StatBuff<Player>(Type.ADDED, Float.POSITIVE_INFINITY,
+          Stats.projPower, 1));
     }
 
     @Override
     String getText() {
-      return "Doubles your damage (and also explosion radius)";
+      return "+1 damage";
     }
 
     @Override
@@ -61,12 +61,12 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE, Float.POSITIVE_INFINITY,
-          Player.Stats.cd, .5f));
+          Player.Stats.cd, 1/1.2f));
     }
 
     @Override
     String getText() {
-      return "Doubles your attack speed KEKW";
+      return "20% more attack speed";
     }
 
     @Override

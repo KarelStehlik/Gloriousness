@@ -91,7 +91,6 @@ public class Projectile extends GameObject implements TickDetect {
     stats[Stats.pierce] += amount;
     if (stats[Stats.pierce] <= 0) {
       delete();
-      Log.write("dee");
     }
   }
 
@@ -181,7 +180,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Player e) {
-    if (wasDeleted || e.WasDeleted() || alreadyHitPlayer
+    if (!active || wasDeleted || e.WasDeleted() || alreadyHitPlayer
         || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + stats[Stats.size]) / 4) {
       return;
     }
@@ -200,7 +199,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(TdMob e) {
-    if (wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)) {
+    if (!active || wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)) {
       return;
     }
     alreadyHitMobs.add(e);

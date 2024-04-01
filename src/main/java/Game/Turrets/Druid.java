@@ -23,7 +23,7 @@ public class Druid extends Turret {
 
   public Druid(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Egg"));
+        new BulletLauncher(world, "Shockwave"));
     onStatsUpdate();
     bulletLauncher.setSpread(45);
     bulletLauncher.setProjectileModifier(this::modProjectile);
@@ -116,12 +116,12 @@ public class Druid extends Turret {
       float size = proj.getStats()[Projectile.Stats.size];
 
       this.sprite = new Animation(
-          new Sprite("Egg", proj.getX(), proj.getY(), size * .8f, size * .8f, 3, "colorCycle2")
+          new Sprite("Shockwave", proj.getX(), proj.getY(), 0, 0, 3, "colorCycle2")
               .addToBs(Game.get().getSpriteBatching("main"))
               .setOpacity(0.0f)
               .setRotation(proj.getRotation() - 90).
               setColors(Util.getCycle2colors(1f)), 1
-      ).setLinearScaling(new Vector2f(size * .01f, size * .01f)).setOpacityScaling(0.015f);
+      ).setLinearScaling(new Vector2f(size * .015f, size * .015f)).setOpacityScaling(0.015f);
     }
 
     @Override
