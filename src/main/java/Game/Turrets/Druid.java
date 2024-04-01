@@ -99,7 +99,7 @@ public class Druid extends Turret {
             world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
                 (int) (proj.getStats()[Projectile.Stats.size]*1.5f),
                 enemy->enemy.addBuff(new StatBuff<TdMob>(
-                    Type.MORE, proj.getPower()/ enemy.getStats()[TdMob.Stats.health]*10000,TdMob.Stats.speed,0.95f
+                    Type.MORE, proj.getPower()/ enemy.getStats()[TdMob.Stats.health]*10000,TdMob.Stats.speed,0.90f
                     )
                 ));
             return true;
@@ -114,7 +114,7 @@ public class Druid extends Turret {
             world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
                 (int) (proj.getStats()[Projectile.Stats.size]*1.5f),
                 enemy->enemy.addBuff(new StatBuff<TdMob>(
-                        Type.MORE, 300,TdMob.Stats.health,0.95f
+                        Type.MORE, 500,TdMob.Stats.health,0.94f
                     )
                 ));
             return true;

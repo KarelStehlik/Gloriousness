@@ -19,7 +19,7 @@ import windowStuff.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  protected final AbstractSprite sprite;
+  protected final Sprite sprite;
   protected final SquareGrid<TdMob> grid;
   private final BuffHandler<TdMob> buffHandler;
   private final MoveAlongTrack<TdMob> movement;
@@ -152,6 +152,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   private void passed() {
+    spawnChildren(0);
     delete();
     world.changeHealth(-1);
   }

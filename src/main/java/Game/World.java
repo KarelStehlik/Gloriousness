@@ -13,8 +13,10 @@ import Game.Mobs.Blue;
 import Game.Mobs.Ceramic;
 import Game.Mobs.Green;
 import Game.Mobs.Lead;
+import Game.Mobs.Moab;
 import Game.Mobs.Pink;
 import Game.Mobs.Red;
+import Game.Mobs.SmallMoab;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
 import Game.Mobs.TdMob.Stats;
@@ -451,6 +453,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private final List<BloonSpawn> bloons = List.of(
+        new BloonSpawn(80, Moab::new),
+        new BloonSpawn(50, SmallMoab::new),
         new BloonSpawn(30, Ceramic::new),
         new BloonSpawn(15, Lead::new),
         new BloonSpawn(7, Black::new),
@@ -466,8 +470,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private BloonSpawn next;
     public boolean cheat = false;
 
-    private static float scaling(int wave) {
-      return (float) Math.pow(1 + Math.max(wave,10)-10, 1.4);
+    private float scaling(int wave) {
+      return cheat?1:(float) Math.pow(1 + Math.max(wave,10)-10, 1.4);
     }
 
     private void add(TdMob e){

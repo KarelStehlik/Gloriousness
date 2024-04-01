@@ -6,4 +6,6 @@ Mobs/Pink % size=34.0|speed=7|health=1|value=1 %
 Mobs/Black % size=34.0|speed=3|health=1|value=1 %
 Mobs/Lead % size=34.0|speed=1|health=2|value=1 %
 Mobs/Ceramic % size=34.0|speed=3.8|health=10|value=0 %
+Mobs/SmallMoab % size=300.0|speed=2|health=500|value=80 %
+Mobs/Moab % size=300.0|speed=10|health=100|value=100 %
 Player   % speed=1|health=100|cd=1000|projSize=18|projSpeed=20|projPierce=2|projDuration=4|projPower=1 %
