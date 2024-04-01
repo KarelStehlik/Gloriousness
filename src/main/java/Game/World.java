@@ -279,7 +279,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     this.tick++;
 
     //Log.write("start: "+timer.elapsedNano(true)/1000000);
-
+    if(mobSpawner.cheat){
+      for(int i=0;i<mobsList.size();i++){
+        mobsList.get(i).takeDamage(1000,DamageType.TRUE);
+      }
+    }
     tickEntities(mobsGrid, mobsList);
     mobsGrid.filled();
 

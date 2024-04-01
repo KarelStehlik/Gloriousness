@@ -8,11 +8,13 @@ public class SmallMoab extends TdMob {
   public SmallMoab(World world) {
     super(world,  "BloonSmallMoab");
     sprite.setSize(getStats()[Stats.size]*1.1f, getStats()[Stats.size]*0.8f);
+    sprite.setLayer(2);
   }
 
   public SmallMoab(TdMob parent) {
     super(parent.world,  "BloonSmallMoab", parent, parent.getChildrenSpread());
     sprite.setSize(getStats()[Stats.size]*1.1f, getStats()[Stats.size]*0.8f);
+    sprite.setLayer(2);
   }
 
   // generated stats

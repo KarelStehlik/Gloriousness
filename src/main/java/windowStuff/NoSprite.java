@@ -43,6 +43,11 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
+  public void setLayer(int layer) {
+
+  }
+
+  @Override
   public NoSprite setPosition(float X, float Y) {
     x = X;
     y = Y;

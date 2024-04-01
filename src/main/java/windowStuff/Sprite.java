@@ -100,6 +100,11 @@ public class Sprite implements AbstractSprite {
     setUV();
     return this;
   }
+  @Override
+  public void setLayer(int layer){
+    mustBeRebatched=true;
+    this.layer=layer;
+  }
 
   @Override
   public Sprite setPosition(float X, float Y) {
