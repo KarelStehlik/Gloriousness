@@ -250,7 +250,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         mobSpawner.cheat = cheat.get();
       }
 
-      ImInt wave = new ImInt(0);
+      int[] currWave = new int[]{wave};
+      if(ImGui.dragInt("Wave", currWave)){
+        wave=currWave[0]-1;
+        beginWave();
+      }
     }
     ImGui.end();
   }
@@ -492,7 +496,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private BloonSpawn selectNectBloon(float toSpawn, int wave) {
       for (var bs : bloons) {
-        if (bs.cost < wave * 5 && bs.cost>toSpawn
+        if (bs.cost < wave * 5 && bs.cost<toSpawn
             && Data.gameMechanicsRng.nextFloat() < toSpawn / bs.cost / bs.cost / 100) {
           return bs;
         }
