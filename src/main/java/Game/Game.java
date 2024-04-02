@@ -75,8 +75,10 @@ public final class Game implements UserInputHandler {
 
   public void tick() {
     userInputListener.handleEvents();
-    tickables.addAll(newTickables);
-    newTickables.clear();
+    synchronized (newTickables) {
+      tickables.addAll(newTickables);
+      newTickables.clear();
+    }
     keyDetects.addAll(newKeyDetects);
     newKeyDetects.clear();
     if (!newMouseDetects.isEmpty()) {
