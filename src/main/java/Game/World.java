@@ -253,7 +253,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       int[] currWave = new int[]{wave};
       if(ImGui.dragInt("Wave", currWave)){
         wave=currWave[0]-1;
-        beginWave();
       }
     }
     ImGui.end();
@@ -416,8 +415,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     Text text = new Text("Wave " + wave, "Calibri", 1800, 60, Constants.screenSize.y / 2, 10,
         490 / (float) ((int) Math.log10(wave) + 7) * 7,
         bs, "colorCycle2", "Button");
-    text.setColors(Util.getCycle2colors(1));
     Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
+    text.setColors(Util.getCycle2colors(1));
   }
 
   public boolean canFitTurret(int x, int y, float size) {
