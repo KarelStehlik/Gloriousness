@@ -77,7 +77,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
-  private double money = 10000000000d;
+  private double money = 0;
   private int wave = 0;
   private boolean waveRunning = true;
 
