@@ -47,10 +47,16 @@ public class BulletLauncher {
     this.y = y;
     this.cooldown = cooldownMs;
     this.remainingCooldown = cooldownMs;
+    launcher=Projectile::new;
   }
 
   public BulletLauncher(World world, String projectileImage) {
     this(world, projectileImage, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  }
+
+  public BulletLauncher(World world, String projectileImage, ProjectileNewFunction f) {
+    this(world, projectileImage);
+    launcher=f;
   }
 
   public BulletLauncher(BulletLauncher og) {
@@ -70,6 +76,7 @@ public class BulletLauncher {
     playerCollides.addAll(og.playerCollides);
     mobCollides.addAll(og.mobCollides);
     projectileCollides.addAll(og.projectileCollides);
+    launcher=og.launcher;
   }
 
   public void addProjectileModifier(Modifier<Projectile> projectileModifier) {
@@ -141,9 +148,16 @@ public class BulletLauncher {
     y = newY;
   }
 
+  @FunctionalInterface
+  public interface ProjectileNewFunction{
+    Projectile make(World world, String image, float X, float Y, float speed, float rotation,
+        int W, int H, int pierce, float size, float duration, float power);
+  }
+  private ProjectileNewFunction launcher;
+
   public void attack(float angle) {
     float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
-    Projectile p = new Projectile(world, image, x, y, speed, angle + deviation, width, height,
+    Projectile p = launcher.make(world, image, x, y, speed, angle + deviation, width, height,
         pierce, size,
         duration, power);
     for (var pm : projectileModifiers) {

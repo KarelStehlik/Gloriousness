@@ -184,7 +184,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
 
     public Sprite makeSprite() {
-      return new Sprite(image, 5).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
+      return new Sprite(image, 10).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
     }
   }
 
@@ -214,13 +214,13 @@ public abstract class Turret extends GameObject implements TickDetect {
     UpgradeMenu() {
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
-      sprites.add(new Sprite("Button", 5).
+      sprites.add(new Sprite("Button", 10).
           setSize(220, 420).
           setPosition(x, y).
           addToBs(bs)
       );
       buttons.add(new Button(
-          new Sprite("Cancelbutton", 5).addToBs(bs).setSize(200, 50).setPosition(x, y - 150),
+          new Sprite("Cancelbutton", 10).addToBs(bs).setSize(200, 50).setPosition(x, y - 150),
           (x, y) -> close()));
 
       List<Upgrade> p1 = getUpgradePath1();

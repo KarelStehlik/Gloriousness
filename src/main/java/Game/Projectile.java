@@ -16,7 +16,11 @@ import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
 
-  private final Sprite sprite;
+  public Sprite getSprite() {
+    return sprite;
+  }
+
+  protected final Sprite sprite;
   private final Collection<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
   private final Collection<TdMob> alreadyHitMobs;
   private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
@@ -24,10 +28,11 @@ public class Projectile extends GameObject implements TickDetect {
   private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
   private final Collection<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
   private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
-  private float vx, vy;
+  protected float vx;
+  protected float vy;
   private boolean wasDeleted = false;
-  private boolean active = true;
-  private float rotation;
+  protected boolean active = true;
+  protected float rotation;
   private boolean alreadyHitPlayer = false;
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
@@ -47,6 +52,8 @@ public class Projectile extends GameObject implements TickDetect {
     alreadyHitProjectiles = new HashSet<>(pierce);
     stats[Stats.power] = power;
   }
+
+  public void special(int i){}
 
   public static void bounce(Projectile p) {
     float s = p.stats[Stats.size] / 2;

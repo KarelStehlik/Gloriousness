@@ -508,9 +508,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private void run() {
       spawningProcess += Math.min(mobsPerTick, mobsToSpawn);
       mobsToSpawn = Math.max(0, mobsToSpawn - mobsPerTick);
-      Log.conditional(
-          "" + mobsToSpawn + " " + spawningProcess + " " + (next == null ? -1 : next.cost),
-          tick % 60 == 0);
       if (mobsToSpawn + spawningProcess < bloons.get(bloons.size() - 1).cost) {
         if (mobsList.isEmpty()) {
           endWave();

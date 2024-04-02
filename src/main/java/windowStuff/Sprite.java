@@ -26,7 +26,24 @@ public class Sprite implements AbstractSprite {
   private float width, height;
   private int imageId;
   private Animation animation;
-  private Short[] staticData;
+
+  public Sprite(Sprite og){
+    textureName=og.textureName;
+    layer=og.layer;
+    shader=og.shader;
+    opacity=og.opacity;
+    hidden=og.hidden;
+    x=og.x;
+    y=og.y;
+    colors=og.colors;
+    texCoords=og.texCoords;
+    rotation=og.rotation;
+    width=og.width;
+    height=og.height;
+    imageId=og.imageId;
+    animation=() -> {
+    };
+  }
 
   public Sprite(String imageName, int layer) {
     this(imageName, 0, 0, 100, 100, layer, "basic");
