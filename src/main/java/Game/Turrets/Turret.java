@@ -67,11 +67,33 @@ public abstract class Turret extends GameObject implements TickDetect {
     Game.get().addMouseDetect(butt);
   }
 
-  protected abstract List<Upgrade> getUpgradePath1();
+  private List<Upgrade> getUpgradePath1() {
+    return List.of(up100(), up200(), up300(), up400(), up500());
+  }
 
-  protected abstract List<Upgrade> getUpgradePath2();
+  private List<Upgrade> getUpgradePath2() {
+    return List.of(up010(), up020(), up030(), up040(), up050());
+  }
 
-  protected abstract List<Upgrade> getUpgradePath3();
+  private List<Upgrade> getUpgradePath3() {
+    return List.of(up001(), up002(), up003(), up004(), up005());
+  }
+
+  protected Upgrade up100() {return maxUpgrades;}
+  protected Upgrade up200() {return maxUpgrades;}
+  protected Upgrade up300() {return maxUpgrades;}
+  protected Upgrade up400() {return maxUpgrades;}
+  protected Upgrade up500() {return maxUpgrades;}
+  protected Upgrade up010() {return maxUpgrades;}
+  protected Upgrade up020() {return maxUpgrades;}
+  protected Upgrade up030() {return maxUpgrades;}
+  protected Upgrade up040() {return maxUpgrades;}
+  protected Upgrade up050() {return maxUpgrades;}
+  protected Upgrade up001() {return maxUpgrades;}
+  protected Upgrade up002() {return maxUpgrades;}
+  protected Upgrade up003() {return maxUpgrades;}
+  protected Upgrade up004() {return maxUpgrades;}
+  protected Upgrade up005() {return maxUpgrades;}
 
   private void openUpgradeMenu() {
     if (menu != null) {
@@ -205,9 +227,37 @@ public abstract class Turret extends GameObject implements TickDetect {
       List<Upgrade> p2 = getUpgradePath2();
       List<Upgrade> p3 = getUpgradePath3();
 
-      Upgrade u1 = path1Tier < p1.size() ? p1.get(path1Tier) : maxUpgrades;
-      Upgrade u2 = path2Tier < p2.size() ? p2.get(path2Tier) : maxUpgrades;
-      Upgrade u3 = path3Tier < p3.size() ? p3.get(path3Tier) : maxUpgrades;
+      int maxTier1=p1.size();
+      int maxTier2=p2.size();
+      int maxTier3=p3.size();
+
+      if(!world.getOptions().isUltimateCrosspathing()) {
+        if (path1Tier >= 3) {
+          maxTier2 = 2;
+          maxTier3 = 2;
+        }
+        if (path2Tier >= 3) {
+          maxTier3 = 2;
+          maxTier1 = 2;
+        }
+        if (path3Tier >= 3) {
+          maxTier2 = 2;
+          maxTier1 = 2;
+        }
+        if (path1Tier > 0 && path2Tier > 0) {
+          maxTier3 = 0;
+        }
+        if (path3Tier > 0 && path2Tier > 0) {
+          maxTier1 = 0;
+        }
+        if (path1Tier > 0 && path3Tier > 0) {
+          maxTier2 = 0;
+        }
+      }
+
+      Upgrade u1 = path1Tier < maxTier1 ? p1.get(path1Tier) : maxUpgrades;
+      Upgrade u2 = path2Tier < maxTier2 ? p2.get(path2Tier) : maxUpgrades;
+      Upgrade u3 = path3Tier < maxTier3 ? p3.get(path3Tier) : maxUpgrades;
 
       buttons.add(
           new Button(bs, u1.makeSprite().setPosition(x, y - 50), (mx, my) -> buttonClicked(u1, 1),

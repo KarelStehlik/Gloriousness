@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
@@ -55,6 +56,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   public static final int HEIGHT = 1080;
   private static final int MAP = 1;
   public final List<TrackPoint> spacPoints = new ArrayList<>(500);
+
+  public Options getOptions() {
+    return options;
+  }
+
   private final Options options = new Options();
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
@@ -71,7 +77,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
-  private double money = 0;
+  private double money = 10000000000d;
   private int wave = 0;
   private boolean waveRunning = true;
 
@@ -131,7 +137,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
     }, null));
 
-    resourceTracker = new Text("Lives: " + health + "\nCash: " + (int) getMoney(), "Calibri", 500,
+    resourceTracker = new Text("Lives: " + health + "\nCash: " + (long) getMoney(), "Calibri", 500,
         0, 1050, 10, 40, bs);
     resourceTracker.setColors(Util.getColors(1, 1, 1));
 
@@ -186,7 +192,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void changeHealth(int change) {
     health += change;
-    resourceTracker.setText("Lives: " + health + "\nCash: " + (int) getMoney());
+    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney());
   }
 
   public List<Point> getMapData() {
@@ -228,9 +234,18 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       if (ImGui.checkbox("Gong lag", gong)) {
         options.laggyGong = gong.get();
       }
+    }
+    if (ImGui.collapsingHeader("Well, fuck you too")) {
+      ImBoolean path = new ImBoolean(options.ultimateCrosspathing);
+      if(ImGui.button("give cash")){
+        setMoney(money+999999);
+      }
+      if (ImGui.checkbox("5-5-5 allowed", path)) {
+        options.ultimateCrosspathing = path.get();
+      }
 
       ImBoolean cheat = new ImBoolean(mobSpawner.cheat);
-      if (ImGui.checkbox("Haxxor", cheat)) {
+      if (ImGui.checkbox("Waves go brr", cheat)) {
         mobSpawner.cheat = cheat.get();
       }
     }
@@ -246,31 +261,31 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   @Override
   public int getLayer() {
-    return -1;
+    return 5;
   }
 
   @Override
   public boolean onMouseButton(int button, double x, double y, int action, int mods) {
     if (!currentTool.WasDeleted()) {
-      currentTool.onMouseButton(button, x, y, action, mods);
+      return currentTool.onMouseButton(button, x, y, action, mods);
     }
-    return true;
+    return false;
   }
 
   @Override
   public boolean onScroll(double scroll) {
     if (!currentTool.WasDeleted()) {
-      currentTool.onScroll(scroll);
+      return currentTool.onScroll(scroll);
     }
-    return true;
+    return false;
   }
 
   @Override
   public boolean onMouseMove(float newX, float newY) {
     if (!currentTool.WasDeleted()) {
-      currentTool.onMouseMove(newX, newY);
+      return currentTool.onMouseMove(newX, newY);
     }
-    return true;
+    return false;
   }
 
   //private Timer timer = new Log.Timer();
@@ -290,15 +305,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
 
-    tickEntities(projectilesGrid, projectilesList);
-    for (var proj : projectilesList) {
-      proj.handleProjectileCollision();
-    }
-
-    //Log.write("projs: "+timer.elapsedNano(true)/1000000);
-
     player.onGameTick(tick);
     if (waveRunning) {
+      tickEntities(projectilesGrid, projectilesList);
+      for (var proj : projectilesList) {
+        proj.handleProjectileCollision();
+      }
+      //Log.write("projs: "+timer.elapsedNano(true)/1000000);
       mobSpawner.run();
     }
 
@@ -352,7 +365,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void setMoney(double money) {
     this.money = money;
-    resourceTracker.setText("Lives: " + health + "\nCash: " + (int) getMoney());
+    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney());
   }
 
   public Tool getCurrentTool() {
@@ -415,10 +428,23 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
   }
 
-  private static class Options {
+  public static class Options {
+
+    public boolean isFuckified() {
+      return fuckified;
+    }
+
+    public boolean isLaggyGong() {
+      return laggyGong;
+    }
+
+    public boolean isUltimateCrosspathing() {
+      return ultimateCrosspathing;
+    }
 
     private boolean fuckified = false;
     private boolean laggyGong = false;
+    private boolean ultimateCrosspathing = false;
   }
 
   private static class Optimization {

@@ -267,8 +267,25 @@ public class Projectile extends GameObject implements TickDetect {
   public static class Guided {
 
     private TdMob targetedMob;
-    private final int range;
-    private final float strength;
+
+    public int getRange() {
+      return range;
+    }
+
+    public void setRange(int range) {
+      this.range = range;
+    }
+
+    public float getStrength() {
+      return strength;
+    }
+
+    public void setStrength(float strength) {
+      this.strength = strength;
+    }
+
+    private int range;
+    private float strength;
 
     public Guided(int range, float strength) {
       this.range = range;

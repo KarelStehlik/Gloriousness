@@ -35,51 +35,59 @@ public class Druid extends Turret {
     return new TurretGenerator(world, image, "Druid", () -> new Druid(world, -1000, -1000));
   }
 
-  private Upgrade up100() {
+  @Override
+  protected Upgrade up100() {
     return new Upgrade("Button", () -> "bounces off walls",
         () -> bulletLauncher.addProjectileModifier(p -> p.addBuff(
             new OnTickBuff<Projectile>(Projectile::bounce))), 200);
   }
 
-  private Upgrade up200() {
+  @Override
+  protected Upgrade up200() {
     return new Upgrade("Button", () -> "regrows 4 more times",
         () -> addBuff(
             new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 4)), 800);
   }
 
-  private Upgrade up300() {
+  @Override
+  protected Upgrade up300() {
     return new Upgrade("Button", () -> "gains bonus duration when regrowing",
         () -> addBuff(
             new StatBuff<Turret>(Type.ADDED, ExtraStats.bonusDuration, 6000)),
         1500);
   }
 
-  private Upgrade up400() {
+  @Override
+  protected Upgrade up400() {
     return new Upgrade("Button", () -> "attacks way faster",
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 0.3f)),
         10000);
   }
 
-  private Upgrade up500() {
+  @Override
+  protected Upgrade up500() {
     return new Upgrade("Button", () -> "keeps regrowing basically forever",
         () -> addBuff(
             new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 20)), 30000);
   }
 
-  private Upgrade up010() {
+  @Override
+  protected Upgrade up010() {
     return new Upgrade("Button", () -> "increases pierce when regrowing",
         () -> addBuff(
             new StatBuff<Turret>(Type.ADDED, ExtraStats.pierceScaling,
                 .4f)), 150);
   }
 
-  private Upgrade up020() {
+  @Override
+  protected Upgrade up020() {
     return new Upgrade("Button", () -> "can hit the same bloon many times",
         () -> bulletLauncher.addProjectileModifier(p -> p.addBuff(
             new OnTickBuff<Projectile>(Projectile::clearCollisions))), 500);
   }
 
-  private Upgrade up030() {
+  @Override
+  protected Upgrade up030() {
     return new Upgrade("Button", () -> "Roots bloons",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> mob.addBuff(
             new StatBuff<TdMob>(Type.MORE,
@@ -88,7 +96,8 @@ public class Druid extends Turret {
         ), 0)), 2500);
   }
 
-  private Upgrade up040() {
+  @Override
+  protected Upgrade up040() {
     return new Upgrade("Button", () -> "slows everything in a large area",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
@@ -102,7 +111,8 @@ public class Druid extends Turret {
         }, 0)), 20000);
   }
 
-  private Upgrade up050() {
+  @Override
+  protected Upgrade up050() {
     return new Upgrade("Button", () -> "Bloons in a large area temporarily take more damage",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
@@ -115,7 +125,8 @@ public class Druid extends Turret {
         }, 0)), 50000);
   }
 
-  private Upgrade up004() {
+  @Override
+  protected Upgrade up004() {
     return new Upgrade("Button", () -> "Also sets shit on fire",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
@@ -125,7 +136,8 @@ public class Druid extends Turret {
         })), 20000);
   }
 
-  private Upgrade up005() {
+  @Override
+  protected Upgrade up005() {
     return new Upgrade("Button", () -> "Projectiles have more speed and piercs",
         () -> bulletLauncher.addProjectileModifier(p -> {
           p.addBuff(
@@ -136,7 +148,8 @@ public class Druid extends Turret {
         }), 50000);
   }
 
-  private Upgrade up003() {
+  @Override
+  protected Upgrade up003() {
     return new Upgrade("Button", () -> "Enemies hit explode",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           BasicCollides.explodeFunc(
@@ -149,7 +162,8 @@ public class Druid extends Turret {
         })), 20000);
   }
 
-  private Upgrade up002() {
+  @Override
+  protected Upgrade up002() {
     return new Upgrade("Button", () -> "increases power and size when regrowing",
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.powScaling,
@@ -159,24 +173,10 @@ public class Druid extends Turret {
         }, 2000);
   }
 
-  private Upgrade up001() {
+  @Override
+  protected Upgrade up001() {
     return new Upgrade("Button", () -> "triple damage",
         () -> addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 2f)), 500);
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of(up100(), up200(), up300(), up400(), up500());
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of(up010(), up020(), up030(), up040(), up050());
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of(up001(), up002(), up003(), up004(), up005());
   }
 
   private void regrow(RefFloat respawnsLeft, Projectile proj) {

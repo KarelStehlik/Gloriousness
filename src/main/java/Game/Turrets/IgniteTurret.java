@@ -22,21 +22,6 @@ public class IgniteTurret extends Turret {
     return new TurretGenerator(world, image, "Fire", () -> new IgniteTurret(world, -1000, -1000));
   }
 
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
-
 
   // generated stats
   @Override

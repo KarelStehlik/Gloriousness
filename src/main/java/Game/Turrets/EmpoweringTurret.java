@@ -32,20 +32,6 @@ public class EmpoweringTurret extends Turret {
             pow));
   }
 
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
 
   private boolean collide(Projectile p1, Projectile p2) {
     final float pow = p1.getPower();

@@ -43,9 +43,8 @@ public class PlaceObjectTool extends Tool {
     if ((button == 0 && action == 1 && click.click((int) x, (int) y)) || (button == 1
         && action == 1)) {
       delete();
-      return true;
     }
-    return false;
+    return true;
   }
 
   @Override

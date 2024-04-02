@@ -32,20 +32,6 @@ public class EatingTurret extends Turret {
     return new TurretGenerator(world, image, "Eating", () -> new EatingTurret(world, -1000, -1000));
   }
 
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
 
   private void modProjectile(Projectile p) {
     eater e = new eater((int) stats[Stats.pierce], stats[Stats.power]);

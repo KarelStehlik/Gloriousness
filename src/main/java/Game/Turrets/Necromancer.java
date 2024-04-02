@@ -48,20 +48,6 @@ public class Necromancer extends Turret {
     updateRange();
   }
 
-  @Override
-  protected List<Upgrade> getUpgradePath1() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath2() {
-    return List.of();
-  }
-
-  @Override
-  protected List<Upgrade> getUpgradePath3() {
-    return List.of();
-  }
 
   @Override
   public void onGameTick(int tick) {
