@@ -487,9 +487,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private float spawningProcess = 0;
     private BloonSpawn next;
 
-    private BloonSpawn selectNectBloon(float toSpawn) {
+    private BloonSpawn selectNectBloon(float toSpawn, int wave) {
       for (var bs : bloons) {
-        if (bs.cost < toSpawn
+        if (bs.cost > wave * 5 && bs.cost>toSpawn
             && Data.gameMechanicsRng.nextFloat() < toSpawn / bs.cost / bs.cost / 100) {
           return bs;
         }
@@ -529,12 +529,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return;
       }
       if (next == null) {
-        next = selectNectBloon(mobsToSpawn);
+        next = selectNectBloon(mobsToSpawn,wave);
       }
       while (next.cost <= spawningProcess) {
         spawningProcess -= next.cost;
         add(next.spawn());
-        next = selectNectBloon(mobsToSpawn);
+        next = selectNectBloon(mobsToSpawn,wave);
       }
     }
 
