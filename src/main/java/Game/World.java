@@ -35,6 +35,7 @@ import general.Log;
 import general.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -248,6 +249,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       if (ImGui.checkbox("Waves go brr", cheat)) {
         mobSpawner.cheat = cheat.get();
       }
+
+      ImInt wave = new ImInt(0);
     }
     ImGui.end();
   }
@@ -489,7 +492,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private BloonSpawn selectNectBloon(float toSpawn, int wave) {
       for (var bs : bloons) {
-        if (bs.cost > wave * 5 && bs.cost>toSpawn
+        if (bs.cost < wave * 5 && bs.cost>toSpawn
             && Data.gameMechanicsRng.nextFloat() < toSpawn / bs.cost / bs.cost / 100) {
           return bs;
         }
@@ -529,12 +532,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return;
       }
       if (next == null) {
-        next = selectNectBloon(mobsToSpawn,wave);
+        next = selectNectBloon(mobsToSpawn,World.this.wave);
       }
       while (next.cost <= spawningProcess) {
         spawningProcess -= next.cost;
         add(next.spawn());
-        next = selectNectBloon(mobsToSpawn,wave);
+        next = selectNectBloon(mobsToSpawn,World.this.wave);
       }
     }
 
