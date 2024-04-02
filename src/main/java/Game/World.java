@@ -307,6 +307,20 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     player.onGameTick(tick);
     if (waveRunning) {
+      int undeleted = 0;
+      for (int current = 0; current < turrets.size(); current++) {
+        if (current != undeleted) {
+          turrets.set(undeleted, turrets.get(current));
+        }
+        if (!turrets.get(current).WasDeleted()) {
+          turrets.get(current).onGameTick(tick);
+          undeleted++;
+        }
+      }
+      if (turrets.size() > undeleted) {
+        turrets.subList(undeleted, turrets.size()).clear();
+      }
+
       tickEntities(projectilesGrid, projectilesList);
       for (var proj : projectilesList) {
         proj.handleProjectileCollision();

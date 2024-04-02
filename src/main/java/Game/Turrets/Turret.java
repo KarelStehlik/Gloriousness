@@ -50,7 +50,6 @@ public abstract class Turret extends GameObject implements TickDetect {
 
     bulletLauncher = launcher;
     launcher.move(x, y);
-    Game.get().addTickable(this);
     onStatsUpdate();
     buffHandler = new BuffHandler<>(this);
     world.addTurret(this);
