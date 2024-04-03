@@ -1,9 +1,7 @@
 package Game;
 
 import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
 import Game.Mobs.TdMob.TrackProgress;
-import general.Data;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -18,7 +16,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
   public SquareGridMobs(int left, int bottom, int width, int height, int squareSize) {
     super(left, bottom, width, height, squareSize);
     strongest = new ArrayList<>(data.size());
-    for(var d : data){
+    for (var d : data) {
       strongest.add(null);
     }
   }
@@ -28,7 +26,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
     for (int i = 0; i < data.size(); i++) {
       ArrayList<TdMob> entities = data.get(i);
       entities.clear();
-      strongest.set(i,null);
+      strongest.set(i, null);
     }
   }
 
@@ -44,7 +42,8 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
       for (int x = left; x <= right; x++) {
         int index = x + y * widthSquares;
         data.get(index).add(in);
-        if(strongest.get(index) ==null || in.getStats()[TdMob.Stats.health] > strongest.get(index).getStats()[TdMob.Stats.health]){
+        if (strongest.get(index) == null || in.getStats()[TdMob.Stats.health] > strongest.get(index)
+            .getStats()[TdMob.Stats.health]) {
           strongest.set(index, in);
         }
       }
@@ -66,18 +65,17 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
     int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
     int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
 
-    TdMob best=null;
+    TdMob best = null;
     for (int y = bottom; y <= top; y++) {
       for (int x = left; x <= right; x++) {
         TdMob candidate = strongest.get(x + y * widthSquares);
-        if(candidate == null){
-        }else
-        if(best==null){
-          best=candidate;
-        }else
-        if(candidate.getStats()[TdMob.Stats.health] > best.getStats()[TdMob.Stats.health]||
-                (candidate.getStats()[TdMob.Stats.health] == best.getStats()[TdMob.Stats.health] && candidate.getProgress().compareTo(best.getProgress())>0)){
-          best=candidate;
+        if (candidate == null) {
+        } else if (best == null) {
+          best = candidate;
+        } else if (candidate.getStats()[TdMob.Stats.health] > best.getStats()[TdMob.Stats.health] ||
+            (candidate.getStats()[TdMob.Stats.health] == best.getStats()[TdMob.Stats.health]
+                && candidate.getProgress().compareTo(best.getProgress()) > 0)) {
+          best = candidate;
         }
       }
     }

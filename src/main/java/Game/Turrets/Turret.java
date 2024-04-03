@@ -78,21 +78,65 @@ public abstract class Turret extends GameObject implements TickDetect {
     return List.of(up001(), up002(), up003(), up004(), up005());
   }
 
-  protected Upgrade up100() {return maxUpgrades;}
-  protected Upgrade up200() {return maxUpgrades;}
-  protected Upgrade up300() {return maxUpgrades;}
-  protected Upgrade up400() {return maxUpgrades;}
-  protected Upgrade up500() {return maxUpgrades;}
-  protected Upgrade up010() {return maxUpgrades;}
-  protected Upgrade up020() {return maxUpgrades;}
-  protected Upgrade up030() {return maxUpgrades;}
-  protected Upgrade up040() {return maxUpgrades;}
-  protected Upgrade up050() {return maxUpgrades;}
-  protected Upgrade up001() {return maxUpgrades;}
-  protected Upgrade up002() {return maxUpgrades;}
-  protected Upgrade up003() {return maxUpgrades;}
-  protected Upgrade up004() {return maxUpgrades;}
-  protected Upgrade up005() {return maxUpgrades;}
+  protected Upgrade up100() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up200() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up300() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up400() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up500() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up010() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up020() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up030() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up040() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up050() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up001() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up002() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up003() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up004() {
+    return maxUpgrades;
+  }
+
+  protected Upgrade up005() {
+    return maxUpgrades;
+  }
 
   private void openUpgradeMenu() {
     if (menu != null) {
@@ -213,6 +257,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     UpgradeMenu() {
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
+      rangeDisplay.setSize(stats[Stats.range]*2, stats[Stats.range]*2);
       sprites.add(new Sprite("Button", 10).
           setSize(220, 420).
           setPosition(x, y).
@@ -226,11 +271,11 @@ public abstract class Turret extends GameObject implements TickDetect {
       List<Upgrade> p2 = getUpgradePath2();
       List<Upgrade> p3 = getUpgradePath3();
 
-      int maxTier1=p1.size();
-      int maxTier2=p2.size();
-      int maxTier3=p3.size();
+      int maxTier1 = p1.size();
+      int maxTier2 = p2.size();
+      int maxTier3 = p3.size();
 
-      if(!world.getOptions().isUltimateCrosspathing()) {
+      if (!world.getOptions().isUltimateCrosspathing()) {
         if (path1Tier >= 3) {
           maxTier2 = 2;
           maxTier3 = 2;

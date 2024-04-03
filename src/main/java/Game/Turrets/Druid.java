@@ -1,35 +1,29 @@
 package Game.Turrets;
 
-import Game.Animation;
 import Game.BasicCollides;
 import Game.Buffs.Ignite;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
-import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;
-import Game.TickDetect;
 import Game.TurretGenerator;
-import Game.Turrets.DruidBall.RespawningProjectile;
+import Game.Turrets.EmpoweringTurret.ExtraStats;
 import Game.World;
 import general.RefFloat;
 import general.Util;
-import org.joml.Vector2f;
-import windowStuff.Sprite;
 
 public class Druid extends Turret {
 
   public static final String image = "Druid";
-  private String ballImage= "DruidBall";
+  private final String ballImage = "DruidBall";
 
   public Druid(World world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "", DruidBall::new));
     bulletLauncher.setImage(ballImage);
     onStatsUpdate();
-    bulletLauncher.setSpread(45);
     bulletLauncher.addProjectileModifier(this::modProjectile);
   }
 
@@ -41,9 +35,9 @@ public class Druid extends Turret {
   protected Upgrade up100() {
     return new Upgrade("Button", () -> "bounces off walls",
         () -> {
-      sprite.setImage("Druid1");
-      bulletLauncher.addProjectileModifier(p -> p.addBuff(
-            new OnTickBuff<Projectile>(Projectile::bounce)));
+          sprite.setImage("Druid1");
+          bulletLauncher.addProjectileModifier(p -> p.addBuff(
+              new OnTickBuff<Projectile>(Projectile::bounce)));
         }, 200);
   }
 
@@ -52,8 +46,8 @@ public class Druid extends Turret {
     return new Upgrade("Button", () -> "regrows 4 more times",
         () -> {
           sprite.setImage("Druid2");
-      addBuff(
-            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 4));
+          addBuff(
+              new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 4));
         }, 800);
   }
 
@@ -90,8 +84,7 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up020() {
     return new Upgrade("Button", () -> "can hit the same bloon many times",
-        () -> bulletLauncher.addProjectileModifier(p -> p.addBuff(
-            new OnTickBuff<Projectile>(Projectile::clearCollisions))), 500);
+        () -> bulletLauncher.addProjectileModifier(p -> p.setMultihit(true)), 500);
   }
 
   @Override
@@ -104,13 +97,14 @@ public class Druid extends Turret {
         ), 0)), 2500);
   }
 
-  private static final float[] blueColors = Util.getColors(.3f,1.05f,1.65f);
+  private static final float[] blueColors = Util.getColors(.3f, 1.05f, 1.65f);
+
   @Override
   protected Upgrade up040() {
     return new Upgrade("Button", () -> "slows everything in a large area",
-        () -> {
-      bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
-        p.getSprite().setColors(blueColors);
+        () -> bulletLauncher.addProjectileModifier(p -> {
+          p.getSprite().setColors(blueColors);
+          p.addMobCollide((proj, mob) -> {
           world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
               (int) (proj.getStats()[Projectile.Stats.size] * 1.5f),
               enemy -> enemy.addBuff(new StatBuff<TdMob>(
@@ -119,8 +113,8 @@ public class Druid extends Turret {
                   )
               ));
           return true;
-        }, 0));
-      }, 20000);
+        }
+        , 0);}), 20000);
   }
 
   @Override
@@ -140,42 +134,41 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up004() {
     return new Upgrade("Button", () -> "Also sets shit on fire",
-        () -> {
-      bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
+        () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
               (int) (p.getStats()[Projectile.Stats.size] * .6f),
               enemy -> enemy.addBuff(new Ignite<>(p.getPower() * 0.1f, 3000)));
           return true;
-        }));}, 20000);
+        })), 20000);
   }
 
   @Override
   protected Upgrade up005() {
     return new Upgrade("Button", () -> "Projectiles have more speed and piercs",
-        () -> bulletLauncher.addProjectileModifier(p -> {
-          p.addBuff(
-              new StatBuff<Projectile>(Type.MORE, Projectile.Stats.speed,
-                  7));
-          p.addBuff(new StatBuff<Projectile>(Type.MORE,
-              Projectile.Stats.pierce, 10));
-        }), 50000);
+        () -> {
+          addBuff(
+              new StatBuff<Turret>(Type.MORE, Stats.speed, 7));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 10));
+        }, 50000);
   }
 
-  private static final float[] redColors = Util.getColors(2,0.7f,0.3f);
+  private static final float[] redColors = Util.getColors(2, 0.7f, 0.3f);
+
   @Override
   protected Upgrade up003() {
     return new Upgrade("Button", () -> "Enemies hit explode",
         () -> bulletLauncher.addProjectileModifier(p -> {
           p.getSprite().setColors(redColors);
           p.addMobCollide((proj, mob) -> {
-          BasicCollides.explodeFunc(
-              (int) mob.getX(),
-              (int) mob.getY(),
-              proj.getPower(),
-              proj.getStats()[Projectile.Stats.size] * .4f,
-              "Explosion2-0");
-          return true;
-        });}), 20000);
+            BasicCollides.explodeFunc(
+                (int) mob.getX(),
+                (int) mob.getY(),
+                proj.getPower(),
+                proj.getStats()[Projectile.Stats.size] * .4f,
+                "Explosion2-0");
+            return true;
+          });
+        }), 20000);
   }
 
   @Override

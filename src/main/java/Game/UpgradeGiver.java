@@ -13,7 +13,7 @@ import windowStuff.SpriteBatching;
 public class UpgradeGiver {
 
   private static final int BOTTOM = 50, LEFT = 110, BUTTON_WIDTH = 200, BUTTON_HEIGHT = 100, BUTTON_OFFSET = 120;
-  private final UpgradeType[] upgradeTypes = new UpgradeType[]{new AttackSpeed(), new Damage()};
+  private final UpgradeType[] upgradeTypes = new UpgradeType[]{new AttackSpeed(), new Damage(), new Pierce()};
   private final List<Button> buttons = new ArrayList<>(2);
   private final World world;
 
@@ -56,17 +56,36 @@ public class UpgradeGiver {
     }
   }
 
+  private class Pierce extends UpgradeType {
+
+    @Override
+    void picked() {
+      world.getPlayer().addBuff(new StatBuff<Player>(Type.ADDED,
+          Stats.projPierce, 2));
+    }
+
+    @Override
+    String getText() {
+      return "+2 pierce";
+    }
+
+    @Override
+    String getImageName() {
+      return "Meteor";
+    }
+  }
+
   private class AttackSpeed extends UpgradeType {
 
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE,
-          Player.Stats.cd, 1 / 1.2f));
+          Player.Stats.cd, 1 / 1.3f));
     }
 
     @Override
     String getText() {
-      return "20% more attack speed";
+      return "30% more attack speed";
     }
 
     @Override

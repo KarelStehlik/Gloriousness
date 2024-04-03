@@ -3,13 +3,10 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.OnTickBuff;
-import Game.Buffs.StatBuff;
-import Game.Buffs.StatBuff.Type;
 import Game.Buffs.UniqueBuff;
 import Game.BulletLauncher;
 import Game.DamageType;
 import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
 import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
@@ -17,7 +14,6 @@ import general.Data;
 import general.RefFloat;
 import general.Util;
 import java.awt.Point;
-import java.util.List;
 import windowStuff.Sprite;
 
 public class EmpoweringTurret extends Turret {
@@ -52,27 +48,31 @@ public class EmpoweringTurret extends Turret {
   }
 
 
-  RefFloat assaCooldown=new RefFloat(0);
+  RefFloat assaCooldown = new RefFloat(0);
+
   @Override
   protected Upgrade up010() {
     return new Upgrade("Button", () -> "Hires edgy assassins to destroy nearby MOABs",
-        () -> addBuff(new OnTickBuff<Turret>(turr->{
+        () -> addBuff(new OnTickBuff<Turret>(turr -> {
           assaCooldown.add(-1);
-          while(assaCooldown.get()<0){
-            assaCooldown.add(stats[Stats.cd]*.7f);
-            var mob = world.getMobsGrid().getStrong(new Point((int) x, (int) y), (int)stats[Stats.range]);
-            if(mob!=null){
-              float angle = Data.unstableRng.nextFloat()*360;
-              Sprite assa = new Sprite("Assassin",1).setPosition(-1000,-1000).addToBs(world.getBs()).setSize(200,200).setRotation(angle);
-              mob.addBuff(new DelayedTrigger<TdMob>(1000, m -> {
-                m.takeDamage(stats[Stats.power]*5000, DamageType.TRUE);
+          while (assaCooldown.get() < 0) {
+            assaCooldown.add(stats[ExtraStats.assaCd]);
+            var mob = world.getMobsGrid()
+                .getStrong(new Point((int) x, (int) y), (int) stats[Stats.range]);
+            if (mob != null) {
+              float angle = Data.unstableRng.nextFloat() * 360;
+              Sprite assa = new Sprite("Assassin", 1).setPosition(-1000, -1000)
+                  .addToBs(world.getBs()).setSize(200, 200).setRotation(angle);
+              mob.addBuff(new DelayedTrigger<TdMob>(stats[ExtraStats.assaDuration], m -> {
+                m.takeDamage(stats[Stats.power] * stats[ExtraStats.assaDamageMult],
+                    DamageType.TRUE);
                 assa.delete();
-                world.explosionVisual(m.getX(),m.getY(),70,true,"Explosion1-0");
-                },true));
-              mob.addBuff(new OnTickBuff<TdMob>(1000,
-                  m->assa.setPosition(
-                      m.getX()+m.getStats()[TdMob.Stats.size]*.4f* Util.sin(-angle)
-                      , m.getY()+m.getStats()[TdMob.Stats.size]*.4f*Util.cos(angle)
+                world.explosionVisual(m.getX(), m.getY(), 70, true, "Explosion1-0");
+              }, true));
+              mob.addBuff(new OnTickBuff<TdMob>(stats[ExtraStats.assaDuration],
+                  m -> assa.setPosition(
+                      m.getX() + m.getStats()[TdMob.Stats.size] * .4f * Util.sin(-angle)
+                      , m.getY() + m.getStats()[TdMob.Stats.size] * .4f * Util.cos(angle)
                   ),
                   false));
             }
@@ -82,6 +82,11 @@ public class EmpoweringTurret extends Turret {
 
 
   // generated stats
+  @Override
+  public int getStatsCount() {
+    return 13;
+  }
+
   @Override
   public void clearStats() {
     stats[Stats.power] = 100f;
@@ -94,6 +99,19 @@ public class EmpoweringTurret extends Turret {
     stats[Stats.cost] = 1000f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
+    stats[ExtraStats.assaCd] = 1000f;
+    stats[ExtraStats.assaDamageMult] = 1000f;
+    stats[ExtraStats.assaDuration] = 1000f;
+  }
+
+  public static final class ExtraStats {
+
+    public static final int assaCd = 10;
+    public static final int assaDamageMult = 11;
+    public static final int assaDuration = 12;
+
+    private ExtraStats() {
+    }
   }
   // end of generated stats
 }

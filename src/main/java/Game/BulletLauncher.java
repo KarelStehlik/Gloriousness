@@ -28,6 +28,15 @@ public class BulletLauncher {
   private float x, y;
   private float cooldown;
   private float spread = 0;
+
+  public float getRemainingCooldown() {
+    return remainingCooldown;
+  }
+
+  public void setRemainingCooldown(float remainingCooldown) {
+    this.remainingCooldown = remainingCooldown;
+  }
+
   private float remainingCooldown;
 
   public BulletLauncher(World world, String projectileImage, float x, float y,
@@ -47,7 +56,7 @@ public class BulletLauncher {
     this.y = y;
     this.cooldown = cooldownMs;
     this.remainingCooldown = cooldownMs;
-    launcher=Projectile::new;
+    launcher = Projectile::new;
   }
 
   public BulletLauncher(World world, String projectileImage) {
@@ -56,7 +65,7 @@ public class BulletLauncher {
 
   public BulletLauncher(World world, String projectileImage, ProjectileNewFunction f) {
     this(world, projectileImage);
-    launcher=f;
+    launcher = f;
   }
 
   public BulletLauncher(BulletLauncher og) {
@@ -76,7 +85,7 @@ public class BulletLauncher {
     playerCollides.addAll(og.playerCollides);
     mobCollides.addAll(og.mobCollides);
     projectileCollides.addAll(og.projectileCollides);
-    launcher=og.launcher;
+    launcher = og.launcher;
   }
 
   public void addProjectileModifier(Modifier<Projectile> projectileModifier) {
@@ -149,10 +158,12 @@ public class BulletLauncher {
   }
 
   @FunctionalInterface
-  public interface ProjectileNewFunction{
+  public interface ProjectileNewFunction {
+
     Projectile make(World world, String image, float X, float Y, float speed, float rotation,
         int W, int H, int pierce, float size, float duration, float power);
   }
+
   private ProjectileNewFunction launcher;
 
   public void attack(float angle) {

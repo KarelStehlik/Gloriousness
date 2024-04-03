@@ -25,16 +25,16 @@ public class SmallMoab extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 300.0f;
-    stats[Stats.speed] = 2f;
+    stats[Stats.speed] = 0.7f;
     stats[Stats.health] = 500f;
     stats[Stats.value] = 80f;
   }
-
+  // end of generated stats
   @Override
   public boolean isMoab() {
     return true;
   }
-  // end of generated stats
+
 
   @Override
   protected List<ChildSpawner> children() {

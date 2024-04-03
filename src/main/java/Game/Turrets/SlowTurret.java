@@ -4,7 +4,6 @@ import Game.BasicCollides;
 import Game.BulletLauncher;
 import Game.TurretGenerator;
 import Game.World;
-import java.util.List;
 
 public class SlowTurret extends Turret {
 

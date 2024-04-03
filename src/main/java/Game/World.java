@@ -36,13 +36,11 @@ import general.Log;
 import general.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
-import imgui.type.ImInt;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
@@ -66,6 +64,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Options options = new Options();
   private final SpriteBatching bs;
   private final SquareGridMobs mobsGrid;
+
+  public ArrayList<TdMob> getMobsList() {
+    return mobsList;
+  }
+
   private final ArrayList<TdMob> mobsList;
   private final SquareGrid<Projectile> projectilesGrid;
   private final ArrayList<Projectile> projectilesList;
@@ -150,7 +153,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     calcSpacPoints();
   }
 
-  public void addEvent(VoidFunc e){
+  public void addEvent(VoidFunc e) {
     queuedEvents.add(e);
   }
 
@@ -158,7 +161,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     if (money < cost) {
       return false;
     }
-    money -= cost;
+    setMoney(money-cost);
     return true;
   }
 
@@ -166,7 +169,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     GameObject fakeBloon = new GameObject(mapData.get(0).x, mapData.get(0).y, 0, 0, this);
     float[] speed = new float[1];
     speed[0] = 1;
-    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<GameObject>(false, mapData,
+    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<>(false, mapData,
         new Point(0, 0), speed, 0, o -> {
     });
     while (!mover.isDone()) {
@@ -245,17 +248,17 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     if (ImGui.collapsingHeader("Well, fuck you too")) {
       ImBoolean path = new ImBoolean(options.ultimateCrosspathing);
 
-      if(ImGui.button("give cash")){
-        setMoney(money+999999);
+      if (ImGui.button("give cash")) {
+        setMoney(money + 999999);
       }
-      if(ImGui.button("yeet projectiles")){
-        addEvent(()->{
+      if (ImGui.button("yeet projectiles")) {
+        addEvent(() -> {
           projectilesList.forEach(Projectile::delete);
           projectilesList.clear();
         });
       }
-      if(ImGui.button("yeet mobs")){
-        addEvent(()->{
+      if (ImGui.button("yeet mobs")) {
+        addEvent(() -> {
           mobsList.forEach(TdMob::delete);
           mobsList.clear();
         });
@@ -270,8 +273,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
 
       int[] currWave = new int[]{wave};
-      if(ImGui.dragInt("Wave", currWave,1,0,1000000)){
-        addEvent(()->wave=currWave[0]-1);
+      if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
+        addEvent(() -> wave = currWave[0] - 1);
       }
     }
     ImGui.end();
@@ -317,7 +320,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   @Override
   public void onGameTick(int tick) {
     this.tick++;
-    for(var e : queuedEvents){
+    for (var e : queuedEvents) {
       e.apply();
     }
     queuedEvents.clear();
@@ -448,7 +451,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       if (t.WasDeleted()) {
         iterator.remove();
       } else if (!t.isNotYetPlaced() && Util.distanceSquared(x - t.x, y - t.y)
-          < Util.square(size + t.stats[Turret.Stats.size]) / 4) {
+          < Util.square(size + t.stats[Turret.Stats.size])) {
         return false;
       }
     }
@@ -461,13 +464,26 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public static class TrackPoint {
 
-    public float x, y;
-    public int node;
+    private final float x;
+    private final float y;
+    private final int node;
 
     public TrackPoint(float x, float y, int node) {
       this.x = x;
       this.y = y;
       this.node = node;
+    }
+
+    public float getX() {
+      return x;
+    }
+
+    public float getY() {
+      return y;
+    }
+
+    public int getNode() {
+      return node;
     }
   }
 
@@ -516,23 +532,23 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private float spawningProcess = 0;
     private BloonSpawn next;
 
-    private BloonSpawn selectNectBloon(float toSpawn, int wave) {
-      for (var bs : bloons) {
-        if (bs.cost < wave * 5 && bs.cost<toSpawn
-            && Data.gameMechanicsRng.nextFloat() < toSpawn / bs.cost / bs.cost / 100) {
-          return bs;
+    private BloonSpawn selectNectBloon(float toSpawn) {
+      for (var loon : bloons) {
+        if (loon.cost < wave * 5 && loon.cost < toSpawn
+            && Data.gameMechanicsRng.nextFloat() < toSpawn / loon.cost / loon.cost / 100) {
+          return loon;
         }
       }
       return bloons.get(bloons.size() - 1);
     }
 
-    private float scaling(int wave) {
+    private float scaling() {
       return cheat ? 1 : (float) Math.pow(1 + Math.max(wave, 10) - 10, 1.4);
     }
 
     private void add(TdMob e) {
-      final float hpScaling = scaling(wave);
-      final float spdScaling = (float) Math.pow(scaling(wave), 0.2);
+      final float hpScaling = scaling();
+      final float spdScaling = (float) Math.pow(scaling(), 0.2);
       e.addBuff(
           new StatBuff<TdMob>(Type.MORE, Stats.health,
               hpScaling));
@@ -558,12 +574,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return;
       }
       if (next == null) {
-        next = selectNectBloon(mobsToSpawn,World.this.wave);
+        next = selectNectBloon(mobsToSpawn);
       }
       while (next.cost <= spawningProcess) {
         spawningProcess -= next.cost;
         add(next.spawn());
-        next = selectNectBloon(mobsToSpawn,World.this.wave);
+        next = selectNectBloon(mobsToSpawn);
       }
     }
 

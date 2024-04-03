@@ -23,12 +23,12 @@ public class Pink extends TdMob {
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }
-
+  // end of generated stats
   @Override
   public boolean isMoab() {
     return false;
   }
-  // end of generated stats
+
 
   @Override
   protected List<ChildSpawner> children() {

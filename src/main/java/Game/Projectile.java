@@ -6,6 +6,7 @@ import Game.Buffs.Modifier;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Mobs.TdMob;
+import Game.Turrets.Turret.Stats;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -35,6 +36,21 @@ public class Projectile extends GameObject implements TickDetect {
   protected float rotation;
   private boolean alreadyHitPlayer = false;
 
+  public boolean isMultihit() {
+    return multihit;
+  }
+
+  public void setMultihit(boolean multihit) {
+    this.multihit = multihit;
+    if(multihit){
+      alreadyHitPlayer=false;
+      alreadyHitProjectiles.clear();
+      alreadyHitMobs.clear();
+    }
+  }
+
+  private boolean multihit=false;
+
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
@@ -48,12 +64,13 @@ public class Projectile extends GameObject implements TickDetect {
     stats[Stats.size] = size;
     stats[Stats.duration] = duration * 1024;
     this.rotation = rotation;
-    alreadyHitMobs = new HashSet<>(pierce);
-    alreadyHitProjectiles = new HashSet<>(pierce);
+    alreadyHitMobs = new HashSet<>(Math.min(pierce,500));
+    alreadyHitProjectiles = new HashSet<>(Math.min(pierce,500));
     stats[Stats.power] = power;
   }
 
-  public void special(int i){}
+  public void special(int i) {
+  }
 
   public static void bounce(Projectile p) {
     float s = p.stats[Stats.size] / 2;
@@ -207,7 +224,7 @@ public class Projectile extends GameObject implements TickDetect {
       return;
     }
     boolean collided = false;
-    alreadyHitPlayer = true;
+    alreadyHitPlayer = !multihit;
     for (var component : playerCollides) {
       collided |= component.collide(this, e);
     }
@@ -228,7 +245,9 @@ public class Projectile extends GameObject implements TickDetect {
     if (!active || wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)) {
       return;
     }
-    alreadyHitMobs.add(e);
+    if(!multihit) {
+      alreadyHitMobs.add(e);
+    }
     boolean collided = false;
     for (var component : mobCollides) {
       collided |= component.collide(this, e);
@@ -257,7 +276,9 @@ public class Projectile extends GameObject implements TickDetect {
     if (!active || !e.active || e.equals(this) || alreadyHitProjectiles.contains(e)) {
       return;
     }
-    alreadyHitProjectiles.add(e);
+    if(!multihit) {
+      alreadyHitProjectiles.add(e);
+    }
     boolean collided = false;
     for (var component : projectileCollides) {
       collided |= component.collide(this, e);
@@ -328,6 +349,8 @@ public class Projectile extends GameObject implements TickDetect {
 
   private void onDelete() {
     bh.delete();
+    alreadyHitMobs.clear();
+    alreadyHitProjectiles.clear();
   }
 
   @FunctionalInterface

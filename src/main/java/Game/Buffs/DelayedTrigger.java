@@ -90,7 +90,7 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
         iterator.remove();
         removed.add(ig);
       }
-      for(var ig:removed){
+      for (var ig : removed) {
         ig.mod.mod(target);
       }
     }

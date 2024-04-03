@@ -19,7 +19,7 @@ public class Animation implements TickDetect {
     return this;
   }
 
-  private float spinning=0;
+  private float spinning = 0;
 
   private Vector2f linearScaling = new Vector2f(0, 0);
   private float duration;
@@ -51,7 +51,7 @@ public class Animation implements TickDetect {
         2 * sprite.getHeight() + linearScaling.y);
     float opac = Math.max(0, Math.min(1, sprite.getOpacity() + opacityScaling));
     sprite.setOpacity(opac);
-    sprite.setRotation(sprite.getRotation()+spinning);
+    sprite.setRotation(sprite.getRotation() + spinning);
     duration -= Game.tickIntervalMillis / 1000f;
     if (duration < 0) {
       delete();

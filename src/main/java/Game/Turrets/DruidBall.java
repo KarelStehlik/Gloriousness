@@ -1,7 +1,6 @@
 package Game.Turrets;
 
 import Game.Animation;
-import Game.Game;
 import Game.Projectile;
 import Game.TickDetect;
 import Game.World;
@@ -25,18 +24,18 @@ public class DruidBall extends Projectile {
 
   @Override
   public void onGameTick(int tick) {
-    if(res != null && !res.WasDeleted()){
+    if (res != null && !res.WasDeleted()) {
       res.onGameTick(tick);
       return;
     }
     super.onGameTick(tick);
-    sprite.setRotation(sprite.getRotation()-8);
+    sprite.setRotation(sprite.getRotation() - 8);
   }
 
   @Override
-  public void special(int i){
+  public void special(int i) {
     clearCollisions();
-    res=new RespawningProjectile();
+    res = new RespawningProjectile();
   }
 
   private RespawningProjectile res;
@@ -49,12 +48,13 @@ public class DruidBall extends Projectile {
       float size = getStats()[Projectile.Stats.size];
 
       this.sprite = new Animation(
-          new Sprite(DruidBall.this.sprite).setSize(0,0).setShader("colorCycle2").
+          new Sprite(DruidBall.this.sprite).setSize(0, 0).setShader("colorCycle2").
               setOpacity(0.5f).addToBs(world.getBs()).
               setColors(Util.getCycle2colors(1f)
               )
           , 1
-      ).setLinearScaling(new Vector2f(size * .015f, size * .015f)).setOpacityScaling(0.015f).setSpinning(-20f);
+      ).setLinearScaling(new Vector2f(size * .015f, size * .015f)).setOpacityScaling(0.015f)
+          .setSpinning(-20f);
     }
 
     @Override

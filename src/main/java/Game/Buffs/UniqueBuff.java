@@ -8,10 +8,17 @@ public class UniqueBuff<T extends GameObject> implements Buff<T> {
 
   private final long id;
   private final Modifier<T> mod;
+  private boolean isTest = false;
 
   public UniqueBuff(long id, Modifier<T> effect) {
     this.id = id;
     mod = effect;
+  }
+
+  public static <T extends  GameObject> UniqueBuff<T> Test(long id) {
+    var t = new UniqueBuff<T>(id, tar->{});
+    t.isTest=true;
+    return t;
   }
 
   @Override
@@ -37,8 +44,10 @@ public class UniqueBuff<T extends GameObject> implements Buff<T> {
       if (alreadyApplied.contains(buff.id)) {
         return false;
       }
-      alreadyApplied.add(buff.id);
-      buff.mod.mod(target);
+      if(!buff.isTest) {
+        alreadyApplied.add(buff.id);
+        buff.mod.mod(target);
+      }
       return true;
     }
 
