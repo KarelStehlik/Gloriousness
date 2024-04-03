@@ -33,7 +33,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
             Constants.MobSpread), 0, 0, world);
     clearStats();
     healthPart = 1;
-    setSize((int) (2 * stats[Stats.size]), (int) (2 * stats[Stats.size]));
+    setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
     sprite = new Sprite(image, x, y, width, height, 1, "basic");
     sprite.addToBs(world.getBs());
@@ -50,7 +50,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
         0, 0, world);
     clearStats();
     healthPart = 1;
-    setSize((int) (2 * stats[Stats.size]), (int) (2 * stats[Stats.size]));
+    setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
     sprite = new Sprite(image, x, y, width, height, 1, "basic");
     sprite.addToBs(world.getBs());
@@ -75,6 +75,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
         height);
   }
+
+  public abstract boolean isMoab();
 
   @Override
   public void setRotation(float f) {

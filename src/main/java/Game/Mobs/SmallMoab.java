@@ -29,6 +29,11 @@ public class SmallMoab extends TdMob {
     stats[Stats.health] = 500f;
     stats[Stats.value] = 80f;
   }
+
+  @Override
+  public boolean isMoab() {
+    return true;
+  }
   // end of generated stats
 
   @Override

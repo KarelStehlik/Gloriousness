@@ -3,7 +3,9 @@ package Game.Buffs;
 import Game.Game;
 import Game.GameObject;
 import general.Util;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 public class DelayedTrigger<T extends GameObject> implements Buff<T>,
@@ -79,12 +81,16 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
     public void tick(T target) {
       float time = Game.get().getTicks();
 
+      List<DelayedTrigger<T>> removed = new ArrayList<>(1);
       for (Iterator<DelayedTrigger<T>> iterator = effs.iterator(); iterator.hasNext(); ) {
         DelayedTrigger<T> ig = iterator.next();
         if (ig.expiryTime > time) {
           break;
         }
         iterator.remove();
+        removed.add(ig);
+      }
+      for(var ig:removed){
         ig.mod.mod(target);
       }
     }

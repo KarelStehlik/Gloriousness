@@ -18,10 +18,15 @@ public class Blue extends TdMob {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 34.0f;
+    stats[Stats.size] = 60.0f;
     stats[Stats.speed] = 2.2f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
+  }
+
+  @Override
+  public boolean isMoab() {
+    return false;
   }
   // end of generated stats
 

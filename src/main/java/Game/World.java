@@ -8,6 +8,7 @@ import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
+import Game.Buffs.VoidFunc;
 import Game.Mobs.Black;
 import Game.Mobs.Blue;
 import Game.Mobs.Ceramic;
@@ -75,6 +76,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final MobSpawner mobSpawner = new MobSpawner();
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
   private final List<Turret> turrets = new ArrayList<>(1);
+  private final List<VoidFunc> queuedEvents = new ArrayList<>(1);
   private Tool currentTool;
   private int tick = 0;
   private int health = Constants.StartingHealth;
@@ -146,6 +148,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     currentTool.delete();
     beginWave();
     calcSpacPoints();
+  }
+
+  public void addEvent(VoidFunc e){
+    queuedEvents.add(e);
   }
 
   public boolean tryPurchase(float cost) {
@@ -238,8 +244,21 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
     if (ImGui.collapsingHeader("Well, fuck you too")) {
       ImBoolean path = new ImBoolean(options.ultimateCrosspathing);
+
       if(ImGui.button("give cash")){
         setMoney(money+999999);
+      }
+      if(ImGui.button("yeet projectiles")){
+        addEvent(()->{
+          projectilesList.forEach(Projectile::delete);
+          projectilesList.clear();
+        });
+      }
+      if(ImGui.button("yeet mobs")){
+        addEvent(()->{
+          mobsList.forEach(TdMob::delete);
+          mobsList.clear();
+        });
       }
       if (ImGui.checkbox("5-5-5 allowed", path)) {
         options.ultimateCrosspathing = path.get();
@@ -251,8 +270,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
 
       int[] currWave = new int[]{wave};
-      if(ImGui.dragInt("Wave", currWave)){
-        wave=currWave[0]-1;
+      if(ImGui.dragInt("Wave", currWave,1,0,1000000)){
+        addEvent(()->wave=currWave[0]-1);
       }
     }
     ImGui.end();
@@ -298,6 +317,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   @Override
   public void onGameTick(int tick) {
     this.tick++;
+    for(var e : queuedEvents){
+      e.apply();
+    }
+    queuedEvents.clear();
 
     //Log.write("start: "+timer.elapsedNano(true)/1000000);
     if (mobSpawner.cheat) {

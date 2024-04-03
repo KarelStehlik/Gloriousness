@@ -18,10 +18,15 @@ public class Ceramic extends TdMob {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 34.0f;
+    stats[Stats.size] = 78.0f;
     stats[Stats.speed] = 3.8f;
     stats[Stats.health] = 10f;
     stats[Stats.value] = 0f;
+  }
+
+  @Override
+  public boolean isMoab() {
+    return false;
   }
   // end of generated stats
 
