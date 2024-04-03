@@ -22,7 +22,7 @@ public class Necromancer extends Turret {
 
   public static final String image = "Necromancer";
   private final List<TrackPoint> spawnPoints = new ArrayList<>(1);
-  private boolean walking=true;
+  private boolean walking = true;
 
   public Necromancer(World world, int X, int Y) {
     super(world, X, Y, image,
@@ -32,8 +32,8 @@ public class Necromancer extends Turret {
     bulletLauncher.addProjectileModifier(p -> {
       TrackPoint initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0, spawnPoints.size()));
       p.move(initPoint.getX(), initPoint.getY());
-      p.setRotation(Data.unstableRng.nextFloat()*360);
-      if(!walking){
+      p.setRotation(Data.unstableRng.nextFloat() * 360);
+      if (!walking) {
         return;
       }
       TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,
@@ -52,11 +52,11 @@ public class Necromancer extends Turret {
   protected Upgrade up010() {
     return new Upgrade("Zombie", () -> "zombies are dead. The don't move but are more powerful.",
         () -> {
-          walking=false;
-            addBuff(new StatBuff<Turret>(Type.INCREASED,Stats.bulletSize, 1));
-            addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 5f));
-            addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 2f));
-            addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 6f));
+          walking = false;
+          addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 1));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 5f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 2f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 6f));
         }, 500);
   }
 
@@ -64,10 +64,11 @@ public class Necromancer extends Turret {
   protected Upgrade up020() {
     return new Upgrade("Zombie", () -> "zombies explode.",
         () -> {
-          walking=false;
+          walking = false;
           bulletLauncher.addProjectileModifier(p -> {
-            p.addMobCollide((proj,mob)->{
-              BasicCollides.explodeFunc((int) mob.getX(), (int) mob.getY(),proj.getPower()*2, 200);
+            p.addMobCollide((proj, mob) -> {
+              BasicCollides.explodeFunc((int) mob.getX(), (int) mob.getY(), proj.getPower() * 2,
+                  200);
               return true;
             });
           });
@@ -78,7 +79,7 @@ public class Necromancer extends Turret {
   protected Upgrade up100() {
     return new Upgrade("Zombie", () -> "makes zombies faster.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE,Stats.cd, 0.4f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 0.4f));
         }, 500);
   }
 
@@ -121,7 +122,8 @@ public class Necromancer extends Turret {
     spawnPoints.clear();
     Log.write(stats[Stats.range] * stats[Stats.range]);
     for (TrackPoint p : world.spacPoints) {
-      if (Util.distanceSquared(p.getX() - x, p.getY() - y) < stats[Stats.range] * stats[Stats.range]) {
+      if (Util.distanceSquared(p.getX() - x, p.getY() - y)
+          < stats[Stats.range] * stats[Stats.range]) {
         spawnPoints.add(p);
       }
     }

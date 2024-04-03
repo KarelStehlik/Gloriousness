@@ -13,7 +13,8 @@ import windowStuff.SpriteBatching;
 public class UpgradeGiver {
 
   private static final int BOTTOM = 50, LEFT = 110, BUTTON_WIDTH = 200, BUTTON_HEIGHT = 100, BUTTON_OFFSET = 120;
-  private final UpgradeType[] upgradeTypes = new UpgradeType[]{new AttackSpeed(), new Damage(), new Pierce()};
+  private final UpgradeType[] upgradeTypes = new UpgradeType[]{new AttackSpeed(), new Damage(),
+      new Pierce()};
   private final List<Button> buttons = new ArrayList<>(2);
   private final World world;
 

@@ -6,7 +6,6 @@ import Game.Buffs.Modifier;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Mobs.TdMob;
-import Game.Turrets.Turret.Stats;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -42,14 +41,14 @@ public class Projectile extends GameObject implements TickDetect {
 
   public void setMultihit(boolean multihit) {
     this.multihit = multihit;
-    if(multihit){
-      alreadyHitPlayer=false;
+    if (multihit) {
+      alreadyHitPlayer = false;
       alreadyHitProjectiles.clear();
       alreadyHitMobs.clear();
     }
   }
 
-  private boolean multihit=false;
+  private boolean multihit = false;
 
   protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power) {
@@ -64,8 +63,8 @@ public class Projectile extends GameObject implements TickDetect {
     stats[Stats.size] = size;
     stats[Stats.duration] = duration * 1024;
     this.rotation = rotation;
-    alreadyHitMobs = new HashSet<>(Math.min(pierce,500));
-    alreadyHitProjectiles = new HashSet<>(Math.min(pierce,500));
+    alreadyHitMobs = new HashSet<>(Math.min(pierce, 500));
+    alreadyHitProjectiles = new HashSet<>(Math.min(pierce, 500));
     stats[Stats.power] = power;
   }
 
@@ -245,7 +244,7 @@ public class Projectile extends GameObject implements TickDetect {
     if (!active || wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)) {
       return;
     }
-    if(!multihit) {
+    if (!multihit) {
       alreadyHitMobs.add(e);
     }
     boolean collided = false;
@@ -276,7 +275,7 @@ public class Projectile extends GameObject implements TickDetect {
     if (!active || !e.active || e.equals(this) || alreadyHitProjectiles.contains(e)) {
       return;
     }
-    if(!multihit) {
+    if (!multihit) {
       alreadyHitProjectiles.add(e);
     }
     boolean collided = false;

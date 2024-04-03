@@ -23,6 +23,7 @@ public class Ceramic extends TdMob {
     stats[Stats.health] = 10f;
     stats[Stats.value] = 0f;
   }
+
   // end of generated stats
   @Override
   public boolean isMoab() {

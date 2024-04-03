@@ -9,7 +9,6 @@ import Game.BulletLauncher;
 import Game.Mobs.TdMob;
 import Game.Projectile;
 import Game.TurretGenerator;
-import Game.Turrets.EmpoweringTurret.ExtraStats;
 import Game.World;
 import general.RefFloat;
 import general.Util;
@@ -105,16 +104,17 @@ public class Druid extends Turret {
         () -> bulletLauncher.addProjectileModifier(p -> {
           p.getSprite().setColors(blueColors);
           p.addMobCollide((proj, mob) -> {
-          world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
-              (int) (proj.getStats()[Projectile.Stats.size] * 1.5f),
-              enemy -> enemy.addBuff(new StatBuff<TdMob>(
-                      Type.MORE, proj.getPower() / enemy.getStats()[TdMob.Stats.health] * 10000,
-                      TdMob.Stats.speed, 0.90f
-                  )
-              ));
-          return true;
-        }
-        , 0);}), 20000);
+                world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
+                    (int) (proj.getStats()[Projectile.Stats.size] * 1.5f),
+                    enemy -> enemy.addBuff(new StatBuff<TdMob>(
+                            Type.MORE, proj.getPower() / enemy.getStats()[TdMob.Stats.health] * 10000,
+                            TdMob.Stats.speed, 0.90f
+                        )
+                    ));
+                return true;
+              }
+              , 0);
+        }), 20000);
   }
 
   @Override

@@ -24,6 +24,7 @@ public class Lead extends TdMob {
     stats[Stats.health] = 2f;
     stats[Stats.value] = 1f;
   }
+
   // end of generated stats
   @Override
   public boolean isMoab() {

@@ -23,6 +23,7 @@ public class Black extends TdMob {
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
   }
+
   // end of generated stats
   @Override
   public boolean isMoab() {

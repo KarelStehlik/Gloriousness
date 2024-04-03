@@ -161,7 +161,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     if (money < cost) {
       return false;
     }
-    setMoney(money-cost);
+    setMoney(money - cost);
     return true;
   }
 
