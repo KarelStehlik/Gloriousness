@@ -257,7 +257,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     UpgradeMenu() {
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
-      rangeDisplay.setSize(stats[Stats.range]*2, stats[Stats.range]*2);
+      rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
       sprites.add(new Sprite("Button", 10).
           setSize(220, 420).
           setPosition(x, y).
