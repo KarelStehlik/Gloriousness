@@ -27,7 +27,7 @@ public class EmpoweringTurret extends Turret {
         new BulletLauncher(world, "Buff"));
     onStatsUpdate();
     bulletLauncher.addProjectileCollide(this::collide);
-    bulletLauncher.addProjectileModifier(p -> p.addBuff(new Tag<>(id, p1 -> {
+    bulletLauncher.addProjectileModifier(p -> p.addBuff(new Tag<Projectile>(id, p1 -> {
     })));
   }
 
@@ -45,7 +45,7 @@ public class EmpoweringTurret extends Turret {
 
   private boolean collide(Projectile p1, Projectile p2) {
     final float pow = p1.getPower();
-    p2.addBuff(new Tag<>(id, proj2 -> addBuff(proj2, pow)));
+    p2.addBuff(new Tag<Projectile>(id, proj2 -> addBuff(proj2, pow)));
     return true;
   }
 

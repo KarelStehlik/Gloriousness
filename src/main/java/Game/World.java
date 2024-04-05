@@ -82,6 +82,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final List<Turret> turrets = new ArrayList<>(1);
   private final List<VoidFunc> queuedEvents = new ArrayList<>(1);
   private Tool currentTool;
+
+  public int getTick() {
+    return tick;
+  }
+
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 0;
@@ -320,7 +325,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   //private Timer timer = new Log.Timer();
   @Override
   public void onGameTick(int tick) {
-    this.tick++;
     for (var e : queuedEvents) {
       e.apply();
     }
@@ -339,8 +343,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
     AbilityGroup.instances.removeIf(AbilityGroup::WasDeleted);
 
-    player.onGameTick(tick);
     if (waveRunning) {
+      this.tick++;
+      player.onGameTick(tick);
       AbilityGroup.instances.forEach(g -> g.onGameTick(tick));
       int undeleted = 0;
       for (int current = 0; current < turrets.size(); current++) {

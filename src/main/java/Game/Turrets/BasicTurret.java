@@ -77,7 +77,7 @@ public class BasicTurret extends Turret {
                 addBuff(new StatBuff<Turret>(Type.MORE, 1, Stats.pierce, 1048576));
                 addBuff(new StatBuff<Turret>(Type.MORE, 1, Stats.power, 200));
                 bulletLauncher.attack(Util.get_rotation(Constants.screenSize.x / 2 - x,
-                        Constants.screenSize.y / 2 - y)).
+                        Constants.screenSize.y / 2 - y), false).
                     addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag, p -> {
                     }));
                 onStatsUpdate();

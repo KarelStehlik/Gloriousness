@@ -166,7 +166,11 @@ public class BulletLauncher {
 
   private ProjectileNewFunction launcher;
 
-  public Projectile attack(float angle) {
+  public Projectile attack(float angle){
+    return attack(angle, true);
+  }
+
+  public Projectile attack(float angle, boolean triggerCooldown) {
     float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
     Projectile p = launcher.make(world, image, x, y, speed, angle + deviation, width, height,
         pierce, size,
@@ -184,11 +188,13 @@ public class BulletLauncher {
     for (var collide : projectileCollides) {
       p.addProjectileCollide(collide);
     }
-    remainingCooldown += cooldown;
+    if(triggerCooldown) {
+      remainingCooldown += cooldown;
+    }
     return p;
   }
 
-  public void attack(float targetX, float targetY) {
-    attack(Util.get_rotation(targetX - x, targetY - y));
+  public Projectile attack(float targetX, float targetY) {
+    return attack(Util.get_rotation(targetX - x, targetY - y));
   }
 }

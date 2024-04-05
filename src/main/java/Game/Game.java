@@ -49,7 +49,7 @@ public final class Game implements UserInputHandler {
   }
 
   public int getTicks() {
-    return ticks;
+    return world.getTick();
   }
 
   public UserInputListener getUserInputListener() {
