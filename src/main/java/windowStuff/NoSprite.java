@@ -95,14 +95,17 @@ public class NoSprite implements AbstractSprite {
     return this;
   }
 
+  private int layer = 0;
+
   @Override
   public int getLayer() {
-    return 0;
+    return layer;
   }
 
   @Override
-  public void setLayer(int layer) {
-
+  public AbstractSprite setLayer(int layer) {
+    this.layer = layer;
+    return this;
   }
 
   @Override

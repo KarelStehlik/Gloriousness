@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengles.GLES20.GL_ONE;
 import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 
+import Game.Ability.AbilityGroup;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Buffs.VoidFunc;
@@ -336,9 +337,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     mobsGrid.filled();
 
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
+    AbilityGroup.instances.removeIf(AbilityGroup::WasDeleted);
 
     player.onGameTick(tick);
     if (waveRunning) {
+      AbilityGroup.instances.forEach(g -> g.onGameTick(tick));
       int undeleted = 0;
       for (int current = 0; current < turrets.size(); current++) {
         if (current != undeleted) {

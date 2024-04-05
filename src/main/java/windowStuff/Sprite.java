@@ -187,9 +187,10 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setLayer(int layer) {
+  public AbstractSprite setLayer(int layer) {
     mustBeRebatched = true;
     this.layer = layer;
+    return this;
   }
 
   @Override

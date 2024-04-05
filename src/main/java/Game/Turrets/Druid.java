@@ -1,5 +1,6 @@
 package Game.Turrets;
 
+import Game.Ability;
 import Game.BasicCollides;
 import Game.Buffs.Ignite;
 import Game.Buffs.OnTickBuff;
@@ -108,7 +109,7 @@ public class Druid extends Turret {
                     (int) (proj.getStats()[Projectile.Stats.size] * 1.5f),
                     enemy -> enemy.addBuff(new StatBuff<TdMob>(
                             Type.MORE, proj.getPower() / enemy.getStats()[TdMob.Stats.health] * 10000,
-                            TdMob.Stats.speed, 0.90f
+                            TdMob.Stats.speed, 0.80f
                         )
                     ));
                 return true;
@@ -117,18 +118,16 @@ public class Druid extends Turret {
         }), 20000);
   }
 
+  private static final long weakenId = Util.getUid();
+
   @Override
   protected Upgrade up050() {
-    return new Upgrade("Button", () -> "Bloons in a large area temporarily take more damage",
-        () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
-          world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
-              (int) (proj.getStats()[Projectile.Stats.size] * 1.5f),
-              enemy -> enemy.addBuff(new StatBuff<TdMob>(
-                      Type.MORE, 500, TdMob.Stats.health, 0.94f
-                  )
-              ));
-          return true;
-        }, 0)), 50000);
+    return new Upgrade("Button", () -> "Ability: bloons temporarily take 50% more damage",
+        () -> Ability.add("Freeze", 60000, () -> "Enemies take 50% more damage for 5 seconds",
+            () -> world.getMobsList().forEach(mob -> mob.addBuff(
+                new StatBuff<TdMob>(Type.MORE, 5000, TdMob.Stats.health, 1 / 1.5f))),
+            weakenId)
+        , 20000);
   }
 
   @Override
@@ -137,7 +136,7 @@ public class Druid extends Turret {
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
               (int) (p.getStats()[Projectile.Stats.size] * .6f),
-              enemy -> enemy.addBuff(new Ignite<>(p.getPower() * 0.1f, 3000)));
+              enemy -> enemy.addBuff(new Ignite<>(p.getPower(), 3000)));
           return true;
         })), 20000);
   }

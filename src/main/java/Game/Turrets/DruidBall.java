@@ -23,6 +23,14 @@ public class DruidBall extends Projectile {
   }
 
   @Override
+  public void delete() {
+    super.delete();
+    if (res != null) {
+      res.sprite.delete();
+    }
+  }
+
+  @Override
   public void onGameTick(int tick) {
     if (res != null && !res.WasDeleted()) {
       res.onGameTick(tick);

@@ -94,6 +94,9 @@ public class Projectile extends GameObject implements TickDetect {
       p.move(p.x, 2 * World.HEIGHT - maxy - s);
       p.setRotation(-p.rotation);
     }
+    float x = Util.clamp(p.x, minx, maxx);
+    float y = Util.clamp(p.y, miny, maxy);
+    p.move(x, y);
   }
 
   public void clearCollisions() {
@@ -339,9 +342,9 @@ public class Projectile extends GameObject implements TickDetect {
         diff = diff - 360;
       }
       if (diff > 0) {
-        target.setRotation(target.rotation - Math.min(strength, diff));
+        target.setRotation(target.rotation - Math.min(strength * target.getSpeed() * .1f, diff));
       } else {
-        target.setRotation(target.rotation + Math.min(strength, -diff));
+        target.setRotation(target.rotation + Math.min(strength * target.getSpeed() * .1f, -diff));
       }
     }
   }

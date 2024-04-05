@@ -5,7 +5,7 @@ import Game.Buffs.DelayedTrigger;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.Buffs.UniqueBuff;
+import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.Projectile;
 import Game.TurretGenerator;
@@ -36,7 +36,7 @@ public class EatingTurret extends Turret {
   private void modProjectile(Projectile p) {
     eater e = new eater((int) stats[Stats.pierce], stats[Stats.power]);
     p.addProjectileCollide((p1, p2) -> e.eat(p2));
-    p.addBuff(new UniqueBuff<>(EatImmuneTag, p1 -> {
+    p.addBuff(new Tag<>(EatImmuneTag, p1 -> {
     }));
     p.addBuff(new OnTickBuff<Projectile>(Projectile::bounce));
     p.addBuff(new DelayedTrigger<Projectile>(
@@ -70,7 +70,7 @@ public class EatingTurret extends Turret {
     }
 
     public boolean eat(Projectile other) {
-      if (!other.addBuff(new UniqueBuff<>(EatImmuneTag, p1 -> {
+      if (!other.addBuff(new Tag<>(EatImmuneTag, p1 -> {
       }))) {
         return false;
       }

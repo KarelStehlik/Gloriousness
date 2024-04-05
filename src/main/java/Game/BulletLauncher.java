@@ -166,7 +166,7 @@ public class BulletLauncher {
 
   private ProjectileNewFunction launcher;
 
-  public void attack(float angle) {
+  public Projectile attack(float angle) {
     float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
     Projectile p = launcher.make(world, image, x, y, speed, angle + deviation, width, height,
         pierce, size,
@@ -185,6 +185,7 @@ public class BulletLauncher {
       p.addProjectileCollide(collide);
     }
     remainingCooldown += cooldown;
+    return p;
   }
 
   public void attack(float targetX, float targetY) {

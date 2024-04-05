@@ -15,9 +15,9 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
   private final long id;
 
 
-  public Ignite(float dmg, float dur) {
-    damagePerTick = dmg;
-    expiryTime = Game.get().getTicks() + dur / Game.tickIntervalMillis;
+  public Ignite(float dps, float durMillis) {
+    damagePerTick = dps * Game.tickIntervalMillis / 1000;
+    expiryTime = Game.get().getTicks() + durMillis / Game.tickIntervalMillis;
     id = Util.getUid();
   }
 
@@ -53,9 +53,9 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     protected Aggregator() {
       var bs = Game.get().getSpriteBatching("main");
-      fireSprite = new Sprite("Fireball-0", 1).addToBs(bs).setSize(50, 50);
+      fireSprite = new Sprite("Fireball-0", 3).addToBs(bs).setSize(50, 50);
       fireSprite.setRotation(180);
-      fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 0.3f).loop());
+      fireSprite.playAnimation(fireSprite.new BasicAnimation("Fireball-0", 1.1f).loop());
       fireSprite.setHidden(true);
     }
 
@@ -83,7 +83,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
         dpTick -= ig.damagePerTick;
       }
 
-      float power = Math.min(5, dpTick / target.getStats()[Stats.health] * 1000);
+      float power = Math.min(3, dpTick / target.getStats()[Stats.health] * 60);
       fireSprite.setSize(power * target.getStats()[Stats.size],
           power * target.getStats()[Stats.size]);
       fireSprite.setPosition(target.getX(),

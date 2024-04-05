@@ -6,15 +6,14 @@ import Game.Buffs.DelayedTrigger;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.Buffs.UniqueBuff;
+import Game.Buffs.Tag;
 import Game.BulletLauncher;
-import Game.Game;
 import Game.Projectile;
 import Game.Projectile.Guided;
 import Game.TurretGenerator;
 import Game.World;
+import general.Constants;
 import general.Util;
-import windowStuff.Sprite;
 
 public class BasicTurret extends Turret {
 
@@ -66,20 +65,23 @@ public class BasicTurret extends Turret {
         }, 20000);
   }
 
+  private static final long bigDart = Util.getUid();
+
   @Override
   protected Upgrade up050() {
     return new Upgrade("Meteor", () -> "adds a cool new ability",
         () -> {
-          var a = new Ability("Dart", 30000,
+          var a = Ability.add("Dart", 30000,
               () -> "Dart monkey immediately throws the beefiest dart ever", () -> {
-            addBuff(new StatBuff<Turret>(Type.MORE, 5000, Stats.bulletSize, 5f));
-            addBuff(new StatBuff<Turret>(Type.MORE, 5000, Stats.pierce, 1048576));
-            addBuff(new StatBuff<Turret>(Type.MORE, 5000, Stats.power, 200));
-            addBuff(new StatBuff<Turret>(Type.MORE, 5000, Stats.cd, 0.5f));
-            bulletLauncher.setRemainingCooldown(0);
-            onStatsUpdate();
-          });
-          addBuff(new OnTickBuff<Turret>(t -> a.onGameTick(Game.get().getTicks())));
+                addBuff(new StatBuff<Turret>(Type.MORE, 1, Stats.bulletSize, 5f));
+                addBuff(new StatBuff<Turret>(Type.MORE, 1, Stats.pierce, 1048576));
+                addBuff(new StatBuff<Turret>(Type.MORE, 1, Stats.power, 200));
+                bulletLauncher.attack(Util.get_rotation(Constants.screenSize.x / 2 - x,
+                        Constants.screenSize.y / 2 - y)).
+                    addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag, p -> {
+                    }));
+                onStatsUpdate();
+              }, bigDart);
           addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));
         }, 20000);
   }
@@ -91,25 +93,29 @@ public class BasicTurret extends Turret {
     return new Upgrade("Meteor", () -> "darts combine to become stronger",
         () -> {
           bulletLauncher.addProjectileModifier(p -> {
-            Sprite s = new Sprite("DruidBall", 2).
-                setSize(100, 100).
-                setPosition(p.getX(), p.getY()).
-                addToBs(world.getBs()).
-                setOpacity(0.1f);
-            p.addBuff(new UniqueBuff<>(dartEatId, t -> {
+            p.addBuff(new Tag<Projectile>(dartEatId, t -> {
             }));
-            p.addBuff(new DelayedTrigger<Projectile>(proj -> s.delete(), true));
-            p.addBuff(new OnTickBuff<Projectile>(proj -> s.setPosition(proj.getX(), proj.getY())));
             p.addProjectileCollide((p1, p2) -> {
-              if (!p2.addBuff(UniqueBuff.Test(dartEatId)) && p2.getPower() <= p1.getPower()) {
-                s.setOpacity(s.getOpacity() + 0.005f * p2.getPower());
-                p1.addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Projectile.Stats.power,
-                    p2.getPower() * 2));
-                p1.addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Projectile.Stats.pierce,
-                    p2.getStats()[Projectile.Stats.pierce]));
-                if (!p2.addBuff(UniqueBuff.Test(EatingTurret.EatImmuneTag))) {
-                  p1.addBuff(new UniqueBuff<>(EatingTurret.EatImmuneTag,
-                      ppp -> ppp.addBuff(new OnTickBuff<Projectile>(Projectile::bounce))));
+              if (!p2.addBuff(Tag.Test(dartEatId)) && p2.getStats()[Projectile.Stats.duration]
+                  <= p1.getStats()[Projectile.Stats.duration]) {
+                float buffDur = p2.getStats()[Projectile.Stats.duration];
+
+                p1.addBuff(
+                    new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.power,
+                        p2.getPower()));
+                p1.addBuff(
+                    new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.pierce,
+                        p2.getStats()[Projectile.Stats.pierce]));
+                p1.addBuff(
+                    new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.size,
+                        p2.getStats()[Projectile.Stats.size] * .3f));
+                p1.addBuff(
+                    new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.speed,
+                        p2.getStats()[Projectile.Stats.speed] * .6f));
+
+                if (!p2.addBuff(Tag.Test(EatingTurret.EatImmuneTag))) {
+                  p1.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag, ppp -> {
+                  }));
                 }
                 p2.delete();
               }
@@ -119,7 +125,7 @@ public class BasicTurret extends Turret {
         }, 1000);
   }
 
-  private final Guided g = new Projectile.Guided(1000, 7);
+  private final Guided g = new Projectile.Guided(1000, 3);
 
   @Override
   protected Upgrade up100() {
@@ -127,7 +133,7 @@ public class BasicTurret extends Turret {
         () -> "projectiles seek, last slightly longer and have infinite pierce",
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, Float.POSITIVE_INFINITY));
-          addBuff(new StatBuff<Turret>(Type.ADDED, Stats.projectileDuration, 5000));
+          addBuff(new StatBuff<Turret>(Type.ADDED, Stats.projectileDuration, 5));
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new OnTickBuff<Projectile>(g::tick));
           });
@@ -138,7 +144,6 @@ public class BasicTurret extends Turret {
   protected Upgrade up300() {
     return new Upgrade("Meteor", () -> "projectiles have double duration and are faster",
         () -> {
-          g.setStrength(15);
           g.setRange(1500);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2));

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
 import windowStuff.Button.MouseoverText;
+import windowStuff.NoSprite;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
 
@@ -30,6 +31,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected final BuffHandler<Turret> buffHandler;
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
   protected boolean notYetPlaced = true;
+  protected float totalCost = 0;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
@@ -53,6 +55,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     onStatsUpdate();
     buffHandler = new BuffHandler<>(this);
     world.addTurret(this);
+    totalCost = stats[Stats.cost];
   }
 
   public void place() {
@@ -171,6 +174,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   @Override
   public void delete() {
     sprite.delete();
+    buffHandler.delete();
     rangeDisplay.delete();
   }
 
@@ -249,12 +253,21 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   }
 
+  private void sell() {
+    if (sprite.isDeleted()) {
+      return;
+    }
+    world.setMoney(world.getMoney() + totalCost * .8);
+    delete();
+  }
+
   private class UpgradeMenu {
 
     private final List<Sprite> sprites = new ArrayList<>(1);
     private final List<Button> buttons = new ArrayList<>(3);
 
     UpgradeMenu() {
+      float X = x, Y = y;
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
       rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
@@ -264,8 +277,17 @@ public abstract class Turret extends GameObject implements TickDetect {
           addToBs(bs)
       );
       buttons.add(new Button(
-          new Sprite("Cancelbutton", 10).addToBs(bs).setSize(200, 50).setPosition(x, y - 150),
+          new NoSprite().setLayer(9).setSize(5000, 5000).setPosition(X, Y - 150),
           (x, y) -> close()));
+
+      buttons.add(new Button(
+          world.getBs(),
+          new Sprite("Cancelbutton", 10).setSize(150, 50).setPosition(X, Y - 150),
+          (x, y) -> {
+            close();
+            sell();
+          },
+          () -> "Sell for: " + totalCost * 0.8f));
 
       List<Upgrade> p1 = getUpgradePath1();
       List<Upgrade> p2 = getUpgradePath2();
@@ -323,6 +345,7 @@ public abstract class Turret extends GameObject implements TickDetect {
       }
       upgradePicked(path);
       u.apply.apply();
+      totalCost += u.cost;
     }
 
     private void upgradePicked(int path) {

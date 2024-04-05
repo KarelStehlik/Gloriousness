@@ -3,7 +3,9 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.OnTickBuff;
-import Game.Buffs.UniqueBuff;
+import Game.Buffs.StatBuff;
+import Game.Buffs.StatBuff.Type;
+import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.DamageType;
 import Game.Mobs.TdMob;
@@ -25,7 +27,7 @@ public class EmpoweringTurret extends Turret {
         new BulletLauncher(world, "Buff"));
     onStatsUpdate();
     bulletLauncher.addProjectileCollide(this::collide);
-    bulletLauncher.addProjectileModifier(p -> p.addBuff(new UniqueBuff<>(id, p1 -> {
+    bulletLauncher.addProjectileModifier(p -> p.addBuff(new Tag<>(id, p1 -> {
     })));
   }
 
@@ -43,7 +45,7 @@ public class EmpoweringTurret extends Turret {
 
   private boolean collide(Projectile p1, Projectile p2) {
     final float pow = p1.getPower();
-    p2.addBuff(new UniqueBuff<>(id, proj2 -> addBuff(proj2, pow)));
+    p2.addBuff(new Tag<>(id, proj2 -> addBuff(proj2, pow)));
     return true;
   }
 
@@ -54,30 +56,59 @@ public class EmpoweringTurret extends Turret {
   protected Upgrade up010() {
     return new Upgrade("Button", () -> "Hires edgy assassins to destroy nearby MOABs",
         () -> addBuff(new OnTickBuff<Turret>(turr -> {
-          assaCooldown.add(-1);
-          while (assaCooldown.get() < 0) {
-            assaCooldown.add(stats[ExtraStats.assaCd]);
-            var mob = world.getMobsGrid()
-                .getStrong(new Point((int) x, (int) y), (int) stats[Stats.range]);
-            if (mob != null) {
-              float angle = Data.unstableRng.nextFloat() * 360;
-              Sprite assa = new Sprite("Assassin", 1).setPosition(-1000, -1000)
-                  .addToBs(world.getBs()).setSize(200, 200).setRotation(angle);
-              mob.addBuff(new DelayedTrigger<TdMob>(stats[ExtraStats.assaDuration], m -> {
-                m.takeDamage(stats[Stats.power] * stats[ExtraStats.assaDamageMult],
-                    DamageType.TRUE);
-                assa.delete();
-                world.explosionVisual(m.getX(), m.getY(), 70, true, "Explosion1-0");
-              }, true));
-              mob.addBuff(new OnTickBuff<TdMob>(stats[ExtraStats.assaDuration],
-                  m -> assa.setPosition(
-                      m.getX() + m.getStats()[TdMob.Stats.size] * .4f * Util.sin(-angle)
-                      , m.getY() + m.getStats()[TdMob.Stats.size] * .4f * Util.cos(angle)
-                  ),
-                  false));
-            }
+          if (assaCooldown.get() > 0) {
+            assaCooldown.add(-1);
           }
-        })), 50000);
+          while (assaCooldown.get() <= 0) {
+            var mob = world.getMobsGrid()
+                .getStrong(new Point((int) x, (int) y), (int) (stats[Stats.range] * .5f));
+            if (mob == null) {
+              return;
+            }
+            assaCooldown.add(stats[ExtraStats.assaCd]);
+            float angle = Data.unstableRng.nextFloat() * 360;
+            Sprite assa = new Sprite("Assassin", 1).setPosition(-1000, -1000)
+                .addToBs(world.getBs()).setSize(200, 200).setRotation(angle);
+            mob.addBuff(new DelayedTrigger<TdMob>(stats[ExtraStats.assaDuration], m -> {
+              m.takeDamage(stats[Stats.power] * stats[ExtraStats.assaDamageMult],
+                  DamageType.TRUE);
+              assa.delete();
+              world.explosionVisual(m.getX(), m.getY(), 70, true, "Explosion1-0");
+            }, true));
+            mob.addBuff(new OnTickBuff<TdMob>(stats[ExtraStats.assaDuration],
+                m -> assa.setPosition(
+                    m.getX() + m.getStats()[TdMob.Stats.size] * .4f * Util.sin(-angle)
+                    , m.getY() + m.getStats()[TdMob.Stats.size] * .4f * Util.cos(angle)
+                ),
+                false));
+          }
+        })), 20000);
+  }
+
+  @Override
+  protected Upgrade up020() {
+    return new Upgrade("Button", () -> "Assassins are more edgy and do 100x more damage",
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaDamageMult, 100)), 50000);
+  }
+
+  @Override
+  protected Upgrade up030() {
+    return new Upgrade("Button",
+        () -> "Assassins are more patient and do 1000000x more damage, but stay on the bloon for longer",
+        () -> {
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaDamageMult, 1000000));
+          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.assaDuration, 5000));
+        }
+        , 100900);
+  }
+
+  @Override
+  protected Upgrade up040() {
+    return new Upgrade("Button", () -> "Assassins are more aggressive and appear more often",
+        () -> {
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaCd, 0.3f));
+        }
+        , 499000);
   }
 
 
@@ -101,7 +132,7 @@ public class EmpoweringTurret extends Turret {
     stats[Stats.spritesize] = 150f;
     stats[ExtraStats.assaCd] = 1000f;
     stats[ExtraStats.assaDamageMult] = 1000f;
-    stats[ExtraStats.assaDuration] = 1000f;
+    stats[ExtraStats.assaDuration] = 5000f;
   }
 
   public static final class ExtraStats {

@@ -36,7 +36,7 @@ public interface AbstractSprite {
 
   int getLayer();
 
-  void setLayer(int layer);
+  AbstractSprite setLayer(int layer);
 
   boolean isDeleted();
 

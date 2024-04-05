@@ -17,6 +17,11 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   private static final float speed = 10;
   private final UserInputListener input;
   private final Sprite sprite;
+
+  public BulletLauncher getBulletLauncher() {
+    return bulletLauncher;
+  }
+
   private final BulletLauncher bulletLauncher;
   private final BuffHandler<Player> buffHandler;
   protected double healthPart;

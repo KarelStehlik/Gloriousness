@@ -2,8 +2,10 @@ package Game;
 
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
+import Game.Buffs.Tag;
 import Game.Player.Stats;
 import general.Data;
+import general.Util;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
@@ -14,7 +16,7 @@ public class UpgradeGiver {
 
   private static final int BOTTOM = 50, LEFT = 110, BUTTON_WIDTH = 200, BUTTON_HEIGHT = 100, BUTTON_OFFSET = 120;
   private final UpgradeType[] upgradeTypes = new UpgradeType[]{new AttackSpeed(), new Damage(),
-      new Pierce()};
+      new Pierce(), new Explode()};
   private final List<Button> buttons = new ArrayList<>(2);
   private final World world;
 
@@ -87,6 +89,32 @@ public class UpgradeGiver {
     @Override
     String getText() {
       return "30% more attack speed";
+    }
+
+    @Override
+    String getImageName() {
+      return "Button";
+    }
+  }
+
+  private class Explode extends UpgradeType {
+
+    float radius = 0;
+    long id = Util.getUid();
+
+    @Override
+    void picked() {
+      if (world.getPlayer().addBuff(new Tag<Player>(id))) {
+        world.getPlayer().getBulletLauncher()
+            .addMobCollide((proj, mob) -> BasicCollides.explodeFunc(
+                (int) proj.getX(), (int) proj.getY(), proj.getPower(), this.radius));
+      }
+      radius += 50;
+    }
+
+    @Override
+    String getText() {
+      return "Exploding projectiles. If already exploding, increases the radius instead.";
     }
 
     @Override

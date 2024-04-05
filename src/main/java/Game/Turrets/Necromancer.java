@@ -1,6 +1,8 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
+import Game.Buffs.DelayedTrigger;
+import Game.Buffs.Ignite;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
@@ -13,6 +15,7 @@ import Game.World;
 import Game.World.TrackPoint;
 import general.Data;
 import general.Log;
+import general.RefFloat;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -31,13 +34,16 @@ public class Necromancer extends Turret {
     bulletLauncher.addMobCollide(BasicCollides.damage);
     bulletLauncher.addProjectileModifier(p -> {
       TrackPoint initPoint = spawnPoints.get(Data.gameMechanicsRng.nextInt(0, spawnPoints.size()));
-      p.move(initPoint.getX(), initPoint.getY());
+      Point offset = new Point(Data.gameMechanicsRng.nextInt(-10, 10),
+          Data.gameMechanicsRng.nextInt(-10, 10));
+      p.move(initPoint.getX() + offset.x, initPoint.getY() + offset.y);
       p.setRotation(Data.unstableRng.nextFloat() * 360);
+      p.setMultihit(true);
       if (!walking) {
         return;
       }
       TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<Projectile>(true,
-          world.getMapData(), new Point(0, 0), stats, Stats.speed, Projectile::delete,
+          world.getMapData(), offset, stats, Stats.speed, Projectile::delete,
           Math.max(initPoint.getNode() - 1, 0));
       p.addBuff(new OnTickBuff<Projectile>(mover::tick));
     });
@@ -56,19 +62,83 @@ public class Necromancer extends Turret {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 1));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 5f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 2f));
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 6f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 3f));
         }, 500);
   }
 
   @Override
   protected Upgrade up020() {
-    return new Upgrade("Zombie", () -> "zombies explode.",
+    return new Upgrade("Zombie",
+        () -> "zombies spin in their graves. this causes nearby non-MOAB bloons to slow down",
+        () -> bulletLauncher.addProjectileModifier(p -> {
+              p.addBuff(new OnTickBuff<Projectile>(proj -> {
+                proj.setRotation(proj.getRotation() + 5);
+                world.getMobsGrid()
+                    .callForEachCircle((int) proj.getX(), (int) proj.getY(), 200, mob -> {
+                      if (!mob.isMoab()) {
+                        mob.addBuff(new StatBuff<TdMob>(Type.MORE, 20, TdMob.Stats.speed, 0.9f));
+                      }
+                    });
+              }));
+            }
+        ), 500);
+  }
+
+  private static final float respawnChance = .75f;
+
+  @Override
+  protected Upgrade up030() {
+    return new Upgrade("Zombie",
+        () -> "The first bloon that a zombie touches will spawn a new zombie on death.",
+        () -> bulletLauncher.addProjectileModifier(p -> {
+              RefFloat alreadyHit = new RefFloat(0);
+              p.addMobCollide((zombie, bloon) -> {
+                if (alreadyHit.get() > 0) {
+                  return false;
+                }
+                alreadyHit.set(1);
+                bloon.addBuff(new DelayedTrigger<TdMob>(mob -> {
+                  float cd = bulletLauncher.getRemainingCooldown();
+                  var newZombie = bulletLauncher.attack(0);
+                  bulletLauncher.setRemainingCooldown(cd);
+                  newZombie.move(mob.getX(), mob.getY());
+                }, true));
+                return true;
+              }, 0);
+            }
+        ), 500);
+  }
+
+  private boolean ignites = false;
+
+  private void explode(Projectile proj, float power, float radius, String img) {
+    BasicCollides.explodeFunc((int) proj.getX(), (int) proj.getY(), proj.getPower() * power,
+        radius, img);
+    if (ignites) {
+      world.getMobsGrid().callForEachCircle((int) proj.getX(), (int) proj.getY(),
+          (int) (radius * 1.5f), m -> m.addBuff(new Ignite<>(proj.getPower() * power, 3000)));
+    }
+  }
+
+  @Override
+  protected Upgrade up001() {
+    return new Upgrade("Zombie", () -> "zombies explode when destroyed.",
         () -> {
-          walking = false;
+          bulletLauncher.addProjectileModifier(p -> {
+            p.addBeforeDeath(proj -> {
+              explode(proj, 5, 150, "Explosion1-0");
+            });
+          });
+        }, 500);
+  }
+
+  @Override
+  protected Upgrade up002() {
+    return new Upgrade("Zombie", () -> "zombies also explode on contact.",
+        () -> {
           bulletLauncher.addProjectileModifier(p -> {
             p.addMobCollide((proj, mob) -> {
-              BasicCollides.explodeFunc((int) mob.getX(), (int) mob.getY(), proj.getPower() * 2,
-                  200);
+              explode(proj, 7, 100, "Explosion2-0");
               return true;
             });
           });
@@ -76,10 +146,49 @@ public class Necromancer extends Turret {
   }
 
   @Override
-  protected Upgrade up100() {
-    return new Upgrade("Zombie", () -> "makes zombies faster.",
+  protected Upgrade up003() {
+    return new Upgrade("Zombie",
+        () -> "zombies also explode all the time. this is mostly for show. They get more pierce.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 0.4f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Turret.Stats.pierce, 2));
+          bulletLauncher.addProjectileModifier(p -> {
+            p.addBuff(new OnTickBuff<Projectile>(proj -> {
+              explode(proj, 20, 50, "Explosion2-0");
+            }));
+          });
+        }, 7000);
+  }
+
+  @Override
+  protected Upgrade up004() {
+    return new Upgrade("Zombie", () -> "explosions also ignite things",
+        () -> {
+          ignites = true;
+        }, 20000);
+  }
+
+  @Override
+  protected Upgrade up005() {
+    return new Upgrade("Zombie", () -> "constantly ignites everything",
+        () -> {
+          addBuff(new OnTickBuff<Turret>(t -> world.getMobsList().forEach(
+              mob -> mob.addBuff(new Ignite<>(stats[Stats.power] * stats[Stats.pierce], 3000)))));
+        }, 50000);
+  }
+
+  @Override
+  protected Upgrade up100() {
+    return new Upgrade("Zombie", () -> "produces zombies faster.",
+        () -> {
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 0.6f));
+        }, 500);
+  }
+
+  @Override
+  protected Upgrade up200() {
+    return new Upgrade("Zombie", () -> "zombies have more pierce",
+        () -> {
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 2));
         }, 500);
   }
 
