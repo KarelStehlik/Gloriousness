@@ -2,8 +2,10 @@ package Game.Turrets;
 
 import Game.Ability;
 import Game.BasicCollides;
+import Game.Buffs.Buff;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.Ignite;
+import Game.Buffs.Modifier;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
@@ -13,7 +15,6 @@ import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
 import Game.Projectile;
-import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import Game.World.TrackPoint;
@@ -23,13 +24,47 @@ import general.RefFloat;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import windowStuff.Sprite;
+import windowStuff.Sprite.BasicAnimation;
 
 public class Necromancer extends Turret {
 
   public static final String image = "Necromancer";
   private final List<TrackPoint> spawnPoints = new ArrayList<>(1);
   private boolean walking = true;
+
+  private static final class Inheritor {
+
+    private int uses;
+    private final Modifier<Necromancer> effect;
+
+    private Inheritor(int uses, Modifier<Necromancer> effect) {
+      this.uses = uses;
+      this.effect = effect;
+    }
+
+    boolean isDepleted() {
+      return uses <= 0;
+    }
+
+    void apply(Necromancer target) {
+      effect.mod(target);
+      uses--;
+    }
+
+    public int uses() {
+      return uses;
+    }
+
+    public Modifier<Necromancer> effect() {
+      return effect;
+    }
+  }
+
+  private static final List<Inheritor> inheritors = new ArrayList<>(1);
 
   public Necromancer(World world, int X, int Y) {
     super(world, X, Y, image,
@@ -124,7 +159,7 @@ public class Necromancer extends Turret {
           addBuff(new StatBuff<Turret>(Type.MORE,Stats.projectileDuration,5));
           bulletLauncher.setImage("Mummy");
         }
-        , 30000);
+        , 10000);
   }
 
 
@@ -138,7 +173,7 @@ public class Necromancer extends Turret {
               float dx = ui.getX()-x;
               float dy = ui.getY()-y;
               float rot = Util.get_rotation(dx,dy);
-              bulletLauncher.setImage("Mine");
+              bulletLauncher.setImage("Bomb-0");
               rotates=false;
               Projectile mine = bulletLauncher.attack(rot,false);
               rotates=true;
@@ -156,6 +191,9 @@ public class Necromancer extends Turret {
               mine.addBeforeDeath(p->BasicCollides.explodeFunc((int) p.getX(),
                   (int) p.getY(),p.getPower()*500,2000));
               mine.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag));
+              Sprite ms = mine.getSprite();
+              ms.setLayer(5);
+              ms.playAnimation(ms.new BasicAnimation("Bomb-0",.1f).loop());
 
             },megaMineId
         ), 150000);
@@ -226,10 +264,65 @@ public class Necromancer extends Turret {
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 2)), 500);
   }
 
+  private static Modifier<Necromancer> getRandomInheritorEffect(){
+    return switch (Data.gameMechanicsRng.nextInt(1, 5)) {
+      case 1 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.aspd, .5f));
+      case 2 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.pierce, .5f));
+      case 3 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.projectileDuration, .5f));
+      case 4 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, .5f));
+      default -> n -> {};
+    };
+  }
+
+  public static final int MAX_INHERITORS = 5;
+  @Override
+  protected Upgrade up300() {
+    return new Upgrade("Zombie", () -> "use genetic engineering to buff the next 3 necromancers. "
+        + "Each tower can only have "+MAX_INHERITORS+" genetic modifications at once.",
+        () -> inheritors.add(new Inheritor(3,getRandomInheritorEffect())), 2000);
+  }
+
+
+  @Override
+  protected Upgrade up400() {
+    return new Upgrade("Zombie", () -> "apply 10 more genetic modifications to this (bypassing the normal limit)",
+        () -> {
+          for(int i=0;i<10;i++){
+            getRandomInheritorEffect().mod(this);
+          }
+        }, 10000);
+  }
+
+  @Override
+  protected Upgrade up500() {
+    return new Upgrade("Zombie", () -> "queue up 5 superior genetic modifications (with 3 uses each)",
+        () -> {
+          for(int x = 0;x<5;x++) {
+            var effects = List.of(getRandomInheritorEffect(), getRandomInheritorEffect(),
+                getRandomInheritorEffect(), getRandomInheritorEffect(), getRandomInheritorEffect());
+            inheritors.add(new Inheritor(3, n -> {
+              for (var eff : effects) {
+                eff.mod(n);
+              }
+            }));
+          }
+        }, 25000);
+  }
+
   @Override
   public void place() {
     super.place();
     updateRange();
+    int applied=0;
+    for (Iterator<Inheritor> iterator = inheritors.iterator(); iterator.hasNext() && applied<MAX_INHERITORS; ) {
+      Inheritor inh = iterator.next();
+      if(inh.isDepleted()){
+        iterator.remove();
+      }else{
+        inh.apply(this);
+        applied++;
+      }
+    }
   }
 
 

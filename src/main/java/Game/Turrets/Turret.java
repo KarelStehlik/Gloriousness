@@ -267,13 +267,13 @@ public abstract class Turret extends GameObject implements TickDetect {
     private final List<Button> buttons = new ArrayList<>(3);
 
     UpgradeMenu() {
-      float X = x, Y = y;
+      float X = Util.clamp(x,110,1810), Y = Util.clamp(y,190,870);
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
       rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
       sprites.add(new Sprite("Button", 10).
           setSize(220, 420).
-          setPosition(x, y).
+          setPosition(X, Y).
           addToBs(bs)
       );
       buttons.add(new Button(
@@ -326,13 +326,13 @@ public abstract class Turret extends GameObject implements TickDetect {
       Upgrade u3 = path3Tier < maxTier3 ? p3.get(path3Tier) : maxUpgrades;
 
       buttons.add(
-          new Button(bs, u1.makeSprite().setPosition(x, y - 50), (mx, my) -> buttonClicked(u1, 1),
+          new Button(bs, u1.makeSprite().setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
               () -> u1.text.get() + " cost: " + u1.cost));
       buttons.add(
-          new Button(bs, u2.makeSprite().setPosition(x, y + 50), (mx, my) -> buttonClicked(u2, 2),
+          new Button(bs, u2.makeSprite().setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
               () -> u2.text.get() + " cost: " + u2.cost));
       buttons.add(
-          new Button(bs, u3.makeSprite().setPosition(x, y + 150), (mx, my) -> buttonClicked(u3, 3),
+          new Button(bs, u3.makeSprite().setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
               () -> u3.text.get() + " cost: " + u3.cost));
 
       buttons.forEach(Game.get()::addMouseDetect);

@@ -105,6 +105,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       if (world.getPlayer().addBuff(new Tag<Player>(id))) {
+        world.getPlayer().getBulletLauncher().setImage("Bomb-0");
         world.getPlayer().getBulletLauncher()
             .addMobCollide((proj, mob) -> BasicCollides.explodeFunc(
                 (int) proj.getX(), (int) proj.getY(), proj.getPower(), this.radius));
