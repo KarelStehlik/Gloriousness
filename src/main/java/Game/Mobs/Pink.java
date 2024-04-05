@@ -22,8 +22,8 @@ public class Pink extends TdMob {
     stats[Stats.speed] = 7f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
+    stats[Stats.damageTaken] = 1f;
   }
-
   // end of generated stats
   @Override
   public boolean isMoab() {

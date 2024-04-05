@@ -49,7 +49,7 @@ public class EatingTurret extends Turret {
     stats[Stats.power] = 3f;
     stats[Stats.range] = 500f;
     stats[Stats.pierce] = 1000f;
-    stats[Stats.cd] = 1000f;
+    stats[Stats.aspd] = 1f;
     stats[Stats.projectileDuration] = 10f;
     stats[Stats.bulletSize] = 220f;
     stats[Stats.speed] = 3.5f;

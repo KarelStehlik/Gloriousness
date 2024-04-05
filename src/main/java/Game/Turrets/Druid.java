@@ -8,6 +8,7 @@ import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.Mobs.TdMob;
+import Game.Mobs.TdMob.Stats;
 import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
@@ -62,7 +63,7 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up400() {
     return new Upgrade("Button", () -> "attacks way faster",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 0.3f)),
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3.3f)),
         10000);
   }
 
@@ -122,10 +123,10 @@ public class Druid extends Turret {
 
   @Override
   protected Upgrade up050() {
-    return new Upgrade("Button", () -> "Ability: bloons temporarily take 50% more damage",
-        () -> Ability.add("Freeze", 60000, () -> "Enemies take 50% more damage for 5 seconds",
+    return new Upgrade("Button", () -> "Ability: bloons temporarily take 100% increased damage",
+        () -> Ability.add("Freeze", 60000, () -> "Enemies take 100% increased damage for 15 seconds",
             () -> world.getMobsList().forEach(mob -> mob.addBuff(
-                new StatBuff<TdMob>(Type.MORE, 5000, TdMob.Stats.health, 1 / 1.5f))),
+                new StatBuff<TdMob>(Type.INCREASED, 15000, TdMob.Stats.damageTaken, 1))),
             weakenId)
         , 20000);
   }
@@ -228,7 +229,7 @@ public class Druid extends Turret {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 500f;
     stats[Stats.pierce] = 5f;
-    stats[Stats.cd] = 2500f;
+    stats[Stats.aspd] = .4f;
     stats[Stats.projectileDuration] = 8f;
     stats[Stats.bulletSize] = 220f;
     stats[Stats.speed] = 3.5f;

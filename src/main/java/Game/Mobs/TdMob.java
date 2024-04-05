@@ -64,7 +64,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   @Override
   protected int getStatsCount() {
-    return 4;
+    return 5;
   }
 
   @Override
@@ -97,7 +97,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   public void takeDamage(float amount, DamageType type) {
-    double resistance = 1;
+    double resistance = stats[Stats.damageTaken];
     double eDamage = amount * resistance / stats[Stats.health];
     healthPart -= eDamage;
     if (healthPart <= 0.0000001 && exists) {
@@ -237,6 +237,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     public static final int speed = 1;
     public static final int health = 2;
     public static final int value = 3;
+    public static final int damageTaken = 4;
 
     private Stats() {
     }

@@ -28,7 +28,7 @@ public class IgniteTurret extends Turret {
     stats[Stats.power] = 0.2f;
     stats[Stats.range] = 500f;
     stats[Stats.pierce] = 1f;
-    stats[Stats.cd] = 10f;
+    stats[Stats.aspd] = 100f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 20f;

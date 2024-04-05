@@ -56,7 +56,7 @@ public class BasicTurret extends Turret {
   protected Upgrade up040() {
     return new Upgrade("Meteor", () -> "Beefier darts",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 10));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.1f));
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 10f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 100f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 100f));
@@ -179,26 +179,26 @@ public class BasicTurret extends Turret {
   @Override
   protected Upgrade up001() {
     return new Upgrade("Meteor", () -> "shoots 2x faster.",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 1 / 2f)), 200);
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2f)), 200);
   }
 
   @Override
   protected Upgrade up002() {
     return new Upgrade("Meteor", () -> "shoots 3x faster.",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 1 / 3f)), 1000);
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3f)), 1000);
   }
 
   @Override
   protected Upgrade up003() {
     return new Upgrade("Meteor", () -> "shoots 4x faster.",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 1 / 4f)), 5000);
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f)), 5000);
   }
 
   @Override
   protected Upgrade up004() {
     return new Upgrade("Meteor", () -> "shoots 5x faster.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 1 / 5f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           bulletLauncher.setSpread(10);
         }, 20000);
   }
@@ -207,7 +207,7 @@ public class BasicTurret extends Turret {
   protected Upgrade up005() {
     return new Upgrade("Meteor", () -> "shoots 10x faster.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 1 / 10f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 10f));
           bulletLauncher.setSpread(30);
         }, 100000);
   }
@@ -218,7 +218,7 @@ public class BasicTurret extends Turret {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 350f;
     stats[Stats.pierce] = 2f;
-    stats[Stats.cd] = 1400f;
+    stats[Stats.aspd] = 0.7f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 30f;
     stats[Stats.speed] = 15f;

@@ -26,10 +26,10 @@ public class SmallMoab extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 300.0f;
     stats[Stats.speed] = 0.7f;
-    stats[Stats.health] = 500f;
+    stats[Stats.health] = 200f;
     stats[Stats.value] = 80f;
+    stats[Stats.damageTaken] = 1f;
   }
-
   // end of generated stats
   @Override
   public boolean isMoab() {

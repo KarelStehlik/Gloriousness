@@ -50,12 +50,12 @@ public class UpgradeGiver {
 
     @Override
     String getText() {
-      return "+1 damage";
+      return "+1 damage. currently "+world.getPlayer().stats[Stats.projPower];
     }
 
     @Override
     String getImageName() {
-      return "bu";
+      return "Damage";
     }
   }
 
@@ -64,17 +64,17 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.ADDED,
-          Stats.projPierce, 2));
+          Stats.projPierce, 1));
     }
 
     @Override
     String getText() {
-      return "+2 pierce";
+      return "+1 pierce. currently "+world.getPlayer().stats[Stats.projPierce];
     }
 
     @Override
     String getImageName() {
-      return "Meteor";
+      return "Pierce";
     }
   }
 
@@ -82,24 +82,24 @@ public class UpgradeGiver {
 
     @Override
     void picked() {
-      world.getPlayer().addBuff(new StatBuff<Player>(Type.MORE,
-          Player.Stats.cd, 1 / 1.3f));
+      world.getPlayer().addBuff(new StatBuff<Player>(Type.INCREASED,
+          Player.Stats.aspd, .5f));
     }
 
     @Override
     String getText() {
-      return "30% more attack speed";
+      return "50% increased attack speed. currently "+world.getPlayer().stats[Stats.aspd];
     }
 
     @Override
     String getImageName() {
-      return "Button";
+      return "Aspd";
     }
   }
 
   private class Explode extends UpgradeType {
 
-    float radius = 0;
+    float radius = 50;
     long id = Util.getUid();
 
     @Override
@@ -108,18 +108,19 @@ public class UpgradeGiver {
         world.getPlayer().getBulletLauncher()
             .addMobCollide((proj, mob) -> BasicCollides.explodeFunc(
                 (int) proj.getX(), (int) proj.getY(), proj.getPower(), this.radius));
+      }else {
+        radius += 2500 / radius;
       }
-      radius += 50;
     }
 
     @Override
     String getText() {
-      return "Exploding projectiles. If already exploding, increases the radius instead.";
+      return "Exploding projectiles. If already exploding, increases the area instead.";
     }
 
     @Override
     String getImageName() {
-      return "Button";
+      return "Radius";
     }
   }
 

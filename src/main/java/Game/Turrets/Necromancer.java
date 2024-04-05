@@ -180,7 +180,7 @@ public class Necromancer extends Turret {
   protected Upgrade up100() {
     return new Upgrade("Zombie", () -> "produces zombies faster.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.cd, 0.6f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 1.8f));
         }, 500);
   }
 
@@ -224,7 +224,7 @@ public class Necromancer extends Turret {
     bulletLauncher.setPower(stats[Stats.power]);
     bulletLauncher.setSize(stats[Stats.bulletSize]);
     bulletLauncher.setSpeed(0);
-    bulletLauncher.setCooldown(stats[Stats.cd]);
+    bulletLauncher.setCooldown(1000/stats[Stats.aspd]);
   }
 
   private void updateRange() {
@@ -245,7 +245,7 @@ public class Necromancer extends Turret {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 200f;
     stats[Stats.pierce] = 3f;
-    stats[Stats.cd] = 1000f;
+    stats[Stats.aspd] = 1f;
     stats[Stats.projectileDuration] = 20f;
     stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 10f;

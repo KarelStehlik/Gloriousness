@@ -38,7 +38,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
     bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        30, 30, 50, 30, 3, 100, stats[Stats.cd]);
+        30, 30, 50, 30, 3, 100, 1000/stats[Stats.aspd]);
     bulletLauncher.addMobCollide(
         BasicCollides.damage
     );
@@ -105,7 +105,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   public void clearStats() {
     stats[Stats.speed] = 1f;
     stats[Stats.health] = 100f;
-    stats[Stats.cd] = 1000f;
+    stats[Stats.aspd] = 1f;
     stats[Stats.projSize] = 18f;
     stats[Stats.projSpeed] = 20f;
     stats[Stats.projPierce] = 2f;
@@ -120,7 +120,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     bulletLauncher.setSpeed(stats[Stats.projSpeed]);
     bulletLauncher.setPierce((int) stats[Stats.projPierce]);
     bulletLauncher.setDuration(stats[Stats.projDuration]);
-    bulletLauncher.setCooldown(stats[Stats.cd]);
+    bulletLauncher.setCooldown(1000/stats[Stats.aspd]);
     bulletLauncher.setPower(stats[Stats.projPower]);
   }
 
@@ -128,7 +128,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
     public static final int speed = 0;
     public static final int health = 1;
-    public static final int cd = 2;
+    public static final int aspd = 2;
     public static final int projSize = 3;
     public static final int projSpeed = 4;
     public static final int projPierce = 5;

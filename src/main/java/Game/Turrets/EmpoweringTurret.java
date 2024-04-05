@@ -123,7 +123,7 @@ public class EmpoweringTurret extends Turret {
     stats[Stats.power] = 100f;
     stats[Stats.range] = 500f;
     stats[Stats.pierce] = 1f;
-    stats[Stats.cd] = 1000f;
+    stats[Stats.aspd] = 1f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 8f;
@@ -131,7 +131,7 @@ public class EmpoweringTurret extends Turret {
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
     stats[ExtraStats.assaCd] = 1000f;
-    stats[ExtraStats.assaDamageMult] = 1000f;
+    stats[ExtraStats.assaDamageMult] = 100f;
     stats[ExtraStats.assaDuration] = 5000f;
   }
 

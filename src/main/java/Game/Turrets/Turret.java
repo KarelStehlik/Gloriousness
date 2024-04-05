@@ -213,7 +213,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     bulletLauncher.setPower(stats[Turret.Stats.power]);
     bulletLauncher.setSize(stats[Turret.Stats.bulletSize]);
     bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
-    bulletLauncher.setCooldown(stats[Turret.Stats.cd]);
+    bulletLauncher.setCooldown(1000f/stats[Turret.Stats.aspd]);
   }
 
   protected static class Upgrade {
@@ -240,7 +240,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     public static final int power = 0;
     public static final int range = 1;
     public static final int pierce = 2;
-    public static final int cd = 3;
+    public static final int aspd = 3;
     public static final int projectileDuration = 4;
     public static final int bulletSize = 5;
     public static final int speed = 6;
