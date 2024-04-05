@@ -268,5 +268,17 @@ public abstract class TdMob extends GameObject implements TickDetect {
       }
       return checkpoint - o.checkpoint;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      return o instanceof TrackProgress && compareTo((TrackProgress) o) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+      int result = checkpoint;
+      result = 31 * result + distanceToNext;
+      return result;
+    }
   }
 }

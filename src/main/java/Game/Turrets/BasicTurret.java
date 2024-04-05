@@ -141,13 +141,13 @@ public class BasicTurret extends Turret {
   }
 
   @Override
-  protected Upgrade up300() {
+  protected Upgrade up200() {
     return new Upgrade("Meteor", () -> "projectiles have double duration and are faster",
         () -> {
           g.setRange(1500);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2));
-        }, 10000);
+        }, 2000);
   }
 
   @Override
@@ -169,11 +169,11 @@ public class BasicTurret extends Turret {
   }
 
   @Override
-  protected Upgrade up200() {
+  protected Upgrade up300() {
     return new Upgrade("Meteor", () -> "darts can hit the same enemy multiple times",
         () -> {
           bulletLauncher.addProjectileModifier(p -> p.setMultihit(true));
-        }, 1000);
+        }, 10000);
   }
 
   @Override

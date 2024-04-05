@@ -37,11 +37,13 @@ import general.Log;
 import general.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
@@ -231,6 +233,50 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     mobsList.add(e);
   }
 
+  private final CustomBuffCheat customBuffCheat = new CustomBuffCheat();
+
+  private class CustomBuffCheat{
+    private static final String[] types = new String[]{"MORE","INCREASED","ADDED","FINALLY_ADDED"};
+    private static final String[] stats = new String[]{"speed","aspd","projSize","projSpeed","projPierce","projDuration","projPower"};
+    private ImInt buffType=new ImInt(0), buffStat=new ImInt(0);
+    private float[] value=new float[]{0};
+
+    void imGui() {
+
+      ImGui.combo("type", buffType, types);
+      ImGui.combo("stat", buffStat, stats);
+      ImGui.dragFloat("amount", value, 1);
+      if(ImGui.button("apply")){
+        apply();
+      }
+    }
+
+    void apply(){
+      addEvent(()->{
+        String btString = types[buffType.get()];
+        StatBuff.Type type = switch (btString) {
+          case "INCREASED" -> Type.INCREASED;
+          case "ADDED" -> Type.ADDED;
+          case "FINALLY_ADDED" -> Type.FINALLY_ADDED;
+          default -> Type.MORE;
+        };
+        String bsString = stats[buffStat.get()];
+        int stat = switch(bsString){
+          case "aspd" -> 2;
+          case "projSize" -> 3;
+          case "projSpeed" -> 4;
+          case "projPierce" -> 5;
+          case "projDuration" -> 6;
+          case "projPower" -> 7;
+          default->0;
+        };
+
+        player.addBuff(new StatBuff<Player>(type,stat,value[0]));
+
+      });
+    }
+  }
+
   // TODO: imgui runs in the graphics thread, careful changing game variables
   public void showPauseMenu() {
     //ImGui.showDemoWindow();
@@ -281,6 +327,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       int[] currWave = new int[]{wave};
       if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
         addEvent(() -> wave = currWave[0] - 1);
+      }
+      if (ImGui.collapsingHeader("Add buff to player")) {
+        customBuffCheat.imGui();
       }
     }
     ImGui.end();

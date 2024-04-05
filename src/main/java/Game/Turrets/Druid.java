@@ -8,7 +8,6 @@ import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
 import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
@@ -124,7 +123,8 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up050() {
     return new Upgrade("Button", () -> "Ability: bloons temporarily take 100% increased damage",
-        () -> Ability.add("Freeze", 60000, () -> "Enemies take 100% increased damage for 15 seconds",
+        () -> Ability.add("Freeze", 60000,
+            () -> "Enemies take 100% increased damage for 15 seconds",
             () -> world.getMobsList().forEach(mob -> mob.addBuff(
                 new StatBuff<TdMob>(Type.INCREASED, 15000, TdMob.Stats.damageTaken, 1))),
             weakenId)

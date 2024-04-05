@@ -166,7 +166,7 @@ public class BulletLauncher {
 
   private ProjectileNewFunction launcher;
 
-  public Projectile attack(float angle){
+  public Projectile attack(float angle) {
     return attack(angle, true);
   }
 
@@ -188,7 +188,7 @@ public class BulletLauncher {
     for (var collide : projectileCollides) {
       p.addProjectileCollide(collide);
     }
-    if(triggerCooldown) {
+    if (triggerCooldown) {
       remainingCooldown += cooldown;
     }
     return p;

@@ -14,7 +14,6 @@ import windowStuff.UserInputListener;
 public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   private static final int HEIGHT = 200, WIDTH = 100;
-  private static final float speed = 10;
   private final UserInputListener input;
   private final Sprite sprite;
 
@@ -37,8 +36,8 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);
     Game.get().addKeyDetect(this);
-    bulletLauncher = new BulletLauncher(world, "Egg", x, y, 20,
-        30, 30, 50, 30, 3, 100, 1000/stats[Stats.aspd]);
+    bulletLauncher = new BulletLauncher(world, "Mummy", x, y, 20,
+        30, 30, 50, 30, 3, 100, 1000 / stats[Stats.aspd]);
     bulletLauncher.addMobCollide(
         BasicCollides.damage
     );
@@ -61,9 +60,9 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   @Override
   public void onKeyPress(int key, int action, int mods) {
     vx =
-        (input.isKeyPressed(GLFW_KEY_D) ? speed : 0) - (input.isKeyPressed(GLFW_KEY_A) ? speed : 0);
+        (input.isKeyPressed(GLFW_KEY_D) ? stats[Stats.speed] : 0) - (input.isKeyPressed(GLFW_KEY_A) ? stats[Stats.speed] : 0);
     vy =
-        (input.isKeyPressed(GLFW_KEY_W) ? speed : 0) - (input.isKeyPressed(GLFW_KEY_S) ? speed : 0);
+        (input.isKeyPressed(GLFW_KEY_W) ? stats[Stats.speed] : 0) - (input.isKeyPressed(GLFW_KEY_S) ? stats[Stats.speed] : 0);
     if (vx != 0 && vy != 0) { // diagonal movement
       vx *= 0.7071067811865475f;
       vy *= 0.7071067811865475f;
@@ -103,7 +102,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.speed] = 1f;
+    stats[Stats.speed] = 10f;
     stats[Stats.health] = 100f;
     stats[Stats.aspd] = 1f;
     stats[Stats.projSize] = 18f;
@@ -120,7 +119,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     bulletLauncher.setSpeed(stats[Stats.projSpeed]);
     bulletLauncher.setPierce((int) stats[Stats.projPierce]);
     bulletLauncher.setDuration(stats[Stats.projDuration]);
-    bulletLauncher.setCooldown(1000/stats[Stats.aspd]);
+    bulletLauncher.setCooldown(1000 / stats[Stats.aspd]);
     bulletLauncher.setPower(stats[Stats.projPower]);
   }
 

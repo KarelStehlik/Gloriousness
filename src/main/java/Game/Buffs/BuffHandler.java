@@ -14,7 +14,7 @@ public class BuffHandler<T extends GameObject> {
   }
 
   public BuffHandler<T> copyForChild(T newTarget) {
-    var copy = new BuffHandler<T>(newTarget);
+    var copy = new BuffHandler<>(newTarget);
     for (var kvp : buffTypes.entrySet()) {
       copy.buffTypes.put(kvp.getKey(), kvp.getValue().copyForChild(newTarget));
     }

@@ -31,7 +31,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected final BuffHandler<Turret> buffHandler;
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
   protected boolean notYetPlaced = true;
-  protected float totalCost = 0;
+  protected float totalCost;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
@@ -61,12 +61,11 @@ public abstract class Turret extends GameObject implements TickDetect {
   public void place() {
     notYetPlaced = false;
     rangeDisplay.setHidden(true);
-    Button butt = new Button(this.sprite, (mouseX, mouseY) -> {
+    Game.get().addMouseDetect(new Button(this.sprite, (mouseX, mouseY) -> {
       if (!notYetPlaced) {
         openUpgradeMenu();
       }
-    });
-    Game.get().addMouseDetect(butt);
+    }));
   }
 
   private List<Upgrade> getUpgradePath1() {
@@ -161,11 +160,10 @@ public abstract class Turret extends GameObject implements TickDetect {
     TdMob target = world.getMobsGrid()
         .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
     if (target != null) {
-      var rotation = Util.get_rotation(target.getX() - x, target.getY() - y);
+      setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
       while (bulletLauncher.canAttack()) {
         bulletLauncher.attack(rotation);
       }
-      setRotation(rotation);
     }
 
     buffHandler.tick();
@@ -213,7 +211,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     bulletLauncher.setPower(stats[Turret.Stats.power]);
     bulletLauncher.setSize(stats[Turret.Stats.bulletSize]);
     bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
-    bulletLauncher.setCooldown(1000f/stats[Turret.Stats.aspd]);
+    bulletLauncher.setCooldown(1000f / stats[Turret.Stats.aspd]);
   }
 
   protected static class Upgrade {
@@ -235,7 +233,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
   }
 
-  public static class Stats {
+  public static final class Stats {
 
     public static final int power = 0;
     public static final int range = 1;
@@ -267,7 +265,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     private final List<Button> buttons = new ArrayList<>(3);
 
     UpgradeMenu() {
-      float X = Util.clamp(x,110,1810), Y = Util.clamp(y,190,870);
+      float X = Util.clamp(x, 110, 1810), Y = Util.clamp(y, 190, 870);
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
       rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);

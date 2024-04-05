@@ -50,7 +50,7 @@ public class UpgradeGiver {
 
     @Override
     String getText() {
-      return "+1 damage. currently "+world.getPlayer().stats[Stats.projPower];
+      return "+1 damage. currently " + world.getPlayer().stats[Stats.projPower];
     }
 
     @Override
@@ -69,7 +69,7 @@ public class UpgradeGiver {
 
     @Override
     String getText() {
-      return "+1 pierce. currently "+world.getPlayer().stats[Stats.projPierce];
+      return "+1 pierce. currently " + world.getPlayer().stats[Stats.projPierce];
     }
 
     @Override
@@ -88,7 +88,7 @@ public class UpgradeGiver {
 
     @Override
     String getText() {
-      return "50% increased attack speed. currently "+world.getPlayer().stats[Stats.aspd];
+      return "50% increased attack speed. currently " + world.getPlayer().stats[Stats.aspd];
     }
 
     @Override
@@ -109,7 +109,7 @@ public class UpgradeGiver {
         world.getPlayer().getBulletLauncher()
             .addMobCollide((proj, mob) -> BasicCollides.explodeFunc(
                 (int) proj.getX(), (int) proj.getY(), proj.getPower(), this.radius));
-      }else {
+      } else {
         radius += 2500 / radius;
       }
     }

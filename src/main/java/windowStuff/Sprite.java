@@ -2,7 +2,6 @@ package windowStuff;
 
 import general.Constants;
 import general.Data;
-import general.Log;
 import general.Util;
 import java.util.Arrays;
 import java.util.Objects;
@@ -347,7 +346,7 @@ public class Sprite implements AbstractSprite {
     public void update() {
       int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
       if (loop) {
-        frame %= length+1;
+        frame %= length + 1;
       }
       //Log.write(length);
       hasUnsavedChanges = true;
