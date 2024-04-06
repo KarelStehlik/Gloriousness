@@ -201,7 +201,7 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up200() {
     return new Upgrade("Button", () -> "get 400 additional end-of-turn gold",
-        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()+100))
+        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()+400))
         , 6000);
   }
 
