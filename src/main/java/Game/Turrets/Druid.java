@@ -69,8 +69,11 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up500() {
     return new Upgrade("Button", () -> "keeps regrowing basically forever",
-        () -> addBuff(
-            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 20)), 50000);
+        () -> {addBuff(
+            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 7));
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.sizeScaling, 0.1f));
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.powScaling, 0.5f));
+          }, 50000);
   }
 
   @Override
@@ -185,7 +188,9 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up001() {
     return new Upgrade("Button", () -> "double damage",
-        () -> addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 3f)), 500);
+        () -> {
+      addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 3f));
+      }, 500);
   }
 
   private void regrow(RefFloat respawnsLeft, Projectile proj) {
@@ -196,13 +201,13 @@ public class Druid extends Turret {
     proj.setActive(false);
     proj.addBuff(
         new StatBuff<Projectile>(Type.MORE, Projectile.Stats.power,
-            stats[ExtraStats.powScaling]));
+            1+stats[ExtraStats.powScaling]));
     proj.addBuff(
         new StatBuff<Projectile>(Type.INCREASED, Projectile.Stats.size,
             stats[ExtraStats.sizeScaling]));
     proj.addBuff(
         new StatBuff<Projectile>(Type.MORE, Projectile.Stats.pierce,
-            stats[ExtraStats.pierceScaling]));
+            1+stats[ExtraStats.pierceScaling]));
     proj.addBuff(
         new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.pierce,
             stats[ExtraStats.bonusPierce]));
