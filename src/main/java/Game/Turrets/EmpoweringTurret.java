@@ -116,12 +116,12 @@ public class EmpoweringTurret extends Turret {
         + "with a 5000-year-old katana that has been folded a billion and one times, "
         + "forged illegally by a now extinct shadowy order of super ninjas inside a space volcano, "
         + "paid for with the blood of a thousand innocents and having cut down a thousand more, "
-        + "which now contains the suffering and desecrated souls of the God-assassin's "
+        + "which now contains the suffering and desecrated souls of the Shadowy Fog Skull Slayer Assassin's "
         + "family that he betrayed and killed by his own hand for no reason. It is said that any who dare "
         + "pronounce the name of this katana will suffer the doom of an eternal torment "
         + "forever in the dark abyss of death, however no one has been able to verify this, as "
         + "its name is some unpronounceable Japanese bullshit that you physically can not utter.",
-        () -> Ability.add("Assassin", 20000,()->"Vengeance!",()->{
+        () -> Ability.add("Assassin", 10000,()->"Vengeance!",()->{
           int x = (int) Game.get().getUserInputListener().getX();
           int y = (int) Game.get().getUserInputListener().getY();
           world.getMobsGrid().callForEachCircle(
