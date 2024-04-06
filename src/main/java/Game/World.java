@@ -610,12 +610,14 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private float scaling() {
-      return cheat ? 1 : (float) Math.pow(1 + Math.max(wave, 10) - 10, 1.4);
+      return cheat ? 1 : (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
+          + Math.pow(1 + Math.max(wave, 100) - 100, 2) // steep scaling after 100
+          + Math.pow(1.1, Math.max(wave, 250) - 250)); // exponential after 250
     }
 
     private void add(TdMob e) {
       final float hpScaling = scaling();
-      final float spdScaling = (float) Math.pow(scaling(), 0.2);
+      final float spdScaling = (float) Math.pow(scaling(), 0.1);
       e.addBuff(
           new StatBuff<TdMob>(Type.MORE, Stats.health,
               hpScaling));
