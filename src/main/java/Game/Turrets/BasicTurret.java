@@ -32,7 +32,7 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Meteor", () -> "beefy darts",
+    return new Upgrade("Dart", () -> "beefy darts",
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 3f));
@@ -43,10 +43,10 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up030() {
-    return new Upgrade("Meteor", () -> "stronger arms grant faster, stronger darts and more range",
+    return new Upgrade("FastDart", () -> "stronger arms grant faster, stronger darts and more range",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.range, 10));
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 3f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 20f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2));
         }, 5000);
@@ -54,12 +54,12 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up040() {
-    return new Upgrade("Meteor", () -> "Beefier darts",
+    return new Upgrade("BeefyDart", () -> "Beefier darts",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.1f));
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 10f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 100f));
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 100f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 200f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 0.3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2f));
         }, 20000);
@@ -69,7 +69,7 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up050() {
-    return new Upgrade("Meteor", () -> "adds a cool new ability",
+    return new Upgrade("BeefierDart", () -> "adds a cool new ability",
         () -> {
           var a = Ability.add("Dart", 30000,
               () -> "Dart monkey immediately throws the beefiest dart ever", () -> {
@@ -90,7 +90,7 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up020() {
-    return new Upgrade("Meteor", () -> "darts combine to become stronger",
+    return new Upgrade("MagnetDart", () -> "darts combine to become stronger",
         () -> {
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new Tag<Projectile>(dartEatId, t -> {
@@ -129,7 +129,7 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up100() {
-    return new Upgrade("Meteor",
+    return new Upgrade("Radar",
         () -> "projectiles seek, last slightly longer and have infinite pierce",
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, Float.POSITIVE_INFINITY));
@@ -142,7 +142,7 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("Meteor", () -> "projectiles have double duration and are faster",
+    return new Upgrade("MoreRadar", () -> "projectiles have double duration and are faster",
         () -> {
           g.setRange(1500);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2));
@@ -151,7 +151,7 @@ public class BasicTurret extends Turret {
   }
 
   @Override
-  protected Upgrade up400() {
+  protected Upgrade up300() {
     return new Upgrade("Meteor", () -> "more damage",
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, 5));
@@ -160,7 +160,7 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up500() {
-    return new Upgrade("Meteor",
+    return new Upgrade("InfiniDart",
         () -> "projectiles last literally forever (i'm sure this isn't game breaking)",
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.projectileDuration,
@@ -169,34 +169,34 @@ public class BasicTurret extends Turret {
   }
 
   @Override
-  protected Upgrade up300() {
-    return new Upgrade("Meteor", () -> "darts can hit the same enemy multiple times",
+  protected Upgrade up400() {
+    return new Upgrade("Goldfish", () -> "darts can hit the same enemy multiple times",
         () -> {
           bulletLauncher.addProjectileModifier(p -> p.setMultihit(true));
-        }, 10000);
+        }, 50000);
   }
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Meteor", () -> "shoots 2x faster.",
+    return new Upgrade("DoubleDart", () -> "shoots 2x faster.",
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2f)), 200);
   }
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("Meteor", () -> "shoots 3x faster.",
+    return new Upgrade("TripleDart", () -> "shoots 3x faster.",
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3f)), 1000);
   }
 
   @Override
   protected Upgrade up003() {
-    return new Upgrade("Meteor", () -> "shoots 4x faster.",
+    return new Upgrade("QuadDart", () -> "shoots 4x faster.",
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f)), 5000);
   }
 
   @Override
   protected Upgrade up004() {
-    return new Upgrade("Meteor", () -> "shoots 5x faster.",
+    return new Upgrade("QuinDart", () -> "shoots 5x faster.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           bulletLauncher.setSpread(10);
@@ -205,7 +205,7 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("Meteor", () -> "shoots 10x faster.",
+    return new Upgrade("TenDart", () -> "shoots 10x faster.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 10f));
           bulletLauncher.setSpread(30);

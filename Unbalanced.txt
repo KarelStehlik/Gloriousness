@@ -1,0 +1,8 @@
+Necromancer:
+investment 36k | r39 (3x 302 inheritored)
+investment 96k | r50 (0-1 spears) (3x 402)
+
+Dart monkey:
+investment 25k | r75 (one 024)
+investment 25k | r50 (one 014)
+investment 25k | r43 (one 204)

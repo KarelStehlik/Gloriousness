@@ -70,7 +70,7 @@ public class Druid extends Turret {
   protected Upgrade up500() {
     return new Upgrade("Button", () -> "keeps regrowing basically forever",
         () -> addBuff(
-            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 20)), 30000);
+            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 30)), 30000);
   }
 
   @Override
@@ -78,7 +78,7 @@ public class Druid extends Turret {
     return new Upgrade("Button", () -> "increases pierce when regrowing",
         () -> addBuff(
             new StatBuff<Turret>(Type.ADDED, ExtraStats.pierceScaling,
-                .4f)), 150);
+                .6f)), 150);
   }
 
   @Override
@@ -92,7 +92,7 @@ public class Druid extends Turret {
     return new Upgrade("Button", () -> "Roots bloons",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> mob.addBuff(
             new StatBuff<TdMob>(Type.MORE,
-                p.getPower() / mob.getStats()[TdMob.Stats.health] * 1000, TdMob.Stats.speed,
+                p.getPower() / mob.getStats()[TdMob.Stats.health] * 5000, TdMob.Stats.speed,
                 0.001f)
         ), 0)), 2500);
   }
@@ -178,14 +178,14 @@ public class Druid extends Turret {
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.powScaling,
               .4f));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.sizeScaling,
-              .15f));
+              .7f));
         }, 2000);
   }
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Button", () -> "triple damage",
-        () -> addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 2f)), 500);
+    return new Upgrade("Button", () -> "double damage",
+        () -> addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 3f)), 500);
   }
 
   private void regrow(RefFloat respawnsLeft, Projectile proj) {
@@ -226,7 +226,7 @@ public class Druid extends Turret {
 
   @Override
   public void clearStats() {
-    stats[Stats.power] = 1f;
+    stats[Stats.power] = 3f;
     stats[Stats.range] = 500f;
     stats[Stats.pierce] = 5f;
     stats[Stats.aspd] = .4f;

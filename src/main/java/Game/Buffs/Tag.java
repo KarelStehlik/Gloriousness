@@ -2,7 +2,10 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
+import general.Log;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 public class Tag<T extends GameObject> implements Buff<T> {
@@ -42,15 +45,17 @@ public class Tag<T extends GameObject> implements Buff<T> {
 
     @Override
     public int compareTo(AppliedTag o) {
-      if (expiryTime != o.expiryTime) {
-        return Float.compare(expiryTime, o.expiryTime);
-      }
       return Long.compare(id, o.id);
     }
 
     @Override
     public boolean equals(Object obj) {
       return obj instanceof AppliedTag && compareTo((AppliedTag) obj) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+      return (int) (id ^ (id >>> 32));
     }
   }
 
@@ -61,10 +66,10 @@ public class Tag<T extends GameObject> implements Buff<T> {
 
   private class Aggregator implements BuffAggregator<T> {
 
-    private final Collection<AppliedTag> alreadyApplied = new TreeSet<>();
+    private final Map<AppliedTag, AppliedTag> alreadyApplied = new HashMap<>(1);
 
     Aggregator(Aggregator og) {
-      alreadyApplied.addAll(og.alreadyApplied);
+      alreadyApplied.putAll(og.alreadyApplied);
     }
 
     Aggregator() {
@@ -72,14 +77,17 @@ public class Tag<T extends GameObject> implements Buff<T> {
 
     @Override
     public boolean add(Buff<T> b, T target) {
+      float time = Game.get().getTicks();
       assert b instanceof Tag<T>;
       Tag<T> buff = (Tag<T>) b;
       AppliedTag buffTag = new AppliedTag(buff.id, buff.expiryTime);
-      if (alreadyApplied.contains(buffTag)) {
+      AppliedTag current = alreadyApplied.get(buffTag);
+
+      if (current!=null && current.expiryTime>time) {
         return false;
       }
       if (!buff.isTest) {
-        alreadyApplied.add(buffTag);
+        alreadyApplied.put(buffTag, buffTag);
         buff.mod.mod(target);
       }
       return true;
@@ -87,14 +95,6 @@ public class Tag<T extends GameObject> implements Buff<T> {
 
     @Override
     public void tick(T target) {
-      float time = Game.get().getTicks();
-      for (var iterator = alreadyApplied.iterator(); iterator.hasNext(); ) {
-        AppliedTag ig = iterator.next();
-        if (ig.expiryTime > time) {
-          break;
-        }
-        iterator.remove();
-      }
     }
 
     @Override

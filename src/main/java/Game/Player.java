@@ -108,7 +108,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     stats[Stats.projSize] = 18f;
     stats[Stats.projSpeed] = 20f;
     stats[Stats.projPierce] = 2f;
-    stats[Stats.projDuration] = 4f;
+    stats[Stats.projDuration] = 2f;
     stats[Stats.projPower] = 1f;
   }
   // end of generated stats

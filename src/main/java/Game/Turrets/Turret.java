@@ -165,7 +165,6 @@ public abstract class Turret extends GameObject implements TickDetect {
         bulletLauncher.attack(rotation);
       }
     }
-
     buffHandler.tick();
   }
 
@@ -201,6 +200,11 @@ public abstract class Turret extends GameObject implements TickDetect {
     super.move(_x, _y);
     sprite.setPosition(_x, _y);
     rangeDisplay.setPosition(_x, _y);
+    if(world.canFitTurret((int) x, (int) y,stats[Stats.size])){
+      rangeDisplay.setColors(Util.getColors(0,0,0));
+    }else{
+      rangeDisplay.setColors(Util.getColors(9,0,0));
+    }
     bulletLauncher.move(_x, _y);
   }
 
@@ -212,6 +216,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     bulletLauncher.setSize(stats[Turret.Stats.bulletSize]);
     bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
     bulletLauncher.setCooldown(1000f / stats[Turret.Stats.aspd]);
+    rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
   }
 
   protected static class Upgrade {
@@ -268,7 +273,6 @@ public abstract class Turret extends GameObject implements TickDetect {
       float X = Util.clamp(x, 110, 1810), Y = Util.clamp(y, 190, 870);
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
-      rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
       sprites.add(new Sprite("Button", 10).
           setSize(220, 420).
           setPosition(X, Y).

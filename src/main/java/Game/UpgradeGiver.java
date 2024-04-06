@@ -83,12 +83,12 @@ public class UpgradeGiver {
     @Override
     void picked() {
       world.getPlayer().addBuff(new StatBuff<Player>(Type.INCREASED,
-          Player.Stats.aspd, .5f));
+          Player.Stats.aspd, .4f));
     }
 
     @Override
     String getText() {
-      return "50% increased attack speed. currently " + world.getPlayer().stats[Stats.aspd];
+      return "40% increased attack speed. currently " + world.getPlayer().stats[Stats.aspd];
     }
 
     @Override
@@ -99,18 +99,19 @@ public class UpgradeGiver {
 
   private class Explode extends UpgradeType {
 
-    float radius = 50;
+    float radius = 30;
     long id = Util.getUid();
 
     @Override
     void picked() {
       if (world.getPlayer().addBuff(new Tag<Player>(id))) {
         world.getPlayer().getBulletLauncher().setImage("Bomb-0");
+        world.getPlayer().addBuff(new StatBuff<Player>(Type.INCREASED, Stats.projSize, 3f));
         world.getPlayer().getBulletLauncher()
             .addMobCollide((proj, mob) -> BasicCollides.explodeFunc(
                 (int) proj.getX(), (int) proj.getY(), proj.getPower(), this.radius));
       } else {
-        radius += 2500 / radius;
+        radius += 2000 / radius;
       }
     }
 

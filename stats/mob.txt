@@ -8,4 +8,4 @@ Mobs/Lead % size=80.0|speed=1|health=2|value=1|damageTaken=1 %
 Mobs/Ceramic % size=78.0|speed=3.8|health=10|value=0|damageTaken=1 %
 Mobs/SmallMoab % size=300.0|speed=0.7|health=200|value=80|damageTaken=1 %
 Mobs/Moab % size=300.0|speed=5|health=500|value=100|damageTaken=1 %
-Player   % speed=10|health=100|aspd=1|projSize=18|projSpeed=20|projPierce=2|projDuration=4|projPower=1 %
+Player   % speed=10|health=100|aspd=1|projSize=18|projSpeed=20|projPierce=2|projDuration=2|projPower=1 %

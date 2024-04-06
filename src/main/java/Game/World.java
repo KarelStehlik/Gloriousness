@@ -235,6 +235,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   private final CustomBuffCheat customBuffCheat = new CustomBuffCheat();
 
+  public List<Turret> getTurrets() {
+    return turrets;
+  }
+
   private class CustomBuffCheat{
     private static final String[] types = new String[]{"MORE","INCREASED","ADDED","FINALLY_ADDED"};
     private static final String[] stats = new String[]{"speed","aspd","projSize","projSpeed","projPierce","projDuration","projPower"};
@@ -303,13 +307,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       if (ImGui.button("give cash")) {
         setMoney(money + 999999);
       }
-      if (ImGui.button("yeet projectiles")) {
+      if (ImGui.button("yeet projectiles ("+projectilesList.size()+")")) {
         addEvent(() -> {
           projectilesList.forEach(Projectile::delete);
           projectilesList.clear();
         });
       }
-      if (ImGui.button("yeet mobs")) {
+      if (ImGui.button("yeet mobs ("+mobsList.size()+")")) {
         addEvent(() -> {
           mobsList.forEach(TdMob::delete);
           mobsList.clear();
@@ -512,6 +516,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return false;
       }
     }
+    for(TrackPoint p : spacPoints){
+      if(Util.distanceSquared(p.x-x,p.y-y)<size*size){
+        return false;
+      }
+    }
     return true;
   }
 
@@ -566,7 +575,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private static class Optimization {
 
     private static final int MobGridSquareSize = 6;
-    private static final int ProjectileGridSquareSize = 6;
+    private static final int ProjectileGridSquareSize = 7;
   }
 
   private class MobSpawner {
@@ -574,8 +583,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private final List<BloonSpawn> bloons = List.of(
         new BloonSpawn(200, Moab::new),
         new BloonSpawn(100, SmallMoab::new),
-        new BloonSpawn(30, Ceramic::new),
-        new BloonSpawn(15, Lead::new),
+        new BloonSpawn(20, Ceramic::new),
+        new BloonSpawn(12, Lead::new),
         new BloonSpawn(7, Black::new),
         new BloonSpawn(4, Pink::new),
         new BloonSpawn(3.5f, Yellow::new),
@@ -591,8 +600,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private BloonSpawn selectNectBloon(float toSpawn) {
       for (var loon : bloons) {
-        if (loon.cost < wave * 5 && loon.cost < toSpawn
-            && Data.gameMechanicsRng.nextFloat() < toSpawn / loon.cost / loon.cost / 100) {
+        if (loon.cost < wave * 4 && loon.cost < toSpawn
+            && Data.gameMechanicsRng.nextFloat() < toSpawn / loon.cost / 200) {
           return loon;
         }
       }
@@ -616,8 +625,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private void onBeginWave(int waveNum) {
-      mobsToSpawn = cheat ? 1 : 50 * waveNum;
-      mobsPerTick = cheat ? 1 : 0.1f * waveNum;
+      mobsToSpawn = cheat ? 1 : Math.min(50000, (float) (50 * Math.pow(waveNum, 1.1)));
+      mobsPerTick = cheat ? 1 : Math.min(200, 0.1f * waveNum);
       spawningProcess = 0;
     }
 

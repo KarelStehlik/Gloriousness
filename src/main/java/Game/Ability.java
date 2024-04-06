@@ -28,7 +28,7 @@ public class Ability {
           () -> {
             var min = abilities.stream().mapToInt(a -> (int) (a.cooldownRemaining / 1000f)).min();
             return text.get() + "\nCooldown:" + (min.isPresent() ? min.getAsInt() : "???")
-                + "\nUses:" + abilities.stream().filter(a -> a.cooldownRemaining <= 0).count();
+                + "\nUses: " + abilities.stream().filter(a -> a.cooldownRemaining <= 0).count();
           }
       );
       button.getSprite().setShader("colorCycle2").setColors(Util.getCycle2colors(0.5f));

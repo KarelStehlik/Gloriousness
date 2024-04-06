@@ -93,8 +93,9 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Zombie", () -> "zombies are dead. The don't move but are more powerful.",
+    return new Upgrade("ZombieDead", () -> "zombies are dead. The don't move but are more powerful.",
         () -> {
+          bulletLauncher.setImage(path1Tier>=2?"ZombieDeadPierce":"ZombieDead");
           walking = false;
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 1));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 5f));
@@ -169,7 +170,7 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up050() {
-    return new Upgrade("Zombie",
+    return new Upgrade("Mine",
         () -> "Cool never-before-seen ability",
         () -> Ability.add("fire", 120000, () -> "Probably bigger than the one in btd8", () -> {
               var ui = Game.get().getUserInputListener();
@@ -221,14 +222,14 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Zombie", () -> "zombies explode when destroyed.",
+    return new Upgrade("Bomb-0", () -> "zombies explode when destroyed.",
         () -> bulletLauncher.addProjectileModifier(
             p -> p.addBeforeDeath(proj -> explode(proj, 5, 150, "Explosion1-0"))), 500);
   }
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("Zombie", () -> "zombies also explode on contact.",
+    return new Upgrade("Duck", () -> "zombies also explode on contact.",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           explode(proj, 7F, 100F, "Explosion2-0", (int) mob.getX(), (int) mob.getY());
           return true;
@@ -262,23 +263,26 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up100() {
-    return new Upgrade("Zombie", () -> "produces zombies faster.",
+    return new Upgrade("MoreZombies", () -> "produces zombies faster.",
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 1.8f)), 500);
   }
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("Zombie", () -> "zombies have more pierce",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 2)), 500);
+    return new Upgrade("ZombiePierce", () -> "zombies have more pierce",
+        () -> {
+      bulletLauncher.setImage(path2Tier>=1? "ZombieDeadPierce": "ZombiePierce");
+      addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 2));
+      }, 500);
   }
 
   private static Modifier<Necromancer> getRandomInheritorEffect() {
     return switch (Data.gameMechanicsRng.nextInt(1, 5)) {
-      case 1 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.aspd, .5f));
-      case 2 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.pierce, .5f));
-      case 3 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.projectileDuration, .5f));
-      case 4 -> n -> n.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, .5f));
-      default -> n -> {
+      case 1 -> nec -> nec.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.aspd, .5f));
+      case 2 -> nec -> nec.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.pierce, .5f));
+      case 3 -> nec -> nec.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.projectileDuration, .5f));
+      case 4 -> nec -> nec.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, .5f));
+      default -> nec -> {
       };
     };
   }
@@ -287,36 +291,49 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up300() {
-    return new Upgrade("Zombie", () -> "use genetic engineering to buff the next 3 necromancers. "
+    return new Upgrade("Inheritor", () -> "use genetic engineering to buff the next 3 necromancers. "
         + "Each tower can only have " + MAX_INHERITORS + " genetic modifications at once.",
         () -> inheritors.add(new Inheritor(3, getRandomInheritorEffect())), 2000);
   }
 
 
+  private static final long rangeBuffId=Util.getUid();
   @Override
   protected Upgrade up400() {
-    return new Upgrade("Zombie",
+    return new Upgrade("Inheritor2",
         () -> "apply 10 more genetic modifications to this (bypassing the normal limit)",
         () -> {
           for (int i = 0; i < 10; i++) {
             getRandomInheritorEffect().mod(this);
           }
+          addBuff(new OnTickBuff<Turret>(necro->{
+            for (Turret t : world.getTurrets()) {
+              if (t!=necro && Util.distanceSquared(t.getX() - necro.getX(), t.getY() - necro.getY()) <= Util.square(
+                  necro.getStats()[Stats.range])) {
+                if(t.addBuff(new Tag<Turret>(rangeBuffId,50))){
+                  t.addBuff(new StatBuff<Turret>(Type.INCREASED,50,Stats.range,.1f));
+                }
+              }
+            }
+          }));
         }, 10000);
   }
 
   @Override
   protected Upgrade up500() {
-    return new Upgrade("Zombie",
-        () -> "queue up 5 superior genetic modifications (with 3 uses each)",
+    return new Upgrade("Inheritor3",
+        () -> "sacrifices nearby towers, gain a genetic modification for every 2500 money sacrificed",
         () -> {
-          for (int i = 0; i < 5; i++) {
-            var effects = List.of(getRandomInheritorEffect(), getRandomInheritorEffect(),
-                getRandomInheritorEffect(), getRandomInheritorEffect(), getRandomInheritorEffect());
-            inheritors.add(new Inheritor(3, n -> {
-              for (var eff : effects) {
-                eff.mod(n);
-              }
-            }));
+          float sacced = 0;
+          for (Turret t : world.getTurrets()) {
+            if (t!=this && Util.distanceSquared(t.getX() - x, t.getY() - y) <= Util.square(
+                stats[Stats.range])) {
+              sacced += t.totalCost;
+              t.delete();
+            }
+          }
+          for(;sacced>250;sacced-=250){
+            getRandomInheritorEffect().mod(this);
           }
         }, 25000);
   }
@@ -359,12 +376,8 @@ public class Necromancer extends Turret {
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setDuration(stats[Stats.projectileDuration]);
-    bulletLauncher.setPierce((int) stats[Stats.pierce]);
-    bulletLauncher.setPower(stats[Stats.power]);
-    bulletLauncher.setSize(stats[Stats.bulletSize]);
+    super.onStatsUpdate();
     bulletLauncher.setSpeed(0);
-    bulletLauncher.setCooldown(1000 / stats[Stats.aspd]);
   }
 
   private void updateRange() {
