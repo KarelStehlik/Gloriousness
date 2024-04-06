@@ -11,12 +11,10 @@ import Game.BulletLauncher;
 import Game.DamageType;
 import Game.Game;
 import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
+import Game.Player;
 import Game.Projectile;
-import Game.Projectile.Guided;
 import Game.TurretGenerator;
 import Game.World;
-import Game.Player;
 import general.Data;
 import general.RefFloat;
 import general.Util;
@@ -26,7 +24,7 @@ import windowStuff.Sprite;
 public class EmpoweringTurret extends Turret {
 
   public static final String image = "EmpoweringTower";
-  private final static long projBuffId=Util.getUid();
+  private static final long projBuffId=Util.getUid();
   public EmpoweringTurret(World world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "Buff"));
@@ -100,18 +98,14 @@ public class EmpoweringTurret extends Turret {
   protected Upgrade up030() {
     return new Upgrade("Button",
         () -> "Assassins are more patient and do 1000000x more damage.",
-        () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaDamageMult, 1000000));
-        }
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaDamageMult, 1000000))
         , 40000);
   }
 
   @Override
   protected Upgrade up040() {
     return new Upgrade("Button", () -> "Assassins are more aggressive and appear more often",
-        () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaCd, 0.3f));
-        }
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaCd, 0.3f))
         , 50000);
   }
 
@@ -127,17 +121,15 @@ public class EmpoweringTurret extends Turret {
         + "pronounce the name of this katana will suffer the doom of an eternal torment "
         + "forever in the dark abyss of death, however no one has been able to verify this, as "
         + "its name is some unpronounceable Japanese bullshit that you physically can not utter.",
-        () -> {
-          Ability.add("Assassin", 20000,()->"Vengeance!",()->{
-            int x = (int) Game.get().getUserInputListener().getX();
-            int y = (int) Game.get().getUserInputListener().getY();
-            world.getMobsGrid().callForEachCircle(
-              x,y,50,TdMob::delete
-            );
-            Sprite s = new Sprite("Explosion1-0",5).setPosition(x,y).setSize(500,500).addToBs(world.getBs());
-            s.playAnimation(s.new BasicAnimation("Explosion1-0",.2f)).setDeleteOnAnimationEnd(true);
-            },abilityId);
-        }
+        () -> Ability.add("Assassin", 20000,()->"Vengeance!",()->{
+          int x = (int) Game.get().getUserInputListener().getX();
+          int y = (int) Game.get().getUserInputListener().getY();
+          world.getMobsGrid().callForEachCircle(
+            x,y,50,TdMob::delete
+          );
+          Sprite s = new Sprite("Explosion1-0",5).setPosition(x,y).setSize(500,500).addToBs(world.getBs());
+          s.playAnimation(s.new BasicAnimation("Explosion1-0",.2f)).setDeleteOnAnimationEnd(true);
+          },abilityId)
         , 499000);
   }
 
@@ -155,29 +147,25 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up002() {
     return new Upgrade("Button", () -> "gives nearby towers 15% increased attack speed",
-        () -> {
-          addBuff(new OnTickBuff<Turret>(buffer->world.getTurrets().forEach(t->{
-            if (t!=buffer && Util.distanceSquared(t.getX() - buffer.getX(), t.getY() - buffer.getY()) <= Util.square(
-                buffer.getStats()[Stats.range])) {
-              if(t.addBuff(new Tag<Turret>(aoeBuffId,50))){
-                t.addBuff(new StatBuff<Turret>(Type.INCREASED,50,Stats.aspd,.15f));
-              }
+        () -> addBuff(new OnTickBuff<Turret>(buffer->world.getTurrets().forEach(t->{
+          if (t!=buffer && Util.distanceSquared(t.getX() - buffer.getX(), t.getY() - buffer.getY()) <= Util.square(
+              buffer.getStats()[Stats.range])) {
+            if(t.addBuff(new Tag<Turret>(aoeBuffId,50))){
+              t.addBuff(new StatBuff<Turret>(Type.INCREASED,50,Stats.aspd,.15f));
             }
-          })));
-        }
+          }
+        })))
         , 3000);
   }
 
   @Override
   protected Upgrade up003() {
     return new Upgrade("Button", () -> "gives the player 1/sec added attack speed",
-        () -> {
-          addBuff(new OnTickBuff<Turret>(
-              buffer->world.getPlayer().addBuff(
-                  new StatBuff<Player>(Type.ADDED,Game.tickIntervalMillis+1, Player.Stats.aspd, 1)
-              )
-          ));
-        }
+        () -> addBuff(new OnTickBuff<Turret>(
+            buffer->world.getPlayer().addBuff(
+                new StatBuff<Player>(Type.ADDED,Game.tickIntervalMillis+1, Player.Stats.aspd, 1)
+            )
+        ))
         , 6000);
   }
 
@@ -188,8 +176,8 @@ public class EmpoweringTurret extends Turret {
         () -> {
           bulletLauncher.setSpread(30);
           addBuff(new StatBuff<Turret>(Type.MORE,Stats.aspd, 5));
-          addBuff(new StatBuff<Turret>(Type.MORE,Stats.power, 5));
-          addBuff(new StatBuff<Turret>(Type.MORE,ExtraStats.radius, 3));
+          addBuff(new StatBuff<Turret>(Type.MORE,Stats.power, 20));
+          addBuff(new StatBuff<Turret>(Type.MORE,ExtraStats.radius, 2));
         }
         , 40000);
   }
@@ -198,9 +186,7 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up005() {
     return new Upgrade("Button", () -> "All projectiles seek",
-        () -> {
-          addBuff(new OnTickBuff<Turret>(t->world.getProjectilesList().forEach(guide::tick)));
-        }
+        () -> addBuff(new OnTickBuff<Turret>(t->world.getProjectilesList().forEach(guide::tick)))
         , 30000);
   }
 
@@ -208,27 +194,21 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up100() {
     return new Upgrade("Button", () -> "get 100 end-of-turn gold",
-        () -> {
-          endOfRoundEffects.add(()->world.setMoney(world.getMoney()+100));
-        }
+        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()+100))
         , 1500);
   }
 
   @Override
   protected Upgrade up200() {
     return new Upgrade("Button", () -> "get 400 additional end-of-turn gold",
-        () -> {
-          endOfRoundEffects.add(()->world.setMoney(world.getMoney()+100));
-        }
+        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()+100))
         , 6000);
   }
 
   @Override
   protected Upgrade up300() {
     return new Upgrade("Button", () -> "at end of turn, increase your total gold by 0.5%",
-        () -> {
-          endOfRoundEffects.add(()->world.setMoney(world.getMoney()*1.005f));
-        }
+        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()*1.005f))
         , 10000);
   }
 
@@ -236,25 +216,21 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up400() {
     return new Upgrade("Button", () -> "bloons popped in radius give 50% increased gold (no stacking)",
-        () -> {
-          addBuff(new OnTickBuff<Turret>(buffer->
-            world.getMobsGrid().callForEachCircle((int) buffer.getX(), (int) buffer.getY(),
-                (int) buffer.getStats()[Stats.range],mob->{
-              if(mob.addBuff(new Tag<TdMob>(increasedGoldIf,100))){
-                mob.addBuff(new StatBuff<TdMob>(Type.INCREASED,100,TdMob.Stats.value,.5f));
-              }
+        () -> addBuff(new OnTickBuff<Turret>(buffer->
+          world.getMobsGrid().callForEachCircle((int) buffer.getX(), (int) buffer.getY(),
+              (int) buffer.getStats()[Stats.range],mob->{
+            if(mob.addBuff(new Tag<TdMob>(increasedGoldIf,100))){
+              mob.addBuff(new StatBuff<TdMob>(Type.INCREASED,100,TdMob.Stats.value,.5f));
             }
-          )));
-        }
+          }
+        )))
         , 10000);
   }
 
   @Override
   protected Upgrade up500() {
     return new Upgrade("Button", () -> "when the player attacks, get money equal to his damage",
-        () -> {
-          world.getPlayer().getBulletLauncher().addProjectileModifier(p->world.setMoney(world.getMoney()+p.getPower()));
-        }
+        () -> world.getPlayer().getBulletLauncher().addProjectileModifier(p->world.setMoney(world.getMoney()+p.getPower()))
         , 50000);
   }
 
