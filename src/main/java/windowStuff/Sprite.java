@@ -239,7 +239,20 @@ public class Sprite implements AbstractSprite {
     return this;
   }
 
+  public boolean isDeleteOnAnimationEnd() {
+    return deleteOnAnimationEnd;
+  }
+
+  public Sprite setDeleteOnAnimationEnd(boolean deleteOnAnimationEnd) {
+    this.deleteOnAnimationEnd = deleteOnAnimationEnd;
+    return this;
+  }
+
+  private boolean deleteOnAnimationEnd=false;
   protected void onAnimationEnd() {
+    if(deleteOnAnimationEnd){
+      delete();
+    }
   }
 
   private void setUV() {

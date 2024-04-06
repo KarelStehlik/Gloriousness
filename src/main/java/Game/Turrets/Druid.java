@@ -73,7 +73,7 @@ public class Druid extends Turret {
             new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 7));
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.sizeScaling, 0.1f));
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.powScaling, 0.5f));
-          }, 50000);
+          }, 75000);
   }
 
   @Override
@@ -243,9 +243,9 @@ public class Druid extends Turret {
     stats[Stats.spritesize] = 150f;
     stats[ExtraStats.respawns] = 2f;
     stats[ExtraStats.sizeScaling] = 0f;
-    stats[ExtraStats.powScaling] = 1f;
+    stats[ExtraStats.powScaling] = 0f;
     stats[ExtraStats.bonusPierce] = 5f;
-    stats[ExtraStats.pierceScaling] = 1f;
+    stats[ExtraStats.pierceScaling] = 0f;
     stats[ExtraStats.bonusDuration] = 0f;
   }
 

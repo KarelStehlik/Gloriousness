@@ -168,6 +168,11 @@ public abstract class Turret extends GameObject implements TickDetect {
     buffHandler.tick();
   }
 
+  protected final List<VoidFunc> endOfRoundEffects = new ArrayList<>(0);
+  public void endOfRound(){
+    endOfRoundEffects.forEach(VoidFunc::apply);
+  }
+
   @Override
   public void delete() {
     sprite.delete();

@@ -332,7 +332,7 @@ public class Necromancer extends Turret {
               t.delete();
             }
           }
-          for(;sacced>250;sacced-=250){
+          for(;sacced>2500;sacced-=2500){
             getRandomInheritorEffect().mod(this);
           }
         }, 25000);

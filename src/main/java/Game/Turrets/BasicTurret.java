@@ -114,8 +114,8 @@ public class BasicTurret extends Turret {
                     new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.size,
                         p2.getStats()[Projectile.Stats.size] * .3f));
                 p1.addBuff(
-                    new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.speed,
-                        p2.getStats()[Projectile.Stats.speed] * .6f));
+                    new StatBuff<Projectile>(Type.FINALLY_ADDED, Math.min(10000,buffDur), Projectile.Stats.speed,
+                        p2.getStats()[Projectile.Stats.speed] * .5f));
 
                 if (!p2.addBuff(Tag.Test(EatingTurret.EatImmuneTag))) {
                   p1.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag, ppp -> {

@@ -487,6 +487,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   }
 
   public void endWave() {
+    turrets.forEach(Turret::endOfRound);
     if (mobSpawner.cheat) {
       beginWave();
     } else {

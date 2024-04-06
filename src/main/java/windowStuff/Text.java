@@ -136,7 +136,7 @@ public class Text {
   public void move(int newX, int newY) {
     newX = Math.min(newX, Constants.screenSize.x - maxWidth);
     newY = Math.min(newY + (int) (lineCount * fontSize),
-        Constants.screenSize.y - (int) fontSize / 2);
+        Constants.screenSize.y - (int) fontSize / 2 - (int)(background.getHeight()*.08f));
     int dx = newX - x, dy = newY - y;
     for (var symbol : symbols) {
       symbol.move(symbol.sprite.getX() + dx, symbol.sprite.getY() + dy);
@@ -172,7 +172,7 @@ public class Text {
     lineCount = line;
 
     background.setPosition(x + maxWidth / 2f, y - line * fontSize / 2 + fontSize * .1f);
-    background.setSize(maxWidth, (line + 1.2f) * fontSize);
+    background.setSize(maxWidth, (line + 1.2f) * fontSize * 1.08f);
   }
 
   public void delete() {

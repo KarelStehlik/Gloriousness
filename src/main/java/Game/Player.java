@@ -81,6 +81,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   @Override
   public void onGameTick(int tick) {
+    buffHandler.tick();
     bulletLauncher.tickCooldown();
     if (input.isMousePressed(0)) {
       float dist = (float) Math.hypot(input.getX() - x, input.getY() - y);
