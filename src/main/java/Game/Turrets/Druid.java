@@ -70,7 +70,7 @@ public class Druid extends Turret {
   protected Upgrade up500() {
     return new Upgrade("Button", () -> "keeps regrowing basically forever",
         () -> addBuff(
-            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 30)), 30000);
+            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 20)), 50000);
   }
 
   @Override
@@ -92,7 +92,7 @@ public class Druid extends Turret {
     return new Upgrade("Button", () -> "Roots bloons",
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> mob.addBuff(
             new StatBuff<TdMob>(Type.MORE,
-                p.getPower() / mob.getStats()[TdMob.Stats.health] * 5000, TdMob.Stats.speed,
+                p.getPower() / mob.getStats()[TdMob.Stats.health] * 10000, TdMob.Stats.speed,
                 0.001f)
         ), 0)), 2500);
   }
@@ -108,7 +108,7 @@ public class Druid extends Turret {
                 world.getMobsGrid().callForEachCircle((int) mob.getX(), (int) mob.getY(),
                     (int) (proj.getStats()[Projectile.Stats.size] * 1.5f),
                     enemy -> enemy.addBuff(new StatBuff<TdMob>(
-                            Type.MORE, proj.getPower() / enemy.getStats()[TdMob.Stats.health] * 10000,
+                            Type.MORE, proj.getPower() / enemy.getStats()[TdMob.Stats.health] * 100000,
                             TdMob.Stats.speed, 0.80f
                         )
                     ));
@@ -128,7 +128,7 @@ public class Druid extends Turret {
             () -> world.getMobsList().forEach(mob -> mob.addBuff(
                 new StatBuff<TdMob>(Type.INCREASED, 15000, TdMob.Stats.damageTaken, 1))),
             weakenId)
-        , 20000);
+        , 12000);
   }
 
   @Override

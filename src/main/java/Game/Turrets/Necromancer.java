@@ -151,7 +151,7 @@ public class Necromancer extends Turret {
               }, 0);
 
             }
-        ), 20000);
+        ), 21000);
   }
 
   @Override
@@ -212,7 +212,7 @@ public class Necromancer extends Turret {
         radius, img);
     if (ignites) {
       world.getMobsGrid().callForEachCircle(centreX, centreY,
-          (int) (radius * 1.5f), m -> m.addBuff(new Ignite<>(proj.getPower() * power, 3000)));
+          (int) (radius * 2.2f), m -> m.addBuff(new Ignite<>(proj.getPower() * power, 3000)));
     }
   }
 
@@ -244,7 +244,7 @@ public class Necromancer extends Turret {
           addBuff(new StatBuff<Turret>(Type.MORE, Turret.Stats.pierce, 2));
           bulletLauncher.addProjectileModifier(p -> p.addBuff(
               new OnTickBuff<Projectile>(proj -> explode(proj, 20, 50, "Explosion2-0"))));
-        }, 7000);
+        }, 12000);
   }
 
   @Override

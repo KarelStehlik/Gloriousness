@@ -59,7 +59,7 @@ public class BasicTurret extends Turret {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.1f));
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 10f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 100f));
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 200f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 150f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 0.3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2f));
         }, 30000);
@@ -99,6 +99,10 @@ public class BasicTurret extends Turret {
               if (!p2.addBuff(Tag.Test(dartEatId)) && p2.getStats()[Projectile.Stats.duration]
                   <= p1.getStats()[Projectile.Stats.duration]) {
                 float buffDur = p2.getStats()[Projectile.Stats.duration];
+
+                float otherPosWeight = p2.getPower()/(p1.getPower()+p2.getPower());
+                p1.move(p1.getX()*(1-otherPosWeight) + p2.getX()*otherPosWeight,
+                    p1.getY()*(1-otherPosWeight) + p2.getY()*otherPosWeight);
 
                 p1.addBuff(
                     new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.power,
@@ -155,7 +159,7 @@ public class BasicTurret extends Turret {
     return new Upgrade("Meteor", () -> "more damage",
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, 5));
-        }, 10000);
+        }, 8000);
   }
 
   @Override
