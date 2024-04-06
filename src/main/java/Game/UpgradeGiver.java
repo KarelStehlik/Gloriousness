@@ -99,7 +99,7 @@ public class UpgradeGiver {
 
   private class Explode extends UpgradeType {
 
-    float radius = 30;
+    float radius = 50;
     long id = Util.getUid();
 
     @Override
