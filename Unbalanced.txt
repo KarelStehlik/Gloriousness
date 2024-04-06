@@ -1,8 +1,27 @@
-Necromancer:
+Top Necromancer:
 investment 36k | r39 (3x 302 inheritored)
 investment 96k | r50 (0-1 spears) (3x 402)
 
-Dart monkey:
+Middle Necromancer:
+investment 45k | r45 (one 240 inheritored)
+
+Bottom Necromancer:
+investment 40k | r42 (2x 204 inheritored)
+
+Bottom Dart:
 investment 25k | r75 (one 024)
-investment 25k | r50 (one 014)
-investment 25k | r43 (one 204)
+
+Middle Dart:
+Ivestment 35k | r50 (no spears) (one 240)
+
+Top Dart:
+Ivestment 25k | r50 (no spears) (420 stasis dart weirdness)
+
+Top Druid:
+Investment 40k | r40 (402)
+
+Middle Druid:
+Investment 40k | r15 (lol) (2x 042)
+
+Bottom Druid:
+Investment 50k | r200 (lol lol) (1x 205)

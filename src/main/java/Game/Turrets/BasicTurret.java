@@ -62,7 +62,7 @@ public class BasicTurret extends Turret {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 200f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 0.3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2f));
-        }, 20000);
+        }, 30000);
   }
 
   private static final long bigDart = Util.getUid();
