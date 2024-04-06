@@ -611,9 +611,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private float scaling() {
       return cheat ? 1 : (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
-          + Math.pow(1 + Math.max(wave, 40) - 40, 2) // real scaling after 40
-          + Math.pow(1 + Math.max(wave, 100) - 100, 3) // steep scaling after 100
-          + Math.pow(1.1, Math.max(wave, 250) - 250)); // exponential after 250
+          * Math.pow(1 + Math.max(wave, 40) - 40, 1) // real scaling after 40
+          * Math.pow(1 + Math.max(wave, 100) - 100, 2) // steep scaling after 100
+          * Math.pow(1.08, Math.max(wave, 250) - 250)); // exponential after 250
     }
 
     private void add(TdMob e) {
