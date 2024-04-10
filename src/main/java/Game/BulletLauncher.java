@@ -12,9 +12,9 @@ import java.util.List;
 public class BulletLauncher {
 
 
-  private final Collection<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
-  private final Collection<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
-  private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
+  private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
+  private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
+  private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
   private final World world;
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
   private String image;
@@ -146,6 +146,10 @@ public class BulletLauncher {
 
   public void addMobCollide(OnCollideComponent<TdMob> component) {
     mobCollides.add(component);
+  }
+
+  public void addMobCollide(OnCollideComponent<TdMob> component, int index) {
+    mobCollides.add(index,component);
   }
 
   public void addProjectileCollide(OnCollideComponent<Projectile> component) {

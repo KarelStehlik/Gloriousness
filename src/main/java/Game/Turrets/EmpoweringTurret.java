@@ -3,6 +3,7 @@ package Game.Turrets;
 import Game.Ability;
 import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
+import Game.CallAfterDuration;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
@@ -12,6 +13,7 @@ import Game.DamageType;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Player;
+import Game.Player.Stats;
 import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
@@ -20,6 +22,7 @@ import general.RefFloat;
 import general.Util;
 import java.awt.Point;
 import windowStuff.Sprite;
+import windowStuff.Text;
 
 public class EmpoweringTurret extends Turret {
 
@@ -41,8 +44,11 @@ public class EmpoweringTurret extends Turret {
 
   private void addBuff(Projectile p2, float pow) {
     p2.addMobCollide(
-        (proj2, mob) -> BasicCollides.explodeFunc((int) proj2.getX(), (int) proj2.getY(), pow,
-            stats[ExtraStats.radius]));
+        (proj2, mob) -> {
+          world.aoeDamage((int) proj2.getX(), (int) proj2.getY(), (int) stats[ExtraStats.radius], pow,DamageType.TRUE);
+          world.lesserExplosionVisual(proj2.getX(), proj2.getY(), stats[ExtraStats.radius]).getSprite().setOpacity(.8f);
+          return true;
+        });
   }
 
 
@@ -121,7 +127,7 @@ public class EmpoweringTurret extends Turret {
         + "pronounce the name of this katana will suffer the doom of an eternal torment "
         + "forever in the dark abyss of death, however no one has been able to verify this, as "
         + "its name is some unpronounceable Japanese bullshit that you physically can not utter.",
-        () -> Ability.add("Assassin", 10000,()->"Vengeance!",()->{
+        () -> {var a = Ability.add("Assassin", 10000,()->"Vengeance!",()->{
           int x = (int) Game.get().getUserInputListener().getX();
           int y = (int) Game.get().getUserInputListener().getY();
           world.getMobsGrid().callForEachCircle(
@@ -129,7 +135,8 @@ public class EmpoweringTurret extends Turret {
           );
           Sprite s = new Sprite("Explosion1-0",5).setPosition(x,y).setSize(500,500).addToBs(world.getBs());
           s.playAnimation(s.new BasicAnimation("Explosion1-0",.2f)).setDeleteOnAnimationEnd(true);
-          },abilityId)
+          },abilityId);
+          addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));}
         , 499000);
   }
 
@@ -160,10 +167,10 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up003() {
-    return new Upgrade("Button", () -> "gives the player 1/sec added attack speed",
+    return new Upgrade("Button", () -> "gives the player 0.5/sec added attack speed",
         () -> addBuff(new OnTickBuff<Turret>(
             buffer->world.getPlayer().addBuff(
-                new StatBuff<Player>(Type.ADDED,Game.tickIntervalMillis+1, Player.Stats.aspd, 1)
+                new StatBuff<Player>(Type.ADDED,Game.tickIntervalMillis+1, Player.Stats.aspd, .5f)
             )
         ))
         , 6000);
@@ -190,25 +197,35 @@ public class EmpoweringTurret extends Turret {
         , 30000);
   }
 
+  private void gainMoney(long amount, float duration){
+    if(WasDeleted()){
+      return;
+    }
+    world.setMoney(world.getMoney()+amount);
+    var t = new Text("+"+amount,"Calibri",500,(int)x-130+Data.unstableRng.nextInt(0,150),(int)y-85+Data.unstableRng.nextInt(0,150),6,50, world.getBs());
+    t.setColors(Util.getColors(1.5f,1.5f,0));
+    Game.get().addTickable(new CallAfterDuration(t::delete,duration));
+  }
 
+  private float endOfTurnGold = 100;
   @Override
   protected Upgrade up100() {
     return new Upgrade("Button", () -> "get 100 end-of-turn gold",
-        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()+100))
+        () -> endOfRoundEffects.add(()->gainMoney((long) endOfTurnGold, 2000))
         , 1500);
   }
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("Button", () -> "get 400 additional end-of-turn gold",
-        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()+400))
-        , 6000);
+    return new Upgrade("Button", () -> "get 50 additional end-of-turn gold per turn while this exists",
+        () -> endOfRoundEffects.add(()->endOfTurnGold += 50)
+        , 5000);
   }
 
   @Override
   protected Upgrade up300() {
     return new Upgrade("Button", () -> "at end of turn, increase your total gold by 0.5%",
-        () -> endOfRoundEffects.add(()->world.setMoney(world.getMoney()*1.005f))
+        () -> endOfRoundEffects.add(()->gainMoney((long) (world.getMoney()*.005f),2000))
         , 10000);
   }
 
@@ -230,7 +247,8 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up500() {
     return new Upgrade("Button", () -> "when the player attacks, get money equal to his damage",
-        () -> world.getPlayer().getBulletLauncher().addProjectileModifier(p->world.setMoney(world.getMoney()+p.getPower()))
+        () -> world.getPlayer().getBulletLauncher().addProjectileModifier(p->gainMoney(
+            (long) p.getPower(), Math.min(2000,8000/world.getPlayer().getStats()[Player.Stats.aspd])))
         , 50000);
   }
 

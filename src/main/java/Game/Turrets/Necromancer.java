@@ -126,7 +126,7 @@ public class Necromancer extends Turret {
                   })))
 
           );
-        }, 500);
+        }, 1000);
   }
 
   private static final float respawnChance = .75f;
@@ -151,7 +151,7 @@ public class Necromancer extends Turret {
               }, 0);
 
             }
-        ), 21000);
+        ), 25000);
   }
 
   @Override
@@ -172,7 +172,7 @@ public class Necromancer extends Turret {
   protected Upgrade up050() {
     return new Upgrade("Mine",
         () -> "Cool never-before-seen ability",
-        () -> Ability.add("fire", 120000, () -> "Probably bigger than the one in btd8", () -> {
+        () -> {Ability a =Ability.add("fire", 120000, () -> "Probably bigger than the one in btd8", () -> {
               var ui = Game.get().getUserInputListener();
               float dx = ui.getX() - x;
               float dy = ui.getY() - y;
@@ -202,7 +202,9 @@ public class Necromancer extends Turret {
               ms.playAnimation(ms.new BasicAnimation("Bomb-0", .1f).loop());
 
             }, megaMineId
-        ), 150000);
+        );
+          addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));
+        }, 150000);
   }
 
   private boolean ignites = false;
@@ -301,22 +303,12 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up400() {
     return new Upgrade("Inheritor2",
-        () -> "apply 10 more genetic modifications to this (bypassing the normal limit)",
+        () -> "apply 12 more genetic modifications to this (bypassing the normal limit)",
         () -> {
-          for (int i = 0; i < 10; i++) {
+          for (int i = 0; i < 12; i++) {
             getRandomInheritorEffect().mod(this);
           }
-          addBuff(new OnTickBuff<Turret>(necro->{
-            for (Turret t : world.getTurrets()) {
-              if (t!=necro && Util.distanceSquared(t.getX() - necro.getX(), t.getY() - necro.getY()) <= Util.square(
-                  necro.getStats()[Stats.range])) {
-                if(t.addBuff(new Tag<Turret>(rangeBuffId,50))){
-                  t.addBuff(new StatBuff<Turret>(Type.INCREASED,50,Stats.range,.1f));
-                }
-              }
-            }
-          }));
-        }, 10000);
+        }, 9000);
   }
 
   @Override

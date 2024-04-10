@@ -19,7 +19,7 @@ public class Blue extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 60.0f;
-    stats[Stats.speed] = 2.2f;
+    stats[Stats.speed] = 3.2f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;

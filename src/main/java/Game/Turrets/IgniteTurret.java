@@ -1,7 +1,9 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
+import Game.Buffs.Ignite;
 import Game.BulletLauncher;
+import Game.Mobs.TdMob;
 import Game.TurretGenerator;
 import Game.World;
 
@@ -13,7 +15,11 @@ public class IgniteTurret extends Turret {
     super(world, X, Y, image,
         new BulletLauncher(world, "Fireball-0"));
     onStatsUpdate();
-    bulletLauncher.addMobCollide(BasicCollides.fire);
+    bulletLauncher.addMobCollide((proj, mob) ->
+    {
+      mob.addBuff(new Ignite<>(proj.getPower() * 0.02f, 2000000));
+      return true;
+    });
     bulletLauncher.setSpread(45);
   }
 
@@ -25,7 +31,7 @@ public class IgniteTurret extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.power] = 0.2f;
+    stats[Stats.power] = 100.2f;
     stats[Stats.range] = 500f;
     stats[Stats.pierce] = 1f;
     stats[Stats.aspd] = 100f;

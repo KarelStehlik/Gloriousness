@@ -25,7 +25,7 @@ public class Moab extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 300.0f;
     stats[Stats.speed] = 5f;
-    stats[Stats.health] = 500f;
+    stats[Stats.health] = 300f;
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
   }

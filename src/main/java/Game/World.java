@@ -91,7 +91,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   private int tick = 0;
   private int health = Constants.StartingHealth;
-  private double money = 0;
+  private double money = 100;
   private int wave = 0;
   private boolean waveRunning = true;
 
@@ -161,6 +161,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     calcSpacPoints();
   }
 
+  private void updateResourceTracker(){
+    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave "+wave);
+  }
+
   public void addEvent(VoidFunc e) {
     queuedEvents.add(e);
   }
@@ -187,6 +191,15 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
   }
 
+  public Animation lesserExplosionVisual(float x, float y, float size) {
+    float duration = .2f;
+    float scaling = size*2/1000*Game.tickIntervalMillis/duration;
+    Sprite sp = new Sprite("Shockwave",4).setPosition(x,y).setSize(0,0).addToBs(bs).setColors(Util.getColors(2.4f,.6f,0));
+    var anim = new Animation(sp,duration).setLinearScaling(new Vector2f(scaling,scaling));
+    Game.get().addTickable(anim);
+    return anim;
+  }
+
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
     Game game = Game.get();
     if (shockwave) {
@@ -210,7 +223,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void changeHealth(int change) {
     health += change;
-    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney());
+    updateResourceTracker();
   }
 
   public List<Point> getMapData() {
@@ -330,7 +343,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
       int[] currWave = new int[]{wave};
       if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
-        addEvent(() -> wave = currWave[0] - 1);
+        addEvent(() -> {wave = currWave[0] - 1;updateResourceTracker();});
       }
       if (ImGui.collapsingHeader("Add buff to player")) {
         customBuffCheat.imGui();
@@ -472,7 +485,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void setMoney(double money) {
     this.money = money;
-    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney());
+    updateResourceTracker();
   }
 
   public Tool getCurrentTool() {
@@ -498,6 +511,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void beginWave() {
     wave++;
+    updateResourceTracker();
     waveRunning = true;
     mobSpawner.onBeginWave(wave);
     Text text = new Text("Wave " + wave, "Calibri", 1800, 60, Constants.screenSize.y / 2, 10,
@@ -611,9 +625,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private float scaling() {
       return cheat ? 1 : (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
-          * Math.pow(1 + Math.max(wave, 40) - 40, 1) // real scaling after 40
-          * Math.pow(1 + Math.max(wave, 100) - 100, 2) // steep scaling after 100
-          * Math.pow(1.08, Math.max(wave, 250) - 250)); // exponential after 250
+          + Math.pow(1 + Math.max(wave, 40) - 40, 1)-1 // real scaling after 40
+          + Math.pow(1 + Math.max(wave, 100) - 100, 2) -1// steep scaling after 100
+          + Math.pow(1.1, Math.max(wave, 200) - 200)-1); // exponential after 250
     }
 
     private void add(TdMob e) {

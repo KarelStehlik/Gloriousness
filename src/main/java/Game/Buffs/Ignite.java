@@ -73,10 +73,9 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
       return true;
     }
 
-    @Override
-    public void tick(T target) {
+    private void update(){
       if(parentIgnites!=null){
-        parentIgnites.tick(target);
+        parentIgnites.update();
       }
       float time = Game.get().getTicks();
 
@@ -88,16 +87,25 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
         iterator.remove();
         dpTick -= ig.damagePerTick;
       }
+    }
 
-      float power = Math.min(3, (dpTick + (parentIgnites==null?0:parentIgnites.dpTick))/ target.getStats()[Stats.health] * 60);
+    @Override
+    public void tick(T target) {
+      if(parentIgnites != null) {
+        dpTick -= parentIgnites.dpTick;
+        update();
+        dpTick += parentIgnites.dpTick;
+      }else{
+        update();
+      }
+
+      float power = Math.min(3, dpTick / target.getStats()[Stats.health] * 60);
       fireSprite.setSize(power * target.getStats()[Stats.size],
           power * target.getStats()[Stats.size]);
       fireSprite.setPosition(target.getX(),
           target.getY() + power * target.getStats()[Stats.size] * .4f);
       target.takeDamage(dpTick, DamageType.TRUE);
-      if (ignites.isEmpty()) {
-        fireSprite.setHidden(true);
-      }
+      fireSprite.setHidden(ignites.isEmpty() && parentIgnites.dpTick==0);
     }
 
     @Override
@@ -109,6 +117,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     public BuffAggregator<T> copyForChild(T newTarget) {
       Aggregator copy = new Aggregator();
       copy.parentIgnites=this;
+      copy.dpTick += dpTick;
       return copy;
     }
   }

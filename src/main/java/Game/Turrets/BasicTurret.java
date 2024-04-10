@@ -194,15 +194,19 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up003() {
-    return new Upgrade("QuadDart", () -> "shoots 4x faster.",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f)), 5000);
+    return new Upgrade("QuadDart", () -> "shoots 4x faster, with full map range",
+        () -> {
+      addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.range, 4f));
+      }, 5000);
   }
 
   @Override
   protected Upgrade up004() {
-    return new Upgrade("QuinDart", () -> "shoots 5x faster.",
+    return new Upgrade("QuinDart", () -> "shoots 5x faster, with 2 added damage.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
+          addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 2f));
           bulletLauncher.setSpread(10);
         }, 20000);
   }

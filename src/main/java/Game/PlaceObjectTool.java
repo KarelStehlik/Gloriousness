@@ -1,5 +1,7 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
+
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.AbstractSprite;
@@ -40,7 +42,7 @@ public class PlaceObjectTool extends Tool {
 
   @Override
   public boolean onMouseButton(int button, double x, double y, int action, int mods) {
-    if ((button == 0 && action == 1 && click.click((int) x, (int) y)) || (button == 1
+    if ((button == 0 && action == 1 && click.click((int) x, (int) y) && !Game.get().getUserInputListener().isKeyPressed(GLFW_KEY_LEFT_SHIFT)) || (button == 1
         && action == 1)) {
       delete();
     }

@@ -2,13 +2,16 @@ package Game.Turrets;
 
 import Game.Ability;
 import Game.BasicCollides;
+import Game.Buffs.DelayedTrigger;
 import Game.Buffs.Ignite;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
+import Game.DamageType;
 import Game.Mobs.TdMob;
 import Game.Projectile;
+import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
@@ -70,9 +73,9 @@ public class Druid extends Turret {
   protected Upgrade up500() {
     return new Upgrade("Button", () -> "keeps regrowing basically forever",
         () -> {addBuff(
-            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 7));
-          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.sizeScaling, 0.1f));
-          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.powScaling, 0.5f));
+            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 15));
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.sizeScaling, 0.10f));
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.powScaling, 0.9f));
           }, 75000);
   }
 
@@ -126,11 +129,12 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up050() {
     return new Upgrade("Button", () -> "Ability: bloons temporarily take 100% increased damage",
-        () -> Ability.add("Freeze", 60000,
+        () -> {var a = Ability.add("Freeze", 60000,
             () -> "Enemies take 100% increased damage for 15 seconds",
             () -> world.getMobsList().forEach(mob -> mob.addBuff(
                 new StatBuff<TdMob>(Type.INCREASED, 15000, TdMob.Stats.damageTaken, 1))),
-            weakenId)
+            weakenId);
+          addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));}
         , 12000);
   }
 
@@ -147,11 +151,13 @@ public class Druid extends Turret {
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("Button", () -> "Projectiles have more speed and piercs",
+    return new Upgrade("Button", () -> "Projectiles don't regrow. goes full machine gun mode.",
         () -> {
           addBuff(
               new StatBuff<Turret>(Type.MORE, Stats.speed, 7));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 10));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 100));
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.respawns, 0));
         }, 50000);
   }
 
@@ -163,12 +169,15 @@ public class Druid extends Turret {
         () -> bulletLauncher.addProjectileModifier(p -> {
           p.getSprite().setColors(redColors);
           p.addMobCollide((proj, mob) -> {
-            BasicCollides.explodeFunc(
-                (int) mob.getX(),
+            world.aoeDamage((int) mob.getX(),
                 (int) mob.getY(),
+                (int) (proj.getStats()[Projectile.Stats.size] * .4f),
                 proj.getPower(),
-                proj.getStats()[Projectile.Stats.size] * .4f,
-                "Explosion2-0");
+                DamageType.TRUE
+                );
+            world.lesserExplosionVisual((int) mob.getX(),
+                (int) mob.getY(),
+                (int) (proj.getStats()[Projectile.Stats.size] * .4f));
             return true;
           });
         }), 20000);
