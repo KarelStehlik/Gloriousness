@@ -1,6 +1,6 @@
 turrets\basicTurret % power=1|range=350|pierce=2|aspd=0.7|projectileDuration=2|bulletSize=30|speed=15|cost=100|size=50|spritesize=150 %
 turrets\empoweringTurret % power=5|range=500|pierce=1|aspd=1.7|projectileDuration=2|bulletSize=50|speed=8|cost=100|size=50|spritesize=150 % assaCd=1000|assaDamageMult=100|assaDuration=5000|radius=150
-turrets\igniteTurret % power=0.2|range=500|pierce=1|aspd=100|projectileDuration=2|bulletSize=50|speed=20|cost=500|size=50|spritesize=150 %
+turrets\igniteTurret % power=0.2|range=500|pierce=1|aspd=100|projectileDuration=2|bulletSize=50|speed=20|cost=500|size=50|spritesize=150 % igniteDuration=1000
 turrets\slowTurret % power=0.004|range=500|pierce=100|aspd=1000|projectileDuration=2|bulletSize=50|speed=7|cost=200|size=50|spritesize=150 %
 turrets\eatingTurret % power=1|range=500|pierce=8|aspd=1|projectileDuration=4|bulletSize=220|speed=3.5|cost=50|size=50|spritesize=150 % fullEatBuff=2
 turrets\necromancer % power=1|range=200|pierce=3|aspd=1|projectileDuration=20|bulletSize=50|speed=10|cost=300|size=50|spritesize=150 %
