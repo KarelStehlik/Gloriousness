@@ -13,11 +13,13 @@ import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Player;
 import Game.Projectile;
+import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
 import general.RefFloat;
 import general.Util;
+import java.util.List;
 
 public class IgniteTurret extends Turret {
 
@@ -234,14 +236,18 @@ public class IgniteTurret extends Turret {
         () -> "Ability: every projectile that currently exists explodes, dealing aoe damage based on its power and pierce. Pierce above 2500 has no effect.",
         () -> {
           var a = Ability.add("Fireball-0", 10000, () -> "Boom",
-              () -> world.getProjectilesList().forEach(proj -> {
-                BasicCollides.explodeFunc(
-                    (int) proj.getX(), (int) proj.getY(),
-                    proj.getStats()[Projectile.Stats.power] * Math.min(2500,
-                        proj.getStats()[Projectile.Stats.pierce]),
-                    proj.getStats()[Projectile.Stats.size] * 2.5f);
-                proj.delete();
-              }), abilityId);
+              () -> {
+                List<Projectile> list = world.getProjectilesList();
+                for (int i = 0; i < list.size(); i++) {
+                  Projectile proj = list.get(i);
+                  BasicCollides.explodeFunc(
+                      (int) proj.getX(), (int) proj.getY(),
+                      proj.getStats()[Projectile.Stats.power] * Math.min(2500,
+                          proj.getStats()[Projectile.Stats.pierce]),
+                      proj.getStats()[Projectile.Stats.size] * 2.5f);
+                  proj.delete();
+                }
+              }, abilityId);
           addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));
         },
         40000);

@@ -108,6 +108,7 @@ public class Ability {
       for (AbilityGroup a : instances) {
         if (a == this) {
           deleted = true;
+          i--;
         }
         if (deleted) {
           a.setup(i);
@@ -168,6 +169,7 @@ public class Ability {
     for (AbilityGroup g : AbilityGroup.instances) {
       if (g.id == id) {
         g.remove(this);
+        return;
       }
     }
   }

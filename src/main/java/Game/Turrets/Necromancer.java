@@ -337,6 +337,11 @@ public class Necromancer extends Turret {
           for (; sacced > 2500; sacced -= 2500) {
             getRandomInheritorEffect().mod(this);
           }
+          // to reduce lag
+          while(stats[Stats.aspd]>100){
+            addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.5f));
+            addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 2f));
+          }
         }, 25000);
   }
 
