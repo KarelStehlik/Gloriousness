@@ -176,9 +176,9 @@ public class IgniteTurret extends Turret {
   private static final long projCollideId = Util.getUid();
 
   @Override
-  protected Upgrade up010() {
+  protected Upgrade up020() {
     return new Upgrade("Button",
-        () -> "also hits projectiles, causing them to do what this does (then they cannot be hit by any flamethrower again)",
+        () -> "also hits projectiles, causing them to do what this does (they cannot be hit by any flamethrower again)",
         () -> {
           bulletLauncher.addProjectileModifier(p -> p.addBuff(new Tag<Projectile>(projCollideId)));
           bulletLauncher.addProjectileCollide((thisProj, otherProj) -> {
@@ -194,7 +194,7 @@ public class IgniteTurret extends Turret {
 
 
   @Override
-  protected Upgrade up020() {
+  protected Upgrade up030() {
     return new Upgrade("Button",
         () -> "also hits the player to grant 1% increased attack speed for 5 seconds.",
         () -> {
@@ -203,14 +203,14 @@ public class IgniteTurret extends Turret {
             return true;
           });
         },
-        5000);
+        7500);
   }
 
   @Override
-  protected Upgrade up030() {
+  protected Upgrade up010() {
     return new Upgrade("Button", () -> "adds 3 pierce",
         () -> addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 3)),
-        7500);
+        1500);
   }
 
   @Override
@@ -231,13 +231,13 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up050() {
     return new Upgrade("Button",
-        () -> "Ability: every projectile that currently exists explodes, dealing aoe damage based on its power and pierce. Pierce above 1000 has no effect.",
+        () -> "Ability: every projectile that currently exists explodes, dealing aoe damage based on its power and pierce. Pierce above 2500 has no effect.",
         () -> {
           var a = Ability.add("Fireball-0", 10000, () -> "Boom",
               () -> world.getProjectilesList().forEach(proj -> {
                 BasicCollides.explodeFunc(
                     (int) proj.getX(), (int) proj.getY(),
-                    proj.getStats()[Projectile.Stats.power] * Math.min(1000,
+                    proj.getStats()[Projectile.Stats.power] * Math.min(2500,
                         proj.getStats()[Projectile.Stats.pierce]),
                     proj.getStats()[Projectile.Stats.size] * 2.5f);
                 proj.delete();

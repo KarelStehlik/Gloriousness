@@ -113,6 +113,41 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
   }
 
 
+  public TdMob getLast(Point centre, int radius) {
+    idOfSearch++;
+
+    int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
+    int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
+    int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
+    int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
+
+    TdMob.TrackProgress best = new TrackProgress(Integer.MAX_VALUE, 0);
+    TdMob result = null;
+
+    for (int y = bottom; y <= top; y++) {
+      for (int x = left; x <= right; x++) {
+
+        ArrayList<TdMob> get = data.get(x + y * widthSquares);
+        for (int i = get.size()-1; i >= 0; i--) {
+          TdMob box = get.get(i);
+
+          if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) > 0) {
+            break;
+          } // this is the least advanced box in the square.
+          box.lastChecked = idOfSearch;
+          if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
+              < radius * radius) {
+            result = box;
+            best = result.getProgress();
+            break;
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+
   public TdMob getFirst(Point centre, int radius, Predicate<? super TdMob> condition) {
     idOfSearch++;
 
