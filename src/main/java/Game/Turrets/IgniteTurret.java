@@ -178,7 +178,7 @@ public class IgniteTurret extends Turret {
   private static final long projCollideId = Util.getUid();
 
   @Override
-  protected Upgrade up020() {
+  protected Upgrade up030() {
     return new Upgrade("Button",
         () -> "also hits projectiles, causing them to do what this does (they cannot be hit by any flamethrower again)",
         () -> {
@@ -191,12 +191,12 @@ public class IgniteTurret extends Turret {
             return true;
           });
         },
-        3000);
+        5000);
   }
 
 
   @Override
-  protected Upgrade up030() {
+  protected Upgrade up020() {
     return new Upgrade("Button",
         () -> "also hits the player to grant 1% increased attack speed for 5 seconds.",
         () -> {
@@ -205,7 +205,7 @@ public class IgniteTurret extends Turret {
             return true;
           });
         },
-        7500);
+        2500);
   }
 
   @Override
