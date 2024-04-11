@@ -26,6 +26,10 @@ public class BuffHandler<T extends GameObject> {
     return aggr.add(newBuff, target);
   }
 
+  public BuffAggregator<T> find(Class<?> type) {
+    return buffTypes.get(type);
+  }
+
   public void tick() {
     for (var buffs : buffTypes.values()) {
       buffs.tick(target);
@@ -33,6 +37,10 @@ public class BuffHandler<T extends GameObject> {
   }
 
   public void delete() {
+    var onDeath = find(DelayedTrigger.class);
+    if (onDeath != null) {
+      onDeath.delete(target);
+    }
     for (var buffs : buffTypes.values()) {
       buffs.delete(target);
     }

@@ -43,7 +43,8 @@ public class BasicTurret extends Turret {
 
   @Override
   protected Upgrade up030() {
-    return new Upgrade("FastDart", () -> "stronger arms grant faster, stronger darts and more range",
+    return new Upgrade("FastDart",
+        () -> "stronger arms grant faster, stronger darts and more range",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.range, 10));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 20f));
@@ -100,9 +101,9 @@ public class BasicTurret extends Turret {
                   <= p1.getStats()[Projectile.Stats.duration]) {
                 float buffDur = p2.getStats()[Projectile.Stats.duration];
 
-                float otherPosWeight = p2.getPower()/(p1.getPower()+p2.getPower());
-                p1.move(p1.getX()*(1-otherPosWeight) + p2.getX()*otherPosWeight,
-                    p1.getY()*(1-otherPosWeight) + p2.getY()*otherPosWeight);
+                float otherPosWeight = p2.getPower() / (p1.getPower() + p2.getPower());
+                p1.move(p1.getX() * (1 - otherPosWeight) + p2.getX() * otherPosWeight,
+                    p1.getY() * (1 - otherPosWeight) + p2.getY() * otherPosWeight);
 
                 p1.addBuff(
                     new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.power,
@@ -114,7 +115,8 @@ public class BasicTurret extends Turret {
                     new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.size,
                         p2.getStats()[Projectile.Stats.size] * .3f));
                 p1.addBuff(
-                    new StatBuff<Projectile>(Type.FINALLY_ADDED, Math.min(10000,buffDur), Projectile.Stats.speed,
+                    new StatBuff<Projectile>(Type.FINALLY_ADDED, Math.min(10000, buffDur),
+                        Projectile.Stats.speed,
                         p2.getStats()[Projectile.Stats.speed] * .5f));
 
                 if (!p2.addBuff(Tag.Test(EatingTurret.EatImmuneTag))) {
@@ -196,9 +198,9 @@ public class BasicTurret extends Turret {
   protected Upgrade up003() {
     return new Upgrade("QuadDart", () -> "shoots 4x faster, with full map range",
         () -> {
-      addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.range, 4f));
-      }, 5000);
+        }, 5000);
   }
 
   @Override

@@ -1,7 +1,5 @@
 package Game;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-
 import Game.Turrets.Turret;
 import Game.Turrets.Turret.Stats;
 import general.Log;
@@ -31,7 +29,7 @@ public class TurretGenerator {
     }
 
     pending.place();
-    pending=func.make();
+    pending = func.make();
     return true;
   }
 
@@ -43,10 +41,10 @@ public class TurretGenerator {
     world.setCurrentTool(tool);
 
     tool.
-        setOnMove((x,y)->this.pending.move(x,y)).setOnDelete(() -> {
+        setOnMove((x, y) -> this.pending.move(x, y)).setOnDelete(() -> {
           if (this.pending.isNotYetPlaced()) {
-            this.pending.move(-1000,-1000);
-          }else {
+            this.pending.move(-1000, -1000);
+          } else {
             this.pending = func.make();
           }
         });

@@ -60,9 +60,11 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   @Override
   public void onKeyPress(int key, int action, int mods) {
     vx =
-        (input.isKeyPressed(GLFW_KEY_D) ? stats[Stats.speed] : 0) - (input.isKeyPressed(GLFW_KEY_A) ? stats[Stats.speed] : 0);
+        (input.isKeyPressed(GLFW_KEY_D) ? stats[Stats.speed] : 0) - (input.isKeyPressed(GLFW_KEY_A)
+            ? stats[Stats.speed] : 0);
     vy =
-        (input.isKeyPressed(GLFW_KEY_W) ? stats[Stats.speed] : 0) - (input.isKeyPressed(GLFW_KEY_S) ? stats[Stats.speed] : 0);
+        (input.isKeyPressed(GLFW_KEY_W) ? stats[Stats.speed] : 0) - (input.isKeyPressed(GLFW_KEY_S)
+            ? stats[Stats.speed] : 0);
     if (vx != 0 && vy != 0) { // diagonal movement
       vx *= 0.7071067811865475f;
       vy *= 0.7071067811865475f;

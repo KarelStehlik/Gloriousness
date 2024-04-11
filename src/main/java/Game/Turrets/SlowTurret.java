@@ -28,8 +28,8 @@ public class SlowTurret extends Turret {
   public void clearStats() {
     stats[Stats.power] = 0.004f;
     stats[Stats.range] = 500f;
-    stats[Stats.pierce] = 100f;
-    stats[Stats.aspd] = 1000f;
+    stats[Stats.pierce] = 1f;
+    stats[Stats.aspd] = 1f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 7f;

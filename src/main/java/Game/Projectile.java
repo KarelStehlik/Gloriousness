@@ -21,12 +21,25 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected final Sprite sprite;
-  private final Collection<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
+
+  public List<OnCollideComponent<Player>> getPlayerCollides() {
+    return playerCollides;
+  }
+
+  public List<OnCollideComponent<TdMob>> getMobCollides() {
+    return mobCollides;
+  }
+
+  public List<OnCollideComponent<Projectile>> getProjectileCollides() {
+    return projectileCollides;
+  }
+
+  private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
   private final Collection<TdMob> alreadyHitMobs;
   private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
   private final Collection<Projectile> alreadyHitProjectiles;
-  private final Collection<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
-  private final Collection<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
+  private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
+  private final List<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
   private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
   protected float vx;
   protected float vy;
@@ -50,7 +63,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   private boolean multihit = false;
 
-  protected Projectile(World world, String image, float X, float Y, float speed, float rotation,
+  public Projectile(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
     sprite = new Sprite(image, X, Y, W, H, 1, "basic");
@@ -222,7 +235,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   protected void collide(Player e) {
     if (!active || wasDeleted || e.WasDeleted() || alreadyHitPlayer
-        || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.width + stats[Stats.size]) / 4) {
+        || Util.distanceSquared(x - e.x, y - e.y) > Util.square(e.height + stats[Stats.size]) / 4) {
       return;
     }
     boolean collided = false;

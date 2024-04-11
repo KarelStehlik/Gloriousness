@@ -169,7 +169,8 @@ public abstract class Turret extends GameObject implements TickDetect {
   }
 
   protected final List<VoidFunc> endOfRoundEffects = new ArrayList<>(0);
-  public void endOfRound(){
+
+  public void endOfRound() {
     endOfRoundEffects.forEach(VoidFunc::apply);
   }
 
@@ -205,10 +206,10 @@ public abstract class Turret extends GameObject implements TickDetect {
     super.move(_x, _y);
     sprite.setPosition(_x, _y);
     rangeDisplay.setPosition(_x, _y);
-    if(world.canFitTurret((int) x, (int) y,stats[Stats.size])){
-      rangeDisplay.setColors(Util.getColors(0,0,0));
-    }else{
-      rangeDisplay.setColors(Util.getColors(9,0,0));
+    if (world.canFitTurret((int) x, (int) y, stats[Stats.size])) {
+      rangeDisplay.setColors(Util.getColors(0, 0, 0));
+    } else {
+      rangeDisplay.setColors(Util.getColors(9, 0, 0));
     }
     bulletLauncher.move(_x, _y);
   }

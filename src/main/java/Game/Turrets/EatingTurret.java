@@ -9,7 +9,6 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.Projectile;
-import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
@@ -37,7 +36,8 @@ public class EatingTurret extends Turret {
 
   @Override
   protected Upgrade up100() {
-    return new Upgrade("Meteor", () -> "2x pierce. Eaten projectiles get 2 additional power if full.",
+    return new Upgrade("Meteor",
+        () -> "2x pierce. Eaten projectiles get 2 additional power if full.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.pierce, 2));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.fullEatBuff, 2));
@@ -46,7 +46,8 @@ public class EatingTurret extends Turret {
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("Meteor", () -> "50x more pierce. Eaten projectiles get 10 additional power if full.",
+    return new Upgrade("Meteor",
+        () -> "50x more pierce. Eaten projectiles get 10 additional power if full.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 50));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.fullEatBuff, 10));
@@ -63,10 +64,13 @@ public class EatingTurret extends Turret {
 
   @Override
   protected Upgrade up020() {
-    return new Upgrade("Meteor", () -> "eaten projectiles have 4s additional duration and +4 pierce",
+    return new Upgrade("Meteor",
+        () -> "eaten projectiles have 4s additional duration and +4 pierce",
         () -> {
-          eatenMods.add(proj->proj.addBuff(new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.duration, 4)));
-          eatenMods.add(proj->proj.addBuff(new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.pierce, 4)));
+          eatenMods.add(proj -> proj.addBuff(
+              new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.duration, 4)));
+          eatenMods.add(proj -> proj.addBuff(
+              new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.pierce, 4)));
         }, 2000);
   }
 
@@ -82,7 +86,8 @@ public class EatingTurret extends Turret {
   protected Upgrade up002() {
     return new Upgrade("Meteor", () -> "eaten projectiles have 20% more power",
         () -> {
-          eatenMods.add(proj->proj.addBuff(new StatBuff<Projectile>(Type.MORE, Projectile.Stats.power, 1.2f)));
+          eatenMods.add(proj -> proj.addBuff(
+              new StatBuff<Projectile>(Type.MORE, Projectile.Stats.power, 1.2f)));
         }, 3000);
   }
 
@@ -94,7 +99,7 @@ public class EatingTurret extends Turret {
     }));
     p.addBuff(new OnTickBuff<Projectile>(Projectile::bounce));
     p.addBuff(new DelayedTrigger<Projectile>(
-        p1 -> e.perish(p1.getX(), p1.getY(), p1.getStats()[Projectile.Stats.pierce]<=0), true));
+        p1 -> e.perish(p1.getX(), p1.getY(), p1.getStats()[Projectile.Stats.pierce] <= 0), true));
   }
 
   // generated stats
@@ -134,7 +139,7 @@ public class EatingTurret extends Turret {
     final List<Projectile> eaten;
 
     eater(int maxEat) {
-      eaten = new ArrayList<>(Math.min(maxEat,1000));
+      eaten = new ArrayList<>(Math.min(maxEat, 1000));
     }
 
     public boolean eat(Projectile other) {
@@ -149,7 +154,7 @@ public class EatingTurret extends Turret {
           new StatBuff<Projectile>(Type.FINALLY_ADDED, Projectile.Stats.power,
               stats[Stats.power]));
       other.addBuff(new OnTickBuff<Projectile>(Projectile::bounce));
-      for(var mod : eatenMods){
+      for (var mod : eatenMods) {
         mod.mod(other);
       }
       return true;
@@ -159,8 +164,9 @@ public class EatingTurret extends Turret {
       for (var p : eaten) {
         p.move(x, y);
         p.setActive(true);
-        if(full){
-          p.addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED,Projectile.Stats.power, stats[ExtraStats.fullEatBuff]));
+        if (full) {
+          p.addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Projectile.Stats.power,
+              stats[ExtraStats.fullEatBuff]));
         }
       }
     }

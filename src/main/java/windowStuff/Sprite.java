@@ -248,9 +248,10 @@ public class Sprite implements AbstractSprite {
     return this;
   }
 
-  private boolean deleteOnAnimationEnd=false;
+  private boolean deleteOnAnimationEnd = false;
+
   protected void onAnimationEnd() {
-    if(deleteOnAnimationEnd){
+    if (deleteOnAnimationEnd) {
       delete();
     }
   }

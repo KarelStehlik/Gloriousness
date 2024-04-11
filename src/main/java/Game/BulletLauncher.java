@@ -6,7 +6,6 @@ import Game.Projectile.OnCollideComponent;
 import general.Data;
 import general.Util;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class BulletLauncher {
@@ -149,7 +148,7 @@ public class BulletLauncher {
   }
 
   public void addMobCollide(OnCollideComponent<TdMob> component, int index) {
-    mobCollides.add(index,component);
+    mobCollides.add(index, component);
   }
 
   public void addProjectileCollide(OnCollideComponent<Projectile> component) {

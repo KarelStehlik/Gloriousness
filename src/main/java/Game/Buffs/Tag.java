@@ -2,11 +2,8 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
-import general.Log;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 public class Tag<T extends GameObject> implements Buff<T> {
 
@@ -83,7 +80,7 @@ public class Tag<T extends GameObject> implements Buff<T> {
       AppliedTag buffTag = new AppliedTag(buff.id, buff.expiryTime);
       AppliedTag current = alreadyApplied.get(buffTag);
 
-      if (current!=null && current.expiryTime>time) {
+      if (current != null && current.expiryTime > time) {
         return false;
       }
       if (!buff.isTest) {

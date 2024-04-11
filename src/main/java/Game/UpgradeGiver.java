@@ -109,10 +109,12 @@ public class UpgradeGiver {
         world.getPlayer().addBuff(new StatBuff<Player>(Type.INCREASED, Stats.projSize, 3f));
         world.getPlayer().getBulletLauncher()
             .addMobCollide((proj, mob) -> {
-              world.aoeDamage((int) proj.getX(), (int) proj.getY(), (int) this.radius, proj.getPower(),DamageType.TRUE);
-              world.lesserExplosionVisual((int) proj.getX(), (int) proj.getY(), (int) this.radius).getSprite().setOpacity(.8f);
+              world.aoeDamage((int) proj.getX(), (int) proj.getY(), (int) this.radius,
+                  proj.getPower(), DamageType.TRUE);
+              world.lesserExplosionVisual((int) proj.getX(), (int) proj.getY(), (int) this.radius)
+                  .getSprite().setOpacity(.8f);
               return true;
-            },0);
+            }, 0);
       } else {
         radius += 2000 / radius;
       }

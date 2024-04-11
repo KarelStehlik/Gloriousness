@@ -46,20 +46,25 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     return new Aggregator();
   }
 
-  private class Aggregator implements BuffAggregator<T> {
+  public class Aggregator implements BuffAggregator<T> {
 
     private final TreeSet<Ignite<T>> ignites = new TreeSet<>();
-    private AbstractSprite fireSprite;
+    private final AbstractSprite fireSprite;
+
+    public float getDpTick() {
+      return dpTick;
+    }
+
     private float dpTick = 0;
     private Aggregator parentIgnites = null;
 
     protected Aggregator() {
       var bs = Game.get().getSpriteBatching("main");
-      Sprite fs  = new Sprite("Fireball-0", 3).setPosition(-1000,-1000).addToBs(bs).setSize(50, 50);
+      Sprite fs = new Sprite("Fireball-0", 3).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
       fs.setRotation(180);
       fs.playAnimation(fs.new BasicAnimation("Fireball-0", 1.1f).loop());
       fs.setHidden(true);
-      fireSprite=fs;
+      fireSprite = fs;
     }
 
     @Override
@@ -73,8 +78,8 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
       return true;
     }
 
-    private void update(){
-      if(parentIgnites!=null){
+    private void update() {
+      if (parentIgnites != null) {
         parentIgnites.update();
       }
       float time = Game.get().getTicks();
@@ -91,11 +96,11 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     @Override
     public void tick(T target) {
-      if(parentIgnites != null) {
+      if (parentIgnites != null) {
         dpTick -= parentIgnites.dpTick;
         update();
         dpTick += parentIgnites.dpTick;
-      }else{
+      } else {
         update();
       }
 
@@ -116,7 +121,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     @Override
     public BuffAggregator<T> copyForChild(T newTarget) {
       Aggregator copy = new Aggregator();
-      copy.parentIgnites=this;
+      copy.parentIgnites = this;
       copy.dpTick += dpTick;
       return copy;
     }

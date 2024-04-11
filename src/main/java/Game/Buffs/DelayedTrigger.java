@@ -109,7 +109,7 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
     public BuffAggregator<T> copyForChild(T newTarget) {
       Aggregator copy = new Aggregator();
       for (var eff : effs) {
-        if (!eff.onDeath && eff.spreads) {
+        if (eff.spreads) {
           copy.add(eff.copy(), newTarget);
         }
       }

@@ -32,7 +32,6 @@ public class Button implements MouseDetect, TickDetect {
   }
 
 
-
   public Button(AbstractSprite sprite, ClickFunction foo) {
     this.sprite = sprite;
     this.onClick = foo;

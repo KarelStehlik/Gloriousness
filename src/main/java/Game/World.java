@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
@@ -161,8 +160,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     calcSpacPoints();
   }
 
-  private void updateResourceTracker(){
-    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave "+wave);
+  private void updateResourceTracker() {
+    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave " + wave);
   }
 
   public void addEvent(VoidFunc e) {
@@ -193,9 +192,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public Animation lesserExplosionVisual(float x, float y, float size) {
     float duration = .2f;
-    float scaling = size*2/1000*Game.tickIntervalMillis/duration;
-    Sprite sp = new Sprite("Shockwave",4).setPosition(x,y).setSize(0,0).addToBs(bs).setColors(Util.getColors(2.4f,.6f,0));
-    var anim = new Animation(sp,duration).setLinearScaling(new Vector2f(scaling,scaling));
+    float scaling = size * 2 / 1000 * Game.tickIntervalMillis / duration;
+    Sprite sp = new Sprite("Shockwave", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
+        .setColors(Util.getColors(2.4f, .6f, 0));
+    var anim = new Animation(sp, duration).setLinearScaling(new Vector2f(scaling, scaling));
     Game.get().addTickable(anim);
     return anim;
   }
@@ -252,24 +252,28 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     return turrets;
   }
 
-  private class CustomBuffCheat{
-    private static final String[] types = new String[]{"MORE","INCREASED","ADDED","FINALLY_ADDED"};
-    private static final String[] stats = new String[]{"speed","aspd","projSize","projSpeed","projPierce","projDuration","projPower"};
-    private ImInt buffType=new ImInt(0), buffStat=new ImInt(0);
-    private float[] value=new float[]{0};
+  private class CustomBuffCheat {
+
+    private static final String[] types = new String[]{"MORE", "INCREASED", "ADDED",
+        "FINALLY_ADDED"};
+    private static final String[] stats = new String[]{"speed", "aspd", "projSize", "projSpeed",
+        "projPierce", "projDuration", "projPower"};
+    private final ImInt buffType = new ImInt(0);
+    private final ImInt buffStat = new ImInt(0);
+    private final float[] value = new float[]{0};
 
     void imGui() {
 
       ImGui.combo("type", buffType, types);
       ImGui.combo("stat", buffStat, stats);
       ImGui.dragFloat("amount", value, 1);
-      if(ImGui.button("apply")){
+      if (ImGui.button("apply")) {
         apply();
       }
     }
 
-    void apply(){
-      addEvent(()->{
+    void apply() {
+      addEvent(() -> {
         String btString = types[buffType.get()];
         StatBuff.Type type = switch (btString) {
           case "INCREASED" -> Type.INCREASED;
@@ -278,17 +282,17 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
           default -> Type.MORE;
         };
         String bsString = stats[buffStat.get()];
-        int stat = switch(bsString){
+        int stat = switch (bsString) {
           case "aspd" -> 2;
           case "projSize" -> 3;
           case "projSpeed" -> 4;
           case "projPierce" -> 5;
           case "projDuration" -> 6;
           case "projPower" -> 7;
-          default->0;
+          default -> 0;
         };
 
-        player.addBuff(new StatBuff<Player>(type,stat,value[0]));
+        player.addBuff(new StatBuff<Player>(type, stat, value[0]));
 
       });
     }
@@ -320,13 +324,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       if (ImGui.button("give cash")) {
         setMoney(money + 999999);
       }
-      if (ImGui.button("yeet projectiles ("+projectilesList.size()+")")) {
+      if (ImGui.button("yeet projectiles (" + projectilesList.size() + ")")) {
         addEvent(() -> {
           projectilesList.forEach(Projectile::delete);
           projectilesList.clear();
         });
       }
-      if (ImGui.button("yeet mobs ("+mobsList.size()+")")) {
+      if (ImGui.button("yeet mobs (" + mobsList.size() + ")")) {
         addEvent(() -> {
           mobsList.forEach(TdMob::delete);
           mobsList.clear();
@@ -343,7 +347,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
       int[] currWave = new int[]{wave};
       if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
-        addEvent(() -> {wave = currWave[0] - 1;updateResourceTracker();});
+        addEvent(() -> {
+          wave = currWave[0] - 1;
+          updateResourceTracker();
+        });
       }
       if (ImGui.collapsingHeader("Add buff to player")) {
         customBuffCheat.imGui();
@@ -531,8 +538,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         return false;
       }
     }
-    for(TrackPoint p : spacPoints){
-      if(Util.distanceSquared(p.x-x,p.y-y)<size*size){
+    for (TrackPoint p : spacPoints) {
+      if (Util.distanceSquared(p.x - x, p.y - y) < size * size) {
         return false;
       }
     }
@@ -625,9 +632,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private float scaling() {
       return cheat ? 1 : (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
-          + Math.pow(1 + Math.max(wave, 40) - 40, 1)-1 // real scaling after 40
-          + Math.pow(1 + Math.max(wave, 100) - 100, 2) -1// steep scaling after 100
-          + Math.pow(1.1, Math.max(wave, 200) - 200)-1); // exponential after 250
+          + Math.pow(1 + Math.max(wave, 40) - 40, 1) - 1 // real scaling after 40
+          + Math.pow(1 + Math.max(wave, 100) - 100, 2) - 1// steep scaling after 100
+          + Math.pow(1.1, Math.max(wave, 200) - 200) - 1); // exponential after 250
     }
 
     private void add(TdMob e) {

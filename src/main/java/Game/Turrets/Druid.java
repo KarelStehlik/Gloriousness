@@ -11,7 +11,6 @@ import Game.BulletLauncher;
 import Game.DamageType;
 import Game.Mobs.TdMob;
 import Game.Projectile;
-import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.RefFloat;
@@ -72,11 +71,12 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up500() {
     return new Upgrade("Button", () -> "keeps regrowing basically forever",
-        () -> {addBuff(
-            new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 15));
+        () -> {
+          addBuff(
+              new StatBuff<Turret>(Type.ADDED, ExtraStats.respawns, 15));
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.sizeScaling, 0.10f));
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.powScaling, 0.9f));
-          }, 75000);
+        }, 75000);
   }
 
   @Override
@@ -129,12 +129,14 @@ public class Druid extends Turret {
   @Override
   protected Upgrade up050() {
     return new Upgrade("Button", () -> "Ability: bloons temporarily take 100% increased damage",
-        () -> {var a = Ability.add("Freeze", 60000,
-            () -> "Enemies take 100% increased damage for 15 seconds",
-            () -> world.getMobsList().forEach(mob -> mob.addBuff(
-                new StatBuff<TdMob>(Type.INCREASED, 15000, TdMob.Stats.damageTaken, 1))),
-            weakenId);
-          addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));}
+        () -> {
+          var a = Ability.add("Freeze", 60000,
+              () -> "Enemies take 100% increased damage for 15 seconds",
+              () -> world.getMobsList().forEach(mob -> mob.addBuff(
+                  new StatBuff<TdMob>(Type.INCREASED, 15000, TdMob.Stats.damageTaken, 1))),
+              weakenId);
+          addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));
+        }
         , 12000);
   }
 
@@ -174,7 +176,7 @@ public class Druid extends Turret {
                 (int) (proj.getStats()[Projectile.Stats.size] * .4f),
                 proj.getPower(),
                 DamageType.TRUE
-                );
+            );
             world.lesserExplosionVisual((int) mob.getX(),
                 (int) mob.getY(),
                 (int) (proj.getStats()[Projectile.Stats.size] * .4f));
@@ -198,8 +200,8 @@ public class Druid extends Turret {
   protected Upgrade up001() {
     return new Upgrade("Button", () -> "double damage",
         () -> {
-      addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 3f));
-      }, 500);
+          addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 3f));
+        }, 500);
   }
 
   private void regrow(RefFloat respawnsLeft, Projectile proj) {
@@ -210,13 +212,13 @@ public class Druid extends Turret {
     proj.setActive(false);
     proj.addBuff(
         new StatBuff<Projectile>(Type.MORE, Projectile.Stats.power,
-            1+stats[ExtraStats.powScaling]));
+            1 + stats[ExtraStats.powScaling]));
     proj.addBuff(
         new StatBuff<Projectile>(Type.INCREASED, Projectile.Stats.size,
             stats[ExtraStats.sizeScaling]));
     proj.addBuff(
         new StatBuff<Projectile>(Type.MORE, Projectile.Stats.pierce,
-            1+stats[ExtraStats.pierceScaling]));
+            1 + stats[ExtraStats.pierceScaling]));
     proj.addBuff(
         new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.pierce,
             stats[ExtraStats.bonusPierce]));
@@ -241,7 +243,7 @@ public class Druid extends Turret {
   @Override
   public void clearStats() {
     stats[Stats.power] = 3f;
-    stats[Stats.range] = 500f;
+    stats[Stats.range] = 400f;
     stats[Stats.pierce] = 5f;
     stats[Stats.aspd] = .4f;
     stats[Stats.projectileDuration] = 8f;
