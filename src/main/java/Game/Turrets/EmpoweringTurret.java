@@ -64,14 +64,13 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Button", () -> "Hires edgy assassins to destroy nearby MOABs",
+    return new Upgrade("Button", () -> "Hires edgy assassins to destroy targets",
         () -> addBuff(new OnTickBuff<Turret>(turr -> {
           if (assaCooldown.get() > 0) {
             assaCooldown.add(-1);
           }
           while (assaCooldown.get() <= 0) {
-            var mob = world.getMobsGrid()
-                .getStrong(new Point((int) x, (int) y), (int) (stats[Stats.range] * .5f));
+            var mob = target();
             if (mob == null) {
               return;
             }

@@ -153,7 +153,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     return buffHandler.add(b);
   }
 
-  private TdMob target(){
+  protected TdMob target(){
     return switch(targeting){
       case FIRST -> world.getMobsGrid().getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
       case LAST -> world.getMobsGrid().getLast(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
