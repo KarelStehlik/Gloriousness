@@ -18,6 +18,27 @@ public class BulletLauncher {
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
   private String image;
   private float speed;
+
+  public String getImage() {
+    return image;
+  }
+
+  public int getWidth() {
+    return width;
+  }
+
+  public void setWidth(int width) {
+    this.width = width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public void setHeight(int height) {
+    this.height = height;
+  }
+
   private int width;
   private int height;
   private int pierce;

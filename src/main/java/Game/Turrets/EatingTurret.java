@@ -37,7 +37,7 @@ public class EatingTurret extends Turret {
   @Override
   protected Upgrade up100() {
     return new Upgrade("Meteor",
-        () -> "2x pierce. Eaten projectiles get 2 additional power if full.",
+        () -> "2x pierce. If full, eaten projectiles get 2 extra power (after multipliers)",
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.pierce, 2));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.fullEatBuff, 2));
@@ -47,7 +47,7 @@ public class EatingTurret extends Turret {
   @Override
   protected Upgrade up200() {
     return new Upgrade("Meteor",
-        () -> "50x more pierce. Eaten projectiles get 10 additional power if full.",
+        () -> "50x more pierce. If full, eaten projectiles get 10 extra power (after multipliers)",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 50));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.fullEatBuff, 10));
@@ -76,7 +76,7 @@ public class EatingTurret extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Meteor", () -> "eaten projectiles gain 1 additional power",
+    return new Upgrade("Meteor", () -> "eaten projectiles gain 1 extra power (after multipliers)",
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 1f));
         }, 200);

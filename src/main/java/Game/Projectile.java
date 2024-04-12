@@ -343,7 +343,7 @@ public class Projectile extends GameObject implements TickDetect {
       if (targetedMob == null) {
         targetedMob = target.world.getMobsGrid()
             .getFirst(new Point((int) target.x, (int) target.y), range,
-                mob -> !(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
+                 mob -> !(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
       }
       if (targetedMob == null) {
         return;

@@ -113,6 +113,7 @@ public class IgniteTurret extends Turret {
   protected Upgrade up002() {
     return new Upgrade("Button", () -> "bigger aoe, but 60% less damage",
         () -> {
+          sprite.setImage("Flamethrower1");
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.aoe, 100));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, .4f));
         },
@@ -218,13 +219,11 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up040() {
     return new Upgrade("Button", () -> "also gives the player 1% increased damage for 5 seconds.",
-        () -> {
-          bulletLauncher.addPlayerCollide((thisProj, player) -> {
-            player.addBuff(
-                new StatBuff<Player>(Type.INCREASED, 5000, Player.Stats.projPower, 0.01f));
-            return true;
-          });
-        },
+        () -> bulletLauncher.addPlayerCollide((thisProj, player) -> {
+          player.addBuff(
+              new StatBuff<Player>(Type.INCREASED, 5000, Player.Stats.projPower, 0.01f));
+          return true;
+        }),
         40000);
   }
 

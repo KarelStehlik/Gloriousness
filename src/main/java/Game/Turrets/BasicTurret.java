@@ -138,6 +138,7 @@ public class BasicTurret extends Turret {
     return new Upgrade("Radar",
         () -> "projectiles seek, last slightly longer and have infinite pierce",
         () -> {
+          bulletLauncher.setImage("Laser");
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, Float.POSITIVE_INFINITY));
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.projectileDuration, 5));
           bulletLauncher.addProjectileModifier(p -> {

@@ -299,7 +299,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
       buttons.add(new Button(
           world.getBs(),
-          new Sprite("Cancelbutton", 10).setSize(190, 40).setPosition(X, Y - 180),
+          new Sprite("Sell", 10).setSize(190, 40).setPosition(X, Y - 180),
           (x, y) -> {
             close();
             sell();
