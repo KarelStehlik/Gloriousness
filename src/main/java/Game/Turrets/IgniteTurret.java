@@ -134,6 +134,7 @@ public class IgniteTurret extends Turret {
         stats[ExtraStats.puddleDuration], ignite.getDpTick() * stats[ExtraStats.puddleDamage]);
     puddle.setMultihit(true);
     puddle.addMobCollide(BasicCollides.damage);
+    puddle.addBuff(new Tag(projCollideId)); // hah, no 700 trillion oneshots anymore
     world.getProjectilesList().add(puddle);
   }
 
