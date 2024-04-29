@@ -15,7 +15,7 @@ public class DruidBall extends Projectile {
   protected DruidBall(World world, String image, float X, float Y, float speed, float rotation,
       int W, int H, int pierce, float size, float duration, float power, float regrowTime) {
     super(world, image, X, Y, speed, rotation, W, H, pierce, size, duration, power);
-    this.regrowTime=regrowTime;
+    this.regrowTime = regrowTime;
   }
 
   @Override
@@ -58,7 +58,7 @@ public class DruidBall extends Projectile {
     RespawningProjectile() {
       float size = getStats()[Projectile.Stats.size];
 
-      float scaling = .015f/regrowTime;
+      float scaling = .015f / regrowTime;
       this.sprite = new Animation(
           new Sprite(DruidBall.this.sprite).setSize(0, 0).setShader("colorCycle2").
               setOpacity(0.5f).addToBs(world.getBs()).

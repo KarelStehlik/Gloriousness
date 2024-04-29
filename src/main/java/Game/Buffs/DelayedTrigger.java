@@ -99,7 +99,7 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
     public void delete(T target) {
       for (var eff : effs) {
         if (eff.onDeath) {
-          target.world.addEvent(()->eff.mod.mod(target));
+          target.world.addEvent(() -> eff.mod.mod(target));
         }
       }
       effs.clear();

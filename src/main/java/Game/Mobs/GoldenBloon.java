@@ -1,17 +1,15 @@
 package Game.Mobs;
 
-import Game.Buffs.BuffHandler;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
+import Game.CallAfterDuration;
 import Game.DamageType;
 import Game.Game;
 import Game.World;
 import general.Constants;
-import general.Data;
 import general.Util;
 import java.util.List;
 import windowStuff.Text;
-import Game.CallAfterDuration;
 
 public class GoldenBloon extends TdMob {
 
@@ -20,10 +18,10 @@ public class GoldenBloon extends TdMob {
       return;
     }
     world.setMoney(world.getMoney() + amount);
-    var t = new Text("+" + amount, "Calibri", 500, (int)x,
-        (int)y, 6, 50, world.getBs());
-    t.move((int) Util.clamp(t.getX(),50, Constants.screenSize.x-50),
-        (int) Util.clamp(t.getY(),30,Constants.screenSize.y-30));
+    var t = new Text("+" + amount, "Calibri", 500, (int) x,
+        (int) y, 6, 50, world.getBs());
+    t.move((int) Util.clamp(t.getX(), 50, Constants.screenSize.x - 50),
+        (int) Util.clamp(t.getY(), 30, Constants.screenSize.y - 30));
     t.setColors(Util.getColors(1.5f, 1.5f, 0));
     Game.get().addTickable(new CallAfterDuration(t::delete, duration));
   }
@@ -40,13 +38,13 @@ public class GoldenBloon extends TdMob {
 
   @Override
   public void takeDamage(float amount, DamageType type) {
-    super.takeDamage(amount,type);
-    addBuff(new StatBuff<TdMob>(Type.ADDED,Stats.value,(long)stats[ExtraStats.moneyPerDamage]));
+    super.takeDamage(amount, type);
+    addBuff(new StatBuff<TdMob>(Type.ADDED, Stats.value, (long) stats[ExtraStats.moneyPerDamage]));
   }
 
   @Override
   public void delete() {
-    gainMoney((long) stats[Stats.value],5000);
+    gainMoney((long) stats[Stats.value], 5000);
     super.delete();
   }
 
@@ -73,6 +71,7 @@ public class GoldenBloon extends TdMob {
     private ExtraStats() {
     }
   }
+
   // end of generated stats
   @Override
   public boolean isMoab() {

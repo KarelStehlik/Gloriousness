@@ -168,8 +168,8 @@ public class Text {
         }
       }
     }
-    if(line*fontSize>=Constants.screenSize.y*0.9 && maxWidth<Constants.screenSize.x){
-      maxWidth*=1.3;
+    if (line * fontSize >= Constants.screenSize.y * 0.9 && maxWidth < Constants.screenSize.x) {
+      maxWidth = (int) (maxWidth * 1.1f);
       arrange();
     }
 

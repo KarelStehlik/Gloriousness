@@ -25,7 +25,8 @@ public class Druid extends Turret {
     super(world, X, Y, image, new BulletLauncher(world, ""));
     bulletLauncher.setLauncher(
         (world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power) -> new DruidBall(
-            world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power, getStats()[ExtraStats.regrowTime]))
+            world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power,
+            getStats()[ExtraStats.regrowTime]))
     ;
     bulletLauncher.setImage(ballImage);
     onStatsUpdate();

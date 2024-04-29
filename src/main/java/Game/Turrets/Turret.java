@@ -32,7 +32,9 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
   protected boolean notYetPlaced = true;
   protected float totalCost;
-  private enum TargetingOption {FIRST, LAST, STRONG};
+
+  private enum TargetingOption {FIRST, LAST, STRONG}
+
   private TargetingOption targeting = TargetingOption.FIRST;
 
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
@@ -153,11 +155,14 @@ public abstract class Turret extends GameObject implements TickDetect {
     return buffHandler.add(b);
   }
 
-  protected TdMob target(){
-    return switch(targeting){
-      case FIRST -> world.getMobsGrid().getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
-      case LAST -> world.getMobsGrid().getLast(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
-      case STRONG -> world.getMobsGrid().getStrong(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+  protected TdMob target() {
+    return switch (targeting) {
+      case FIRST -> world.getMobsGrid()
+          .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+      case LAST ->
+          world.getMobsGrid().getLast(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+      case STRONG -> world.getMobsGrid()
+          .getStrong(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
     };
   }
 
@@ -306,18 +311,17 @@ public abstract class Turret extends GameObject implements TickDetect {
           },
           () -> "Sell for: " + totalCost * 0.8f));
 
-
       buttons.add(new Button(
           world.getBs(),
           new Sprite("Radar", 10).setSize(170, 40).setPosition(X, Y - 135),
           (x, y) -> {
-            targeting = switch(targeting){
+            targeting = switch (targeting) {
               case FIRST -> TargetingOption.LAST;
               case LAST -> TargetingOption.STRONG;
               case STRONG -> TargetingOption.FIRST;
             };
           },
-          () -> ""+targeting));
+          () -> "" + targeting));
 
       List<Upgrade> p1 = getUpgradePath1();
       List<Upgrade> p2 = getUpgradePath2();

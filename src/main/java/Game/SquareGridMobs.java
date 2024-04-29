@@ -128,7 +128,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
       for (int x = left; x <= right; x++) {
 
         ArrayList<TdMob> get = data.get(x + y * widthSquares);
-        for (int i = get.size()-1; i >= 0; i--) {
+        for (int i = get.size() - 1; i >= 0; i--) {
           TdMob box = get.get(i);
 
           if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) > 0) {

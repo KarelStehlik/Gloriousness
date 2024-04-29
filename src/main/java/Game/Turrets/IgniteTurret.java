@@ -9,10 +9,9 @@ import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.BulletLauncher;
-import Game.Game;
 import Game.DamageType;
+import Game.Game;
 import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
 import Game.Player;
 import Game.Projectile;
 import Game.TurretGenerator;
@@ -123,7 +122,7 @@ public class IgniteTurret extends Turret {
 
   private void makePuddle(TdMob mob) {
     var aggreg = mob.getBuffHandler().find(Ignite.class);
-    if (!(aggreg instanceof Ignite<TdMob>.Aggregator ignite)  || ignite.getDpTick()<0.0001) {
+    if (!(aggreg instanceof Ignite<TdMob>.Aggregator ignite) || ignite.getDpTick() < 0.0001) {
       return;
     }
 
@@ -167,7 +166,8 @@ public class IgniteTurret extends Turret {
         }, 20000);
   }
 
-  private static long ddId=Util.getUid();
+  private static final long ddId = Util.getUid();
+
   @Override
   protected Upgrade up005() {
     return new Upgrade("Zombie",
@@ -177,14 +177,17 @@ public class IgniteTurret extends Turret {
                 if (!bloon.addBuff(new Tag<TdMob>(ddId))) {
                   return false;
                 }
-                bloon.addBuff(new DelayedTrigger<TdMob>(Float.POSITIVE_INFINITY, mob->{
+                bloon.addBuff(new DelayedTrigger<TdMob>(Float.POSITIVE_INFINITY, mob -> {
                   var aggreg = mob.getBuffHandler().find(Ignite.class);
-                  if (!(aggreg instanceof Ignite<TdMob>.Aggregator ignite) || ignite.getDpTick()<0.0001) {
+                  if (!(aggreg instanceof Ignite<TdMob>.Aggregator ignite)
+                      || ignite.getDpTick() < 0.0001) {
                     return;
                   }
                   world.aoeDamage((int) mob.getX(),
-                      (int) mob.getY(), (int) (mob.getStats()[TdMob.Stats.size]*1.5f), ignite.getDpTick()*10000/Game.tickIntervalMillis, DamageType.TRUE);
-                  world.explosionVisual(mob.getX(),mob.getY(),mob.getStats()[TdMob.Stats.size]*1.5f, false, "Explosion2-0");
+                      (int) mob.getY(), (int) (mob.getStats()[TdMob.Stats.size] * 1.5f),
+                      ignite.getDpTick() * 10000 / Game.tickIntervalMillis, DamageType.TRUE);
+                  world.explosionVisual(mob.getX(), mob.getY(), mob.getStats()[TdMob.Stats.size] * 1.5f,
+                      false, "Explosion2-0");
                 }, true,
                     true));
                 return true;

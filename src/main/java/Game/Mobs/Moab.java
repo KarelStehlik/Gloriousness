@@ -1,7 +1,6 @@
 package Game.Mobs;
 
 import Game.World;
-import general.Log;
 import java.util.List;
 
 public class Moab extends TdMob {
@@ -30,6 +29,7 @@ public class Moab extends TdMob {
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
   }
+
   // end of generated stats
   @Override
   public boolean isMoab() {

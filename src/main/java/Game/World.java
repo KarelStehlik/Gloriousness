@@ -637,9 +637,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private float scaling() {
       return cheat ? 1 :
           (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
-          + Math.pow(1 + Math.max(wave, 40) - 40, 1)-1 // real scaling after 40
-          + Math.pow(1 + Math.max(wave, 100) - 100, 2)-1// steep scaling after 100
-          + Math.pow(1.1, Math.max(wave, 200) - 200)-1); // exponential after 250
+              + Math.pow(1 + Math.max(wave, 40) - 40, 1) - 1 // real scaling after 40
+              + Math.pow(1 + Math.max(wave, 100) - 100, 2) - 1// steep scaling after 100
+              + Math.pow(1.1, Math.max(wave, 200) - 200) - 1); // exponential after 250
     }
 
     private void add(TdMob e) {
@@ -657,7 +657,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private void onBeginWave(int waveNum) {
       mobsToSpawn = cheat ? 1 : Math.min(300000, (float) (50 * Math.pow(waveNum, 1.1)));
       mobsPerTick = cheat ? 1 : Math.min(200, 0.1f * waveNum);
-      goldenSpawned=false;
+      goldenSpawned = false;
       spawningProcess = 0;
     }
 
@@ -665,9 +665,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       spawningProcess += Math.min(mobsPerTick, mobsToSpawn);
       mobsToSpawn = Math.max(0, mobsToSpawn - mobsPerTick);
       if (mobsToSpawn + spawningProcess < bloons.get(bloons.size() - 1).cost) {
-        if(!goldenSpawned && wave%10==0){
+        if (!goldenSpawned && wave % 10 == 0) {
           add(new GoldenBloon(World.this));
-          goldenSpawned=true;
+          goldenSpawned = true;
         }
         if (mobsList.isEmpty()) {
           endWave();

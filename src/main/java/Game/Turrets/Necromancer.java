@@ -122,7 +122,8 @@ public class Necromancer extends Turret {
               p -> p.addBuff(new OnTickBuff<Projectile>(proj -> world.getMobsGrid()
                   .callForEachCircle((int) proj.getX(), (int) proj.getY(), 150, mob -> {
                     if (!mob.isMoab()) {
-                      mob.addBuff(new StatBuff<TdMob>(Type.INCREASED, 20, TdMob.Stats.speed, -0.03f));
+                      mob.addBuff(
+                          new StatBuff<TdMob>(Type.INCREASED, 20, TdMob.Stats.speed, -0.03f));
                     }
                   })))
 
@@ -338,7 +339,7 @@ public class Necromancer extends Turret {
             getRandomInheritorEffect().mod(this);
           }
           // to reduce lag
-          while(stats[Stats.aspd]>100){
+          while (stats[Stats.aspd] > 100) {
             addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.5f));
             addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 2f));
           }
