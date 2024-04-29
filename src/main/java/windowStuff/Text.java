@@ -11,7 +11,7 @@ public class Text {
       128d / 4096d; //the height of a glyph sub-texture, in uv coordinates
   private final int layer;
   private final String fontName;
-  private final int maxWidth;
+  private int maxWidth;
   private final String shader;
   private final SpriteBatching bs;
   private final AbstractSprite background;
@@ -167,6 +167,10 @@ public class Text {
           xOffset = fontSize / 4;
         }
       }
+    }
+    if(line*fontSize>=Constants.screenSize.y*0.9 && maxWidth<Constants.screenSize.x){
+      maxWidth*=1.3;
+      arrange();
     }
 
     lineCount = line;

@@ -188,6 +188,14 @@ public class BulletLauncher {
         int W, int H, int pierce, float size, float duration, float power);
   }
 
+  public ProjectileNewFunction getLauncher() {
+    return launcher;
+  }
+
+  public void setLauncher(ProjectileNewFunction launcher) {
+    this.launcher = launcher;
+  }
+
   private ProjectileNewFunction launcher;
 
   public Projectile attack(float angle) {

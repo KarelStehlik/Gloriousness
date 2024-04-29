@@ -13,6 +13,7 @@ import Game.Buffs.VoidFunc;
 import Game.Mobs.Black;
 import Game.Mobs.Blue;
 import Game.Mobs.Ceramic;
+import Game.Mobs.GoldenBloon;
 import Game.Mobs.Green;
 import Game.Mobs.Lead;
 import Game.Mobs.Moab;
@@ -193,7 +194,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   public Animation lesserExplosionVisual(float x, float y, float size) {
     float duration = .2f;
     float scaling = size * 2 / 1000 * Game.tickIntervalMillis / duration;
-    Sprite sp = new Sprite("Shockwave", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
+    Sprite sp = new Sprite("DruidBall", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
         .setColors(Util.getColors(2.4f, .6f, 0));
     var anim = new Animation(sp, duration).setLinearScaling(new Vector2f(scaling, scaling));
     Game.get().addTickable(anim);
@@ -205,11 +206,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     if (shockwave) {
       game.addTickable(
           new Animation(
-              new Sprite("Shockwave", x, y, size, size, 3, "basic").addToBs(bs).setOpacity(0.7f), 3
+              new Sprite("Shockwave", x, y, size, size, 3, "basic").addToBs(bs).setOpacity(0.7f), 2
           ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
       );
     }
-    Sprite sp = new SingleAnimationSprite(image, .7f, x, y, size * 2, size * 2, 4, "basic").
+    Sprite sp = new SingleAnimationSprite(image, .4f, x, y, size * 2, size * 2, 4, "basic").
         addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
   }
 
@@ -398,11 +399,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   //private Timer timer = new Log.Timer();
   @Override
   public void onGameTick(int tick) {
-    for (var e : queuedEvents) {
-      e.apply();
-    }
-    queuedEvents.clear();
-
     //Log.write("start: "+timer.elapsedNano(true)/1000000);
     if (mobSpawner.cheat) {
       //noinspection ForLoopReplaceableByForEach
@@ -412,6 +408,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
     tickEntities(mobsGrid, mobsList);
     mobsGrid.filled();
+
+    List<VoidFunc> appliedEvents = new ArrayList<>(queuedEvents.size());
+    appliedEvents.addAll(queuedEvents);
+    queuedEvents.clear();
+    for (var e : appliedEvents) {
+      e.apply();
+    }
 
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
     AbilityGroup.instances.removeIf(AbilityGroup::WasDeleted);
@@ -615,6 +618,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         new BloonSpawn(1, Red::new)
     );
     public boolean cheat = false;
+    private boolean goldenSpawned = false;
     private float mobsToSpawn = 0;
     private float mobsPerTick = 1;
     private float spawningProcess = 0;
@@ -631,10 +635,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private float scaling() {
-      return cheat ? 1 : (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
-          + Math.pow(1 + Math.max(wave, 40) - 40, 1) - 1 // real scaling after 40
-          + Math.pow(1 + Math.max(wave, 100) - 100, 2) - 1// steep scaling after 100
-          + Math.pow(1.1, Math.max(wave, 200) - 200) - 1); // exponential after 250
+      return cheat ? 1 :
+          (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
+          + Math.pow(1 + Math.max(wave, 40) - 40, 1)-1 // real scaling after 40
+          + Math.pow(1 + Math.max(wave, 100) - 100, 2)-1// steep scaling after 100
+          + Math.pow(1.1, Math.max(wave, 200) - 200)-1); // exponential after 250
     }
 
     private void add(TdMob e) {
@@ -650,8 +655,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     }
 
     private void onBeginWave(int waveNum) {
-      mobsToSpawn = cheat ? 1 : Math.min(50000, (float) (50 * Math.pow(waveNum, 1.1)));
+      mobsToSpawn = cheat ? 1 : Math.min(300000, (float) (50 * Math.pow(waveNum, 1.1)));
       mobsPerTick = cheat ? 1 : Math.min(200, 0.1f * waveNum);
+      goldenSpawned=false;
       spawningProcess = 0;
     }
 
@@ -659,6 +665,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       spawningProcess += Math.min(mobsPerTick, mobsToSpawn);
       mobsToSpawn = Math.max(0, mobsToSpawn - mobsPerTick);
       if (mobsToSpawn + spawningProcess < bloons.get(bloons.size() - 1).cost) {
+        if(!goldenSpawned && wave%10==0){
+          add(new GoldenBloon(World.this));
+          goldenSpawned=true;
+        }
         if (mobsList.isEmpty()) {
           endWave();
         }

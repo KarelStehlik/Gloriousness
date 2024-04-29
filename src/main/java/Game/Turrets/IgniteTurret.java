@@ -10,10 +10,11 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.Game;
+import Game.DamageType;
 import Game.Mobs.TdMob;
+import Game.Mobs.TdMob.Stats;
 import Game.Player;
 import Game.Projectile;
-import Game.Projectile.Stats;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
@@ -122,11 +123,9 @@ public class IgniteTurret extends Turret {
 
   private void makePuddle(TdMob mob) {
     var aggreg = mob.getBuffHandler().find(Ignite.class);
-    if (aggreg == null) {
+    if (!(aggreg instanceof Ignite<TdMob>.Aggregator ignite)  || ignite.getDpTick()<0.0001) {
       return;
     }
-
-    Ignite<TdMob>.Aggregator ignite = (Ignite<TdMob>.Aggregator) aggreg;
 
     int size = (int) mob.getStats()[TdMob.Stats.size];
     var puddle = new Projectile(world, "fire", mob.getX(), mob.getY(), 0,
@@ -134,7 +133,7 @@ public class IgniteTurret extends Turret {
         stats[ExtraStats.puddleDuration], ignite.getDpTick() * stats[ExtraStats.puddleDamage]);
     puddle.setMultihit(true);
     puddle.addMobCollide(BasicCollides.damage);
-    puddle.addBuff(new Tag(projCollideId)); // hah, no 700 trillion oneshots anymore
+    puddle.addBuff(new Tag<Projectile>(projCollideId)); // hah, no 700 trillion oneshots anymore
     world.getProjectilesList().add(puddle);
   }
 
@@ -150,7 +149,7 @@ public class IgniteTurret extends Turret {
                   return false;
                 }
                 bloon.addBuff(new DelayedTrigger<TdMob>(Float.POSITIVE_INFINITY, this::makePuddle, true,
-                    stats[ExtraStats.puddleSpread] > 0));
+                    false));
                 return true;
               }, 0);
 
@@ -168,19 +167,37 @@ public class IgniteTurret extends Turret {
         }, 20000);
   }
 
+  private static long ddId=Util.getUid();
   @Override
   protected Upgrade up005() {
     return new Upgrade("Zombie",
-        () -> "children of hit bloons will also leave puddles.",
-        () -> {
-          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.puddleSpread, 1));
-        }, 60000);
+        () -> "Hit bloons and their children also explode equal to 10 seconds worth of ignite dps",
+        () -> bulletLauncher.addProjectileModifier(p -> {
+              p.addMobCollide((zombie, bloon) -> {
+                if (!bloon.addBuff(new Tag<TdMob>(ddId))) {
+                  return false;
+                }
+                bloon.addBuff(new DelayedTrigger<TdMob>(Float.POSITIVE_INFINITY, mob->{
+                  var aggreg = mob.getBuffHandler().find(Ignite.class);
+                  if (!(aggreg instanceof Ignite<TdMob>.Aggregator ignite) || ignite.getDpTick()<0.0001) {
+                    return;
+                  }
+                  world.aoeDamage((int) mob.getX(),
+                      (int) mob.getY(), (int) (mob.getStats()[TdMob.Stats.size]*1.5f), ignite.getDpTick()*10000/Game.tickIntervalMillis, DamageType.TRUE);
+                  world.explosionVisual(mob.getX(),mob.getY(),mob.getStats()[TdMob.Stats.size]*1.5f, false, "Explosion2-0");
+                }, true,
+                    true));
+                return true;
+              }, 0);
+
+            }
+        ), 60000);
   }
 
   private static final long projCollideId = Util.getUid();
 
   @Override
-  protected Upgrade up030() {
+  protected Upgrade up050() {
     return new Upgrade("Button",
         () -> "also hits projectiles, causing them to do what this does (they cannot be hit by any flamethrower again)",
         () -> {
@@ -193,7 +210,7 @@ public class IgniteTurret extends Turret {
             return true;
           });
         },
-        5000);
+        80000);
   }
 
 
@@ -218,20 +235,20 @@ public class IgniteTurret extends Turret {
   }
 
   @Override
-  protected Upgrade up040() {
+  protected Upgrade up030() {
     return new Upgrade("Button", () -> "also gives the player 1% increased damage for 5 seconds.",
         () -> bulletLauncher.addPlayerCollide((thisProj, player) -> {
           player.addBuff(
               new StatBuff<Player>(Type.INCREASED, 5000, Player.Stats.projPower, 0.01f));
           return true;
         }),
-        40000);
+        5000);
   }
 
   private static final long abilityId = Util.getUid();
 
   @Override
-  protected Upgrade up050() {
+  protected Upgrade up040() {
     return new Upgrade("Button",
         () -> "Ability: every projectile that currently exists explodes, dealing aoe damage based on its power and pierce. Pierce above 2500 has no effect.",
         () -> {

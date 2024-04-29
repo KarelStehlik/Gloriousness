@@ -22,8 +22,11 @@ public class Druid extends Turret {
   private final String ballImage = "DruidBall";
 
   public Druid(World world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "", DruidBall::new));
+    super(world, X, Y, image, new BulletLauncher(world, ""));
+    bulletLauncher.setLauncher(
+        (world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power) -> new DruidBall(
+            world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power, getStats()[ExtraStats.regrowTime]))
+    ;
     bulletLauncher.setImage(ballImage);
     onStatsUpdate();
     bulletLauncher.addProjectileModifier(this::modProjectile);
@@ -153,13 +156,12 @@ public class Druid extends Turret {
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("Button", () -> "Projectiles don't regrow. goes full machine gun mode.",
+    return new Upgrade("Button", () -> "Goes full machine gun mode.",
         () -> {
           addBuff(
               new StatBuff<Turret>(Type.MORE, Stats.speed, 7));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 10));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 100));
-          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.respawns, 0));
         }, 50000);
   }
 
@@ -237,7 +239,7 @@ public class Druid extends Turret {
   // generated stats
   @Override
   public int getStatsCount() {
-    return 16;
+    return 17;
   }
 
   @Override
@@ -258,6 +260,7 @@ public class Druid extends Turret {
     stats[ExtraStats.bonusPierce] = 5f;
     stats[ExtraStats.pierceScaling] = 0f;
     stats[ExtraStats.bonusDuration] = 0f;
+    stats[ExtraStats.regrowTime] = 1f;
   }
 
   public static final class ExtraStats {
@@ -268,6 +271,7 @@ public class Druid extends Turret {
     public static final int bonusPierce = 13;
     public static final int pierceScaling = 14;
     public static final int bonusDuration = 15;
+    public static final int regrowTime = 16;
 
     private ExtraStats() {
     }

@@ -120,9 +120,9 @@ public class Necromancer extends Turret {
           });
           bulletLauncher.addProjectileModifier(
               p -> p.addBuff(new OnTickBuff<Projectile>(proj -> world.getMobsGrid()
-                  .callForEachCircle((int) proj.getX(), (int) proj.getY(), 200, mob -> {
+                  .callForEachCircle((int) proj.getX(), (int) proj.getY(), 150, mob -> {
                     if (!mob.isMoab()) {
-                      mob.addBuff(new StatBuff<TdMob>(Type.MORE, 20, TdMob.Stats.speed, 0.95f));
+                      mob.addBuff(new StatBuff<TdMob>(Type.INCREASED, 20, TdMob.Stats.speed, -0.03f));
                     }
                   })))
 

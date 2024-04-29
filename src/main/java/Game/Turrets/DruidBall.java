@@ -10,9 +10,12 @@ import windowStuff.Sprite;
 
 public class DruidBall extends Projectile {
 
+  private final float regrowTime;
+
   protected DruidBall(World world, String image, float X, float Y, float speed, float rotation,
-      int W, int H, int pierce, float size, float duration, float power) {
+      int W, int H, int pierce, float size, float duration, float power, float regrowTime) {
     super(world, image, X, Y, speed, rotation, W, H, pierce, size, duration, power);
+    this.regrowTime=regrowTime;
   }
 
   @Override
@@ -55,13 +58,14 @@ public class DruidBall extends Projectile {
     RespawningProjectile() {
       float size = getStats()[Projectile.Stats.size];
 
+      float scaling = .015f/regrowTime;
       this.sprite = new Animation(
           new Sprite(DruidBall.this.sprite).setSize(0, 0).setShader("colorCycle2").
               setOpacity(0.5f).addToBs(world.getBs()).
               setColors(Util.getCycle2colors(1f)
               )
-          , 1
-      ).setLinearScaling(new Vector2f(size * .015f, size * .015f)).setOpacityScaling(0.015f)
+          , regrowTime
+      ).setLinearScaling(new Vector2f(size * scaling, size * scaling)).setOpacityScaling(scaling)
           .setSpinning(-20f);
     }
 

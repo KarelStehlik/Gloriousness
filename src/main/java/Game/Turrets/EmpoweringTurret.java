@@ -129,7 +129,15 @@ public class EmpoweringTurret extends Turret {
         + "forever in the dark abyss of death, however no one has been able to verify this, as "
         + "its name is some unpronounceable Japanese bullshit that you physically can not utter.",
         () -> {
-          var a = Ability.add("Assassin", 10000, () -> "Vengeance!", () -> {
+          var a = Ability.add("Assassin", 10000, () -> "Agony! Torment! Retribution! This is the creed of the Shadowy Assassin Demonic Blade Slayer Super Ninjas, warriors forged in the soul-scorching fires of despair and fueled by the unrelenting anguish that courses through our veins. Our suffering, matched only by the suffering we yearn to inflict upon our foes, is the very essence of our existence, the driving force that propels us forward in our dark and violent crusade. Without this torment, this unending torment that threatens to consume us whole, we Shadowy Assassin Demonic Blade Slayer Super Ninjas would be nothing but hollow shells, mere shadows of the warriors we now are.\n"
+              + '\n'
+              + "Oh, how ignorant you are to believe that we should not all kill ourselves as escape from the crushing misery of our bleak reality! You, who frolick in the shallow waters of false happiness, you cannot comprehend the depths of darkness that lurk within us. It is not madness that plagues us, no, it is clarity. We, the Shadowy Assassin Demonic Blade Slayer Super Ninjas, see the world for what it truly is: a desolate wasteland of despair and deceit, its only light thrown by the glorious certainty of death.\n"
+              + '\n'
+              + "We are not driven by insanity, but by a true sense of righteousness that demands no accolades or recognition. We, the Ninjas, are the silent protectors of this doomed world, the only salvation to be found in our merciless blades. We cut down all who stand in our path, leaving nothing but devastation and carnage in our wake. We envy all whose blood we spill, for they are fortunate enough to find death.\n"
+              + '\n'
+              + "We have sacrificed everything for this noble cause. We have forsaken our very souls, stained our blades in the blood of our families, and abandoned all that we once held dear. But this price is nothing in face of the ability to deliver death upon our enemies. And in the end, when the final moment of silence descends upon us, when all that remains is the sound of our own breathless cries, we will ourselves descend into the eternal void of oblivion, our brutal quest complete.\n"
+              + '\n'
+              + "You will come to understand, in time, the glory that can be found in misery. You will feast your eyes on the beauty of our sacrifice, the righteousness of our vengeance. And you will bow before the Shadowy Assassin Demonic Blade Slayer Super Ninjas, the true masters of death and despair.", () -> {
             int x = (int) Game.get().getUserInputListener().getX();
             int y = (int) Game.get().getUserInputListener().getY();
             world.getMobsGrid().callForEachCircle(

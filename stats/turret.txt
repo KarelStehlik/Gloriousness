@@ -4,4 +4,4 @@ turrets\igniteTurret % power=0.2|range=300|pierce=1|aspd=70|projectileDuration=2
 turrets\slowTurret % power=0.004|range=500|pierce=1|aspd=0.2|projectileDuration=2|bulletSize=50|speed=7|cost=200|size=50|spritesize=150 %
 turrets\eatingTurret % power=1|range=500|pierce=8|aspd=1|projectileDuration=4|bulletSize=220|speed=3.5|cost=50|size=50|spritesize=150 % fullEatBuff=2
 turrets\necromancer % power=1|range=200|pierce=3|aspd=1|projectileDuration=20|bulletSize=50|speed=10|cost=300|size=50|spritesize=150 %
-turrets\druid % power=3|range=400|pierce=5|aspd=.4|projectileDuration=8|bulletSize=220|speed=3.5|cost=200|size=50|spritesize=150 % respawns=2|sizeScaling=0|powScaling=0|bonusPierce=5|pierceScaling=0|bonusDuration=0
+turrets\druid % power=3|range=400|pierce=5|aspd=.4|projectileDuration=8|bulletSize=220|speed=3.5|cost=200|size=50|spritesize=150 % respawns=2|sizeScaling=0|powScaling=0|bonusPierce=5|pierceScaling=0|bonusDuration=0|regrowTime=1
