@@ -30,6 +30,7 @@ import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
 import Game.Turrets.IgniteTurret;
 import Game.Turrets.Necromancer;
+import Game.Turrets.Plane;
 import Game.Turrets.SlowTurret;
 import Game.Turrets.Turret;
 import general.Constants;
@@ -131,8 +132,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator druid = Druid.generator(this);
 
+    TurretGenerator plane = Plane.generator(this);
+
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
-        testEmp, testEating, necro, druid};
+        testEmp, testEating, necro, druid, plane};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton()).toArray(Button[]::new),
@@ -194,7 +197,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   public Animation lesserExplosionVisual(float x, float y, float size) {
     float duration = .2f;
     float scaling = size * 2 / 1000 * Game.tickIntervalMillis / duration;
-    Sprite sp = new Sprite("DruidBall", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
+    Sprite sp = new Sprite("Shockwave", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
         .setColors(Util.getColors(2.4f, .6f, 0));
     var anim = new Animation(sp, duration).setLinearScaling(new Vector2f(scaling, scaling));
     Game.get().addTickable(anim);
@@ -636,10 +639,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     private float scaling() {
       return cheat ? 1 :
-          (float) (Math.pow(1 + Math.max(wave, 10) - 10, 1.4) // scaling after 10
-              + Math.pow(1 + Math.max(wave, 40) - 40, 1) - 1 // real scaling after 40
-              + Math.pow(1 + Math.max(wave, 100) - 100, 2) - 1// steep scaling after 100
-              + Math.pow(1.1, Math.max(wave, 200) - 200) - 1); // exponential after 250
+          (float) (
+              Math.max(Math.pow(wave/20f, 3.3), 1) // polynomial
+              + Math.pow(1.1, Math.max(wave, 200) - 200) - 1 // exponential after 200
+          );
     }
 
     private void add(TdMob e) {

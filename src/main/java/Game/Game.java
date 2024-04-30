@@ -95,7 +95,7 @@ public final class Game implements UserInputHandler {
 
     ticks++;
     if (ticks % 60 == 0) {
-      Log.write(ticks + " in " + timer.saved + " ms");
+      //Log.write(ticks + " in " + timer.saved + " ms");
       timer.saved = 0;
     }
     var iter = tickables.iterator();

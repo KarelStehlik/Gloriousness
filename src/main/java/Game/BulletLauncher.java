@@ -18,6 +18,7 @@ public class BulletLauncher {
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
   private String image;
   private float speed;
+  public int radial=1;
 
   public String getImage() {
     return image;
@@ -203,27 +204,33 @@ public class BulletLauncher {
   }
 
   public Projectile attack(float angle, boolean triggerCooldown) {
-    float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
-    Projectile p = launcher.make(world, image, x, y, speed, angle + deviation, width, height,
-        pierce, size,
-        duration, power);
-    for (var pm : projectileModifiers) {
-      pm.mod(p);
-    }
-    world.getProjectilesList().add(p);
-    for (var collide : playerCollides) {
-      p.addPlayerCollide(collide);
-    }
-    for (var collide : mobCollides) {
-      p.addMobCollide(collide);
-    }
-    for (var collide : projectileCollides) {
-      p.addProjectileCollide(collide);
-    }
     if (triggerCooldown) {
       remainingCooldown += cooldown;
     }
-    return p;
+    float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
+
+    for(int i=0;i<radial;i++) {
+      Projectile p = launcher.make(world, image, x, y, speed, angle + 360f*i/radial + deviation, width, height,
+          pierce, size,
+          duration, power);
+      for (var pm : projectileModifiers) {
+        pm.mod(p);
+      }
+      world.getProjectilesList().add(p);
+      for (var collide : playerCollides) {
+        p.addPlayerCollide(collide);
+      }
+      for (var collide : mobCollides) {
+        p.addMobCollide(collide);
+      }
+      for (var collide : projectileCollides) {
+        p.addProjectileCollide(collide);
+      }
+      if(i==radial-1) {
+        return p;
+      }
+    }
+    return null;
   }
 
   public Projectile attack(float targetX, float targetY) {

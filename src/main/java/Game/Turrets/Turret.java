@@ -72,15 +72,15 @@ public abstract class Turret extends GameObject implements TickDetect {
     }));
   }
 
-  private List<Upgrade> getUpgradePath1() {
+  protected List<Upgrade> getUpgradePath1() {
     return List.of(up100(), up200(), up300(), up400(), up500());
   }
 
-  private List<Upgrade> getUpgradePath2() {
+  protected List<Upgrade> getUpgradePath2() {
     return List.of(up010(), up020(), up030(), up040(), up050());
   }
 
-  private List<Upgrade> getUpgradePath3() {
+  protected List<Upgrade> getUpgradePath3() {
     return List.of(up001(), up002(), up003(), up004(), up005());
   }
 
@@ -144,11 +144,15 @@ public abstract class Turret extends GameObject implements TickDetect {
     return maxUpgrades;
   }
 
-  private void openUpgradeMenu() {
+  protected void openUpgradeMenu() {
     if (menu != null) {
       menu.close();
     }
     menu = new UpgradeMenu();
+  }
+
+  protected void closeUpgradeMenu(){
+
   }
 
   public boolean addBuff(Buff<Turret> b) {
@@ -211,7 +215,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   @Override
   public void setRotation(float f) {
-    rotation = f;
+    super.setRotation(f);
     sprite.setRotation(f - 90);
   }
 
@@ -380,6 +384,7 @@ public abstract class Turret extends GameObject implements TickDetect {
       upgradePicked(path);
       u.apply.apply();
       totalCost += u.cost;
+      openUpgradeMenu();
     }
 
     private void upgradePicked(int path) {
@@ -388,13 +393,13 @@ public abstract class Turret extends GameObject implements TickDetect {
         case 2 -> path2Tier++;
         case 3 -> path3Tier++;
       }
-      openUpgradeMenu();
     }
 
     void close() {
       sprites.forEach(Sprite::delete);
       buttons.forEach(Button::delete);
       rangeDisplay.setHidden(true);
+      closeUpgradeMenu();
     }
   }
 }

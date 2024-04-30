@@ -45,7 +45,6 @@ public class Projectile extends GameObject implements TickDetect {
   protected float vy;
   private boolean wasDeleted = false;
   protected boolean active = true;
-  protected float rotation;
   private boolean alreadyHitPlayer = false;
 
   public boolean isMultihit() {
@@ -158,8 +157,8 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   @Override
-  public void setRotation(float rotation) {
-    this.rotation = rotation;
+  public void setRotation(float f) {
+    super.setRotation(f);
     sprite.setRotation(rotation - 90);
     vx = Util.cos(rotation) * stats[Stats.speed];
     vy = Util.sin(rotation) * stats[Stats.speed];
@@ -348,17 +347,9 @@ public class Projectile extends GameObject implements TickDetect {
       if (targetedMob == null) {
         return;
       }
-      float diff =
-          target.rotation - Util.get_rotation(targetedMob.x - target.x, targetedMob.y - target.y);
-      diff = (diff + 720) % 360;
-      if (diff > 180) {
-        diff = diff - 360;
-      }
-      if (diff > 0) {
-        target.setRotation(target.rotation - Math.min(strength * target.getSpeed() * .1f, diff));
-      } else {
-        target.setRotation(target.rotation + Math.min(strength * target.getSpeed() * .1f, -diff));
-      }
+
+      target.turnTowards(targetedMob.x, targetedMob.y, strength * target.getSpeed() * .1f);
+
     }
   }
 

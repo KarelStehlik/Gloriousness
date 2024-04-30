@@ -25,8 +25,8 @@ public class Lead extends TdMob {
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
   }
-
   // end of generated stats
+
   @Override
   public boolean isMoab() {
     return false;

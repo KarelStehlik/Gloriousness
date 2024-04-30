@@ -8,6 +8,7 @@ public class Button implements MouseDetect, TickDetect {
   private final AbstractSprite sprite;
   private final ClickFunction onClick;
   private final MouseoverText mouseoverTextGenerator;
+  protected boolean pressed=false;
 
   public Text getMouseoverText() {
     return mouseoverText;
@@ -23,7 +24,7 @@ public class Button implements MouseDetect, TickDetect {
     mouseoverTextGenerator = caption;
     sprite.addToBs(bs);
     mouseoverText = caption == null ? null
-        : new Text(caption.get(), "Calibri", 450, 0, 0, sprite.getLayer() + 1,
+        : new Text(caption.get(), "Calibri", 450, 0, 0, sprite.getLayer() + 10,
             35, bs, "basic", "textbox");
 
     if (mouseoverText != null) {
@@ -76,7 +77,11 @@ public class Button implements MouseDetect, TickDetect {
         && x < sprite.getX() + sprite.getWidth() &&
         y > sprite.getY() - sprite.getHeight() && y < sprite.getY() + sprite.getHeight()) {
       onClick.onClick(button, action);
+      pressed=true;
       return true;
+    }
+    if(action==0){
+      pressed=false;
     }
     return false;
   }

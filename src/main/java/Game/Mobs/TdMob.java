@@ -225,7 +225,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
         float vx = stats[speedStat] * Util.cos(rotationToNextPoint);
         float vy = stats[speedStat] * Util.sin(rotationToNextPoint);
         target.move(target.getX() + vx, target.getY() + vy);
-        target.setRotation(rotationToNextPoint - 90f);
+        if(target instanceof TdMob mob && mob.isMoab()) {
+          target.setRotation(rotationToNextPoint - 90f);
+        }
       }
     }
   }

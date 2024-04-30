@@ -14,6 +14,19 @@ public class GameObject {
   protected int width, height;
   protected float rotation;
 
+  public void turnTowards(float X, float Y, float speed) {
+    float diff = rotation - Util.get_rotation(X - x, Y - y);
+    diff = (diff + 720) % 360;
+    if (diff > 180) {
+      diff = diff - 360;
+    }
+    if (diff > 0) {
+      setRotation(rotation - Math.min(speed, diff));
+    } else {
+      setRotation(rotation + Math.min(speed, -diff));
+    }
+  }
+
   protected GameObject(float X, float Y, int W, int H, World w) {
     x = X;
     y = Y;
@@ -48,7 +61,7 @@ public class GameObject {
   }
 
   public void setRotation(float f) {
-    rotation = f;
+    rotation = f % 360;
   }
 
   public void move(float _x, float _y) {

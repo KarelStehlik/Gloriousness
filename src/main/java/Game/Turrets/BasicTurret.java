@@ -90,7 +90,7 @@ public class BasicTurret extends Turret {
   private static final long dartEatId = Util.getUid();
 
   @Override
-  protected Upgrade up020() {
+  protected Upgrade up300() {
     return new Upgrade("MagnetDart", () -> "darts combine to become stronger",
         () -> {
           bulletLauncher.addProjectileModifier(p -> {
@@ -117,7 +117,7 @@ public class BasicTurret extends Turret {
                 p1.addBuff(
                     new StatBuff<Projectile>(Type.FINALLY_ADDED, Math.min(10000, buffDur),
                         Projectile.Stats.speed,
-                        p2.getStats()[Projectile.Stats.speed] * .5f));
+                        p2.getStats()[Projectile.Stats.speed] * .2f));
 
                 if (!p2.addBuff(Tag.Test(EatingTurret.EatImmuneTag))) {
                   p1.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag, ppp -> {
@@ -136,11 +136,11 @@ public class BasicTurret extends Turret {
   @Override
   protected Upgrade up100() {
     return new Upgrade("Radar",
-        () -> "projectiles seek, last slightly longer and have infinite pierce",
+        () -> "projectiles seek and have infinite pierce, but last less long",
         () -> {
           bulletLauncher.setImage("Laser");
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, Float.POSITIVE_INFINITY));
-          addBuff(new StatBuff<Turret>(Type.ADDED, Stats.projectileDuration, 5));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, .4f));
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new OnTickBuff<Projectile>(g::tick));
           });
@@ -158,7 +158,7 @@ public class BasicTurret extends Turret {
   }
 
   @Override
-  protected Upgrade up300() {
+  protected Upgrade up020() {
     return new Upgrade("Meteor", () -> "more damage",
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, 5));

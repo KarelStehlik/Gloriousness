@@ -20,7 +20,7 @@ public class DruidBall extends Projectile {
 
   @Override
   public void setRotation(float rotation) {
-    this.rotation = rotation;
+    super.setRotation(rotation);
     vx = Util.cos(rotation) * stats[Stats.speed];
     vy = Util.sin(rotation) * stats[Stats.speed];
   }

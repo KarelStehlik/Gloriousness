@@ -111,11 +111,11 @@ public class IgniteTurret extends Turret {
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("Button", () -> "bigger aoe, but 60% less damage",
+    return new Upgrade("Button", () -> "bigger aoe, but 40% less damage",
         () -> {
           sprite.setImage("Flamethrower1");
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.aoe, 100));
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, .4f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, .6f));
         },
         2500);
   }

@@ -24,8 +24,8 @@ public class Ceramic extends TdMob {
     stats[Stats.value] = 0f;
     stats[Stats.damageTaken] = 1f;
   }
-
   // end of generated stats
+
   @Override
   public boolean isMoab() {
     return false;
