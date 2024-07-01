@@ -7,9 +7,11 @@ import Game.DamageType;
 import Game.GameObject;
 import Game.SquareGrid;
 import Game.TickDetect;
+import Game.Wave;
 import Game.World;
 import general.Constants;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -25,12 +27,15 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
+  protected final int waveNum;
 
-  public TdMob(World world, String image) {
+  public TdMob(World world, String image, int wave) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread), 0, 0, world);
+    waveNum=wave;
+    Wave.increaseMobsInWave(waveNum);
     clearStats();
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
@@ -48,6 +53,8 @@ public abstract class TdMob extends GameObject implements TickDetect {
     super(parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),
         parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),
         0, 0, world);
+    waveNum= parent.waveNum;
+    Wave.increaseMobsInWave(waveNum);
     clearStats();
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
@@ -131,12 +138,17 @@ public abstract class TdMob extends GameObject implements TickDetect {
     miscTickActions();
     sprite.setPosition(x, y);
   }
+  
+  public void onGameTickP2(int tick){
+    buffHandler.tick();
+  }
 
   @Override
   public void delete() {
     sprite.delete();
     exists = false;
     buffHandler.delete();
+    Wave.decreaseMobsInWave(waveNum);
   }
 
   @Override

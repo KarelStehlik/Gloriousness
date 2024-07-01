@@ -50,7 +50,7 @@ public class BasicTurret extends Turret {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 20f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2));
-        }, 5000);
+        }, 25000);
   }
 
   @Override
@@ -63,7 +63,7 @@ public class BasicTurret extends Turret {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 150f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 0.3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2f));
-        }, 30000);
+        }, 64000);
   }
 
   private static final long bigDart = Util.getUid();
@@ -84,7 +84,7 @@ public class BasicTurret extends Turret {
                 onStatsUpdate();
               }, bigDart);
           addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));
-        }, 20000);
+        }, 200000);
   }
 
   private static final long dartEatId = Util.getUid();
@@ -93,6 +93,7 @@ public class BasicTurret extends Turret {
   protected Upgrade up300() {
     return new Upgrade("MagnetDart", () -> "darts combine to become stronger",
         () -> {
+          addBuff(new StatBuff<Turret>(Type.MORE,Stats.projectileDuration,3f));
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new Tag<Projectile>(dartEatId, t -> {
             }));
@@ -114,10 +115,6 @@ public class BasicTurret extends Turret {
                 p1.addBuff(
                     new StatBuff<Projectile>(Type.FINALLY_ADDED, buffDur, Projectile.Stats.size,
                         p2.getStats()[Projectile.Stats.size] * .3f));
-                p1.addBuff(
-                    new StatBuff<Projectile>(Type.FINALLY_ADDED, Math.min(10000, buffDur),
-                        Projectile.Stats.speed,
-                        p2.getStats()[Projectile.Stats.speed] * .2f));
 
                 if (!p2.addBuff(Tag.Test(EatingTurret.EatImmuneTag))) {
                   p1.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag, ppp -> {
@@ -128,7 +125,7 @@ public class BasicTurret extends Turret {
               return false;
             });
           });
-        }, 1000);
+        }, 4000);
   }
 
   private final Guided g = new Projectile.Guided(1000, 3);
@@ -144,7 +141,7 @@ public class BasicTurret extends Turret {
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new OnTickBuff<Projectile>(g::tick));
           });
-        }, 1000);
+        }, 350);
   }
 
   @Override
@@ -154,15 +151,15 @@ public class BasicTurret extends Turret {
           g.setRange(1500);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2));
-        }, 2000);
+        }, 800);
   }
 
   @Override
   protected Upgrade up020() {
-    return new Upgrade("Meteor", () -> "more damage",
+    return new Upgrade("Meteor", () -> "3x more damage",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, 5));
-        }, 8000);
+          addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.power, 3));
+        }, 5000);
   }
 
   @Override
@@ -180,13 +177,13 @@ public class BasicTurret extends Turret {
     return new Upgrade("Goldfish", () -> "darts can hit the same enemy multiple times",
         () -> {
           bulletLauncher.addProjectileModifier(p -> p.setMultihit(true));
-        }, 50000);
+        }, 10000);
   }
 
   @Override
   protected Upgrade up001() {
     return new Upgrade("DoubleDart", () -> "shoots 2x faster.",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2f)), 200);
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2f)), 100);
   }
 
   @Override
@@ -201,26 +198,26 @@ public class BasicTurret extends Turret {
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.range, 4f));
-        }, 5000);
+        }, 8000);
   }
 
   @Override
   protected Upgrade up004() {
-    return new Upgrade("QuinDart", () -> "shoots 5x faster, with 2 added damage.",
+    return new Upgrade("QuinDart", () -> "shoots 5x faster.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
-          addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 2f));
           bulletLauncher.setSpread(10);
-        }, 20000);
+        }, 40000);
   }
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("TenDart", () -> "shoots 10x faster.",
+    return new Upgrade("TenDart", () -> "shoots 5x faster with double damage.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 10f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 2f));
           bulletLauncher.setSpread(30);
-        }, 100000);
+        }, 150000);
   }
 
   // generated stats
@@ -229,7 +226,7 @@ public class BasicTurret extends Turret {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 350f;
     stats[Stats.pierce] = 2f;
-    stats[Stats.aspd] = 0.7f;
+    stats[Stats.aspd] = 1.1f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 30f;
     stats[Stats.speed] = 15f;

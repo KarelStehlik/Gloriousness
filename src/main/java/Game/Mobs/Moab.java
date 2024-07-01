@@ -8,8 +8,8 @@ public class Moab extends TdMob {
   private static final List<TdMob.ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,
       SmallMoab::new, SmallMoab::new);
 
-  public Moab(World world) {
-    super(world, "BloonMoab");
+  public Moab(World world, int wave) {
+    super(world, "BloonMoab", wave);
     sprite.setSize(getStats()[Stats.size] * 1.5f, getStats()[Stats.size] * 0.7f);
     sprite.setLayer(2);
   }

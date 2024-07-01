@@ -5,9 +5,15 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.Player.Stats;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import windowStuff.Button;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
@@ -19,6 +25,7 @@ public class UpgradeGiver {
       new Pierce(), new Explode()};
   private final List<Button> buttons = new ArrayList<>(2);
   private final World world;
+  private final Queue<Integer> requested = new LinkedList<>();
 
   public UpgradeGiver(World w) {
     world = w;
@@ -28,15 +35,29 @@ public class UpgradeGiver {
     for (Button b : buttons) {
       b.delete();
     }
+    buttons.clear();
   }
 
-  public void gib(int gloriousness) {
-    clearOptions();
+  private void LoadNewUpgrades(){
+    if(requested.isEmpty()) {
+      return;
+    }
+    int gloriousness = requested.poll();
     for (int i = 0; i < Math.min(gloriousness, 5); i++) {
       Button B = upgradeTypes[Data.gameMechanicsRng.nextInt(upgradeTypes.length)].genButton(
           world.getBs(), i);
       buttons.add(B);
       Game.get().addMouseDetect(B);
+    }
+  }
+
+  public void gib(int gloriousness) {
+    if(gloriousness==0){
+      return;
+    }
+    requested.add(gloriousness);
+    if(buttons.isEmpty()){
+      LoadNewUpgrades();
     }
   }
 
@@ -140,13 +161,14 @@ public class UpgradeGiver {
           (b, a) -> this._picked(a), this::getText);
     }
 
+
     private void _picked(int action) {
       if (action == 0) {
         return;
       }
       clearOptions();
-      world.beginWave();
       picked();
+      LoadNewUpgrades();
     }
 
     abstract void picked();

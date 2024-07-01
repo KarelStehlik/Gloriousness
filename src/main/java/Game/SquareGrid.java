@@ -1,6 +1,7 @@
 package Game;
 
 
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -135,6 +136,10 @@ public class SquareGrid<T extends GameObject> implements SpacePartitioning<T> {
         }
       }
     }
+  }
+
+  public void callForEachCircle(float x, float y, float radius, collideFunction<T> F){
+    callForEachCircle((int)x, (int)y, (int)radius, F);
   }
 
   public void callForEachCircle(int x, int y, int radius, collideFunction<T> F) {

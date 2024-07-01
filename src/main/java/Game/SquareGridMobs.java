@@ -169,7 +169,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
           if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
               < radius * radius && condition.test(box)) {
             result = box;
-            best = result.getProgress();
+            best = box.getProgress();
             break;
           }
         }

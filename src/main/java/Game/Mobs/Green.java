@@ -7,8 +7,8 @@ public class Green extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Blue::new);
 
-  public Green(World world) {
-    super(world, "BloonGreen");
+  public Green(World world, int wave) {
+    super(world, "BloonGreen", wave);
   }
 
   public Green(TdMob parent) {

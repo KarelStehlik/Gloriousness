@@ -7,8 +7,8 @@ public class Lead extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Black::new, Black::new);
 
-  public Lead(World world) {
-    super(world, "BloonLead");
+  public Lead(World world, int wave) {
+    super(world, "BloonLead", wave);
   }
 
 

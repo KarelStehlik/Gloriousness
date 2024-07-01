@@ -28,8 +28,8 @@ public class GoldenBloon extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of();
 
-  public GoldenBloon(World world) {
-    super(world, "Buff");
+  public GoldenBloon(World world, int wave) {
+    super(world, "Buff", wave);
   }
 
   public GoldenBloon(TdMob parent) {

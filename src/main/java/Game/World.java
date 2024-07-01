@@ -1,5 +1,7 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
@@ -28,6 +30,7 @@ import Game.Turrets.BasicTurret;
 import Game.Turrets.Druid;
 import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
+import Game.Turrets.Engineer;
 import Game.Turrets.IgniteTurret;
 import Game.Turrets.Necromancer;
 import Game.Turrets.Plane;
@@ -44,6 +47,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import org.joml.Vector2f;
 import windowStuff.Button;
@@ -93,8 +97,6 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 100;
-  private int wave = 0;
-  private boolean waveRunning = true;
 
   public World() {
     Game game = Game.get();
@@ -134,8 +136,10 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator plane = Plane.generator(this);
 
+    TurretGenerator engi = Engineer.generator(this);
+
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, testDotTurret, testSlowTurret,
-        testEmp, testEating, necro, druid, plane};
+        testEmp, testEating, necro, druid, plane, engi};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton()).toArray(Button[]::new),
@@ -160,12 +164,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
-    beginWave();
+    mobSpawner.beginWave();
     calcSpacPoints();
   }
 
   private void updateResourceTracker() {
-    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave " + wave);
+    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave " + mobSpawner.waveNum);
   }
 
   public void addEvent(VoidFunc e) {
@@ -344,15 +348,15 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         options.ultimateCrosspathing = path.get();
       }
 
-      ImBoolean cheat = new ImBoolean(mobSpawner.cheat);
+      ImBoolean cheat = new ImBoolean(options.cheat);
       if (ImGui.checkbox("Waves go brr", cheat)) {
-        mobSpawner.cheat = cheat.get();
+        options.cheat = cheat.get();
       }
 
-      int[] currWave = new int[]{wave};
+      int[] currWave = new int[]{mobSpawner.waveNum};
       if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
         addEvent(() -> {
-          wave = currWave[0] - 1;
+          mobSpawner.waveNum = currWave[0] - 1;
           updateResourceTracker();
         });
       }
@@ -367,6 +371,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   public void onKeyPress(int key, int action, int mods) {
     if (!currentTool.WasDeleted()) {
       currentTool.onKeyPress(key, action, mods);
+    }
+    if(key==GLFW_KEY_SPACE && action==0){
+      mobSpawner.beginWave();
     }
   }
 
@@ -403,7 +410,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   @Override
   public void onGameTick(int tick) {
     //Log.write("start: "+timer.elapsedNano(true)/1000000);
-    if (mobSpawner.cheat) {
+    if (options.cheat) {
       //noinspection ForLoopReplaceableByForEach
       for (int i = 0; i < mobsList.size(); i++) {
         mobsList.get(i).takeDamage(1000, DamageType.TRUE);
@@ -422,7 +429,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
     AbilityGroup.instances.removeIf(AbilityGroup::WasDeleted);
 
-    if (waveRunning) {
+
       this.tick++;
       player.onGameTick(tick);
       AbilityGroup.instances.forEach(g -> g.onGameTick(tick));
@@ -446,7 +453,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       //Log.write("projs: "+timer.elapsedNano(true)/1000000);
       mobSpawner.run();
-    }
+
 
     //Log.write("other: "+timer.elapsedNano(true)/1000000);
   }
@@ -512,26 +519,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     this.currentTool = currentTool;
   }
 
-  public void endWave() {
-    turrets.forEach(Turret::endOfRound);
-    if (mobSpawner.cheat) {
-      beginWave();
-    } else {
-      upgrades.gib(wave);
-      waveRunning = false;
-    }
-  }
-
-  public void beginWave() {
-    wave++;
+  public void onBeginWave() {
     updateResourceTracker();
-    waveRunning = true;
-    mobSpawner.onBeginWave(wave);
-    Text text = new Text("Wave " + wave, "Calibri", 1800, 60, Constants.screenSize.y / 2, 10,
-        490 / (float) ((int) Math.log10(wave) + 7) * 7,
-        bs, "colorCycle2", "Button");
-    Game.get().addTickable(new CallAfterDuration(text::delete, 1000));
-    text.setColors(Util.getCycle2colors(1));
   }
 
   public boolean canFitTurret(int x, int y, float size) {
@@ -539,7 +528,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       Turret t = iterator.next();
       if (t.WasDeleted()) {
         iterator.remove();
-      } else if (!t.isNotYetPlaced() && Util.distanceSquared(x - t.x, y - t.y)
+      } else if (!t.isNotYetPlaced() && t.blocksPlacement() && Util.distanceSquared(x - t.x, y - t.y)
           < Util.square(size + t.stats[Turret.Stats.size])) {
         return false;
       }
@@ -598,6 +587,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     private boolean fuckified = false;
     private boolean laggyGong = false;
     private boolean ultimateCrosspathing = false;
+    private boolean cheat = false;
   }
 
   private static class Optimization {
@@ -608,108 +598,33 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   private class MobSpawner {
 
-    private final List<BloonSpawn> bloons = List.of(
-        new BloonSpawn(200, Moab::new),
-        new BloonSpawn(100, SmallMoab::new),
-        new BloonSpawn(20, Ceramic::new),
-        new BloonSpawn(12, Lead::new),
-        new BloonSpawn(7, Black::new),
-        new BloonSpawn(4, Pink::new),
-        new BloonSpawn(3.5f, Yellow::new),
-        new BloonSpawn(2.8f, Green::new),
-        new BloonSpawn(2, Blue::new),
-        new BloonSpawn(1, Red::new)
-    );
-    public boolean cheat = false;
-    private boolean goldenSpawned = false;
-    private float mobsToSpawn = 0;
-    private float mobsPerTick = 1;
-    private float spawningProcess = 0;
-    private BloonSpawn next;
+    int waveNum=0;
+    List<Wave> waves = new ArrayList<>(1);
 
-    private BloonSpawn selectNectBloon(float toSpawn) {
-      for (var loon : bloons) {
-        if (loon.cost < wave * 4 && loon.cost < toSpawn
-            && Data.gameMechanicsRng.nextFloat() < toSpawn / loon.cost / 200) {
-          return loon;
-        }
-      }
-      return bloons.get(bloons.size() - 1);
-    }
-
-    private float scaling() {
-      return cheat ? 1 :
-          (float) (
-              Math.max(Math.pow(wave/20f, 3.3), 1) // polynomial
-              + Math.pow(1.1, Math.max(wave, 200) - 200) - 1 // exponential after 200
-          );
-    }
-
-    private void add(TdMob e) {
-      final float hpScaling = scaling();
-      final float spdScaling = (float) Math.pow(scaling(), 0.1);
-      e.addBuff(
-          new StatBuff<TdMob>(Type.MORE, Stats.health,
-              hpScaling));
-      e.addBuff(
-          new StatBuff<TdMob>(Type.MORE, Stats.speed,
-              spdScaling));
-      addEnemy(e);
-    }
-
-    private void onBeginWave(int waveNum) {
-      mobsToSpawn = cheat ? 1 : Math.min(300000, (float) (50 * Math.pow(waveNum, 1.1)));
-      mobsPerTick = cheat ? 1 : Math.min(200, 0.1f * waveNum);
-      goldenSpawned = false;
-      spawningProcess = 0;
+    private void beginWave() {
+      waves.add(Wave.get(World.this, waveNum));
+      waveNum++;
+      World.this.onBeginWave();
     }
 
     private void run() {
-      spawningProcess += Math.min(mobsPerTick, mobsToSpawn);
-      mobsToSpawn = Math.max(0, mobsToSpawn - mobsPerTick);
-      if (mobsToSpawn + spawningProcess < bloons.get(bloons.size() - 1).cost) {
-        if (!goldenSpawned && wave % 10 == 0) {
-          add(new GoldenBloon(World.this));
-          goldenSpawned = true;
+      for (Iterator<Wave> iterator = waves.iterator(); iterator.hasNext(); ) {
+        Wave x = iterator.next();
+        x.onGameTick(tick);
+        if (x.WasDeleted()) {
+          endWave(x.waveNum);
+          iterator.remove();
         }
-        if (mobsList.isEmpty()) {
-          endWave();
-        }
-        return;
       }
-      if (next == null) {
-        next = selectNectBloon(mobsToSpawn);
-      }
-      while (next.cost <= spawningProcess) {
-        spawningProcess -= next.cost;
-        add(next.spawn());
-        next = selectNectBloon(mobsToSpawn);
+
+      if(waves.isEmpty()){
+        beginWave();
       }
     }
 
-    class BloonSpawn {
-
-      private final float cost;
-      private final Spawner spawn;
-
-      BloonSpawn(float cost, Spawner newBloon) {
-        this.cost = cost;
-        spawn = newBloon;
-      }
-
-      float getCost() {
-        return cost;
-      }
-
-      TdMob spawn() {
-        return spawn.spawn(World.this);
-      }
-
-      @FunctionalInterface
-      interface Spawner {
-
-        TdMob spawn(World w);
-      }
+    public void endWave(int num) {
+      turrets.forEach(Turret::endOfRound);
+      upgrades.gib(num+1);
     }
   }
 }

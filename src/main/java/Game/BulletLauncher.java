@@ -106,6 +106,7 @@ public class BulletLauncher {
     playerCollides.addAll(og.playerCollides);
     mobCollides.addAll(og.mobCollides);
     projectileCollides.addAll(og.projectileCollides);
+    projectileModifiers.addAll(og.projectileModifiers);
     launcher = og.launcher;
   }
 

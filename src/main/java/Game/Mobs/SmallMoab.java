@@ -9,8 +9,8 @@ public class SmallMoab extends TdMob {
       Ceramic::new, Ceramic::new,
       Ceramic::new, Ceramic::new, Ceramic::new, Ceramic::new);
 
-  public SmallMoab(World world) {
-    super(world, "BloonSmallMoab");
+  public SmallMoab(World world, int wave) {
+    super(world, "BloonSmallMoab", wave);
     sprite.setSize(getStats()[Stats.size] * 1.1f, getStats()[Stats.size] * 0.8f);
     sprite.setLayer(2);
   }

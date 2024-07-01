@@ -197,6 +197,10 @@ public class Projectile extends GameObject implements TickDetect {
     }
   }
 
+  public void onGameTickP2(){
+    bh.tick();
+  }
+
   @Override
   public void delete() {
     onDelete();
@@ -306,9 +310,9 @@ public class Projectile extends GameObject implements TickDetect {
     projectileCollides.add(component);
   }
 
-  public static class Guided {
+  private TdMob targetedMob;
 
-    private TdMob targetedMob;
+  public static class Guided {
 
     public int getRange() {
       return range;
@@ -335,20 +339,20 @@ public class Projectile extends GameObject implements TickDetect {
     }
 
     public void tick(Projectile target) {
-      if (targetedMob == null || target.alreadyHitMobs.contains(targetedMob)
-          || targetedMob.WasDeleted()) {
-        targetedMob = null;
+      if (target.targetedMob == null || target.alreadyHitMobs.contains(target.targetedMob)
+          || target.targetedMob.WasDeleted()) {
+        target.targetedMob = null;
       }
-      if (targetedMob == null) {
-        targetedMob = target.world.getMobsGrid()
+      if (target.targetedMob == null) {
+        target.targetedMob = target.world.getMobsGrid()
             .getFirst(new Point((int) target.x, (int) target.y), range,
                 mob -> !(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
       }
-      if (targetedMob == null) {
+      if (target.targetedMob == null) {
         return;
       }
 
-      target.turnTowards(targetedMob.x, targetedMob.y, strength * target.getSpeed() * .1f);
+      target.turnTowards(target.targetedMob.x, target.targetedMob.y, strength * target.getSpeed() * .1f);
 
     }
   }

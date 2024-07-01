@@ -243,6 +243,10 @@ public abstract class Turret extends GameObject implements TickDetect {
     rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
   }
 
+  public boolean blocksPlacement(){
+    return true;
+  }
+
   protected static class Upgrade {
 
     protected final float cost;

@@ -7,8 +7,8 @@ public class Ceramic extends TdMob {
 
   private static final List<TdMob.ChildSpawner> spawns = List.of(Lead::new, Lead::new);
 
-  public Ceramic(World world) {
-    super(world, "BloonCeramic");
+  public Ceramic(World world, int wave) {
+    super(world, "BloonCeramic", wave);
   }
 
   public Ceramic(TdMob parent) {

@@ -229,7 +229,7 @@ public class Plane extends Turret {
   protected Upgrade up300() {
     return new Upgrade("Meteor", () -> "Beefy darts",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 1.8f));
+          addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 1.0f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 3f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, .8f));
@@ -248,7 +248,7 @@ public class Plane extends Turret {
           for(Turret t : world.getTurrets()){
             if(
                 !carried.contains(t)&&
-                !(t instanceof Plane || t instanceof Necromancer || t.isNotYetPlaced()) &&
+                !(t instanceof Plane || t instanceof Necromancer || t instanceof EngiTurret || t.isNotYetPlaced()) &&
                 Util.distanceSquared(x-t.getX(),y-t.getY()) < dist){
               best=t;
               dist = Util.distanceSquared(x-t.getX(),y-t.getY());
@@ -285,23 +285,23 @@ public class Plane extends Turret {
   @Override
   protected Upgrade up001() {
     return new Upgrade("DoubleDart", () -> "shoots 2x more darts, currently "+(int)stats[ExtraStats.Radial],
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.Radial, 2f)), 200);
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.Radial, 2f)), 550);
   }
 
   @Override
   protected Upgrade up002() {
     return new Upgrade("TripleDart", () -> "shoots 3x more often.",
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3f)), 1000);
+        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3f)), 4000);
   }
 
   @Override
   protected Upgrade up003() {
-    return new Upgrade("QuadDart", () -> "shoots 4x more darts, currently "+(int)stats[ExtraStats.Radial],
+    return new Upgrade("QuadDart", () -> "shoots 4x more darts.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.Radial, 4f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 0.5f));
-        }, 5000);
+        }, 25000);
   }
 
   @Override
@@ -310,17 +310,22 @@ public class Plane extends Turret {
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 2f));
-          bulletLauncher.setSpread(10);
-        }, 20000);
+          bulletLauncher.setSpread(100);
+        }, 80000);
   }
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("TenDart", () -> "5x damage. shoots 5x more darts, currently "+(int)stats[ExtraStats.Radial],
+    return new Upgrade("TenDart", () -> "5x damage. shoots 5x more darts.",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.Radial, 5f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 5f));
-        }, 100000);
+        }, 960000);
+  }
+
+  @Override
+  public boolean blocksPlacement(){
+    return false;
   }
 
   // generated stats
@@ -334,11 +339,11 @@ public class Plane extends Turret {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 350f;
     stats[Stats.pierce] = 8f;
-    stats[Stats.aspd] = 0.7f;
+    stats[Stats.aspd] = 0.8f;
     stats[Stats.projectileDuration] = 1.1f;
     stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 25f;
-    stats[Stats.cost] = 100f;
+    stats[Stats.cost] = 700f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
     stats[ExtraStats.Radial] = 8f;
