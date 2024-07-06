@@ -11,7 +11,6 @@ import Game.Wave;
 import Game.World;
 import general.Constants;
 import general.Data;
-import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -34,7 +33,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread), 0, 0, world);
-    waveNum=wave;
+    waveNum = wave;
     Wave.increaseMobsInWave(waveNum);
     clearStats();
     healthPart = 1;
@@ -53,7 +52,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     super(parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),
         parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),
         0, 0, world);
-    waveNum= parent.waveNum;
+    waveNum = parent.waveNum;
     Wave.increaseMobsInWave(waveNum);
     clearStats();
     healthPart = 1;
@@ -107,6 +106,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
     double resistance = stats[Stats.damageTaken];
     double eDamage = amount * resistance / stats[Stats.health];
     healthPart -= eDamage;
+    handleDeath();
+  }
+
+  protected void handleDeath(){
     if (healthPart <= 0.0000001 && exists) {
       world.setMoney(world.getMoney() + stats[Stats.value]);
       onDeath();
@@ -132,15 +135,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   @Override
   public void onGameTick(int tick) {
-    buffHandler.tick();
     movement.tick(this);
     grid.add(this);
-    miscTickActions();
     sprite.setPosition(x, y);
   }
-  
-  public void onGameTickP2(int tick){
+
+  public void onGameTickP2(int tick) {
     buffHandler.tick();
+    miscTickActions(tick);
   }
 
   @Override
@@ -156,7 +158,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     return !exists;
   }
 
-  private void miscTickActions() {
+  protected void miscTickActions(int tick) {
   }
 
   private void passed() {
@@ -237,7 +239,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
         float vx = stats[speedStat] * Util.cos(rotationToNextPoint);
         float vy = stats[speedStat] * Util.sin(rotationToNextPoint);
         target.move(target.getX() + vx, target.getY() + vy);
-        if(target instanceof TdMob mob && mob.isMoab()) {
+        if (target instanceof TdMob mob && mob.isMoab()) {
           target.setRotation(rotationToNextPoint - 90f);
         }
       }

@@ -18,7 +18,7 @@ public class BulletLauncher {
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
   private String image;
   private float speed;
-  public int radial=1;
+  public int radial = 1;
 
   public String getImage() {
     return image;
@@ -210,8 +210,9 @@ public class BulletLauncher {
     }
     float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
 
-    for(int i=0;i<radial;i++) {
-      Projectile p = launcher.make(world, image, x, y, speed, angle + 360f*i/radial + deviation, width, height,
+    for (int i = 0; i < radial; i++) {
+      Projectile p = launcher.make(world, image, x, y, speed, angle + 360f * i / radial + deviation,
+          width, height,
           pierce, size,
           duration, power);
       for (var pm : projectileModifiers) {
@@ -227,7 +228,7 @@ public class BulletLauncher {
       for (var collide : projectileCollides) {
         p.addProjectileCollide(collide);
       }
-      if(i==radial-1) {
+      if (i == radial - 1) {
         return p;
       }
     }

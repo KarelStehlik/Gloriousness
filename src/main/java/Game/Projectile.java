@@ -183,8 +183,6 @@ public class Projectile extends GameObject implements TickDetect {
       return;
     }
     fly();
-    bh.tick();
-    handleCollisions();
     world.getProjectilesGrid().add(this);
     addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Stats.duration, -Game.tickIntervalMillis));
     if (stats[Stats.duration] <= 0) {
@@ -197,8 +195,10 @@ public class Projectile extends GameObject implements TickDetect {
     }
   }
 
-  public void onGameTickP2(){
+  public void onGameTickP2() {
     bh.tick();
+    handleCollisions();
+    handleProjectileCollision();
   }
 
   @Override
@@ -221,8 +221,6 @@ public class Projectile extends GameObject implements TickDetect {
 
   private void fly() {
     move(x + vx, y + vy);
-    handleCollisions();
-    world.getProjectilesGrid().add(this);
   }
 
   private void handleCollisions() {
@@ -291,7 +289,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Projectile e) {
-    if (!active || !e.active || e.equals(this) || alreadyHitProjectiles.contains(e)) {
+    if (!active || !e.active || e==this || alreadyHitProjectiles.contains(e)) {
       return;
     }
     if (!multihit) {
@@ -352,7 +350,8 @@ public class Projectile extends GameObject implements TickDetect {
         return;
       }
 
-      target.turnTowards(target.targetedMob.x, target.targetedMob.y, strength * target.getSpeed() * .1f);
+      target.turnTowards(target.targetedMob.x, target.targetedMob.y,
+          strength * target.getSpeed() * .1f);
 
     }
   }

@@ -5,15 +5,11 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.Player.Stats;
 import general.Data;
-import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 import windowStuff.Button;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
@@ -38,8 +34,8 @@ public class UpgradeGiver {
     buttons.clear();
   }
 
-  private void LoadNewUpgrades(){
-    if(requested.isEmpty()) {
+  private void LoadNewUpgrades() {
+    if (requested.isEmpty()) {
       return;
     }
     int gloriousness = requested.poll();
@@ -52,11 +48,11 @@ public class UpgradeGiver {
   }
 
   public void gib(int gloriousness) {
-    if(gloriousness==0){
+    if (gloriousness == 0) {
       return;
     }
     requested.add(gloriousness);
-    if(buttons.isEmpty()){
+    if (buttons.isEmpty()) {
       LoadNewUpgrades();
     }
   }

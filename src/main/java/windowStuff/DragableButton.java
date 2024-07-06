@@ -1,6 +1,6 @@
 package windowStuff;
 
-public class DragableButton extends Button{
+public class DragableButton extends Button {
 
   public DragableButton(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
       MouseoverText caption) {
@@ -13,9 +13,9 @@ public class DragableButton extends Button{
 
   @Override
   public boolean onMouseMove(float newX, float newY) {
-    if(pressed){
-      getSprite().setPosition(newX,newY);
+    if (pressed) {
+      getSprite().setPosition(newX, newY);
     }
-    return super.onMouseMove(newX,newY);
+    return super.onMouseMove(newX, newY);
   }
 }

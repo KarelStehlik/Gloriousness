@@ -19,47 +19,45 @@ import Game.Mobs.Yellow;
 import general.Data;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Wave implements TickDetect{
+public class Wave implements TickDetect {
 
   private static final List<Integer> MobsAliveFromEachWave = new ArrayList<>();
 
-  public static void increaseMobsInWave(int waveNum){
-    MobsAliveFromEachWave.set(waveNum, MobsAliveFromEachWave.get(waveNum)+1);
+  public static void increaseMobsInWave(int waveNum) {
+    MobsAliveFromEachWave.set(waveNum, MobsAliveFromEachWave.get(waveNum) + 1);
   }
 
-  public static void decreaseMobsInWave(int waveNum){
-    MobsAliveFromEachWave.set(waveNum, MobsAliveFromEachWave.get(waveNum)-1);
+  public static void decreaseMobsInWave(int waveNum) {
+    MobsAliveFromEachWave.set(waveNum, MobsAliveFromEachWave.get(waveNum) - 1);
   }
 
   public final int waveNum;
-  private World world;
-  private float scaling;
-  private int elapsed=0;
+  private final World world;
+  private final float scaling;
+  private int elapsed = 0;
   private final SpawnSequence[] spawns;
 
   public float getElapsedMillis() {
     return elapsedMillis;
   }
 
-  private float elapsedMillis=0;
+  private final float elapsedMillis = 0;
 
-  private Wave(World world, int n,  SpawnSequence[] s) {
-    while(MobsAliveFromEachWave.size()<=n) {
+  private Wave(World world, int n, SpawnSequence[] s) {
+    while (MobsAliveFromEachWave.size() <= n) {
       MobsAliveFromEachWave.add(0);
     }
     this.world = world;
-    this.waveNum=n;
-    scaling=getScaling(n);
-    spawns=s;
+    this.waveNum = n;
+    scaling = getScaling(n);
+    spawns = s;
   }
 
   @Override
   public void onGameTick(int tick) {
-    for(var sp : spawns){
+    for (var sp : spawns) {
       sp.onTick(elapsed, this);
     }
     elapsed++;
@@ -72,7 +70,8 @@ public class Wave implements TickDetect{
 
   @Override
   public boolean WasDeleted() {
-    return MobsAliveFromEachWave.get(waveNum)==0 && Arrays.stream(spawns).allMatch(sp -> sp.done(elapsed));
+    return MobsAliveFromEachWave.get(waveNum) == 0 && Arrays.stream(spawns)
+        .allMatch(sp -> sp.done(elapsed));
   }
 
   private void add(TdMob e) {
@@ -87,19 +86,21 @@ public class Wave implements TickDetect{
     world.addEnemy(e);
   }
 
-  public static Wave get(World w, int num){
-    if(num>=waves.length){
-      return new Wave(w, num, waves[Data.gameMechanicsRng.nextInt(waves.length-5, waves.length)]);
+  public static Wave get(World w, int num) {
+    if (num >= waves.length) {
+      return new Wave(w, num, waves[Data.gameMechanicsRng.nextInt(waves.length - 5, waves.length)]);
     }
     return new Wave(w, num, waves[num]);
   }
 
   @FunctionalInterface
-  private interface BloonNew{
+  private interface BloonNew {
+
     TdMob create(World w, int wave);
   }
 
-  private static final class SpawnSequence{
+  private static final class SpawnSequence {
+
     BloonNew bloonType;
     int count;
     int beginTick;
@@ -112,31 +113,30 @@ public class Wave implements TickDetect{
       this.interval = interval;
     }
 
-    public void onTick(int tick, Wave w){
-      if(tick>=beginTick && tick<beginTick+count*interval && (tick-beginTick)%interval==0){
+    public void onTick(int tick, Wave w) {
+      if (tick >= beginTick && tick < beginTick + count * interval
+          && (tick - beginTick) % interval == 0) {
         w.add(bloonType.create(w.world, w.waveNum));
       }
     }
-    public boolean done(int tick){
-      return tick>=beginTick+count*interval;
+
+    public boolean done(int tick) {
+      return tick >= beginTick + count * interval;
     }
   }
 
-  private static float getScaling(int wave){
+  private static float getScaling(int wave) {
     return
         1 +
-        Math.max(0, wave-40) * .05f +
-        Math.max(0, wave-80) * .1f +
-        Math.max(0, wave-100) * .1f +
-        Math.max(0, wave-150) * .5f +
-        Math.max(0, wave-300) * 1f
+            Math.max(0, wave - 40) * .05f +
+            Math.max(0, wave - 80) * .1f +
+            Math.max(0, wave - 100) * .1f +
+            Math.max(0, wave - 150) * .5f +
+            Math.max(0, wave - 300) * 1f
         ;
   }
 
   private static final SpawnSequence[][] waves = new SpawnSequence[][]{
-      new SpawnSequence[]{
-          new SpawnSequence(ShieldBloon::new, 1, 0, 5),
-      },
       // 1
       new SpawnSequence[]{
           new SpawnSequence(Red::new, 20, 0, 5),
@@ -251,7 +251,7 @@ public class Wave implements TickDetect{
       },
       // 24
       new SpawnSequence[]{
-          new SpawnSequence(ShieldBloon::new, 50, 0, 20),
+          new SpawnSequence(ShieldBloon::new, 15, 0, 100),
           new SpawnSequence(Red::new, 1000, 0, 1),
       },
       // 25
@@ -262,7 +262,7 @@ public class Wave implements TickDetect{
       // 30
       // 31
       new SpawnSequence[]{
-          new SpawnSequence(ShieldBloon::new, 35, 0, 10),
+          new SpawnSequence(ShieldBloon::new, 10, 0, 35),
           new SpawnSequence(Lead::new, 50, 0, 1),
           new SpawnSequence(Red::new, 50, 40, 1),
           new SpawnSequence(Blue::new, 50, 80, 1),
@@ -282,7 +282,7 @@ public class Wave implements TickDetect{
       // 36
       new SpawnSequence[]{
           new SpawnSequence(SmallMoab::new, 20, 0, 50),
-          new SpawnSequence(ShieldBloon::new, 100, 0, 10),
+          new SpawnSequence(ShieldBloon::new, 10, 0, 100),
           new SpawnSequence(Lead::new, 1000, 0, 1),
       },
       // 37

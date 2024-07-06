@@ -151,7 +151,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     menu = new UpgradeMenu();
   }
 
-  protected void closeUpgradeMenu(){
+  protected void closeUpgradeMenu() {
 
   }
 
@@ -243,7 +243,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
   }
 
-  public boolean blocksPlacement(){
+  public boolean blocksPlacement() {
     return true;
   }
 

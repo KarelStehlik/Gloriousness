@@ -1,6 +1,5 @@
 package Game;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -12,20 +11,8 @@ import Game.Ability.AbilityGroup;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Buffs.VoidFunc;
-import Game.Mobs.Black;
-import Game.Mobs.Blue;
-import Game.Mobs.Ceramic;
-import Game.Mobs.GoldenBloon;
-import Game.Mobs.Green;
-import Game.Mobs.Lead;
-import Game.Mobs.Moab;
-import Game.Mobs.Pink;
-import Game.Mobs.Red;
-import Game.Mobs.SmallMoab;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
-import Game.Mobs.TdMob.Stats;
-import Game.Mobs.Yellow;
 import Game.Turrets.BasicTurret;
 import Game.Turrets.Druid;
 import Game.Turrets.EatingTurret;
@@ -47,7 +34,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import org.joml.Vector2f;
 import windowStuff.Button;
@@ -169,7 +155,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   }
 
   private void updateResourceTracker() {
-    resourceTracker.setText("Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave " + mobSpawner.waveNum);
+    resourceTracker.setText(
+        "Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave " + mobSpawner.waveNum);
   }
 
   public void addEvent(VoidFunc e) {
@@ -372,7 +359,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     if (!currentTool.WasDeleted()) {
       currentTool.onKeyPress(key, action, mods);
     }
-    if(key==GLFW_KEY_SPACE && action==0){
+    if (key == GLFW_KEY_SPACE && action == 0) {
       mobSpawner.beginWave();
     }
   }
@@ -419,6 +406,20 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     tickEntities(mobsGrid, mobsList);
     mobsGrid.filled();
 
+    int undeletedM = 0;
+    for (int current = 0; current < mobsList.size(); current++) {
+      if (current != undeletedM) {
+        mobsList.set(undeletedM, mobsList.get(current));
+      }
+      if (!mobsList.get(current).WasDeleted()) {
+        mobsList.get(current).onGameTickP2(tick);
+        undeletedM++;
+      }
+    }
+    if (mobsList.size() > undeletedM) {
+      mobsList.subList(undeletedM, mobsList.size()).clear();
+    }
+
     List<VoidFunc> appliedEvents = new ArrayList<>(queuedEvents.size());
     appliedEvents.addAll(queuedEvents);
     queuedEvents.clear();
@@ -429,31 +430,41 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
     AbilityGroup.instances.removeIf(AbilityGroup::WasDeleted);
 
-
-      this.tick++;
-      player.onGameTick(tick);
-      AbilityGroup.instances.forEach(g -> g.onGameTick(tick));
-      int undeleted = 0;
-      for (int current = 0; current < turrets.size(); current++) {
-        if (current != undeleted) {
-          turrets.set(undeleted, turrets.get(current));
-        }
-        if (!turrets.get(current).WasDeleted()) {
-          turrets.get(current).onGameTick(tick);
-          undeleted++;
-        }
+    this.tick++;
+    player.onGameTick(tick);
+    AbilityGroup.instances.forEach(g -> g.onGameTick(tick));
+    int undeleted = 0;
+    for (int current = 0; current < turrets.size(); current++) {
+      if (current != undeleted) {
+        turrets.set(undeleted, turrets.get(current));
       }
-      if (turrets.size() > undeleted) {
-        turrets.subList(undeleted, turrets.size()).clear();
+      if (!turrets.get(current).WasDeleted()) {
+        turrets.get(current).onGameTick(tick);
+        undeleted++;
       }
+    }
+    if (turrets.size() > undeleted) {
+      turrets.subList(undeleted, turrets.size()).clear();
+    }
 
-      tickEntities(projectilesGrid, projectilesList);
-      for (var proj : projectilesList) {
-        proj.handleProjectileCollision();
+    tickEntities(projectilesGrid, projectilesList);
+
+    int undeletedP = 0;
+    for (int current = 0; current < projectilesList.size(); current++) {
+      if (current != undeletedP) {
+        projectilesList.set(undeletedP, projectilesList.get(current));
       }
-      //Log.write("projs: "+timer.elapsedNano(true)/1000000);
-      mobSpawner.run();
+      if (!projectilesList.get(current).WasDeleted()) {
+        projectilesList.get(current).onGameTickP2();
+        undeletedP++;
+      }
+    }
+    if (projectilesList.size() > undeletedP) {
+      projectilesList.subList(undeletedP, projectilesList.size()).clear();
+    }
 
+    //Log.write("projs: "+timer.elapsedNano(true)/1000000);
+    mobSpawner.run();
 
     //Log.write("other: "+timer.elapsedNano(true)/1000000);
   }
@@ -528,7 +539,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       Turret t = iterator.next();
       if (t.WasDeleted()) {
         iterator.remove();
-      } else if (!t.isNotYetPlaced() && t.blocksPlacement() && Util.distanceSquared(x - t.x, y - t.y)
+      } else if (!t.isNotYetPlaced() && t.blocksPlacement()
+          && Util.distanceSquared(x - t.x, y - t.y)
           < Util.square(size + t.stats[Turret.Stats.size])) {
         return false;
       }
@@ -598,7 +610,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   private class MobSpawner {
 
-    int waveNum=0;
+    int waveNum = 0;
     List<Wave> waves = new ArrayList<>(1);
 
     private void beginWave() {
@@ -617,14 +629,14 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         }
       }
 
-      if(waves.isEmpty()){
+      if (waves.isEmpty()) {
         beginWave();
       }
     }
 
     public void endWave(int num) {
       turrets.forEach(Turret::endOfRound);
-      upgrades.gib(num+1);
+      upgrades.gib(num + 1);
     }
   }
 }

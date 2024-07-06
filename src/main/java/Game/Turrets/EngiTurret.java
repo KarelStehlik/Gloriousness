@@ -10,7 +10,6 @@ import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.Projectile;
 import Game.Projectile.Guided;
-import Game.TurretGenerator;
 import Game.World;
 import general.Constants;
 import general.Util;
@@ -24,11 +23,11 @@ public class EngiTurret extends Turret {
         new BulletLauncher(templateLauncher));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
-    addBuff(new DelayedTrigger<Turret>(stats[ExtraStats.duration], Turret::delete,false));
+    addBuff(new DelayedTrigger<Turret>(stats[ExtraStats.duration], Turret::delete, false));
   }
 
   @Override
-  public boolean blocksPlacement(){
+  public boolean blocksPlacement() {
     return false;
   }
 
@@ -95,7 +94,7 @@ public class EngiTurret extends Turret {
   protected Upgrade up300() {
     return new Upgrade("MagnetDart", () -> "darts combine to become stronger",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE,Stats.projectileDuration,3f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 3f));
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new Tag<Projectile>(dartEatId, t -> {
             }));

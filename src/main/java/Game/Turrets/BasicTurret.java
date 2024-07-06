@@ -93,7 +93,7 @@ public class BasicTurret extends Turret {
   protected Upgrade up300() {
     return new Upgrade("MagnetDart", () -> "darts combine to become stronger",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE,Stats.projectileDuration,3f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 3f));
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new Tag<Projectile>(dartEatId, t -> {
             }));

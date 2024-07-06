@@ -39,7 +39,8 @@ public class GoldenBloon extends TdMob {
   @Override
   public void takeDamage(float amount, DamageType type) {
     super.takeDamage(amount, type);
-    addBuff(new StatBuff<TdMob>(Type.ADDED, Stats.value, (long) stats[ExtraStats.moneyPerDamage]*amount));
+    addBuff(new StatBuff<TdMob>(Type.ADDED, Stats.value,
+        (long) stats[ExtraStats.moneyPerDamage] * amount));
   }
 
   @Override

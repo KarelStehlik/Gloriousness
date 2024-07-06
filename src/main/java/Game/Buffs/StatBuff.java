@@ -2,7 +2,6 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
-import general.Log;
 import general.Util;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -108,7 +107,6 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       //int count = moreModifiers.computeIfAbsent(value,v->0);
       //moreModifiers.put(value, count+1);
       more *= value;
-      Log.write("addMore "+Game.get().getTicks());
     }
 
     void removeMore(float value) {
@@ -119,7 +117,6 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       //  moreModifiers.put(value, count-1);
       //}
       more /= value;
-      Log.write("rmMore "+Game.get().getTicks());
     }
 
     void add(StatBuff<?> b, GameObject tar) {

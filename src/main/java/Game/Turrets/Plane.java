@@ -5,6 +5,7 @@ import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
+import Game.DamageType;
 import Game.Game;
 import Game.Projectile;
 import Game.Projectile.Guided;
@@ -15,10 +16,8 @@ import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import org.lwjgl.system.linux.Stat;
 import windowStuff.DragableButton;
 import windowStuff.Sprite;
-import Game.DamageType;
 
 public class Plane extends Turret {
 
@@ -32,32 +31,32 @@ public class Plane extends Turret {
       return;
     }
     bulletLauncher.tickCooldown();
-    bulletLauncher.move(x,y);
+    bulletLauncher.move(x, y);
     while (bulletLauncher.canAttack()) {
       bulletLauncher.attack(rotation);
     }
-    if(dropsPineapples){
-      pineappleLauncher.move(x,y);
+    if (dropsPineapples) {
+      pineappleLauncher.move(x, y);
       pineappleLauncher.tickCooldown();
       while (pineappleLauncher.canAttack()) {
         pineappleLauncher.attack(rotation);
       }
     }
     buffHandler.tick();
-    move(x+speed*Util.cos(rotation), y+speed*Util.sin(rotation));
+    move(x + speed * Util.cos(rotation), y + speed * Util.sin(rotation));
     var next = flyPoints.get(currentFlyPoint);
-    turnTowards(next.getSprite().getX(),next.getSprite().getY(),1.7f);
-    if(Util.distanceSquared(x-next.getSprite().getX(), y-next.getSprite().getY())<5000){
-      next.getSprite().setColors(Util.getColors(0,0,0));
-      currentFlyPoint = (currentFlyPoint+1)%flyPoints.size();
-      flyPoints.get(currentFlyPoint).getSprite().setColors(Util.getColors(1,0,0.3f));
+    turnTowards(next.getSprite().getX(), next.getSprite().getY(), 1.7f);
+    if (Util.distanceSquared(x - next.getSprite().getX(), y - next.getSprite().getY()) < 5000) {
+      next.getSprite().setColors(Util.getColors(0, 0, 0));
+      currentFlyPoint = (currentFlyPoint + 1) % flyPoints.size();
+      flyPoints.get(currentFlyPoint).getSprite().setColors(Util.getColors(1, 0, 0.3f));
     }
     for (int i = 0; i < carried.size(); i++) {
       Turret c = carried.get(i);
-      if(c.WasDeleted()){
+      if (c.WasDeleted()) {
         carried.remove(i);
         i--;
-      }else {
+      } else {
         float offset = 100;
         float angle = 360f * i / carried.size();
         c.move(x + Util.cos(angle) * offset, y + Util.sin(angle) * offset);
@@ -66,16 +65,16 @@ public class Plane extends Turret {
   }
 
   private static final List<Point> defaultFlyPoints = List.of(
-      new Point(950,540),
-      new Point(1620,540),
-      new Point(970,540),
-      new Point(300,540)
+      new Point(950, 540),
+      new Point(1620, 540),
+      new Point(970, 540),
+      new Point(300, 540)
   );
 
   private final List<DragableButton> flyPoints = new ArrayList<>(4);
-  private int currentFlyPoint=0;
+  private int currentFlyPoint = 0;
   private final BulletLauncher pineappleLauncher = new BulletLauncher(world, "Duck");
-  private boolean dropsPineapples=false;
+  private boolean dropsPineapples = false;
 
   public Plane(World world, int X, int Y) {
     super(world, X, Y, image,
@@ -83,37 +82,41 @@ public class Plane extends Turret {
     onStatsUpdate();
     sprite.setLayer(3);
     bulletLauncher.addMobCollide(BasicCollides.damage);
-    pineappleLauncher.addProjectileModifier(p->p.addBeforeDeath(pineapple->{
+    pineappleLauncher.addProjectileModifier(p -> p.addBeforeDeath(pineapple -> {
       world.aoeDamage(
-        (int) pineapple.getX(), (int) pineapple.getY(), (int) stats[ExtraStats.PineRadius],pineapple.getPower(),
-        DamageType.TRUE);
-      world.explosionVisual((int) pineapple.getX(), (int) pineapple.getY(), (int) stats[ExtraStats.PineRadius], false, "Explosion2-0");
+          (int) pineapple.getX(), (int) pineapple.getY(), (int) stats[ExtraStats.PineRadius],
+          pineapple.getPower(),
+          DamageType.TRUE);
+      world.explosionVisual((int) pineapple.getX(), (int) pineapple.getY(),
+          (int) stats[ExtraStats.PineRadius], false, "Explosion2-0");
     }));
 
-    for(int i=0;i<4;i++){
+    for (int i = 0; i < 4; i++) {
       Point loc = defaultFlyPoints.get(i);
-      var b = new DragableButton(new Sprite("Button",100).setPosition(loc.x,loc.y).setSize(50,50).addToBs(world.getBs()),(x,y)->{});
+      var b = new DragableButton(new Sprite("Button", 100).setPosition(loc.x, loc.y).setSize(50, 50)
+          .addToBs(world.getBs()), (x, y) -> {
+      });
       Game.get().addMouseDetect(b);
       b.hide();
       flyPoints.add(b);
     }
-    bulletLauncher.radial=8;
+    bulletLauncher.radial = 8;
   }
 
   @Override
-  public void place(){
+  public void place() {
     super.place();
-    move(960,0);
+    move(960, 0);
     setRotation(90);
   }
 
   @Override
   public void onStatsUpdate() {
     super.onStatsUpdate();
-    bulletLauncher.radial= (int) stats[ExtraStats.Radial];
-    if(pineappleLauncher!=null) {
+    bulletLauncher.radial = (int) stats[ExtraStats.Radial];
+    if (pineappleLauncher != null) {
       pineappleLauncher.setPower(stats[ExtraStats.PinePower] * stats[Stats.power]);
-      pineappleLauncher.setCooldown(1000f/(stats[ExtraStats.PineAspd] * stats[Stats.aspd]));
+      pineappleLauncher.setCooldown(1000f / (stats[ExtraStats.PineAspd] * stats[Stats.aspd]));
       pineappleLauncher.setDuration(stats[ExtraStats.PineDuration]);
       pineappleLauncher.setSpeed(0);
       pineappleLauncher.setSize(65);
@@ -122,17 +125,17 @@ public class Plane extends Turret {
   }
 
   @Override
-  protected void openUpgradeMenu(){
+  protected void openUpgradeMenu() {
     super.openUpgradeMenu();
-    for(var s:flyPoints){
+    for (var s : flyPoints) {
       s.show();
     }
   }
 
   @Override
-  protected void closeUpgradeMenu(){
+  protected void closeUpgradeMenu() {
     super.closeUpgradeMenu();
-    for(var s:flyPoints){
+    for (var s : flyPoints) {
       s.hide();
     }
   }
@@ -145,7 +148,7 @@ public class Plane extends Turret {
   protected Upgrade up010() {
     return new Upgrade("Duck", () -> "drops pineapples",
         () -> {
-          dropsPineapples=true;
+          dropsPineapples = true;
         }, 200);
   }
 
@@ -153,7 +156,7 @@ public class Plane extends Turret {
   protected Upgrade up020() {
     return new Upgrade("Button", () -> "more pineapples",
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE,ExtraStats.PineAspd,3));
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.PineAspd, 3));
         }, 1000);
   }
 
@@ -172,15 +175,16 @@ public class Plane extends Turret {
     return new Upgrade("BeefierDart", () -> "Pineapples fire darts 10 times. darts do more damage.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 3));
-          pineappleLauncher.addProjectileModifier(dart->{
-            dart.addBeforeDeath(p->{
-              bulletLauncher.move(p.getX(),p.getY());
+          pineappleLauncher.addProjectileModifier(dart -> {
+            dart.addBeforeDeath(p -> {
+              bulletLauncher.move(p.getX(), p.getY());
 
-              for(int i=0;i<10;i++) {
-                bulletLauncher.attack(Data.gameMechanicsRng.nextFloat(0,360),false);
+              for (int i = 0; i < 10; i++) {
+                bulletLauncher.attack(Data.gameMechanicsRng.nextFloat(0, 360), false);
               }
 
-            });});
+            });
+          });
         }, 20000);
   }
 
@@ -220,7 +224,7 @@ public class Plane extends Turret {
   @Override
   public void delete() {
     super.delete();
-    for(DragableButton b : flyPoints){
+    for (DragableButton b : flyPoints) {
       b.delete();
     }
   }
@@ -237,7 +241,8 @@ public class Plane extends Turret {
         }, 5000);
   }
 
-  private List<Turret> carried = new ArrayList<>();
+  private final List<Turret> carried = new ArrayList<>();
+
   @Override
   protected Upgrade up500() {
     return new Upgrade("InfiniDart",
@@ -245,23 +250,25 @@ public class Plane extends Turret {
         () -> {
           Turret best = null;
           float dist = Float.POSITIVE_INFINITY;
-          for(Turret t : world.getTurrets()){
-            if(
-                !carried.contains(t)&&
-                !(t instanceof Plane || t instanceof Necromancer || t instanceof EngiTurret || t.isNotYetPlaced()) &&
-                Util.distanceSquared(x-t.getX(),y-t.getY()) < dist){
-              best=t;
-              dist = Util.distanceSquared(x-t.getX(),y-t.getY());
+          for (Turret t : world.getTurrets()) {
+            if (
+                !carried.contains(t) &&
+                    !(t instanceof Plane || t instanceof Necromancer || t instanceof EngiTurret
+                        || t.isNotYetPlaced()) &&
+                    Util.distanceSquared(x - t.getX(), y - t.getY()) < dist) {
+              best = t;
+              dist = Util.distanceSquared(x - t.getX(), y - t.getY());
             }
           }
-          if(best!=null) {
+          if (best != null) {
             carried.add(best);
           }
-          path1Tier=4;
+          path1Tier = 4;
         }, 12000);
   }
 
-  private static final float[] red = Util.getColors(0.9f,0,0);
+  private static final float[] red = Util.getColors(0.9f, 0, 0);
+
   @Override
   protected Upgrade up400() {
     return new Upgrade("Button", () -> "Enemies hit explode",
@@ -271,7 +278,7 @@ public class Plane extends Turret {
             world.aoeDamage((int) mob.getX(),
                 (int) mob.getY(),
                 100,
-                proj.getPower()*6,
+                proj.getPower() * 6,
                 DamageType.TRUE
             );
             world.lesserExplosionVisual((int) mob.getX(),
@@ -284,7 +291,8 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("DoubleDart", () -> "shoots 2x more darts, currently "+(int)stats[ExtraStats.Radial],
+    return new Upgrade("DoubleDart",
+        () -> "shoots 2x more darts, currently " + (int) stats[ExtraStats.Radial],
         () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.Radial, 2f)), 550);
   }
 
@@ -324,7 +332,7 @@ public class Plane extends Turret {
   }
 
   @Override
-  public boolean blocksPlacement(){
+  public boolean blocksPlacement() {
     return false;
   }
 

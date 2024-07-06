@@ -1,27 +1,23 @@
 package Game.Turrets;
 
-import Game.Ability;
 import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.Modifier;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.Buffs.Tag;
 import Game.BulletLauncher;
+import Game.DamageType;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;
 import Game.Projectile.Guided;
 import Game.TurretGenerator;
-import Game.DamageType;
-import Game.Turrets.EngiTurret.ExtraStats;
 import Game.World;
 import general.Data;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
-import org.lwjgl.system.linux.Stat;
 
 public class Engineer extends Turret {
 
@@ -43,7 +39,7 @@ public class Engineer extends Turret {
     return new TurretGenerator(world, image, "Basic", () -> new Engineer(world, -1000, -1000));
   }
 
-  private float turretPlaceTimer=0;
+  private float turretPlaceTimer = 0;
 
   @Override
   public void onGameTick(int tick) {
@@ -59,16 +55,17 @@ public class Engineer extends Turret {
       }
     }
     turretPlaceTimer += Game.tickIntervalMillis * stats[Stats.aspd] * stats[ExtraStats.spawnSpd];
-    while(turretPlaceTimer >= 1000){
-      turretPlaceTimer-=1000;
-      float dist = (float) Math.sqrt(Data.gameMechanicsRng.nextDouble(Util.square(stats[Stats.range])));
+    while (turretPlaceTimer >= 1000) {
+      turretPlaceTimer -= 1000;
+      float dist = (float) Math.sqrt(
+          Data.gameMechanicsRng.nextDouble(Util.square(stats[Stats.range])));
       float angle = Data.gameMechanicsRng.nextFloat(360);
       EngiTurret t = new EngiTurret(world,
-          (int) (x+ dist*Util.cos(angle)),
-          (int) (y+dist*Util.sin(angle)),
+          (int) (x + dist * Util.cos(angle)),
+          (int) (y + dist * Util.sin(angle)),
           turretLauncher);
       t.place();
-      turretMods.forEach(m->m.mod(t));
+      turretMods.forEach(m -> m.mod(t));
     }
     buffHandler.tick();
   }
@@ -77,9 +74,9 @@ public class Engineer extends Turret {
   protected Upgrade up010() {
     return new Upgrade("Dart", () -> "turrets also shoot behind them, and have +3 pierce",
         () -> {
-          turretMods.add(t->{
-            t.bulletLauncher.radial=2;
-            t.addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce,3));
+          turretMods.add(t -> {
+            t.bulletLauncher.radial = 2;
+            t.addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 3));
           });
         }, 150);
   }
@@ -88,8 +85,8 @@ public class Engineer extends Turret {
   protected Upgrade up030() {
     return new Upgrade("Dart", () -> "turrets shoot 10 bullets radially.",
         () -> {
-          turretMods.add(t->{
-            t.bulletLauncher.radial=10;
+          turretMods.add(t -> {
+            t.bulletLauncher.radial = 10;
           });
         }, 1500);
   }
@@ -98,13 +95,13 @@ public class Engineer extends Turret {
   protected Upgrade up040() {
     return new Upgrade("BeefyDart", () -> "turrets have beefier lasers.",
         () -> {
-          turretMods.add(t->{
-          t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.1f));
-          t.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 5f));
-          t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 10f));
-          t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 36f));
-          t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 0.3f));
-          t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 3.2f));
+          turretMods.add(t -> {
+            t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.1f));
+            t.addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 5f));
+            t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 10f));
+            t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 36f));
+            t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 0.3f));
+            t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 3.2f));
           });
         }, 64000);
   }
@@ -116,8 +113,8 @@ public class Engineer extends Turret {
     return new Upgrade("Dart", () -> "turrets shoot a ring of death, but there's fewer turrets.",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spawnSpd, 0.3f));
-          turretMods.add(t->{
-            t.bulletLauncher.radial=200;
+          turretMods.add(t -> {
+            t.bulletLauncher.radial = 200;
           });
         }, 1500);
   }
@@ -128,8 +125,10 @@ public class Engineer extends Turret {
   protected Upgrade up300() {
     return new Upgrade("MagnetDart", () -> "turrets explode on death",
         () -> {
-          turretMods.add(t->t.addBuff(new DelayedTrigger<Turret>(turr->{world.aoeDamage((int) turr.getX(), (int) turr.getY(),400,200, DamageType.TRUE);
-            world.explosionVisual((int) turr.getX(), (int) turr.getY(),200, false, "Explosion1-0");}, true)));
+          turretMods.add(t -> t.addBuff(new DelayedTrigger<Turret>(turr -> {
+            world.aoeDamage((int) turr.getX(), (int) turr.getY(), 400, 200, DamageType.TRUE);
+            world.explosionVisual((int) turr.getX(), (int) turr.getY(), 200, false, "Explosion1-0");
+          }, true)));
         }, 4000);
   }
 
@@ -140,8 +139,8 @@ public class Engineer extends Turret {
     return new Upgrade("Radar",
         () -> "turret projectiles last longer and seek",
         () -> {
-          turretLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(g::tick)));
-          turretMods.add(t->{
+          turretLauncher.addProjectileModifier(p -> p.addBuff(new OnTickBuff<Projectile>(g::tick)));
+          turretMods.add(t -> {
             t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 2));
             t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2));
           });
@@ -152,9 +151,10 @@ public class Engineer extends Turret {
   protected Upgrade up200() {
     return new Upgrade("MoreRadar", () -> "turret projectiles explode on depletion",
         () -> {
-          turretLauncher.addProjectileModifier(p->p.addBeforeDeath(proj->{
-            world.aoeDamage((int) proj.getX(), (int) proj.getY(),200,proj.getPower(), DamageType.TRUE);
-            world.explosionVisual((int) proj.getX(), (int) proj.getY(),200, false, "Explosion2-0");
+          turretLauncher.addProjectileModifier(p -> p.addBeforeDeath(proj -> {
+            world.aoeDamage((int) proj.getX(), (int) proj.getY(), 200, proj.getPower(),
+                DamageType.TRUE);
+            world.explosionVisual((int) proj.getX(), (int) proj.getY(), 200, false, "Explosion2-0");
           }));
         }, 800);
   }
@@ -163,7 +163,7 @@ public class Engineer extends Turret {
   protected Upgrade up020() {
     return new Upgrade("Dart", () -> "turrets have 20% more attack speed, range, damage, duration.",
         () -> {
-          turretMods.add(t->{
+          turretMods.add(t -> {
             t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 1.2f));
             t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.range, 1.2f));
             t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 1.2f));
@@ -187,7 +187,8 @@ public class Engineer extends Turret {
     return new Upgrade("Goldfish", () -> "produces 5x more turrets, with less duration",
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spawnSpd, 5));
-          turretMods.add(t->t.addBuff(new StatBuff<Turret>(Type.MORE, EngiTurret.ExtraStats.duration, 0.2f)));
+          turretMods.add(t -> t.addBuff(
+              new StatBuff<Turret>(Type.MORE, EngiTurret.ExtraStats.duration, 0.2f)));
         }, 10000);
   }
 

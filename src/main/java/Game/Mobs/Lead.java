@@ -1,5 +1,6 @@
 package Game.Mobs;
 
+import Game.DamageType;
 import Game.World;
 import java.util.List;
 
@@ -15,6 +16,16 @@ public class Lead extends TdMob {
   public Lead(TdMob parent) {
     super(parent.world, "BloonLead", parent, parent.getChildrenSpread());
   }
+
+  @Override
+  public void takeDamage(float amount, DamageType type) {
+    double resistance = stats[Stats.damageTaken];
+    double eDamage = amount * resistance / stats[Stats.health];
+    eDamage = Math.max(0, eDamage - stats[Stats.health] * .2f);
+    healthPart -= eDamage;
+    handleDeath();
+  }
+
 
   // generated stats
   @Override
