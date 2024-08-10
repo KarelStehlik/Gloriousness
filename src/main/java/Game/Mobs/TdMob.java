@@ -11,6 +11,7 @@ import Game.Wave;
 import Game.World;
 import general.Constants;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -22,7 +23,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected final Sprite sprite;
   protected final SquareGrid<TdMob> grid;
   private final BuffHandler<TdMob> buffHandler;
-  private final MoveAlongTrack<TdMob> movement;
+  protected MovementAi<TdMob> movement;
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
@@ -39,11 +40,12 @@ public abstract class TdMob extends GameObject implements TickDetect {
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
-    sprite = new Sprite(image, x, y, width, height, 1, "basic");
+    sprite = new Sprite(image, x, y, width, height, isMoab()?2:1, "basic");
     sprite.addToBs(world.getBs());
+    sprite.setNaturalHeight();
     exists = true;
     buffHandler = new BuffHandler<>(this);
-    movement = new MoveAlongTrack<>(false, world.getMapData(),
+    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
         new Point((int) x - world.getMapData().get(0).x,
             (int) y - world.getMapData().get(0).y), stats, Stats.speed, TdMob::passed);
   }
@@ -58,13 +60,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
-    sprite = new Sprite(image, x, y, width, height, 1, "basic");
+    sprite = new Sprite(image, x, y, width, height, isMoab()?2:1, "basic");
     sprite.addToBs(world.getBs());
+    sprite.setNaturalHeight();
     exists = true;
     buffHandler = parent.buffHandler.copyForChild(this);
-    movement = new MoveAlongTrack<>(false, world.getMapData(),
-        new Point((int) (x - parent.x + parent.movement.offset.x),
-            (int) (y - parent.y + parent.movement.offset.y)), stats, Stats.speed, TdMob::passed,
+    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
+        new Point((int) (x - parent.x + parent.movement.getOffsetX()),
+            (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
         parent.movement.getProgress());
   }
 
@@ -91,7 +94,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   public TrackProgress getProgress() {
-    return movement.progress;
+    return movement.getProgress();
   }
 
   public boolean addBuff(Buff<TdMob> eff) {
@@ -109,14 +112,18 @@ public abstract class TdMob extends GameObject implements TickDetect {
     handleDeath();
   }
 
+  public void die(){
+    world.setMoney(world.getMoney() + stats[Stats.value]);
+    onDeath();
+
+    spawnChildren(Math.max(0, (float) (-healthPart * stats[Stats.health])));
+
+    delete();
+  }
+
   protected void handleDeath(){
     if (healthPart <= 0.0000001 && exists) {
-      world.setMoney(world.getMoney() + stats[Stats.value]);
-      onDeath();
-
-      spawnChildren((float) (-healthPart * stats[Stats.health]));
-
-      delete();
+      die();
     }
   }
 
@@ -175,7 +182,57 @@ public abstract class TdMob extends GameObject implements TickDetect {
     TdMob spawn(TdMob parent);
   }
 
-  public static class MoveAlongTrack<T extends GameObject> {
+  public interface MovementAi<T extends GameObject>{
+    TrackProgress getProgress();
+    boolean isDone();
+    void tick(T target);
+    float getOffsetX();
+    float getOffsetY();
+  }
+
+  public static class HardFollow<T extends TdMob> implements MovementAi<T> {
+    private final TdMob master;
+    private final float offX, offY;
+
+    public HardFollow(TdMob master, float offX, float offY) {
+      this.master = master;
+      this.offX = -offY*.99f;
+      this.offY = offX*.99f;
+    }
+
+    @Override
+    public TrackProgress getProgress() {
+      return master.getProgress();
+    }
+
+    @Override
+    public boolean isDone() {
+      return master.movement.isDone();
+    }
+
+    @Override
+    public void tick(T target) {
+      target.setRotation(master.rotation);
+      float sin = Util.sin(master.rotation), cos=Util.cos(master.rotation);
+      target.move(master.getX() + offX*cos - offY*sin,
+          master.getY()  + offX*sin+ offY*cos);
+      if(master.WasDeleted()){
+        target.die();
+      }
+    }
+
+    @Override
+    public float getOffsetX() {
+      return master.movement.getOffsetX() + offX*Util.cos(master.rotation) + offY*Util.sin(master.rotation);
+    }
+
+    @Override
+    public float getOffsetY() {
+      return master.movement.getOffsetX() + offX*Util.sin(master.rotation) + offY*Util.cos(master.rotation);
+    }
+  }
+
+  public static class MoveAlongTrack<T extends GameObject> implements MovementAi<T> {
 
     private final boolean reverse;
     private final List<? extends Point> mapData;
@@ -211,18 +268,22 @@ public abstract class TdMob extends GameObject implements TickDetect {
       nextMapPoint = progress.checkpoint;
     }
 
+    @Override
     public TrackProgress getProgress() {
       return progress;
     }
 
+    @Override
     public boolean isDone() {
       return reverse ? nextMapPoint < 0 : nextMapPoint >= mapData.size();
     }
 
+    @Override
     public void tick(T target) {
       if (isDone()) {
         return;
       }
+      //Log.write(stats[speedStat]);
       Point nextPoint = mapData.get(nextMapPoint);
       int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.getX()) + Math.abs(
           nextPoint.y + offset.y - target.getY()));
@@ -243,6 +304,16 @@ public abstract class TdMob extends GameObject implements TickDetect {
           target.setRotation(rotationToNextPoint - 90f);
         }
       }
+    }
+
+    @Override
+    public float getOffsetX() {
+      return offset.x;
+    }
+
+    @Override
+    public float getOffsetY() {
+      return offset.y;
     }
   }
 

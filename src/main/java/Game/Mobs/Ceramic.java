@@ -20,7 +20,7 @@ public class Ceramic extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 78.0f;
     stats[Stats.speed] = 5.8f;
-    stats[Stats.health] = 20f;
+    stats[Stats.health] = 30f;
     stats[Stats.value] = 0f;
     stats[Stats.damageTaken] = 1f;
   }

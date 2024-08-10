@@ -260,6 +260,11 @@ public class Sprite implements AbstractSprite {
     texCoords = Graphics.getLoadedImages().getImageCoordinates(imageId);
   }
 
+  @Override
+  public void setNaturalHeight(){
+    setSize(2*width, 2*width / (texCoords[4]-texCoords[2]) * (texCoords[3]-texCoords[1]));
+  }
+
   public synchronized void updateVertices() {
     animation.update();
     if (!hasUnsavedChanges || hidden) {

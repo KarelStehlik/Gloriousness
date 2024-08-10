@@ -20,8 +20,9 @@ public class Lead extends TdMob {
   @Override
   public void takeDamage(float amount, DamageType type) {
     double resistance = stats[Stats.damageTaken];
+    amount -= 1;
+    amount = Math.max(0, amount);
     double eDamage = amount * resistance / stats[Stats.health];
-    eDamage = Math.max(0, eDamage - stats[Stats.health] * .2f);
     healthPart -= eDamage;
     handleDeath();
   }
@@ -32,7 +33,7 @@ public class Lead extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 80.0f;
     stats[Stats.speed] = 2f;
-    stats[Stats.health] = 2f;
+    stats[Stats.health] = 10f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
   }

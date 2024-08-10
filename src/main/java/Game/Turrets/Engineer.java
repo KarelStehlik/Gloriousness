@@ -114,7 +114,7 @@ public class Engineer extends Turret {
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spawnSpd, 0.3f));
           turretMods.add(t -> {
-            t.bulletLauncher.radial = 200;
+            t.bulletLauncher.radial = 1000;
           });
         }, 1500);
   }

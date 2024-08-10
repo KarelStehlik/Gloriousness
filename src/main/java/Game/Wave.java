@@ -9,6 +9,7 @@ import Game.Mobs.GoldenBloon;
 import Game.Mobs.Green;
 import Game.Mobs.Lead;
 import Game.Mobs.Moab;
+import Game.Mobs.MultiMoabCore;
 import Game.Mobs.Pink;
 import Game.Mobs.Red;
 import Game.Mobs.ShieldBloon;
@@ -19,18 +20,21 @@ import Game.Mobs.Yellow;
 import general.Data;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Wave implements TickDetect {
 
-  private static final List<Integer> MobsAliveFromEachWave = new ArrayList<>();
+  private static final Map<Integer, Integer> MobsAliveFromEachWave = new HashMap<>();
 
   public static void increaseMobsInWave(int waveNum) {
-    MobsAliveFromEachWave.set(waveNum, MobsAliveFromEachWave.get(waveNum) + 1);
+    MobsAliveFromEachWave.put(waveNum, MobsAliveFromEachWave.get(waveNum) + 1);
   }
 
   public static void decreaseMobsInWave(int waveNum) {
-    MobsAliveFromEachWave.set(waveNum, MobsAliveFromEachWave.get(waveNum) - 1);
+    int n = MobsAliveFromEachWave.get(waveNum) - 1;
+    MobsAliveFromEachWave.put(waveNum, n);
   }
 
   public final int waveNum;
@@ -46,9 +50,7 @@ public class Wave implements TickDetect {
   private final float elapsedMillis = 0;
 
   private Wave(World world, int n, SpawnSequence[] s) {
-    while (MobsAliveFromEachWave.size() <= n) {
-      MobsAliveFromEachWave.add(0);
-    }
+    MobsAliveFromEachWave.put(n, 0);
     this.world = world;
     this.waveNum = n;
     scaling = getScaling(n);
@@ -70,8 +72,14 @@ public class Wave implements TickDetect {
 
   @Override
   public boolean WasDeleted() {
-    return MobsAliveFromEachWave.get(waveNum) == 0 && Arrays.stream(spawns)
-        .allMatch(sp -> sp.done(elapsed));
+    if(!MobsAliveFromEachWave.containsKey(waveNum)){
+      return true;
+    }
+    if(MobsAliveFromEachWave.get(waveNum)==0 && Arrays.stream(spawns).allMatch(sp -> sp.done(elapsed))){
+      MobsAliveFromEachWave.remove(waveNum);
+      return true;
+    }
+    return false;
   }
 
   private void add(TdMob e) {

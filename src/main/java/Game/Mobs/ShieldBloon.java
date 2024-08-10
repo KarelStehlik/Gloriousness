@@ -27,7 +27,7 @@ public class ShieldBloon extends TdMob {
       float f = frequency - .5f;
       world.getMobsGrid().callForEachCircle(x, y, stats[Stats.size]/2,
           m -> m.addBuff(new StatBuff<TdMob>(
-              Type.MORE, f * Game.tickIntervalMillis, Stats.damageTaken, 0.5f))
+              Type.INCREASED, f * Game.tickIntervalMillis, Stats.health, 1))
       );
     }
   }
