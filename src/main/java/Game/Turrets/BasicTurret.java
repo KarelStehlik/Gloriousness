@@ -13,6 +13,7 @@ import Game.Projectile.Guided;
 import Game.TurretGenerator;
 import Game.World;
 import general.Constants;
+import general.Data;
 import general.Log;
 import general.Util;
 
@@ -226,11 +227,11 @@ public class BasicTurret extends Turret {
   @Override
   public void clearStats() {
     stats[Stats.power] = 1f;
-    stats[Stats.range] = 350f;
+    stats[Stats.range] = Data.gameMechanicsRng.nextFloat(50f,500f);
     stats[Stats.pierce] = 2f;
-    stats[Stats.aspd] = 1.1f;
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(1.1f,10f);
     stats[Stats.projectileDuration] = 2f;
-    stats[Stats.bulletSize] = 30f;
+    stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(5f,100f);
     stats[Stats.speed] = 15f;
     stats[Stats.cost] = 100f;
     stats[Stats.size] = 50f;

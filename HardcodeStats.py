@@ -3,16 +3,20 @@ import os
 
 def refFloatify(string, statclass):
     name,eq,num=string.split(" ")
-    return f"stats[{statclass}.{name}] = {num}f;"
+    if "??" in num:
+        low,high = num.split("??")
+        num = f"Data.gameMechanicsRng.nextFloat({low}f,{high}f)"
+    else:
+        num=f"{num}f"
+    return f"stats[{statclass}.{name}] = {num};"
 
 def toClassText(input):
     input = input.replace(" ", "")
-    className, baseStats, extraStats = input.replace("="," = ").split("%")
-    baseStats = baseStats.split("|")
-    extraStats = extraStats.split("|")
+    parts = input.replace("="," = ").split("\n")
 
-    if baseStats==[""]:baseStats=[]
-    if extraStats==[""]:extraStats=[]
+    className = parts[0]
+    baseStats = parts[1].split("|") if len(parts)>1 else []
+    extraStats = parts[2].split("|") if len(parts) > 2 else []
 
     hasExtra = len(extraStats) != 0
     hasBase = len(baseStats) != 0
@@ -91,7 +95,7 @@ def handleStatsText(statsText):
 def main():
     for filename in os.listdir("stats"):
         with open("stats\\" + filename, "r") as file:
-            for line in file.readlines():
+            for line in file.read().split("\n---\n"):
                 handleStatsText(line.strip())
 
 
