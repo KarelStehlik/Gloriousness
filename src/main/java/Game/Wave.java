@@ -337,6 +337,9 @@ public class Wave implements TickDetect {
       // 58
       // 59
       // 60
+      new SpawnSequence[]{
+          new SpawnSequence(MultiMoabCore::new, 1, 0, 1),
+      },
       // 61
       // 62
       // 63

@@ -13,6 +13,7 @@ import Game.Projectile.Guided;
 import Game.TurretGenerator;
 import Game.World;
 import general.Constants;
+import general.Log;
 import general.Util;
 
 public class BasicTurret extends Turret {
@@ -83,7 +84,8 @@ public class BasicTurret extends Turret {
                     }));
                 onStatsUpdate();
               }, bigDart);
-          addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));
+          addBuff(new DelayedTrigger<Turret>(t -> {a.delete();
+            Log.write("dd");}, true));
         }, 200000);
   }
 
