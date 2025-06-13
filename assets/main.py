@@ -137,7 +137,8 @@ n_textures = 0
 def addInFolder(folder):
     pass
 def add(fromFolder, e):
-    if(e.endswith(".kra")):
+    if(e.endswith(".kra")):   # this is support for my image drawing software, if U get mad we can gitignore this shit
+                              # but I am keeping it here for now so that I get versioning until that happens
         if not os.path.exists("kras/"+fromFolder):
             os.makedirs("kras/"+fromFolder)
         os.replace(fromFolder + e,"kras/"+fromFolder + e)
