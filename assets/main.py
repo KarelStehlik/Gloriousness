@@ -1,6 +1,6 @@
 from PIL import Image
 import os
-
+import shutil
 TEXSIZE = 4096
 
 class Animation:  # contains images that may be swapped between frequently. this must be saved in one texture.
@@ -137,6 +137,12 @@ n_textures = 0
 def addInFolder(folder):
     pass
 def add(fromFolder, e):
+    if(e.endswith(".kra")):
+        if not os.path.exists("kras/"+fromFolder):
+            os.makedirs("kras/"+fromFolder)
+        os.replace(fromFolder + e,"kras/"+fromFolder + e)
+        return
+
     if os.path.isdir(fromFolder + e):
         if e.startswith("A_"):
             InternalName=e[2:] #removes A_ from the animation name for internal use
@@ -147,7 +153,7 @@ def add(fromFolder, e):
                 img.pixelCount = img.size[0] * img.size[1]
                 animations[InternalName].add(img)
         else:
-            addInFolder(fromFolder+"/"+e)
+            addInFolder(fromFolder+e)
     else:
         img = Image.open(fromFolder + e)
         img.name = e.split(".")[0]
