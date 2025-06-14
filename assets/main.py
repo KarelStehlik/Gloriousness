@@ -1,6 +1,6 @@
 from PIL import Image
 import os
-
+import shutil
 TEXSIZE = 4096
 
 class Animation:  # contains images that may be swapped between frequently. this must be saved in one texture.
@@ -134,29 +134,35 @@ class TestSetup:
 animations = {}
 files = []
 n_textures = 0
-
+def addInFolder(folder):
+    pass
 def add(fromFolder, e):
-    if e.startswith("ANIM_"):
-        animName = e.split("_")[1]
-        img = Image.open(fromFolder + e)
-        img.pixelCount = img.size[0] * img.size[1]
-        img.name = e.split("_")[2].split(".")[0]
-        if animName not in animations.keys():
-            animations[animName] = Animation()
-        animations[animName].add(img)
-    elif os.path.isdir(fromFolder + e):
-        animations[e] = Animation()
-        for f in os.listdir(fromFolder + e):
-            img = Image.open(fromFolder + e + "/" + f)
-            img.name = e + "-" + f.split(".")[0]
-            img.pixelCount = img.size[0] * img.size[1]
-            animations[e].add(img)
+    if(e.endswith(".kra")):   # this is support for my image drawing software, if U get mad we can gitignore this shit
+                              # but I am keeping it here for now so that I get versioning until that happens
+        if not os.path.exists("kras/"+fromFolder):
+            os.makedirs("kras/"+fromFolder)
+        os.replace(fromFolder + e,"kras/"+fromFolder + e)
+        return
+
+    if os.path.isdir(fromFolder + e):
+        if e.startswith("A_"):
+            InternalName=e[2:] #removes A_ from the animation name for internal use
+            animations[InternalName] = Animation()
+            for f in os.listdir(fromFolder + e):
+                img = Image.open(fromFolder + e + "/" + f)
+                img.name = InternalName + "-" + f.split(".")[0]
+                img.pixelCount = img.size[0] * img.size[1]
+                animations[InternalName].add(img)
+        else:
+            addInFolder(fromFolder+e)
     else:
         img = Image.open(fromFolder + e)
         img.name = e.split(".")[0]
         img.pixelCount = img.size[0] * img.size[1]
         files.append(img)
-
+def addInFolder(folder):
+    for e in os.listdir(folder):
+        add(folder+"/", e)
 def main():
     global n_textures
     for e in os.listdir("final images"):
@@ -164,10 +170,8 @@ def main():
     for e in os.listdir("image coordinates"):
         os.remove(f"image coordinates/{e}")
 
-    for e in os.listdir("rawImages"):
-        add("rawImages/", e)
-    for e in os.listdir("convert/fonts"):
-        add("convert/fonts/", e)
+    addInFolder("rawImages")
+    addInFolder("convert/fonts")
 
     files.sort(key=lambda image: max(image.size[0], image.size[1]), reverse=True)
     print(str([e.name for e in files]).replace("\'", "\""))
@@ -200,7 +204,7 @@ def main():
         n_textures += 1
 
 if __name__ == "__main__":
-    if os.path.exists("final images") and os.path.getmtime("convert/fonts") <= os.path.getmtime("final images") >= os.path.getmtime("rawImages"):
-        print("skipped: no new images")
-    else:
+    # if os.path.exists("final images") and os.path.getmtime("convert/fonts") <= os.path.getmtime("final images") >= os.path.getmtime("rawImages"):
+    #     print("skipped: no new images")
+    # else:
         main()
