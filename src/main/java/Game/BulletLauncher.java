@@ -4,6 +4,7 @@ import Game.Buffs.Modifier;
 import Game.Mobs.TdMob;
 import Game.Projectile.OnCollideComponent;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class BulletLauncher {
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
   private String image;
   private float speed;
+  private float aspectRatio=1; //
   public int radial = 1;
 
   public String getImage() {
@@ -28,20 +30,17 @@ public class BulletLauncher {
     return width;
   }
 
-  public void setWidth(int width) {
+  protected void setWidth(int width) {
     this.width = width;
   }
 
-  public int getHeight() {
-    return height;
-  }
 
-  public void setHeight(int height) {
-    this.height = height;
+
+  public void setAspectRatio(float newval){
+    aspectRatio=newval;
   }
 
   private int width;
-  private int height;
   private int pierce;
   private float size;
   private float power;
@@ -68,7 +67,6 @@ public class BulletLauncher {
     this.image = projectileImage;
     this.speed = projectileSpeed;
     this.width = projectileSpriteWidth;
-    this.height = projectileSpriteHeight;
     this.pierce = pierce;
     this.size = size;
     this.power = power;
@@ -94,7 +92,6 @@ public class BulletLauncher {
     image = og.image;
     speed = og.speed;
     width = og.width;
-    height = og.height;
     pierce = og.pierce;
     size = og.size;
     power = og.power;
@@ -150,7 +147,6 @@ public class BulletLauncher {
 
   public void setSize(float size) {
     width = (int) size;
-    height = (int) size;
     this.size = size;
   }
 
@@ -187,7 +183,7 @@ public class BulletLauncher {
   public interface ProjectileNewFunction {
 
     Projectile make(World world, String image, float X, float Y, float speed, float rotation,
-        int W, int H, int pierce, float size, float duration, float power);
+        int W, float AR, int pierce, float size, float duration, float power);
   }
 
   public ProjectileNewFunction getLauncher() {
@@ -212,9 +208,10 @@ public class BulletLauncher {
 
     for (int i = 0; i < radial; i++) {
       Projectile p = launcher.make(world, image, x, y, speed, angle + 360f * i / radial + deviation,
-          width, height,
+          width, aspectRatio,
           pierce, size,
           duration, power);
+
       for (var pm : projectileModifiers) {
         pm.mod(p);
       }

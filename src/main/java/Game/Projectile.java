@@ -6,6 +6,7 @@ import Game.Buffs.Modifier;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Mobs.TdMob;
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class Projectile extends GameObject implements TickDetect {
   private final List<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
   private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
   protected float vx;
+  private float aspectRatio;
   protected float vy;
   private boolean wasDeleted = false;
   protected boolean active = true;
@@ -63,9 +65,10 @@ public class Projectile extends GameObject implements TickDetect {
   private boolean multihit = false;
 
   public Projectile(World world, String image, float X, float Y, float speed, float rotation,
-      int W, int H, int pierce, float size, float duration, float power) {
+      int width, float aspectRatio, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
-    sprite = new Sprite(image, X, Y, W, H, 1, "basic");
+    sprite = new Sprite(image, X, Y, width, width*aspectRatio, 1, "basic");
+    this.aspectRatio=aspectRatio;
     sprite.setRotation(rotation - 90);
     world.getBs().addSprite(sprite);
     stats[Stats.pierce] = pierce;
@@ -169,10 +172,15 @@ public class Projectile extends GameObject implements TickDetect {
     super.move(_x, _y);
     sprite.setPosition(x, y);
   }
-
+  public void setAspectRatio(float newval){
+    aspectRatio=newval;
+  }
+  public float getAspectRatio(){
+    return aspectRatio;
+  }
   @Override
   public void onStatsUpdate() {
-    sprite.setSize(stats[Stats.size], stats[Stats.size]);
+    sprite.setSize(stats[Stats.size], stats[Stats.size]*aspectRatio);
     vx = Util.cos(rotation) * stats[Stats.speed];
     vy = Util.sin(rotation) * stats[Stats.speed];
   }
