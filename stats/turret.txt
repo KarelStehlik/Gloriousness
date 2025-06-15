@@ -36,4 +36,4 @@ turrets\engiTurret
     duration=5000
 ---
 turrets\dartmonkey
-    power=1|range=250|pierce=1|aspd=0.45??1.2|projectileDuration=2|bulletSize=30|speed=1|cost=25|size=25|spritesize=100
+    power=1|range=250|pierce=1|aspd=0.45??1.2|projectileDuration=2|bulletSize=30|speed=1??19|cost=25|size=25|spritesize=100

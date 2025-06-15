@@ -26,14 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.joml.Vector2f;
-import windowStuff.Button;
-import windowStuff.ButtonArray;
-import windowStuff.NoSprite;
-import windowStuff.SingleAnimationSprite;
-import windowStuff.Sprite;
-import windowStuff.SpriteBatching;
-import windowStuff.Text;
+import windowStuff.*;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
@@ -60,7 +55,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   private final Player player;
   private final Sprite mapSprite;
   private final List<Point> mapData;
-  private final Text resourceTracker;
+  private final TextBox resourceTracker;
   private final MobSpawner mobSpawner = new MobSpawner();
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
   private final List<Turret> turrets = new ArrayList<>(1);
@@ -134,23 +129,28 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
         explosionVisual(x, y, 100, true, "Explosion1-0");
       }
-    }, null));
+    }));
 
-    resourceTracker = new Text("Lives: " + health + "\nCash: " + (long) getMoney(), "Calibri", 500,
-        0, 1050, 10, 40, bs);
-    resourceTracker.setColors(Util.getColors(1, 1, 1));
+    ArrayList<SimpleText> texts=new ArrayList<>();
+    SimpleText text= new SimpleText(() ->"Lives: " + health, "Calibri", 500,
+            0, 1050, 10, 40, bs);
+    text.setColors(Util.getColors(1, 1, 1));
+    texts.add(text);
+    SimpleText text2= new SimpleText(() ->"Cash: " + (long) getMoney(), "Calibri", 500,
+            0, 1550, 10, 40, bs);
+    text2.setColors(Util.getColors(1, 1, 1));
+    texts.add(text2);
+    SimpleText text3= new SimpleText(() ->"Wave " + mobSpawner.waveNum, "Calibri", 500,
+            0, 900, 10, 40, bs);
+    text3.setColors(Util.getColors(1, 1, 1));
+    texts.add(text3);
+    resourceTracker =new TextBox(0,1100,500,true,texts);
 
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
     mobSpawner.beginWave();
     calcSpacPoints();
   }
-
-  private void updateResourceTracker() {
-    resourceTracker.setText(
-        "Lives: " + health + "\nCash: " + (long) getMoney() + "\nWave " + mobSpawner.waveNum);
-  }
-
   public void addEvent(VoidFunc e) {
     queuedEvents.add(e);
   }
@@ -210,7 +210,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void changeHealth(int change) {
     health += change;
-    updateResourceTracker();
+    resourceTracker.update();
   }
 
   public List<Point> getMapData() {
@@ -336,7 +336,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
         addEvent(() -> {
           mobSpawner.waveNum = currWave[0] - 1;
-          updateResourceTracker();
+          resourceTracker.update();
         });
       }
       if (ImGui.collapsingHeader("Add buff to player")) {
@@ -508,7 +508,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
   public void setMoney(double money) {
     this.money = money;
-    updateResourceTracker();
+    resourceTracker.update();
   }
 
   public Tool getCurrentTool() {
@@ -523,7 +523,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
   }
 
   public void onBeginWave() {
-    updateResourceTracker();
+    resourceTracker.update();
   }
 
   public boolean canFitTurret(int x, int y, float size) {

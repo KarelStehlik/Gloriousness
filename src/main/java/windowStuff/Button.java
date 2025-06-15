@@ -2,12 +2,13 @@ package windowStuff;
 
 import Game.MouseDetect;
 import Game.TickDetect;
+import general.Log;
+import org.lwjgl.system.NonnullDefault;
 
 public class Button implements MouseDetect, TickDetect {
 
   private final AbstractSprite sprite;
   private final ClickFunction onClick;
-  private final MouseoverText mouseoverTextGenerator;
   protected boolean pressed = false;
 
   public Text getMouseoverText() {
@@ -18,13 +19,19 @@ public class Button implements MouseDetect, TickDetect {
   private boolean shown = true;
 
   public Button(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
-      MouseoverText caption) {
+                  Text caption) {
     this.sprite = sprite;
     this.onClick = foo;
-    mouseoverTextGenerator = caption;
+    sprite.addToBs(bs);
+    mouseoverText = caption;
+  }
+  public Button(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
+      SimpleText.TextGenerator caption) {
+    this.sprite = sprite;
+    this.onClick = foo;
     sprite.addToBs(bs);
     mouseoverText = caption == null ? null
-        : new Text(caption.get(), "Calibri", 450, 0, 0, sprite.getLayer() + 10,
+        : new SimpleText(caption, "Calibri", 450, 0, 0, sprite.getLayer() + 10,
             35, bs, "basic", "textbox");
 
     if (mouseoverText != null) {
@@ -32,11 +39,14 @@ public class Button implements MouseDetect, TickDetect {
     }
   }
 
-
+  public Button(SpriteBatching bs,AbstractSprite sprite, ClickFunction foo) { //I dunno if this should ever be used,
+                                                                            // because it looks kinda sus ngl
+    this(sprite,foo);
+    sprite.addToBs(bs);
+  }
   public Button(AbstractSprite sprite, ClickFunction foo) {
     this.sprite = sprite;
     this.onClick = foo;
-    mouseoverTextGenerator = null;
     mouseoverText = null;
   }
 
@@ -99,7 +109,7 @@ public class Button implements MouseDetect, TickDetect {
     if (newX > sprite.getX() - sprite.getWidth() && newX < sprite.getX() + sprite.getWidth() &&
         newY > sprite.getY() - sprite.getHeight() && newY < sprite.getY() + sprite.getHeight()) {
       mouseoverText.show();
-      mouseoverText.setText(mouseoverTextGenerator.get());
+      mouseoverText.update();
       mouseoverText.move((int) newX, (int) newY);
       return false;
     }
@@ -125,7 +135,7 @@ public class Button implements MouseDetect, TickDetect {
     if (!shown || mouseoverText == null) {
       return;
     }
-    mouseoverText.setText(mouseoverTextGenerator.get());
+    mouseoverText.update();
   }
 
   @FunctionalInterface
@@ -134,9 +144,4 @@ public class Button implements MouseDetect, TickDetect {
     void onClick(int button, int action);
   }
 
-  @FunctionalInterface
-  public interface MouseoverText {
-
-    String get();
-  }
 }

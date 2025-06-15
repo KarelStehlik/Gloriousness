@@ -12,6 +12,7 @@ import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
+import general.Description;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class EatingTurret extends Turret {
   @Override
   protected Upgrade up100() {
     return new Upgrade("Meteor",
-        () -> "2x pierce. If full, eaten projectiles get 2 extra power (after multipliers)",
+         new Description( "Powah","2x pierce. If full, eaten projectiles get 2 extra power","(after multipliers)"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.pierce, 2));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.fullEatBuff, 2));
@@ -47,7 +48,7 @@ public class EatingTurret extends Turret {
   @Override
   protected Upgrade up200() {
     return new Upgrade("Meteor",
-        () -> "50x more pierce. If full, eaten projectiles get 10 extra power (after multipliers)",
+         new Description( "50x more pierce. If full, eaten projectiles get 10 extra power (after multipliers)"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 50));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.fullEatBuff, 10));
@@ -56,7 +57,7 @@ public class EatingTurret extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Meteor", () -> "projectiles last longer",
+    return new Upgrade("Meteor",  new Description( "projectiles last longer"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.projectileDuration, 2));
         }, 200);
@@ -65,7 +66,7 @@ public class EatingTurret extends Turret {
   @Override
   protected Upgrade up020() {
     return new Upgrade("Meteor",
-        () -> "eaten projectiles have 4s additional duration and +4 pierce",
+         new Description( "eaten projectiles have 4s additional duration and +4 pierce"),
         () -> {
           eatenMods.add(proj -> proj.addBuff(
               new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.duration, 4)));
@@ -76,7 +77,7 @@ public class EatingTurret extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Meteor", () -> "eaten projectiles gain 1 extra power (after multipliers)",
+    return new Upgrade("Meteor",  new Description( "eaten projectiles gain 1 extra power (after multipliers)"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 1f));
         }, 200);
@@ -84,7 +85,7 @@ public class EatingTurret extends Turret {
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("Meteor", () -> "eaten projectiles have 20% more power",
+    return new Upgrade("Meteor",  new Description( "eaten projectiles have 20% more power"),
         () -> {
           eatenMods.add(proj -> proj.addBuff(
               new StatBuff<Projectile>(Type.MORE, Projectile.Stats.power, 1.2f)));

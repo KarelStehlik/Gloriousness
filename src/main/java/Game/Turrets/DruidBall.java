@@ -13,8 +13,8 @@ public class DruidBall extends Projectile {
   private final float regrowTime;
 
   protected DruidBall(World world, String image, float X, float Y, float speed, float rotation,
-      int W, int H, int pierce, float size, float duration, float power, float regrowTime) {
-    super(world, image, X, Y, speed, rotation, W, H, pierce, size, duration, power);
+      int W, int pierce, float size, float duration, float power, float regrowTime) {
+    super(world, image, X, Y, speed, rotation, W, 1, pierce, size, duration, power);
     this.regrowTime = regrowTime;
   }
 

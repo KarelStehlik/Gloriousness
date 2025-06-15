@@ -9,7 +9,7 @@ import Game.World;
 import general.Constants;
 import general.Util;
 import java.util.List;
-import windowStuff.Text;
+import windowStuff.SimpleText;
 
 public class GoldenBloon extends TdMob {
 
@@ -18,7 +18,7 @@ public class GoldenBloon extends TdMob {
       return;
     }
     world.setMoney(world.getMoney() + amount);
-    var t = new Text("+" + amount, "Calibri", 500, (int) x,
+    var t = new SimpleText("+" + amount, "Calibri", 500, (int) x,
         (int) y, 6, 50, world.getBs());
     t.move((int) Util.clamp(t.getX(), 50, Constants.screenSize.x - 50),
         (int) Util.clamp(t.getY(), 30, Constants.screenSize.y - 30));

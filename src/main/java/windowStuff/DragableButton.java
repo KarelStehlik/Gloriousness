@@ -3,7 +3,7 @@ package windowStuff;
 public class DragableButton extends Button {
 
   public DragableButton(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
-      MouseoverText caption) {
+      SimpleText.TextGenerator caption) {
     super(bs, sprite, foo, caption);
   }
 

@@ -7,6 +7,7 @@ import general.Util;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
+import windowStuff.SimpleText;
 import windowStuff.Sprite;
 
 public class Ability {
@@ -19,7 +20,7 @@ public class Ability {
     public static final List<AbilityGroup> instances = new ArrayList<>(1);
     private final long id;
 
-    AbilityGroup(String image, Button.MouseoverText text, long id) {
+    AbilityGroup(String image, SimpleText.TextGenerator text, long id) {
       bg = new Sprite("Button", 9).setSize(90, 90).addToBs(Game.get().getSpriteBatching("main"));
       button = new Button(
           Game.get().getSpriteBatching("main"),
@@ -151,7 +152,7 @@ public class Ability {
   private final VoidFunc onTrigger;
   private final long id;
 
-  public static Ability add(String image, float cooldown, Button.MouseoverText text,
+  public static Ability add(String image, float cooldown, SimpleText.TextGenerator text,
       VoidFunc onTrigger, long id) {
     Ability a = new Ability(cooldown, onTrigger, id);
     for (AbilityGroup g : AbilityGroup.instances) {

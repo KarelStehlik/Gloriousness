@@ -16,10 +16,11 @@ import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
+import general.Description;
 import general.RefFloat;
 import general.Util;
 import windowStuff.Sprite;
-import windowStuff.Text;
+import windowStuff.SimpleText;
 
 public class EmpoweringTurret extends Turret {
 
@@ -63,7 +64,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Button", () -> "Hires edgy assassins to destroy targets",
+    return new Upgrade("Button",  new Description( "Hires edgy assassins to destroy targets"),
         () -> addBuff(new OnTickBuff<Turret>(turr -> {
           if (assaCooldown.get() > 0) {
             assaCooldown.add(-1);
@@ -95,21 +96,21 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up020() {
-    return new Upgrade("Button", () -> "Assassins are more edgy and do 100x more damage.",
+    return new Upgrade("Button",  new Description( "Assassins are more edgy and do 100x more damage."),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaDamageMult, 100)), 20000);
   }
 
   @Override
   protected Upgrade up030() {
     return new Upgrade("Button",
-        () -> "Assassins are more patient and do 1000000x more damage.",
+         new Description( "Assassins are more patient and do 1000000x more damage."),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaDamageMult, 1000000))
         , 40000);
   }
 
   @Override
   protected Upgrade up040() {
-    return new Upgrade("Button", () -> "Assassins are more aggressive and appear more often",
+    return new Upgrade("Button",  new Description( "Assassins are more aggressive and appear more often"),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.assaCd, 0.3f))
         , 50000);
   }
@@ -118,7 +119,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up050() {
-    return new Upgrade("Button", () -> "Ability: hire a super edgy assassin "
+    return new Upgrade("Button",  new Description( "","Ability: hire a super edgy assassin "
         + "with a 5000-year-old katana that has been folded a billion and one times, "
         + "forged illegally by a now extinct shadowy order of super ninjas inside a space volcano, "
         + "paid for with the blood of a thousand innocents and having cut down a thousand more, "
@@ -126,7 +127,7 @@ public class EmpoweringTurret extends Turret {
         + "family that he betrayed and killed by his own hand for no reason. It is said that any who dare "
         + "pronounce the name of this katana will suffer the doom of an eternal torment "
         + "forever in the dark abyss of death, however no one has been able to verify this, as "
-        + "its name is some unpronounceable Japanese bullshit that you physically can not utter.",
+        + "its name is some unpronounceable Japanese bullshit that you physically can not utter.","should add a title and alt text to this one"),
         () -> {
           var a = Ability.add("Assassin", 10000, () ->
                   """
@@ -157,7 +158,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Button", () -> "shoots faster and affects more projectiles",
+    return new Upgrade("Button",  new Description( "shoots faster and affects more projectiles"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3));
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 3));
@@ -169,7 +170,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("Button", () -> "gives nearby towers 15% increased attack speed",
+    return new Upgrade("Button",  new Description( "gives nearby towers 15% increased attack speed"),
         () -> addBuff(new OnTickBuff<Turret>(buffer -> world.getTurrets().forEach(t -> {
           if (t != buffer
               && Util.distanceSquared(t.getX() - buffer.getX(), t.getY() - buffer.getY())
@@ -185,7 +186,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up003() {
-    return new Upgrade("Button", () -> "gives the player 0.5/sec added attack speed",
+    return new Upgrade("Button",  new Description( "gives the player 0.5/sec added attack speed"),
         () -> addBuff(new OnTickBuff<Turret>(
             buffer -> world.getPlayer().addBuff(
                 new StatBuff<Player>(Type.ADDED, Game.tickIntervalMillis + 1, Player.Stats.aspd,
@@ -198,7 +199,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up004() {
-    return new Upgrade("Button", () -> "more attack speed, power, granted explosion radius.",
+    return new Upgrade("Button",  new Description( "more attack speed, power, granted explosion radius."),
         () -> {
           bulletLauncher.setSpread(30);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5));
@@ -212,7 +213,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("Button", () -> "All projectiles seek",
+    return new Upgrade("Button",  new Description( "All projectiles seek"),
         () -> addBuff(new OnTickBuff<Turret>(t -> world.getProjectilesList().forEach(guide::tick)))
         , 30000);
   }
@@ -222,7 +223,7 @@ public class EmpoweringTurret extends Turret {
       return;
     }
     world.setMoney(world.getMoney() + amount);
-    var t = new Text("+" + amount, "Calibri", 500, (int) x - 130 + Data.unstableRng.nextInt(0, 150),
+    var t = new SimpleText("+" + amount, "Calibri", 500, (int) x - 130 + Data.unstableRng.nextInt(0, 150),
         (int) y - 85 + Data.unstableRng.nextInt(0, 150), 6, 50, world.getBs());
     t.setColors(Util.getColors(1.5f, 1.5f, 0));
     Game.get().addTickable(new CallAfterDuration(t::delete, duration));
@@ -232,7 +233,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up100() {
-    return new Upgrade("Button", () -> "get 100 end-of-turn gold",
+    return new Upgrade("Button",  new Description( "get 100 end-of-turn gold"),
         () -> endOfRoundEffects.add(() -> gainMoney((long) endOfTurnGold, 2000))
         , 1500);
   }
@@ -240,14 +241,14 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up200() {
     return new Upgrade("Button",
-        () -> "get 50 additional end-of-turn gold per turn while this exists",
+         new Description( "get 50 additional end-of-turn gold per turn while this exists"),
         () -> endOfRoundEffects.add(() -> endOfTurnGold += 50)
         , 5000);
   }
 
   @Override
   protected Upgrade up300() {
-    return new Upgrade("Button", () -> "at end of turn, increase your total gold by 0.5%",
+    return new Upgrade("Button",  new Description( "at end of turn, increase your total gold by 0.5%"),
         () -> endOfRoundEffects.add(() -> gainMoney((long) (world.getMoney() * .005f), 2000))
         , 10000);
   }
@@ -257,7 +258,7 @@ public class EmpoweringTurret extends Turret {
   @Override
   protected Upgrade up400() {
     return new Upgrade("Button",
-        () -> "bloons popped in radius give 50% increased gold (no stacking)",
+         new Description( "bloons popped in radius give 50% increased gold (no stacking)"),
         () -> addBuff(new OnTickBuff<Turret>(buffer ->
             world.getMobsGrid().callForEachCircle((int) buffer.getX(), (int) buffer.getY(),
                 (int) buffer.getStats()[Stats.range], mob -> {
@@ -271,7 +272,7 @@ public class EmpoweringTurret extends Turret {
 
   @Override
   protected Upgrade up500() {
-    return new Upgrade("Button", () -> "when the player attacks, get money equal to his damage",
+    return new Upgrade("Button",  new Description( "when the player attacks, get money equal to his damage"),
         () -> world.getPlayer().getBulletLauncher().addProjectileModifier(p -> gainMoney(
             (long) p.getPower(),
             Math.min(2000, 8000 / world.getPlayer().getStats()[Player.Stats.aspd])))

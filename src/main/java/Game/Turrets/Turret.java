@@ -9,12 +9,13 @@ import Game.GameObject;
 import Game.Mobs.TdMob;
 import Game.TickDetect;
 import Game.World;
+import general.Description;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
-import windowStuff.Button.MouseoverText;
+import windowStuff.SimpleText.TextGenerator;
 import windowStuff.NoSprite;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
@@ -22,7 +23,7 @@ import windowStuff.SpriteBatching;
 public abstract class Turret extends GameObject implements TickDetect {
 
   private static final Upgrade maxUpgrades = new Upgrade("MaxUpgrades",
-      () -> "here is a number. " + Game.get().getTicks(), () -> {
+      new Description( ()->"LOCKED",() -> "here is a number. " + Game.get().getTicks(),()->"it's gameticks. I'm sorry for the demystification"), () -> {
   }, Float.POSITIVE_INFINITY);
   private static UpgradeMenu menu;
   protected final BulletLauncher bulletLauncher;
@@ -251,12 +252,12 @@ public abstract class Turret extends GameObject implements TickDetect {
 
     protected final float cost;
     private final String image;
-    protected Button.MouseoverText text;
+    protected Description description;
     protected VoidFunc apply;
 
-    public Upgrade(String image, MouseoverText text, VoidFunc apply, float cost) {
+    public Upgrade(String image, Description description, VoidFunc apply, float cost) {
       this.image = image;
-      this.text = text;
+      this.description = description;
       this.apply = apply;
       this.cost = cost;
     }
@@ -369,13 +370,13 @@ public abstract class Turret extends GameObject implements TickDetect {
 
       buttons.add(
           new Button(bs, u1.makeSprite().setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
-              () -> u1.text.get() + " cost: " + u1.cost));
+              u1.description.getAsTextBox(sprite.getLayer()+10,bs,u1.cost)));
       buttons.add(
           new Button(bs, u2.makeSprite().setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
-              () -> u2.text.get() + " cost: " + u2.cost));
+               u2.description.getAsTextBox(sprite.getLayer()+10,bs,u1.cost)));
       buttons.add(
           new Button(bs, u3.makeSprite().setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
-              () -> u3.text.get() + " cost: " + u3.cost));
+              u3.description.getAsTextBox(sprite.getLayer()+10,bs,u1.cost)));
 
       buttons.forEach(Game.get()::addMouseDetect);
       buttons.forEach(Game.get()::addTickable);
