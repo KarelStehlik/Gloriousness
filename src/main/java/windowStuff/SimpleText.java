@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
+import static java.lang.Character.isDigit;
+import static java.lang.Character.isISOControl;
+
 public class SimpleText implements Text{
 
   private static final double textureHeight =
@@ -45,16 +48,14 @@ public class SimpleText implements Text{
     this.textupdater=value;
     fontSize = size;
     this.x = x;
-    this.text=value.get();
     this.bs = bs;
     this.y = y;
     this.maxWidth = width;
     fontName = font;
     this.layer = layer + 1;
     this.shader = shader;
-    symbols = new ArrayList<>(text.length());
     scale = (float) (fontSize / textureHeight);
-
+    this.text=value.get();
     if (backgroundImage == null) {
       background = new NoSprite();
     } else {
@@ -62,11 +63,8 @@ public class SimpleText implements Text{
       background.addToBs(bs);
     }
 
-    for (char c : text.toCharArray()) {
-      Symbol symbol = new Symbol(c, x, y, shader);
-      symbols.add(symbol);
-      bs.addSprite(symbol.sprite);
-    }
+    symbols=new ArrayList<>(0);
+    generateSymbols(value.get());
     arrange();
   }
   public void update(){
@@ -132,7 +130,6 @@ public class SimpleText implements Text{
       symbol.updateScale();
     }
   }
-
   public void setText(String value) {
     if(value==null){
       text=null;
@@ -142,11 +139,68 @@ public class SimpleText implements Text{
     if(Objects.equals(value, text)){
      return;
     }
+    generateSymbols(value);
+    if(text==null){
+      show();
+    }
+    text=value;
+    arrange();
+  }
+  private void generateSymbols(String value) {
+    float[] originalColors=colors;
+    float originalFontSize=fontSize;
     ArrayList<Symbol> newSymbols = new ArrayList<>(value.length());
     Iterator<Symbol> existing = symbols.listIterator();
+    String[] strings = value.split("\\|");
+
+    for (String s : strings) {
+      if (isModifier(s)) {//for stuff like color
+        applyMod(s);
+      } else {
+        addToSymbols(s, existing, newSymbols);
+      }
+    }
+    colors=originalColors;
+    fontSize=originalFontSize;
+    symbols.clear();
+    symbols = newSymbols;
+  }
+  private boolean isModifier(String string){ //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
+    for(String s:string.split("\\.")){
+      if(!s.startsWith("#")){
+        return false;
+      }
+      if(s.length()<2){
+        return false;
+      }
+      for (char c : s.substring(1).toCharArray()) {
+        if(!isDigit(c)){
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  private void applyMod(String string){ //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
+    String[] split=string.split("\\.");
+    switch(split.length){
+      case (1) -> {
+        fontSize=Integer.parseInt( split[0].substring(1));
+      }
+      case (3) -> {
+        colors=Util.getColors(Integer.parseInt( split[0].substring(1))/255f
+                , Integer.parseInt( split[1].substring(1))/255f,
+                Integer.parseInt( split[2].substring(1))/255f);
+      }
+      default ->
+        Log.write("Invalid modifier:"+string);
+
+    }
+  }
+  private void addToSymbols(String value,Iterator<Symbol> existing,ArrayList<Symbol> newSymbols){
     for (char c : value.toCharArray()) {
       if (existing.hasNext()) {
-        Symbol symbol = existing.next();
+        Symbol symbol=existing.next();
         newSymbols.add(symbol);
         if (symbol.character != c) {
           symbol.setCharacter(c);
@@ -158,19 +212,7 @@ public class SimpleText implements Text{
         }
         newSymbols.add(symbol);
       }
-      if(text==null){
-        show();
-      }
-      text=value;
     }
-    while (existing.hasNext()) {
-      Symbol symbol = existing.next();
-      symbol.delete();
-      existing.remove();
-    }
-    symbols.clear();
-    symbols = newSymbols;
-    arrange();
   }
 
   public void setColors(float[] colors) {

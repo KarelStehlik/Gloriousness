@@ -5,7 +5,7 @@ import windowStuff.KeyListener;
 import windowStuff.SimpleText;
 import windowStuff.SpriteBatching;
 import windowStuff.TextBox;
-
+import windowStuff.TextModifiers;
 import java.util.ArrayList;
 
 public class Description {
@@ -35,13 +35,11 @@ public class Description {
     public TextBox getAsTextBox(int layer, SpriteBatching bs,float cost) {
         ArrayList<SimpleText> texts=new ArrayList<>();
         if (title != null) {
-            Log.write(title);
-            Log.write(title.get());
             SimpleText titleText = new SimpleText(title, "Calibri", 450, 0, 0, layer
                     , 75, bs, "basic", null);
             texts.add(titleText);
         }
-        SimpleText costtxt = new SimpleText("cost: "+cost, "Calibri", 450, 0, 0, layer
+        SimpleText costtxt = new SimpleText(TextModifiers.green+"cost: "+cost, "Calibri", 450, 0, 0, layer
                 , 25, bs, "basic", null);
         texts.add(costtxt);
         SimpleText desc = new SimpleText(description, "Calibri", 450, 0, 0, layer
