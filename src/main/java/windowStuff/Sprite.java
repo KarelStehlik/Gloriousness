@@ -2,6 +2,7 @@ package windowStuff;
 
 import general.Constants;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.util.Arrays;
 import java.util.Objects;
@@ -45,42 +46,26 @@ public class Sprite implements AbstractSprite {
     };
   }
 
-  public Sprite(String imageName, int layer) {
-    this(imageName, 0, 0, 100, 100, layer, "basic");
-  }
-
-  public Sprite(String imageName, float sizeX, float sizeY, int layer,
-      String shader) {
-    this(imageName, 0, 0, sizeX, sizeY, layer, shader);
-  }
-
-  public Sprite(String imageName, float sizeX, float sizeY, int layer,
-      String shader, SpriteBatching bs) {
-    this(imageName, 0, 0, sizeX, sizeY, layer, shader);
-    this.addToBs(bs);
-  }
-
-  public Sprite(String imageName, float sizeX, float sizeY, int layer) {
-    this(imageName, 0, 0, sizeX, sizeY, layer, "basic");
-  }
-
-  public Sprite(String imageName, float sizeX, float sizeY, int layer, SpriteBatching bs) {
-    this(imageName, 0, 0, sizeX, sizeY, layer, "basic");
-    this.addToBs(bs);
-  }
-
-  public Sprite(String imageName, float x, float y, float sizeX, float sizeY, int layer,
-      String shader) {
-    this.setX(x);
-    this.setY(y);
-    width = sizeX / 2;
-    height = sizeY / 2;
+  public Sprite(int image, int layer, String shader) {
     this.shader = Data.getShader(shader);
     this.layer = layer;
-    setImage(imageName);
+    setImage(image);
     this.animation = () -> {
     };
   }
+
+  public Sprite(int imageId, int layer) {
+    this(imageId, layer, "basic");
+  }
+
+  public Sprite(String image, int layer) {
+    this(Graphics.getImageId(image), layer, "basic");
+  }
+
+  public Sprite(String image, int layer, String shader) {
+    this(Graphics.getImageId(image), layer, shader);
+  }
+
 
   public Shader getShader() {
     return shader;
@@ -106,8 +91,21 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
+  public Sprite setImage(int imageId) {
+    this.imageId = imageId;
+    String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
+
+    if (!Objects.equals(this.textureName, newTexture)) {
+      this.textureName = newTexture;
+      mustBeRebatched = true;
+    }
+    setUV();
+    return this;
+  }
+
+  @Override
   public Sprite setImage(String name) {
-    imageId = Graphics.getLoadedImages().getImageId(name);
+    imageId = Graphics.getImageId(name);
     String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
 
     if (!Objects.equals(this.textureName, newTexture)) {
@@ -341,7 +339,7 @@ public class Sprite implements AbstractSprite {
     private boolean loop = false;
 
     public BasicAnimation(String name, float duration) {
-      this(Graphics.getLoadedImages().getImageId(name), duration);
+      this(Graphics.getImageId(name), duration);
     }
 
     public BasicAnimation(int first, float duration) {

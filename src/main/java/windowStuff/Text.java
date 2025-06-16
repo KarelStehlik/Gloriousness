@@ -44,7 +44,7 @@ public class Text {
     if (backgroundImage == null) {
       background = new NoSprite();
     } else {
-      background = new Sprite(backgroundImage, width, fontSize, layer, shader);
+      background = new Sprite(backgroundImage, layer, shader).setSize(width, fontSize);
       background.addToBs(bs);
     }
 
@@ -196,10 +196,10 @@ public class Text {
     Symbol(char c, float x, float y, String shader) {
       String imageName = fontName + '-' + Character.getName(c);
       float[] uv = Graphics.getLoadedImages()
-          .getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
+          .getImageCoordinates(Graphics.getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
-      sprite = new Sprite(imageName, width, fontSize, layer, shader);
+      sprite = new Sprite(imageName, layer, shader).setSize(width, fontSize);
       sprite.setX(x + width / 2);
       sprite.setY(y);
       character = c;
@@ -209,7 +209,7 @@ public class Text {
     void updateScale() {
       String imageName = fontName + '-' + Character.getName(character);
       float[] uv = Graphics.getLoadedImages()
-          .getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
+          .getImageCoordinates(Graphics.getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setSize(width, fontSize);
@@ -230,7 +230,7 @@ public class Text {
     void setCharacter(char c) {
       String imageName = fontName + '-' + Character.getName(c);
       float[] uv = Graphics.getLoadedImages()
-          .getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
+          .getImageCoordinates(Graphics.getImageId(imageName));
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setImage(imageName);

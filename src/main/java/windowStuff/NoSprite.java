@@ -38,6 +38,11 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
+  public AbstractSprite setImage(int imageId) {
+    return this;
+  }
+
+  @Override
   public NoSprite setImage(String name) {
     return this;
   }

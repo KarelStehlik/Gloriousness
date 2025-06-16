@@ -42,8 +42,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
     clearStats();
 
-    sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize],
-        2);
+    sprite = new Sprite(imageName,2).setSize(stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize]);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);

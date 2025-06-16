@@ -24,6 +24,10 @@ public final class Graphics {
     return loadedImages;
   }
 
+  public static int getImageId(String name){
+    return loadedImages.getImageId(name);
+  }
+
   public static void setLoadedImages(ImageSet Images) {
     loadedImages = Images;
   }
