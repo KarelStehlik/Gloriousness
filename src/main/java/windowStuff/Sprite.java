@@ -133,6 +133,13 @@ public class Sprite implements AbstractSprite {
     hasUnsavedChanges = true;
     return this;
   }
+  @Override
+  public Sprite scale(float multiplierX,float multiplierY) {
+    width *= multiplierX;
+    height *= multiplierY;
+    hasUnsavedChanges = true;
+    return this;
+  }
 
   @Override
   public Sprite setSize(float w, float h) {

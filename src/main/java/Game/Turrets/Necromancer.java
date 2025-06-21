@@ -175,7 +175,7 @@ public class Necromancer extends Turret {
     return new Upgrade("Mine",
          new Description( "Cool never-before-seen ability"),
         () -> {
-          Ability a = Ability.add("fire", 120000, () -> "Probably smaller, weaker and lower balls than the one in btd8",
+          Ability a = Ability.add("fire", 120000, () -> "Probably weaker, smaller dick and lower balls than the one in btd8",
               () -> {
                 var ui = Game.get().getUserInputListener();
                 float dx = ui.getX() - x;

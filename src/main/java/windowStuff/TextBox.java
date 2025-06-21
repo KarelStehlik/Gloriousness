@@ -12,6 +12,7 @@ public class TextBox implements Text{ //not sure if imgonna use this,
     private int x, y;
     private final AbstractSprite background;
     private boolean rearrange;
+    private boolean hidden=false;
     private int maxWidth;
     private int layer;
 
@@ -71,8 +72,14 @@ public class TextBox implements Text{ //not sure if imgonna use this,
 
     @Override
     public void update() {
+        if(hidden){
+            return;
+        }
         for(SimpleText text:texts){
             text.update();
+        }
+        if(rearrange){
+            arrange();
         }
     }
 
@@ -98,19 +105,20 @@ public class TextBox implements Text{ //not sure if imgonna use this,
             return;
         }
         int currentY=y;
+        int height=getHeight();
         for(SimpleText text:texts){
             if(text.isHidden()){
                 continue;
             }
             currentY-=text.getHeight();
-            text.move(x,currentY);
+            text.move(x-maxWidth/2,currentY+height);
         }
-        background.setPosition(x, y + currentY/2f-borderSize);
-        background.setSize(maxWidth, y-currentY);
+        background.setSize(maxWidth, y-currentY+borderSize*2);
     }
 
     @Override
     public void hide() {
+        hidden=true;
         background.setHidden(true);
         for(SimpleText text:texts){
             text.hide();
@@ -119,6 +127,7 @@ public class TextBox implements Text{ //not sure if imgonna use this,
 
     @Override
     public void show() {
+        hidden=false;
         background.setHidden(false);
         for(SimpleText text:texts){
             text.show();
@@ -145,8 +154,8 @@ public class TextBox implements Text{ //not sure if imgonna use this,
         int displaceX=newX-x;
         int displaceY=newY-y;
         for(SimpleText text:texts){
-            text.move(text.getX()- maxWidth / 2+displaceX
-                    ,text.getY()+displaceY+ getHeight());
+            text.move(text.getX()+displaceX
+                    ,text.getY()+displaceY);
         }
         x=newX;
         y=newY;

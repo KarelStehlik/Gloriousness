@@ -141,7 +141,7 @@ def add(fromFolder, e):
                               # but I am keeping it here for now so that I get versioning until that happens
         if not os.path.exists("kras/"+fromFolder):
             os.makedirs("kras/"+fromFolder)
-        os.replace(fromFolder + e,"kras/"+fromFolder + e)
+        os.replace(fromFolder + e,"kras/"+fromFolder + e.replace(".png","")) #krita loves making it a .png.kra, which looks ugly so this is mandatory
         return
 
     if os.path.isdir(fromFolder + e):

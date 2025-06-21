@@ -37,7 +37,6 @@ public abstract class Turret extends GameObject implements TickDetect {
   private enum TargetingOption {FIRST, LAST, STRONG}
 
   private TargetingOption targeting = TargetingOption.FIRST;
-
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
@@ -71,6 +70,9 @@ public abstract class Turret extends GameObject implements TickDetect {
         openUpgradeMenu();
       }
     }));
+  }
+  protected int getHighestTier(){
+    return Math.max(Math.max(path3Tier,path2Tier),path1Tier);
   }
 
   protected List<Upgrade> getUpgradePath1() {
@@ -373,10 +375,10 @@ public abstract class Turret extends GameObject implements TickDetect {
               u1.description.getAsTextBox(sprite.getLayer()+10,bs,u1.cost)));
       buttons.add(
           new Button(bs, u2.makeSprite().setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
-               u2.description.getAsTextBox(sprite.getLayer()+10,bs,u1.cost)));
+               u2.description.getAsTextBox(sprite.getLayer()+10,bs,u2.cost)));
       buttons.add(
           new Button(bs, u3.makeSprite().setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
-              u3.description.getAsTextBox(sprite.getLayer()+10,bs,u1.cost)));
+              u3.description.getAsTextBox(sprite.getLayer()+10,bs,u3.cost)));
 
       buttons.forEach(Game.get()::addMouseDetect);
       buttons.forEach(Game.get()::addTickable);
@@ -386,8 +388,8 @@ public abstract class Turret extends GameObject implements TickDetect {
       if (!world.tryPurchase(u.cost)) {
         return;
       }
-      upgradePicked(path);
       u.apply.apply();
+      upgradePicked(path);
       totalCost += u.cost;
       openUpgradeMenu();
     }

@@ -24,6 +24,9 @@ public class Button implements MouseDetect, TickDetect {
     this.onClick = foo;
     sprite.addToBs(bs);
     mouseoverText = caption;
+    if (mouseoverText != null) {
+      mouseoverText.hide();
+    }
   }
   public Button(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
       SimpleText.TextGenerator caption) {

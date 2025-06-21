@@ -60,6 +60,12 @@ public class NoSprite implements AbstractSprite {
     h *= multiplier;
     return this;
   }
+  @Override
+  public NoSprite scale(float multiplierX,float multiplierY) {
+    w *= multiplierX;
+    h *= multiplierY;
+    return this;
+  }
 
   @Override
   public NoSprite setSize(float w, float h) {

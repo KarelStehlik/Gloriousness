@@ -144,7 +144,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
             0, 900, 10, 40, bs);
     text3.setColors(Util.getColors(1, 1, 1));
     texts.add(text3);
-    resourceTracker =new TextBox(0,1100,500,true,texts);
+    resourceTracker =new TextBox(250,975,500,true,texts);
 
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();

@@ -55,17 +55,19 @@ public class SimpleText implements Text{
     this.layer = layer + 1;
     this.shader = shader;
     scale = (float) (fontSize / textureHeight);
-    this.text=value.get();
     if (backgroundImage == null) {
       background = new NoSprite();
     } else {
       background = new Sprite(backgroundImage, width, fontSize, layer, shader);
       background.addToBs(bs);
     }
-
     symbols=new ArrayList<>(0);
-    generateSymbols(value.get());
-    arrange();
+    if(value.get()!=null){
+      setText(value.get());
+    }else{
+      text=null;
+      hide();
+    }
   }
   public void update(){
     if(textupdater!=null){
@@ -160,6 +162,10 @@ public class SimpleText implements Text{
         addToSymbols(s, existing, newSymbols);
       }
     }
+    while (existing.hasNext()) {
+      Symbol unusedSymbol=existing.next();
+      unusedSymbol.delete();
+    }
     colors=originalColors;
     fontSize=originalFontSize;
     symbols.clear();
@@ -207,9 +213,7 @@ public class SimpleText implements Text{
         }
       } else {
         Symbol symbol = new Symbol(c, x, y, shader);
-        if (!hidden) {
-          bs.addSprite(symbol.sprite);
-        }
+        bs.addSprite(symbol.sprite);
         newSymbols.add(symbol);
       }
     }
