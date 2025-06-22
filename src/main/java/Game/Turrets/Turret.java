@@ -11,6 +11,7 @@ import Game.Mobs.TdMob;
 import Game.TickDetect;
 import Game.World;
 import general.Description;
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import Game.Enums.TargetingOption;
@@ -192,27 +193,12 @@ public abstract class Turret extends GameObject implements TickDetect {
       return;
     }
     bulletLauncher.tickCooldown();
-    if(bulletLauncher.canAttack()){
-      ArrayList<TdMob> targets = target(Stats.maxTargets);
-      if(!targets.isEmpty()){
-        List<Float> rotations=new ArrayList<>(targets.size());
-        for(int i=0;i<targets.size();i++){
-          TdMob target=targets.get(i);
-          rotations.add(Util.get_rotation(target.getX() - x, target.getY() - y));
-        }
-        while (bulletLauncher.canAttack()) {
-          for (int i=0;i<rotations.size();i++) {
-            bulletLauncher.attack(rotations.get(i),i==0);
-          }
-        }
-        setRotation(rotations.get(0));
-      }
-    }else{
-      TdMob target = target();
-      if (target != null) {
-        setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
-      }
+    TdMob target = target();
+    if (target != null) {
+      setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
+      bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
     }
+
 
     buffHandler.tick();
   }
@@ -301,7 +287,6 @@ public abstract class Turret extends GameObject implements TickDetect {
 
     public static final int power = 0;
     public static final int range = 1;
-    public static final int maxTargets = 1;
     public static final int pierce = 2;
     public static final int aspd = 3;
     public static final int projectileDuration = 4;

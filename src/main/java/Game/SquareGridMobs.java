@@ -117,13 +117,13 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
                   < radius * radius && condition.test(bloon)) {
 
             if (result.size() == maxCount) {
-              result.remove(maxCount - 1);
+              result.remove(0);
               result.add(bloon);//will be sorted bc we override the add method
             } else {
               result.add(bloon);
             }
             if (result.size() == maxCount) {
-              leastGood = result.get(result.size() - 1);
+              leastGood = result.get(0);
             }
             if(maxCount==1){
               break;

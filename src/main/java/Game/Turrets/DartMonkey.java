@@ -3,11 +3,17 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.StatBuff;
 import Game.BulletLauncher;
+import Game.Mobs.TdMob;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
 import general.Description;
+import general.Log;
+import general.Util;
 import windowStuff.TextModifiers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DartMonkey extends Turret{
     public static final String image = "DartMonkey";
@@ -20,6 +26,39 @@ public class DartMonkey extends Turret{
     }
     public static TurretGenerator generator(World world) {
         return new TurretGenerator(world, image, "DartMonkey", () -> new DartMonkey(world, -1000, -1000));
+    }
+    @Override
+    public void onGameTick(int tick) {
+        if (notYetPlaced) {
+            return;
+        }
+        bulletLauncher.tickCooldown();
+        if(bulletLauncher.canAttack()){
+            ArrayList<TdMob> targets = target(ExtraStats.maxTargets);
+            if(!targets.isEmpty()){
+                Log.write(targets.size());
+                List<Float> rotations=new ArrayList<>(targets.size());
+                for(int i=0;i<targets.size();i++){
+                    TdMob target=targets.get(i);
+                    rotations.add(Util.get_rotation(target.getX() - x, target.getY() - y));
+                }
+                while (bulletLauncher.canAttack()) {
+                    for (int i=0;i<rotations.size();i++) {
+                        targets.get(i).setRotation(rotation*30);
+                        bulletLauncher.setRemainingCooldown(0.1f);
+                        //bulletLauncher.attack(rotations.get(i),i==0);
+                    }
+                }
+                setRotation(rotations.get(0));
+            }
+        }else{
+            TdMob target = target();
+            if (target != null) {
+                setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
+            }
+        }
+
+        buffHandler.tick();
     }
     @Override
     protected Upgrade up010() {
@@ -43,7 +82,7 @@ public class DartMonkey extends Turret{
                             p.getSprite().setImage("beefdrt");
                         });
                     }
-                    float aspdDebuf= (float) Math.sqrt( stats[Stats.speed]/19);
+                    float aspdDebuf= (float) Math.sqrt( originalStats[Stats.speed]/19);
                     if(aspdDebuf<0.5){ //happens at 4 or less dartspeed
                         aspdDebuf=0;
                     }
@@ -64,7 +103,7 @@ public class DartMonkey extends Turret{
                     bulletLauncher.addProjectileModifier(p -> {
                         p.getSprite().setImage("beefyerdrt");
                     });
-                    int pierceBuff=(int)(stats[Stats.speed]/19*10)+3;
+                    int pierceBuff=(int)(originalStats[Stats.speed]/19*10)+3;
                     addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.bulletSize, 0.5f));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, pierceBuff));
                 }, 100);
@@ -90,11 +129,16 @@ public class DartMonkey extends Turret{
                 "We've had one dart yes, but what about second dart?",
                 "I don't think he knows about second dart"),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.maxTargets, 1));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.maxTargets, 1));
                 }, 100);
     }
 
     // generated stats
+  @Override
+  public int getStatsCount() {
+    return 11;
+  }
+
   @Override
   public void clearStats() {
     stats[Stats.power] = 1f;
@@ -107,6 +151,15 @@ public class DartMonkey extends Turret{
     stats[Stats.cost] = 25f;
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;
+    stats[ExtraStats.maxTargets] = 1f;
+  }
+
+  public static final class ExtraStats {
+
+    public static final int maxTargets = 10;
+
+    private ExtraStats() {
+    }
   }
   // end of generated stats
 
