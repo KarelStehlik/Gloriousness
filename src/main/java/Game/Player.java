@@ -7,6 +7,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
+import Game.Enums.DamageType;
 import general.Util;
 import windowStuff.Sprite;
 import windowStuff.UserInputListener;

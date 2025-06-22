@@ -3,6 +3,7 @@ package Game;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
+import Game.Enums.DamageType;
 import Game.Player.Stats;
 import general.Data;
 import general.Util;

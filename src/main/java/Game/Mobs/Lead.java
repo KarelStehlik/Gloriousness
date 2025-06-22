@@ -1,6 +1,6 @@
 package Game.Mobs;
 
-import Game.DamageType;
+import Game.Enums.DamageType;
 import Game.World;
 import java.util.List;
 

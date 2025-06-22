@@ -3,7 +3,7 @@ package Game.Mobs;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.CallAfterDuration;
-import Game.DamageType;
+import Game.Enums.DamageType;
 import Game.Game;
 import Game.World;
 import general.Constants;

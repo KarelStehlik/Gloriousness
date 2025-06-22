@@ -86,12 +86,12 @@ public class DartMonkey extends Turret{
     }
     @Override
     protected Upgrade up200() {
-        return new Upgrade("doubleshot", new Description( "Doubleshot","We've had one dart yes, but what about second dart?",
+        return new Upgrade("doubleshot", new Description( "Doubleshot",
+                "We've had one dart yes, but what about second dart?",
                 "I don't think he knows about second dart"),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.5f));
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 2));
-                }, 40);
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.maxTargets, 1));
+                }, 100);
     }
 
     // generated stats

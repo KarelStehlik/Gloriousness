@@ -223,13 +223,13 @@ public class BasicTurret extends Turret {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.power] = 1f;
-    stats[Stats.range] = Data.gameMechanicsRng.nextFloat(50f,500f);
+    stats[Stats.power] = 0f;
+    stats[Stats.range] = Data.gameMechanicsRng.nextFloat(5000f,50000f);
     stats[Stats.pierce] = 2f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(1.1f,10f);
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(10f,30f);
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(5f,100f);
-    stats[Stats.speed] = 15f;
+    stats[Stats.speed] = 55f;
     stats[Stats.cost] = 100f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
