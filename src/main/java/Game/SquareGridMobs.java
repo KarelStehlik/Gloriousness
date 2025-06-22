@@ -79,7 +79,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
     int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
     int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
     int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
-    TdMob.TrackProgress leastGood = new TrackProgress(-1, 0);//the worst good-enough-so-far bloon
+    TdMob leastGood = null;//the worst good-enough-so-far bloon
     Comparator<TdMob> comp = targeting.getComparator();
     ArrayList<TdMob> result = new ArrayList<>(maxCount) {
       @Override
@@ -102,9 +102,16 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
           if (bloon == null) {
             break;
           }
-          if ((bloon.lastChecked == idOfSearch && (maxCount == 1)) || bloon.getProgress().compareTo(leastGood) < 0) {
+          if (leastGood!=null&&(comp.compare(bloon,leastGood)<=0)) {
             break;
-          } // this is the index best bloon in the square. if we have already seen it, no other one can be better.
+          }
+          if(bloon.lastChecked == idOfSearch){
+            if(maxCount==1){// this is the index best bloon in the square. if we have already seen it, no other one can be better.
+              break;
+            }else{
+              continue;
+            }
+          }
           bloon.lastChecked = idOfSearch;
           if (Util.distanceSquared(bloon.x - centre.x, bloon.y - centre.y)
                   < radius * radius && condition.test(bloon)) {
@@ -112,12 +119,15 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
             if (result.size() == maxCount) {
               result.remove(maxCount - 1);
               result.add(bloon);//will be sorted bc we override the add method
-              leastGood = result.get(result.size() - 1).getProgress();
             } else {
               result.add(bloon);
             }
-
-            break;
+            if (result.size() == maxCount) {
+              leastGood = result.get(result.size() - 1);
+            }
+            if(maxCount==1){
+              break;
+            }
           }
         }
       }

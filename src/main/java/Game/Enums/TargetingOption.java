@@ -15,7 +15,7 @@ public enum TargetingOption {
     LAST(new Comparator<TdMob>() {
         @Override
         public int compare(TdMob o1, TdMob o2) {
-            return o1.getProgress().compareTo(o2.getProgress());
+            return o2.getProgress().compareTo(o1.getProgress());
         }
     }
     ),
