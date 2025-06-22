@@ -3,6 +3,7 @@ package Game;
 import Game.Enums.TargetingOption;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.TrackProgress;
+import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -60,163 +61,60 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
   }
   public TdMob search(Point centre, int radius, TargetingOption targeting){
     ArrayList<TdMob> found=search(centre,radius,targeting,null,1);
-    return found==null ? null:found.get(0);
+    return found.isEmpty() ? null:found.get(0);
   }
-  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting,int count){
-    return search(centre,radius,targeting,null,count);
+  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting,int maxCount){
+    return search(centre,radius,targeting,null,maxCount);
   }
   public TdMob search(Point centre, int radius, TargetingOption targeting, Predicate<? super TdMob> condition){
     ArrayList<TdMob> found=search(centre,radius,targeting,condition,1);
     return found==null ? null:found.get(0);
   }
-  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting, Predicate<? super TdMob> condition,int count){
+  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting, Predicate<? super TdMob> condition,int maxCount) {
     idOfSearch++;
-
+    if(condition==null){
+      condition=mob -> true;
+    }
     int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
     int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
     int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
     int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
-    TdMob.TrackProgress best = new TrackProgress(-1, 0);
-    Comparator<TdMob> comp=TargetingOption.getComparator();
-    ArrayList<TdMob> result = new ArrayList<>(maxCount){
+    TdMob.TrackProgress leastGood = new TrackProgress(-1, 0);//the worst good-enough-so-far bloon
+    Comparator<TdMob> comp = targeting.getComparator();
+    ArrayList<TdMob> result = new ArrayList<>(maxCount) {
       @Override
       public boolean add(TdMob obj) {
-        int index = Collections.binarySearch(this,obj,comp); //finds index at which this would be sorted
+        int index = Collections.binarySearch(this, obj, comp); //finds index at which this would be sorted
         //if element is not present it's -index-1
         //I guess so that 0 index not present is distinct
-        if(index<0){
-          index=-index-1;
+        if (index < 0) {
+          index = -index - 1;
         }
-        super.add(index,obj);
+        super.add(index, obj);
         return true;
       }
     };
 
     for (int y = bottom; y <= top; y++) {
       for (int x = left; x <= right; x++) {
-        for (TdMob box : data.get(x + y * widthSquares)) {
-          if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) < 0) {
-            break;
-          } // this is the most advanced box in the square. if we have already seen it, no other one can be farther.
-          box.lastChecked = idOfSearch;
-          if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
-                  < radius * radius) {
-
-            if(result.size()==maxCount){
-              result.remove(maxCount-1);
-              result.add( box);//will be sorted bc we override the add method
-              best = result.get(result.size()-1).getProgress();
-            }else{
-              result.add( box);
-            }
-
+        for (int index = 0; ; index++) {
+          TdMob bloon = getBesiInBox(x, y, index, targeting);
+          if (bloon == null) {
             break;
           }
-        }
-      }
-    }
-
-  }
-  // is approximate, may return mobs that are out of range.
-  public TdMob getStrong(Point centre, int radius) {
-    idOfSearch++;
-
-    int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
-    int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
-    int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
-    int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
-
-    TdMob best = null;
-    for (int y = bottom; y <= top; y++) {
-      for (int x = left; x <= right; x++) {
-        TdMob candidate = strongest.get(x + y * widthSquares);
-        if (candidate == null) {
-        } else if (best == null) {
-          best = candidate;
-        } else if (candidate.getStats()[TdMob.Stats.health] > best.getStats()[TdMob.Stats.health] ||
-            (candidate.getStats()[TdMob.Stats.health] == best.getStats()[TdMob.Stats.health]
-                && candidate.getProgress().compareTo(best.getProgress()) > 0)) {
-          best = candidate;
-        }
-      }
-    }
-    return best;
-  }
-
-  public TdMob getFirst(Point centre, int radius) {
-    idOfSearch++;
-
-    int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
-    int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
-    int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
-    int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
-
-    TdMob.TrackProgress best = new TrackProgress(-1, 0);
-    TdMob result = null;
-
-    for (int y = bottom; y <= top; y++) {
-      for (int x = left; x <= right; x++) {
-        for (TdMob box : data.get(x + y * widthSquares)) {
-          if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) < 0) {
+          if ((bloon.lastChecked == idOfSearch && (maxCount == 1)) || bloon.getProgress().compareTo(leastGood) < 0) {
             break;
-          } // this is the most advanced box in the square. if we have already seen it, no other one can be farther.
-          box.lastChecked = idOfSearch;
-          if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
-              < radius * radius) {
-            result = box;
-            best = result.getProgress();
-            break;
-          }
-        }
-      }
-    }
-    return result;
-  }
-  public ArrayList<TdMob> getFirstX(Point centre, int radius,int maxCount) {
-    idOfSearch++;
+          } // this is the index best bloon in the square. if we have already seen it, no other one can be better.
+          bloon.lastChecked = idOfSearch;
+          if (Util.distanceSquared(bloon.x - centre.x, bloon.y - centre.y)
+                  < radius * radius && condition.test(bloon)) {
 
-    int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
-    int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
-    int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
-    int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
-
-    TdMob.TrackProgress best = new TrackProgress(-1, 0);
-    Comparator<TdMob> comp=new Comparator<TdMob>() {
-      @Override
-      public int compare(TdMob o1, TdMob o2) {
-        return o1.getProgress().compareTo(o2.getProgress());
-      }
-    };
-    ArrayList<TdMob> result = new ArrayList<>(maxCount){
-      @Override
-      public boolean add(TdMob obj) {
-        int index = Collections.binarySearch(this,obj,comp); //finds index at which this would be sorted
-                                                                  //if element is not present it's -index-1
-                                                                  //I guess so that 0 index not present is distinct
-        if(index<0){
-          index=-index-1;
-        }
-        super.add(index,obj);
-        return true;
-      }
-    };
-
-    for (int y = bottom; y <= top; y++) {
-      for (int x = left; x <= right; x++) {
-        for (TdMob box : data.get(x + y * widthSquares)) {
-          if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) < 0) {
-            break;
-          } // this is the most advanced box in the square. if we have already seen it, no other one can be farther.
-          box.lastChecked = idOfSearch;
-          if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
-                  < radius * radius) {
-
-            if(result.size()==maxCount){
-              result.remove(maxCount-1);
-              result.add( box);//will be sorted bc we override the add method
-              best = result.get(result.size()-1).getProgress();
-            }else{
-              result.add( box);
+            if (result.size() == maxCount) {
+              result.remove(maxCount - 1);
+              result.add(bloon);//will be sorted bc we override the add method
+              leastGood = result.get(result.size() - 1).getProgress();
+            } else {
+              result.add(bloon);
             }
 
             break;
@@ -226,70 +124,34 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
     }
     return result;
   }
-
-
-  public TdMob getLast(Point centre, int radius) {
-    idOfSearch++;
-
-    int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
-    int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
-    int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
-    int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
-
-    TdMob.TrackProgress best = new TrackProgress(Integer.MAX_VALUE, 0);
-    TdMob result = null;
-
-    for (int y = bottom; y <= top; y++) {
-      for (int x = left; x <= right; x++) {
-
-        ArrayList<TdMob> get = data.get(x + y * widthSquares);
-        for (int i = get.size() - 1; i >= 0; i--) {
-          TdMob box = get.get(i);
-
-          if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) > 0) {
-            break;
-          } // this is the least advanced box in the square.
-          box.lastChecked = idOfSearch;
-          if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
-              < radius * radius) {
-            result = box;
-            best = result.getProgress();
-            break;
+  public TdMob getBesiInBox(int x,int y,int index,TargetingOption targeting){//returns index best bloon according to condition
+    ArrayList<TdMob> all=data.get(x + y * widthSquares);                                                       //in box x y
+    if(index>=all.size()){
+      return null;
+    }
+    switch (targeting){
+      case FIRST -> {
+        return all.get(index);
+      }
+      case STRONG -> {
+        if(index!=0){
+          TdMob improvise=getBesiInBox(x,y,index-1,TargetingOption.FIRST);
+          if(improvise==strongest.get(x + y * widthSquares)){ //to not return strongest twice, gets last
+                                                              //this should be second strongest and we will pretend that it is
+            return getBesiInBox(x,y,data.size()-1,TargetingOption.FIRST);
+          }else{
+            return improvise;
           }
         }
+        return strongest.get(x + y * widthSquares);
+      }
+      case LAST -> {
+        return all.get(all.size()-1-index);
+      }
+      default -> {
+        Log.write("UNKNOWN PRIORITY STRATEGY OF "+targeting);
+        return null;
       }
     }
-    return result;
-  }
-
-
-  public TdMob getFirst(Point centre, int radius, Predicate<? super TdMob> condition) {
-    idOfSearch++;
-
-    int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
-    int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
-    int top = Math.min((centre.y + radius >> squareSizePow2) - bottomSquares, heightSquares - 1);
-    int right = Math.min((centre.x + radius >> squareSizePow2) - leftSquares, widthSquares - 1);
-
-    TdMob.TrackProgress best = new TrackProgress(-1, 0);
-    TdMob result = null;
-
-    for (int y = bottom; y <= top; y++) {
-      for (int x = left; x <= right; x++) {
-        for (TdMob box : data.get(x + y * widthSquares)) {
-          if (box.lastChecked == idOfSearch || box.getProgress().compareTo(best) < 0) {
-            break;
-          } // this is the most advanced box in the square. if we have already seen it, no other one can be farther.
-          box.lastChecked = idOfSearch;
-          if (Util.distanceSquared(box.x - centre.x, box.y - centre.y)
-              < radius * radius && condition.test(box)) {
-            result = box;
-            best = box.getProgress();
-            break;
-          }
-        }
-      }
-    }
-    return result;
   }
 }

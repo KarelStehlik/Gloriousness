@@ -22,7 +22,13 @@ public enum TargetingOption {
     STRONG(new Comparator<TdMob>() {
         @Override
         public int compare(TdMob o1, TdMob o2) {
-            return o1.getProgress().compareTo(o2.getProgress());
+            if(o1.getStats()[TdMob.Stats.health]>o2.getStats()[TdMob.Stats.health]){
+                return 1;
+            }else if(o1.getStats()[TdMob.Stats.health]<o2.getStats()[TdMob.Stats.health]){
+                return -1;
+            }else{
+                return 0;
+            }
         }
     }
     );
