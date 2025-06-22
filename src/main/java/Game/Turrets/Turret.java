@@ -172,6 +172,16 @@ public abstract class Turret extends GameObject implements TickDetect {
           .getStrong(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
     };
   }
+  protected ArrayList<TdMob> getXTarget(int maxTargets) {
+    return switch (targeting) {
+      case FIRST -> world.getMobsGrid()
+              .getFirstX(new Point((int) x, (int) y), (int) stats[Turret.Stats.range],maxTargets);
+      case LAST ->
+              world.getMobsGrid().getLast(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+      case STRONG -> world.getMobsGrid()
+              .getStrong(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+    };
+  }
 
   @Override
   public void onGameTick(int tick) {
@@ -179,7 +189,8 @@ public abstract class Turret extends GameObject implements TickDetect {
       return;
     }
     bulletLauncher.tickCooldown();
-    TdMob target = target();
+    TdMob target = getXTargets();
+    target()
     if (target != null) {
       setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
       while (bulletLauncher.canAttack()) {
@@ -273,6 +284,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
     public static final int power = 0;
     public static final int range = 1;
+    public static final int maxTargets = 1;
     public static final int pierce = 2;
     public static final int aspd = 3;
     public static final int projectileDuration = 4;

@@ -3,6 +3,7 @@ package Game;
 import Game.Buffs.Ignite;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
+import Game.Enums.DamageType;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.Stats;
 
