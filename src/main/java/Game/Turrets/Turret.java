@@ -33,6 +33,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
   protected boolean notYetPlaced = true;
   protected float totalCost;
+  protected final float[] originalStats;
 
   private enum TargetingOption {FIRST, LAST, STRONG}
 
@@ -41,6 +42,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     super(X, Y, 0, 0, world);
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
     clearStats();
+    originalStats=getStats().clone();
 
     sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize],
         2);
