@@ -1,11 +1,11 @@
 package Game.Turrets;
 
-import Game.BasicCollides;
+import Game.*;
+import Game.Buffs.Explosive;
+import Game.Buffs.Ignite;
+import Game.Buffs.Modifier;
 import Game.Buffs.StatBuff;
-import Game.BulletLauncher;
 import Game.Mobs.TdMob;
-import Game.TurretGenerator;
-import Game.World;
 import general.Data;
 import general.Description;
 import general.Log;
@@ -34,9 +34,8 @@ public class DartMonkey extends Turret{
         }
         bulletLauncher.tickCooldown();
         if(bulletLauncher.canAttack()){
-            ArrayList<TdMob> targets = target(ExtraStats.maxTargets);
+            ArrayList<TdMob> targets = target((int)getStats()[ExtraStats.maxTargets]);
             if(!targets.isEmpty()){
-                Log.write(targets.size());
                 List<Float> rotations=new ArrayList<>(targets.size());
                 for(int i=0;i<targets.size();i++){
                     TdMob target=targets.get(i);
@@ -44,9 +43,7 @@ public class DartMonkey extends Turret{
                 }
                 while (bulletLauncher.canAttack()) {
                     for (int i=0;i<rotations.size();i++) {
-                        targets.get(i).setRotation(rotation*30);
-                        bulletLauncher.setRemainingCooldown(0.1f);
-                        //bulletLauncher.attack(rotations.get(i),i==0);
+                        bulletLauncher.attack(rotations.get(i),i==0);
                     }
                 }
                 setRotation(rotations.get(0));
@@ -129,8 +126,55 @@ public class DartMonkey extends Turret{
                 "We've had one dart yes, but what about second dart?",
                 "I don't think he knows about second dart"),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.maxTargets, 1));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.maxTargets, 1));
                 }, 100);
+    }
+    private boolean upgraded=false;
+    private void explodfunc(Projectile proj){
+        if (upgraded){
+            explodfuncUpgraded(proj);
+            return;
+        }
+        proj.addBeforeDeath(
+                new Explosive<Projectile>(1,120)
+        );
+    }
+    @Override
+    protected Upgrade up300() {
+        return new Upgrade("rocketdart", new Description( "Rocket darts",
+                "Darts explode, have increased projectile speed and deal more damage.",
+                "they deal 1 more damage, 1 dmg explosions, 75 percent more speedy"),
+                () -> {
+                    sprite.setImage("cyborg");
+                    bulletLauncher.addProjectileModifier(p -> {
+                        p.getSprite().setImage("drtex");
+                    });
+                    bulletLauncher.addProjectileModifier(this::explodfunc);
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.75f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
+                }, 125);
+    }
+    private void explodfuncUpgraded(Projectile proj){
+        Explosive<Projectile> explode=new Explosive<Projectile>(getStats()[Stats.pierce],180);
+        explode.addEffect((TdMob mob)->mob.addBuff( new Ignite<>(originalStats[Stats.aspd],4)));
+        proj.addBeforeDeath(
+                explode
+        );
+    }
+    @Override
+    protected Upgrade up400() {
+        return new Upgrade("incendiary", new Description( "Incendiary darts",
+                "Roasts bloons alive with extra powerful explosions, burn damage is better with attackspeed. " +
+                        "Additionally sets base explosion damage to pierce.",
+                "duration of 4s, burn damage is equal to attackspeed"),
+                () -> {
+                    sprite.setImage("bombsuit");
+                    bulletLauncher.addProjectileModifier(p -> {
+                        p.getSprite().setImage("drtbomb");
+                    });
+                    upgraded=true;
+
+                }, 400);
     }
 
     // generated stats
