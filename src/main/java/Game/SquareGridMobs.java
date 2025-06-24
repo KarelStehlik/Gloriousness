@@ -108,9 +108,8 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
           if(bloon.lastChecked == idOfSearch){
             if(maxCount==1){// this is the index best bloon in the square. if we have already seen it, no other one can be better.
               break;
-            }else{
-              continue;
             }
+            continue;
           }
           bloon.lastChecked = idOfSearch;
           if (Util.distanceSquared(bloon.x - centre.x, bloon.y - centre.y)

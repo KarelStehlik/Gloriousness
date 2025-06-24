@@ -129,7 +129,7 @@ public class DartMonkey extends Turret{
                 "We've had one dart yes, but what about second dart?",
                 "I don't think he knows about second dart"),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.maxTargets, 1));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.maxTargets, 1));
                 }, 100);
     }
 

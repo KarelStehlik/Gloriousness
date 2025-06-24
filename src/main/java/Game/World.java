@@ -333,6 +333,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
         options.cheat = cheat.get();
       }
 
+      ImBoolean ff = new ImBoolean(options.fastForward);
+      if (ImGui.checkbox("vzoom", ff)) {
+        options.fastForward = ff.get();
+      }
+
       int[] currWave = new int[]{mobSpawner.waveNum};
       if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
         addEvent(() -> {
@@ -589,10 +594,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       return ultimateCrosspathing;
     }
 
+    public boolean isFastForward() {return fastForward;}
+
     private boolean fuckified = false;
     private boolean laggyGong = false;
     private boolean ultimateCrosspathing = false;
     private boolean cheat = false;
+    private boolean fastForward = false;
   }
 
   private static class Optimization {
