@@ -133,29 +133,29 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
     }
     return result;
   }
-  public TdMob getBesiInBox(int x,int y,int index,TargetingOption targeting){//returns index best bloon according to condition
-    ArrayList<TdMob> all=data.get(x + y * widthSquares);                                                       //in box x y
-    if(index>=all.size()){
+  public TdMob getBesiInBox(int x, int y, int index,TargetingOption targeting){//returns index best bloon according to condition
+    ArrayList<TdMob> byProgress=data.get(x + y * widthSquares);                                                       //in box x y
+    if(index>=byProgress.size()){
       return null;
     }
     switch (targeting){
       case FIRST -> {
-        return all.get(index);
+        return byProgress.get(index);
       }
       case STRONG -> {
-        if(index!=0){
-          TdMob improvise=getBesiInBox(x,y,index-1,TargetingOption.FIRST);
-          if(improvise==strongest.get(x + y * widthSquares)){ //to not return strongest twice, gets last
-                                                              //this should be second strongest and we will pretend that it is
-            return getBesiInBox(x,y,data.size()-1,TargetingOption.FIRST);
-          }else{
-            return improvise;
-          }
+        if(index==0){
+          return strongest.get(x + y * widthSquares);
         }
-        return strongest.get(x + y * widthSquares);
+        TdMob improvise=byProgress.get(index-1);
+        if(improvise==strongest.get(x + y * widthSquares)){ //to not return strongest twice, gets last
+                                                            //this should be second strongest and we will pretend that it is
+          return byProgress.get(byProgress.size()-1);
+        }else{
+          return improvise;
+        }
       }
       case LAST -> {
-        return all.get(all.size()-1-index);
+        return byProgress.get(byProgress.size()-1-index);
       }
       default -> {
         Log.write("UNKNOWN PRIORITY STRATEGY OF "+targeting);
