@@ -186,9 +186,10 @@ public abstract class Turret extends GameObject implements TickDetect {
     TdMob target = target();
     if (target != null) {
       setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
-      bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
+      while(bulletLauncher.canAttack()) {
+        bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
+      }
     }
-
 
     buffHandler.tick();
   }
