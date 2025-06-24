@@ -52,15 +52,13 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     private final AbstractSprite fireSprite;
 
     public float getDpTick() {
-      float parentDamage = parentIgnites==null?0 : parentIgnites.getDpTick();
-      if(parentDamage==0){
-        parentIgnites=null;
-      }
-      return dpTick+parentDamage;
+      return totalDpTick;
     }
 
     private float dpTick = 0;
     private Aggregator parentIgnites = null;
+    private int lastUpdate =0;
+    private float totalDpTick = 0;
 
     protected Aggregator() {
       var bs = Game.get().getSpriteBatching("main");
@@ -83,19 +81,25 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     }
 
     private void update() {
+      int tick = Game.get().getTicks();
+      if(lastUpdate == tick){
+        return;
+      }
+      lastUpdate = tick;
       if (parentIgnites != null) {
         parentIgnites.update();
       }
-      float time = Game.get().getTicks();
 
       for (Iterator<Ignite<T>> iterator = ignites.iterator(); iterator.hasNext(); ) {
         Ignite<T> ig = iterator.next();
-        if (ig.expiryTime > time) {
+        if (ig.expiryTime > tick) {
           break;
         }
         iterator.remove();
         dpTick -= ig.damagePerTick;
       }
+
+      totalDpTick = dpTick + (parentIgnites==null?0:parentIgnites.totalDpTick);
     }
 
     @Override
