@@ -52,7 +52,11 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     private final AbstractSprite fireSprite;
 
     public float getDpTick() {
-      return dpTick;
+      float parentDamage = parentIgnites==null?0 : parentIgnites.getDpTick();
+      if(parentDamage==0){
+        parentIgnites=null;
+      }
+      return dpTick+parentDamage;
     }
 
     private float dpTick = 0;
@@ -98,7 +102,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     public void tick(T target) {
       update();
 
-      float damage = dpTick+ (parentIgnites==null?0:parentIgnites.dpTick);
+      float damage = getDpTick();
       float power = Math.min(3, damage / target.getStats()[Stats.health] * 60);
       fireSprite.setSize(power * target.getStats()[Stats.size],
           power * target.getStats()[Stats.size]);
