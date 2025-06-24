@@ -1,5 +1,9 @@
 package Game.Turrets;
 
+import static Game.Enums.TargetingOption.FIRST;
+import static Game.Enums.TargetingOption.LAST;
+import static Game.Enums.TargetingOption.STRONG;
+
 import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
 import Game.Buffs.VoidFunc;
@@ -11,19 +15,14 @@ import Game.Mobs.TdMob;
 import Game.TickDetect;
 import Game.World;
 import general.Description;
-import general.Log;
 import general.Util;
 import java.awt.Point;
-import Game.Enums.TargetingOption;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
-import windowStuff.SimpleText.TextGenerator;
 import windowStuff.NoSprite;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
-
-import static Game.Enums.TargetingOption.*;
 
 public abstract class Turret extends GameObject implements TickDetect {
 
@@ -270,7 +269,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
 
     public Sprite makeSprite() {
-      return new Sprite(image, 10).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
+      return new Sprite(image, 11).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
     }
   }
 
