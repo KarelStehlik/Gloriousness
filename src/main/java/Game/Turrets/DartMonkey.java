@@ -156,7 +156,7 @@ public class DartMonkey extends Turret{
     }
     private void explodfuncUpgraded(Projectile proj){
         Explosive<Projectile> explode=new Explosive<Projectile>(getStats()[Stats.pierce],180);
-        explode.addEffect((TdMob mob)->mob.addBuff( new Ignite<>(originalStats[Stats.aspd],4)));
+        explode.addEffect((TdMob mob)->mob.addBuff( new Ignite<>(originalStats[Stats.aspd],4*1000)));
         proj.addBeforeDeath(
                 explode
         );
@@ -164,9 +164,9 @@ public class DartMonkey extends Turret{
     @Override
     protected Upgrade up400() {
         return new Upgrade("incendiary", new Description( "Incendiary darts",
-                "Roasts bloons alive with extra powerful explosions, burn damage is better with attackspeed. " +
+                "Roasts bloons alive with extra large and powerful explosions, burn damage is better with attackspeed. " +
                         "Additionally sets base explosion damage to pierce.",
-                "duration of 4s, burn damage is equal to attackspeed"),
+                "duration of 4s, burn damage is equal to attackspeed, AOE is increased by 50%"),
                 () -> {
                     sprite.setImage("bombsuit");
                     bulletLauncher.addProjectileModifier(p -> {
