@@ -39,3 +39,7 @@ turrets\engiTurret
 turrets\dartmonkey
     power=1|range=250|pierce=1|aspd=0.45??1.2|projectileDuration=2|bulletSize=30|speed=1??19|cost=25|size=25|spritesize=100
     maxTargets=1
+
+---
+turrets\dartlinggunner
+    power=2|range=15|pierce=1|aspd=0.9??5|projectileDuration=4|bulletSize=30|speed=2??25|cost=250|size=25|spritesize=100

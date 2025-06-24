@@ -5,6 +5,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import general.Constants;
 import imgui.ImGui;
+import org.joml.Vector2d;
+import org.joml.Vector2f;
+
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -15,12 +18,16 @@ public class UserInputListener {
   private final boolean[] buttonsPressed;
   private final UserInputHandler game;
   private final BlockingQueue<Event> events = new LinkedBlockingQueue<>();
-  private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
+  private double dx, dy, lastX, lastY, scrollX, scrollY;
+  private final Vector2d position=new Vector2d(); /*I want to be able to return this and at some point
+                                         I heard vector creation has a cost so vectors should be reused instead of throwaway
+                                        Now... I think there is absolutely no way that it could have a performance impact if a
+                                        couple vecors are made from returning a new vector2d instead of reusing this one and
+                                       I'm a teensy tiny tad afraid someone is going to grab the vector and modify it but whatever
+                                                          */
   private boolean dragging;
 
   public UserInputListener(UserInputHandler g) {
-    x = 0;
-    y = 0;
     dx = 0;
     dy = 0;
     lastX = 0;
@@ -38,13 +45,15 @@ public class UserInputListener {
       events.remove().run();
     }
   }
-
+  public final Vector2d getPos(){
+    return position;
+  }
   public float getX() {
-    return (float) x;
+    return (float) position.x;
   }
 
   public float getY() {
-    return (float) y;
+    return (float) position.y;
   }
 
   public float getDx() {
@@ -72,10 +81,10 @@ public class UserInputListener {
   }
 
   public void mousePosCallback(long window, double newX, double newY) {
-    lastX = x;
-    lastY = y;
-    x = newX;
-    y = Constants.screenSize.y - newY;
+    lastX = position.x;
+    lastY = position.y;
+    position.x = newX;
+    position.y = Constants.screenSize.y - newY;
     dx = newX - lastX;
     dy = Constants.screenSize.y - newY - lastY;
     dragging = Arrays.asList(buttonsPressed, 5).contains(true);

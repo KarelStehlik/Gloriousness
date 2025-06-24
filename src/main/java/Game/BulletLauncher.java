@@ -1,15 +1,16 @@
 package Game;
 
 import Game.Buffs.Modifier;
+import Game.Buffs.AttackEffect;
 import Game.Mobs.TdMob;
 import Game.Projectile.OnCollideComponent;
 import general.Data;
-import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BulletLauncher {
+  private final List<AttackEffect> onAttackEffects = new ArrayList<>(1);
   private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
@@ -171,6 +172,9 @@ public class BulletLauncher {
   public void addProjectileCollide(OnCollideComponent<Projectile> component) {
     projectileCollides.add(component);
   }
+  public void addAttackEffect(AttackEffect component) {
+    onAttackEffects.add(component);
+  }
 
   public void move(float newX, float newY) {
     x = newX;
@@ -199,6 +203,9 @@ public class BulletLauncher {
   }
 
   public Projectile attack(float angle, boolean triggerCooldown) {
+    for (AttackEffect effect:onAttackEffects){
+      effect.mod(this,triggerCooldown,angle);
+    }
     if (triggerCooldown) {
       remainingCooldown += cooldown;
     }

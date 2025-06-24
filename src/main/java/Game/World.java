@@ -95,6 +95,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator test = BasicTurret.generator(this);
     TurretGenerator drtmonk = DartMonkey.generator(this);
+    TurretGenerator dartling = DartlingGunner.generator(this);
 
     TurretGenerator testDotTurret = IgniteTurret.generator(this);
 
@@ -112,7 +113,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator engi = Engineer.generator(this);
 
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test,drtmonk, testDotTurret, testSlowTurret,
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test,drtmonk,dartling, testDotTurret, testSlowTurret,
         testEmp, testEating, necro, druid, plane, engi};
 
     ButtonArray turretBar = new ButtonArray(2,
