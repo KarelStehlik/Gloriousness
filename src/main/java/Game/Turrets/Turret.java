@@ -167,24 +167,14 @@ public abstract class Turret extends GameObject implements TickDetect {
   }
 
   protected TdMob target() {
-    return switch (targeting) {
-      case FIRST -> world.getMobsGrid()
-          .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], FIRST);
-      case LAST ->
-          world.getMobsGrid().search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], LAST);
-      case STRONG -> world.getMobsGrid()
-          .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], STRONG);
-    };
+    return world.getMobsGrid().search(
+        new Point((int) x, (int) y), (int) stats[Turret.Stats.range], targeting
+    );
   }
   protected ArrayList<TdMob> target(int maxTargets) {
-    return switch (targeting) {
-      case FIRST -> world.getMobsGrid()
-              .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], FIRST,maxTargets);
-      case LAST ->
-              world.getMobsGrid().search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], LAST,maxTargets);
-      case STRONG -> world.getMobsGrid()
-              .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], STRONG,maxTargets);
-    };
+    return world.getMobsGrid().search(
+        new Point((int) x, (int) y), (int) stats[Turret.Stats.range], targeting, maxTargets
+    );
   }
 
   @Override
