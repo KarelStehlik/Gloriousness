@@ -68,7 +68,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
   }
   public TdMob search(Point centre, int radius, TargetingOption targeting, Predicate<? super TdMob> condition){
     ArrayList<TdMob> found=search(centre,radius,targeting,condition,1);
-    return found==null ? null:found.get(0);
+    return found.isEmpty() ? null:found.get(0);
   }
   public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting, Predicate<? super TdMob> condition,int maxCount) {
     idOfSearch++;
