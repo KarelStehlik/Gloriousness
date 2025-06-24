@@ -4,14 +4,17 @@ import Game.Buffs.Buff;
 import Game.Buffs.BuffHandler;
 import Game.Buffs.VoidFunc;
 import Game.BulletLauncher;
+import Game.Enums.TargetingOption;
 import Game.Game;
 import Game.GameObject;
 import Game.Mobs.TdMob;
 import Game.TickDetect;
 import Game.World;
 import general.Description;
+import general.Log;
 import general.Util;
 import java.awt.Point;
+import Game.Enums.TargetingOption;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
@@ -19,6 +22,8 @@ import windowStuff.SimpleText.TextGenerator;
 import windowStuff.NoSprite;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
+
+import static Game.Enums.TargetingOption.*;
 
 public abstract class Turret extends GameObject implements TickDetect {
 
@@ -34,10 +39,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected boolean notYetPlaced = true;
   protected float totalCost;
   protected final float[] originalStats;
-
-  private enum TargetingOption {FIRST, LAST, STRONG}
-
-  private TargetingOption targeting = TargetingOption.FIRST;
+  private TargetingOption targeting = FIRST;
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
@@ -167,11 +169,21 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected TdMob target() {
     return switch (targeting) {
       case FIRST -> world.getMobsGrid()
-          .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+          .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], FIRST);
       case LAST ->
-          world.getMobsGrid().getLast(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+          world.getMobsGrid().search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], LAST);
       case STRONG -> world.getMobsGrid()
-          .getStrong(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+          .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], STRONG);
+    };
+  }
+  protected ArrayList<TdMob> target(int maxTargets) {
+    return switch (targeting) {
+      case FIRST -> world.getMobsGrid()
+              .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], FIRST,maxTargets);
+      case LAST ->
+              world.getMobsGrid().search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], LAST,maxTargets);
+      case STRONG -> world.getMobsGrid()
+              .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], STRONG,maxTargets);
     };
   }
 
@@ -184,10 +196,10 @@ public abstract class Turret extends GameObject implements TickDetect {
     TdMob target = target();
     if (target != null) {
       setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
-      while (bulletLauncher.canAttack()) {
-        bulletLauncher.attack(rotation);
-      }
+      bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
     }
+
+
     buffHandler.tick();
   }
 
@@ -329,9 +341,9 @@ public abstract class Turret extends GameObject implements TickDetect {
           new Sprite("Radar", 10).setSize(170, 40).setPosition(X, Y - 135),
           (x, y) -> {
             targeting = switch (targeting) {
-              case FIRST -> TargetingOption.LAST;
-              case LAST -> TargetingOption.STRONG;
-              case STRONG -> TargetingOption.FIRST;
+              case FIRST -> LAST;
+              case LAST -> STRONG;
+              case STRONG -> FIRST;
             };
           },
           () -> "" + targeting));

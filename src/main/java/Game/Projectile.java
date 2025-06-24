@@ -5,6 +5,7 @@ import Game.Buffs.BuffHandler;
 import Game.Buffs.Modifier;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
+import Game.Enums.TargetingOption;
 import Game.Mobs.TdMob;
 import general.Log;
 import general.Util;
@@ -351,7 +352,7 @@ public class Projectile extends GameObject implements TickDetect {
       }
       if (target.targetedMob == null) {
         target.targetedMob = target.world.getMobsGrid()
-            .getFirst(new Point((int) target.x, (int) target.y), range,
+            .search(new Point((int) target.x, (int) target.y), range, TargetingOption.FIRST,
                 mob -> !(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
       }
       if (target.targetedMob == null) {

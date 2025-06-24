@@ -222,6 +222,11 @@ public class BasicTurret extends Turret {
 
   // generated stats
   @Override
+  public int getStatsCount() {
+    return 20;
+  }
+
+  @Override
   public void clearStats() {
     stats[Stats.power] = 1f;
     stats[Stats.range] = Data.gameMechanicsRng.nextFloat(50f,500f);
@@ -233,6 +238,33 @@ public class BasicTurret extends Turret {
     stats[Stats.cost] = 100f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
+    stats[ExtraStats.power] = 0f;
+    stats[ExtraStats.range] = Data.gameMechanicsRng.nextFloat(5000f,50000f);
+    stats[ExtraStats.pierce] = 2f;
+    stats[ExtraStats.aspd] = Data.gameMechanicsRng.nextFloat(10f,30f);
+    stats[ExtraStats.projectileDuration] = 2f;
+    stats[ExtraStats.bulletSize] = Data.gameMechanicsRng.nextFloat(5f,100f);
+    stats[ExtraStats.speed] = 55f;
+    stats[ExtraStats.cost] = 100f;
+    stats[ExtraStats.size] = 50f;
+    stats[ExtraStats.spritesize] = 150f;
+  }
+
+  public static final class ExtraStats {
+
+    public static final int power = 10;
+    public static final int range = 11;
+    public static final int pierce = 12;
+    public static final int aspd = 13;
+    public static final int projectileDuration = 14;
+    public static final int bulletSize = 15;
+    public static final int speed = 16;
+    public static final int cost = 17;
+    public static final int size = 18;
+    public static final int spritesize = 19;
+
+    private ExtraStats() {
+    }
   }
   // end of generated stats
 }

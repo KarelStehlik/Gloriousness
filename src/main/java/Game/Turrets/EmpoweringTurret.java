@@ -8,7 +8,7 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.CallAfterDuration;
-import Game.DamageType;
+import Game.Enums.DamageType;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Player;

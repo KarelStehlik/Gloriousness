@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BulletLauncher {
-
-
   private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);

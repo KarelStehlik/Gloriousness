@@ -7,7 +7,7 @@ import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
-import Game.DamageType;
+import Game.Enums.DamageType;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;

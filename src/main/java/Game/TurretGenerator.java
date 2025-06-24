@@ -34,7 +34,6 @@ public class TurretGenerator {
   }
 
   public void select() {
-    Log.write(this.label);
     var tool = new PlaceObjectTool(world,
         new NoSprite(),
         this::generate);

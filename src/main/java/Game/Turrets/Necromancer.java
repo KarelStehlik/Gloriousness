@@ -10,6 +10,7 @@ import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.BulletLauncher;
+import Game.Enums.TargetingOption;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
@@ -369,7 +370,7 @@ public class Necromancer extends Turret {
     }
     bulletLauncher.tickCooldown();
     TdMob target = world.getMobsGrid()
-        .getFirst(new Point((int) x, (int) y), (int) stats[Turret.Stats.range]);
+        .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], TargetingOption.FIRST);
     if (target != null) {
       setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
     }

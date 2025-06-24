@@ -1,6 +1,6 @@
 package Game.Buffs;
 
-import Game.DamageType;
+import Game.Enums.DamageType;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.Stats;

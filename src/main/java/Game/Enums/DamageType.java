@@ -1,4 +1,4 @@
-package Game;
+package Game.Enums;
 
 public enum DamageType {
   TRUE(""), PHYSICAL("physicalResist"), MAGIC("magicResist");
