@@ -285,7 +285,7 @@ public class Wave implements TickDetect {
       // 34
       // 35
       new SpawnSequence[]{
-          new SpawnSequence(SmallMoab::new, 100, 0, 60),
+          new SpawnSequence(SmallMoab::new, 20, 0, 60),
       },
       // 36
       new SpawnSequence[]{
@@ -295,9 +295,9 @@ public class Wave implements TickDetect {
       },
       // 37
       new SpawnSequence[]{
-          new SpawnSequence(SmallMoab::new, 10, 0, 100),
-          new SpawnSequence(SmallMoab::new, 10, 500, 50),
-          new SpawnSequence(SmallMoab::new, 10, 750, 25),
+          new SpawnSequence(SmallMoab::new, 5, 0, 100),
+          new SpawnSequence(SmallMoab::new, 5, 500, 50),
+          new SpawnSequence(SmallMoab::new, 5, 750, 25),
           new SpawnSequence(SmallMoab::new, 10, 875, 13),
           new SpawnSequence(SmallMoab::new, 10, 950, 7),
       },
