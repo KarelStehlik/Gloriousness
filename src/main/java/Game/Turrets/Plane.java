@@ -264,7 +264,7 @@ public class Plane extends Turret {
           if (best != null) {
             carried.add(best);
           }
-          path1Tier = 4;
+          path1Tier = 3;
         }, 12000);
   }
 
