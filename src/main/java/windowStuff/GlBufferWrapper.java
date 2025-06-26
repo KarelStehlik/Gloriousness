@@ -34,7 +34,7 @@ public class GlBufferWrapper {
   public void alloc(int newSize, int usage) {
     bind();
     while (size < newSize) {
-      size *= 2;
+      size = (int) (size * 1.5f);
     }
     glBufferData(type, size, usage);
   }

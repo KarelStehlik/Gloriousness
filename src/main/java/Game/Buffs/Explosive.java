@@ -28,7 +28,7 @@ public class Explosive<T extends GameObject> implements Modifier<T>{
         public void mod(GameObject target) {
             target.world.getMobsGrid().callForEachCircle((int) target.getX(),
                     (int) target.getY(),
-                    (radius), m -> {
+                radius, m -> {
                         for (Modifier<TdMob> effect : effects) {
                             effect.mod(m);
                         }
