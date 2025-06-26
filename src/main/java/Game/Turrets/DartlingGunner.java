@@ -1,10 +1,7 @@
 package Game.Turrets;
 
 import Game.*;
-import Game.Buffs.Explosive;
-import Game.Buffs.Ignite;
-import Game.Buffs.SideWeapon;
-import Game.Buffs.StatBuff;
+import Game.Buffs.*;
 import Game.Mobs.TdMob;
 import general.Data;
 import general.Description;
@@ -18,10 +15,30 @@ import java.util.List;
 
 public class DartlingGunner  extends Turret{
     public static final String image = "gunner";
+    private String imageSuffix ="";
+    private String imagePrefix ="gunner";
+    private List<AttackEffect> extraBarrels=new ArrayList<>();
+    private void setSuffix(String suffix){
+        this.imageSuffix=suffix;
+        calcImage();
+    }
+    private void setPrefix(String prefix){
+        this.imagePrefix=prefix;
+        calcImage();
+    }
+
+    private void calcImage(){
+        sprite.setImage(imagePrefix+ imageSuffix);
+        sprite.setNaturalHeight();
+    }
 
     public DartlingGunner(World world, int X, int Y){
         super(world, X, Y, image, new BulletLauncher(world, "drt"));
+        double aspdBuff=Math.pow(Data.gameMechanicsRng.nextFloat(1,(float)Math.sqrt(2)),2);
+        originalStats[Stats.aspd]*=aspdBuff;
+        getStats()[Stats.aspd]*=aspdBuff;
         onStatsUpdate();
+        calcImage();
         bulletLauncher.setAspectRatio(1.5f);
         bulletLauncher.addMobCollide(BasicCollides.damage);
     }
@@ -46,51 +63,69 @@ public class DartlingGunner  extends Turret{
     }
     @Override
     protected Upgrade up010() {
-        return new Upgrade("sharper",
-                new Description("Sharper darts"
-                        ,"Throws razor sharp darts that can pop 2 layers at once"),
+        return new Upgrade("larger",
+                new Description("Larger darts"
+                        ,"Shoots extra large extra powerful darts that deal extra damage, but shoots slightly slower (and slower projectiles)." +
+                        "Better if dartspeed is at least mediocre.",
+                        "dartspeed is 2-25. pierce is +1 or +2 (if dartspeed is above 9), damage is +1. " +
+                                "Attacks and dartspeeds 20% slower or 10% if dartspeed is decent."),
                 () -> {
+                    int extraPierce=originalStats[Stats.aspd]>9 ? 2:1;
+                    float atcSpeedDebuff=originalStats[Stats.aspd]>9 ? (0.9f):(0.8f);
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, atcSpeedDebuff));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, atcSpeedDebuff));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, extraPierce));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
-                }, 40);
+                }, 300);
     }
     @Override
     protected Upgrade up020() {
-        return new Upgrade("beefmen",
-                new Description("Beefy darts"
-                        ,"reduce attack speed with low dart speed, but increase pierce by two. "+ TextModifiers.red +"Warning:"+ TextModifiers.white +" If dartspeed is too low may not shoot at all",
-                        "1-19 drtspeed, atcspd*=sqrt(drtspeed/19), if atcpd were halved or more it is set to 0"),
+        return new Upgrade("greatbarrel",
+                new Description("Superior Barrels"
+                        ,"Superior barrels accomodate the greater darts, increasing all basic stats, especially attackspeed",
+                        "50% attackspeed 40% dartspeed, +1 pierce and damage"),
                 () -> {
-                    if(getHighestTier()<2) {
-                        sprite.setImage("beefdrtmonk");
-                        bulletLauncher.addProjectileModifier(p -> {
-                            p.getSprite().setImage("beefdrt");
-                        });
-                    }
-                    float aspdDebuf= (float) Math.sqrt( originalStats[Stats.speed]/19);
-                    if(aspdDebuf<0.5){ //happens at 4 or less dartspeed
-                        aspdDebuf=0;
-                    }
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.bulletSize, 0.5f));
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 2));
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, aspdDebuf));
-                }, 40);
+                    setSuffix("wide");
+
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 1.5f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.4f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 1f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1f));
+                }, 400);
     }
     @Override
     protected Upgrade up030() {
-        return new Upgrade("beefyer",
-                new Description("Beefyer darts"
-                        ,"increases pierce by up to 13 depending on dartspeed",
-                        "1-19 drtspeed, pierce+=drtspeed/19*10+3"),
+        return new Upgrade("juggermen",
+                new Description("Juggernaut darts"
+                        ,"Juggernaut darts are extremely powerful, but it comes at a cost of attackspeed that depends on dartspeed." +
+                        "Removes additional barrels."
+                        + TextModifiers.red +"Warning:"+ TextModifiers.white +" If dartspeed is too low may not shoot at all",
+                        "five times the pierce and six times the damage. Attack speed is multiplied by " +
+                                "(original speed)/25, if this is lower or equal to a fourth of the original it does not shoot," +
+                                "and then reduced to third."),
                 () -> {
-                    sprite.setImage("gorrila");
-                    sprite.scale(1.4f,1.2f);
+                    for(AttackEffect effect:extraBarrels){
+                        bulletLauncher.removeAttackEffect(effect);
+                    }
+                    path3Tier=2;
+                    sprite.setImage("gunnerjugger");
+                    sprite.scale(1.5f);
                     bulletLauncher.addProjectileModifier(p -> {
-                        p.getSprite().setImage("beefyerdrt");
+                        p.getSprite().setImage("juggerdrt");
                     });
-                    int pierceBuff=(int)(originalStats[Stats.speed]/19*10)+3;
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.bulletSize, 0.5f));
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, pierceBuff));
-                }, 100);
+                    int pierceBuff=5;
+                    int dmgBuff=7;
+                    float atcSpeedDebuff=originalStats[Stats.speed]/25f;
+                    if(atcSpeedDebuff<=0.25f){
+                        atcSpeedDebuff=0;
+                    }
+                    atcSpeedDebuff/=3f;
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.bulletSize, 3.8f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, atcSpeedDebuff));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.pierce, pierceBuff));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.power, dmgBuff));
+                }, 2225);
     }
     @Override
     protected Upgrade up100() {
@@ -99,63 +134,53 @@ public class DartlingGunner  extends Turret{
                         "Shoots darts from an additional barrel",
                 "buffs work on the second barrel (apart from on attack effects that happen on no cooldown trigger I guess)"),
                 () -> {
-                    bulletLauncher.addAttackEffect(new SideWeapon(new Vector2f(0,100)));
-                }, 40);
+                    setPrefix("double");
+
+                    SideWeapon side=new SideWeapon(new Vector2f(-30,0));
+                    extraBarrels.add(side);
+                    bulletLauncher.addAttackEffect(side);
+                }, 200);
     }
     @Override
     protected Upgrade up200() {
-        return new Upgrade("barrels", new Description( "Triple Barrel",
+        return new Upgrade("barells", new Description( "Triple Barrel",
                 "The greed for barrels is strong, two was never enough"),
                 () -> {
-            bulletLauncher.addAttackEffect(new SideWeapon(new Vector2f(-100,0)));
-                }, 100);
-    }
-    private boolean upgraded=false;
-    private void explodfunc(Projectile proj){
-        if (upgraded){
-            explodfuncUpgraded(proj);
-            return;
-        }
-        proj.addBeforeDeath(
-                new Explosive<Projectile>(1,120)
-        );
+                    setPrefix("triple");
+                    SideWeapon side=new SideWeapon(new Vector2f(30,0));
+                    extraBarrels.add(side);
+                    bulletLauncher.addAttackEffect(side);
+                }, 200);
     }
     @Override
     protected Upgrade up300() {
-        return new Upgrade("rocketdart", new Description( "Rocket darts",
-                "Darts explode, have increased projectile speed and deal more damage.",
-                "they deal 1 more damage, 1 dmg explosions, 75 percent more speedy"),
+        return new Upgrade("tankmen", new Description( "Tank",
+                "Increases all basic stats, adds three barrels and occasionally fires bombs, bomb frequency depends on attackspeed",
+                "Base attack speed is 1.5 to 6 but is increased by random(1,sqrt(2))**2." +
+                        "Pierce and damage is doubled, attackspeed *1.5. bombs deal 10 AOE damage (each)," +
+                        " and the chance of an attack being bombs is 0.05+originalStats[Stats.aspd]/72d where 1 is 100%"),
                 () -> {
-                    sprite.setImage("cyborg");
-                    bulletLauncher.addProjectileModifier(p -> {
-                        p.getSprite().setImage("drtex");
-                    });
-                    bulletLauncher.addProjectileModifier(this::explodfunc);
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.75f));
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
-                }, 125);
-    }
-    private void explodfuncUpgraded(Projectile proj){
-        Explosive<Projectile> explode=new Explosive<Projectile>(getStats()[Stats.pierce],180);
-        explode.addEffect((TdMob mob)->mob.addBuff( new Ignite<>(originalStats[Stats.aspd],4*1000)));
-        proj.addBeforeDeath(
-                explode
-        );
-    }
-    @Override
-    protected Upgrade up400() {
-        return new Upgrade("incendiary", new Description( "Incendiary darts",
-                "Roasts bloons alive with extra large and powerful explosions, burn damage is better with attackspeed. " +
-                        "Additionally sets base explosion damage to pierce.",
-                "duration of 4s, burn damage is equal to attackspeed, AOE is increased by 50%"),
-                () -> {
-                    sprite.setImage("bombsuit");
-                    bulletLauncher.addProjectileModifier(p -> {
-                        p.getSprite().setImage("drtbomb");
-                    });
-                    upgraded=true;
+                    setPrefix("tank");
+                    SideWeapon side=new SideWeapon(new Vector2f(-50,0));
+                    extraBarrels.add(side);
+                    bulletLauncher.addAttackEffect(side);
+                    side=new SideWeapon(new Vector2f(50,0));
+                    extraBarrels.add(side);
+                    bulletLauncher.addAttackEffect(side);
+                    side=new SideWeapon(new Vector2f(0,20));
+                    extraBarrels.add(side);
+                    bulletLauncher.addAttackEffect(side);
 
-                }, 400);
+                    bulletLauncher.setImage("blcdrt");
+                    double bombchance=0.05+originalStats[Stats.aspd]/72d;
+                    sprite.scale(2.5f);
+
+                    bulletLauncher.addAttackEffect(new ProcTrigger<>(new TankRockets(bulletLauncher.getImage()), bombchance,true));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 1.5f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.5f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.pierce, 2f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.power, 2f));
+                }, 4500);
     }
 
     // generated stats
@@ -163,8 +188,8 @@ public class DartlingGunner  extends Turret{
   public void clearStats() {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 15f;
-    stats[Stats.pierce] = 1f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.9f,5f);
+    stats[Stats.pierce] = 2f;
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(1.5f,6f);
     stats[Stats.projectileDuration] = 4f;
     stats[Stats.bulletSize] = 30f;
     stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(2f,25f);

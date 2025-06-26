@@ -122,7 +122,6 @@ public class Sprite implements AbstractSprite {
   public Sprite setPosition(float X, float Y) {
     setX(X);
     setY(Y);
-    hasUnsavedChanges = true;
     return this;
   }
 
@@ -174,6 +173,7 @@ public class Sprite implements AbstractSprite {
   @Override
   public Sprite setX(float x) {
     this.x = x;
+    hasUnsavedChanges = true;
     return this;
   }
 
@@ -185,6 +185,7 @@ public class Sprite implements AbstractSprite {
   @Override
   public Sprite setY(float y) {
     this.y = y;
+    hasUnsavedChanges = true;
     return this;
   }
 

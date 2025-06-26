@@ -148,6 +148,10 @@ public class BulletLauncher {
     width = (int) size;
     this.size = size;
   }
+  public void scale(float sizeMult) {
+    this.size *= sizeMult;
+    width=(int)size;
+  }
 
   public void setPower(float power) {
     this.power = power;
@@ -175,7 +179,12 @@ public class BulletLauncher {
   public void addAttackEffect(AttackEffect component) {
     onAttackEffects.add(component);
   }
-
+  public void removeAttackEffect(AttackEffect component) {
+    onAttackEffects.remove(component);
+  }
+  public void removeProjectileModifier(Modifier<Projectile> projectileModifier) {
+    projectileModifiers.remove(projectileModifier);
+  }
   public void move(float newX, float newY) {
     x = newX;
     y = newY;
