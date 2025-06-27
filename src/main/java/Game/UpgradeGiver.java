@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import windowStuff.Button;
+import windowStuff.Graphics;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
 
@@ -123,7 +124,7 @@ public class UpgradeGiver {
     @Override
     void picked() {
       if (world.getPlayer().addBuff(new Tag<Player>(id))) {
-        world.getPlayer().getBulletLauncher().setImage("Bomb-0");
+        world.getPlayer().getBulletLauncher().setImage(Graphics.getImage("Bomb-0"));
         world.getPlayer().addBuff(new StatBuff<Player>(Type.INCREASED, Stats.projSize, 3f));
         world.getPlayer().getBulletLauncher()
             .addMobCollide((proj, mob) -> {

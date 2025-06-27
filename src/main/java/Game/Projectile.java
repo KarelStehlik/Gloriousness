@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import windowStuff.ImageData;
 import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
@@ -65,7 +66,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   private boolean multihit = false;
 
-  public Projectile(World world, String image, float X, float Y, float speed, float rotation,
+  public Projectile(World world, ImageData image, float X, float Y, float speed, float rotation,
       int width, float aspectRatio, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
     this.aspectRatio=aspectRatio;

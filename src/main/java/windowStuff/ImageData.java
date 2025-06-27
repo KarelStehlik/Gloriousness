@@ -2,7 +2,7 @@ package windowStuff;
 
 import java.util.List;
 
-class ImageData {
+public class ImageData {
 
   public final String textureName;
   public final float[] textureCoordinates;

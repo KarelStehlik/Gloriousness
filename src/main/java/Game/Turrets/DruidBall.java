@@ -6,13 +6,14 @@ import Game.TickDetect;
 import Game.World;
 import general.Util;
 import org.joml.Vector2f;
+import windowStuff.ImageData;
 import windowStuff.Sprite;
 
 public class DruidBall extends Projectile {
 
   private final float regrowTime;
 
-  protected DruidBall(World world, String image, float X, float Y, float speed, float rotation,
+  protected DruidBall(World world, ImageData image, float X, float Y, float speed, float rotation,
       int W, int pierce, float size, float duration, float power, float regrowTime) {
     super(world, image, X, Y, speed, rotation, W, 1, pierce, size, duration, power);
     this.regrowTime = regrowTime;

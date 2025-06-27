@@ -8,6 +8,8 @@ import general.Data;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class BulletLauncher {
   private final List<AttackEffect> onAttackEffects = new ArrayList<>(1);
@@ -16,12 +18,12 @@ public class BulletLauncher {
   private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
   private final World world;
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
-  private String image;
+  private ImageData image;
   private float speed;
   private float aspectRatio=1; //
   public int radial = 1;
 
-  public String getImage() {
+  public ImageData getImage() {
     return image;
   }
 
@@ -63,7 +65,7 @@ public class BulletLauncher {
       int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
       int power, float cooldownMs) {
     this.world = world;
-    this.image = projectileImage;
+    this.image = Graphics.getImage(projectileImage);
     this.speed = projectileSpeed;
     this.width = projectileSpriteWidth;
     this.pierce = pierce;
@@ -110,8 +112,12 @@ public class BulletLauncher {
     projectileModifiers.add(projectileModifier);
   }
 
-  public void setImage(String image) {
+  public void setImage(ImageData image) {
     this.image = image;
+  }
+
+  public void setImage(String image) {
+    this.image = Graphics.getImage(image);
   }
 
   public float getSpread() {
@@ -193,7 +199,7 @@ public class BulletLauncher {
   @FunctionalInterface
   public interface ProjectileNewFunction {
 
-    Projectile make(World world, String image, float X, float Y, float speed, float rotation,
+    Projectile make(World world, ImageData image, float X, float Y, float speed, float rotation,
         int W, float AR, int pierce, float size, float duration, float power);
   }
 

@@ -2,13 +2,15 @@ package Game.Buffs;
 
 import Game.BulletLauncher;
 import Game.Projectile;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class TankRockets implements Proc{
     Modifier<Projectile> explosive=(proj)->proj.addBeforeDeath(new Explosive<Projectile>(10,150));
-    private String image="bomb";//ok this is kinda painful ngl this should be a sprite
-    private String prevImage;
+    private ImageData image= Graphics.getImage("Bomb-0");//ok this is kinda painful ngl this should be a sprite
+    private ImageData prevImage;
     private boolean active=false;
-    public TankRockets(String originalImage){
+    public TankRockets(ImageData originalImage){
         prevImage=originalImage;
     }
     @Override
