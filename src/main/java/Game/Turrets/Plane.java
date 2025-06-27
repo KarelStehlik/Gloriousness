@@ -89,7 +89,7 @@ public class Plane extends Turret {
           pineapple.getPower(),
           DamageType.TRUE);
       world.explosionVisual((int) pineapple.getX(), (int) pineapple.getY(),
-          (int) stats[ExtraStats.PineRadius], false, "Explosion2-0");
+          (int) stats[ExtraStats.PineRadius], false, "Explosion2");
     }));
 
     for (int i = 0; i < 4; i++) {

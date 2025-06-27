@@ -5,6 +5,7 @@ import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Character.isDigit;
@@ -23,7 +24,7 @@ public class SimpleText implements Text{
   private int x, y;
   private float fontSize;
   private float scale;
-  private TextGenerator textupdater;
+  private final TextGenerator textupdater;
   private ArrayList<Symbol> symbols;
   private String text;
   private float[] colors = Util.getColors(1, 1, 1);
@@ -58,7 +59,7 @@ public class SimpleText implements Text{
     if (backgroundImage == null) {
       background = new NoSprite();
     } else {
-      background = new Sprite(backgroundImage, width, fontSize, layer, shader);
+      background = new Sprite(backgroundImage, layer, shader).setSize(width, fontSize);
       background.addToBs(bs);
     }
     symbols=new ArrayList<>(0);
@@ -69,6 +70,7 @@ public class SimpleText implements Text{
       hide();
     }
   }
+  @Override
   public void update(){
     if(textupdater!=null){
       setText(textupdater.get());
@@ -77,6 +79,7 @@ public class SimpleText implements Text{
   public boolean isHidden(){
     return hidden;
   }
+  @Override
   public int getX() {
     return x;
   }
@@ -95,10 +98,12 @@ public class SimpleText implements Text{
   public void setLayer(int newval){
     layer=newval;
   }
+  @Override
   public int getY() {
     return y;
   }
 
+  @Override
   public void hide() {
     if (hidden) {
       return;
@@ -110,6 +115,7 @@ public class SimpleText implements Text{
     hidden = true;
   }
 
+  @Override
   public void show() {
     if (!hidden) {
       return;
@@ -171,7 +177,7 @@ public class SimpleText implements Text{
     symbols.clear();
     symbols = newSymbols;
   }
-  private boolean isModifier(String string){ //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
+  private static boolean isModifier(String string){ //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
     for(String s:string.split("\\.")){
       if(!s.startsWith("#")){
         return false;
@@ -190,10 +196,10 @@ public class SimpleText implements Text{
   private void applyMod(String string){ //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
     String[] split=string.split("\\.");
     switch(split.length){
-      case (1) -> {
+      case 1 -> {
         fontSize=Integer.parseInt( split[0].substring(1));
       }
-      case (3) -> {
+      case 3 -> {
         colors=Util.getColors(Integer.parseInt( split[0].substring(1))/255f
                 , Integer.parseInt( split[1].substring(1))/255f,
                 Integer.parseInt( split[2].substring(1))/255f);
@@ -203,7 +209,7 @@ public class SimpleText implements Text{
 
     }
   }
-  private void addToSymbols(String value,Iterator<Symbol> existing,ArrayList<Symbol> newSymbols){
+  private void addToSymbols(String value,Iterator<Symbol> existing, List<Symbol> newSymbols){
     for (char c : value.toCharArray()) {
       if (existing.hasNext()) {
         Symbol symbol=existing.next();
@@ -226,6 +232,7 @@ public class SimpleText implements Text{
     this.colors = colors;
   }
 
+  @Override
   public void move(int newX, int newY) {
     newX = Math.min(newX, Constants.screenSize.x - maxWidth);
     newY = Math.min(newY,
@@ -276,6 +283,7 @@ public class SimpleText implements Text{
     }
   }
 
+  @Override
   public void delete() {
     for (var symbol : symbols) {
       symbol.delete();
@@ -298,12 +306,11 @@ public class SimpleText implements Text{
     char character;
 
     Symbol(char c, float x, float y, String shader) {
-      String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Graphics.getLoadedImages()
-              .getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
+      ImageData img = Graphics.getImage(fontName + '-' + Character.getName(c));
+      float[] uv = img.textureCoordinates;
       float w = uv[0] - uv[2];
       width = w * scale;
-      sprite = new Sprite(imageName, width, fontSize, layer, shader);
+      sprite = new Sprite(img, layer, shader).setSize(width, fontSize);
       sprite.setX(x + width / 2);
       sprite.setY(y);
       character = c;
@@ -311,9 +318,8 @@ public class SimpleText implements Text{
     }
 
     void updateScale() {
-      String imageName = fontName + '-' + Character.getName(character);
-      float[] uv = Graphics.getLoadedImages()
-              .getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
+      ImageData img = Graphics.getImage(fontName + '-' + Character.getName(character));
+      float[] uv = img.textureCoordinates;
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setSize(width, fontSize);
@@ -332,12 +338,11 @@ public class SimpleText implements Text{
     }
 
     void setCharacter(char c) {
-      String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Graphics.getLoadedImages()
-              .getImageCoordinates(Graphics.getLoadedImages().getImageId(imageName));
+      ImageData img = Graphics.getImage(fontName + '-' + Character.getName(c));
+      float[] uv = img.textureCoordinates;
       float w = uv[0] - uv[2];
       width = w * scale;
-      sprite.setImage(imageName);
+      sprite.setImage(img);
       sprite.setSize(width, fontSize);
       character = c;
     }

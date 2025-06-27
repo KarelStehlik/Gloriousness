@@ -14,6 +14,8 @@ public interface AbstractSprite {
 
   AbstractSprite setRotation(float r);
 
+  AbstractSprite setImage(ImageData imageId);
+
   AbstractSprite setImage(String name);
 
   void setNaturalHeight();

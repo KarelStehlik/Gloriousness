@@ -39,7 +39,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
-    sprite = new Sprite(image, x, y, width, height, isMoab()?2:1, "basic");
+    sprite = new Sprite(image, isMoab()?2:1, "basic").setSize(width, height).setPosition(x, y);
     sprite.addToBs(world.getBs());
     sprite.setNaturalHeight();
     exists = true;
@@ -59,7 +59,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
-    sprite = new Sprite(image, x, y, width, height, isMoab()?2:1, "basic");
+    sprite = new Sprite(image, isMoab()?2:1, "basic").setSize(width, height).setPosition(x, y);
     sprite.addToBs(world.getBs());
     sprite.setNaturalHeight();
     exists = true;

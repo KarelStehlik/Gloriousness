@@ -42,7 +42,7 @@ public class TextBox implements Text{ //not sure if imgonna use this,
         if (backgroundImage == null) {
             background = new NoSprite();
         } else {
-            background = new Sprite(backgroundImage, 0, 0, layer, shader);
+            background = new Sprite(backgroundImage, layer, shader);
             background.addToBs(bs);
         }
         this.rearrange=rearrange;

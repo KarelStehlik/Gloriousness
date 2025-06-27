@@ -88,8 +88,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     String mapName = Data.listMaps()[MAP];
 
-    mapSprite = new Sprite(mapName, Constants.screenSize.x / 2f, Constants.screenSize.y / 2f,
-        Constants.screenSize.x, Constants.screenSize.y, 0, "basic");
+    mapSprite = new Sprite(mapName, 0).setPosition(Constants.screenSize.x / 2f, Constants.screenSize.y / 2f).setSize(Constants.screenSize.x, Constants.screenSize.y);
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
@@ -129,7 +128,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
-        explosionVisual(x, y, 100, true, "Explosion1-0");
+        explosionVisual(x, y, 100, true, "Explosion1");
       }
     }));
 
@@ -194,11 +193,11 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     if (shockwave) {
       game.addTickable(
           new Animation(
-              new Sprite("Shockwave", x, y, size, size, 3, "basic").addToBs(bs).setOpacity(0.7f), 2
+              new Sprite("Shockwave", 3, "basic").setPosition(x, y).setSize(size, size).addToBs(bs).setOpacity(0.7f), 2
           ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
       );
     }
-    Sprite sp = new SingleAnimationSprite(image, .4f, x, y, size * 2, size * 2, 4, "basic").
+    Sprite sp = new SingleAnimationSprite(image, .4f, 4, "basic").setPosition(x, y).setSize(size * 2, size * 2).
         addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
   }
 

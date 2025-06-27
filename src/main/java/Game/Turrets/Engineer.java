@@ -130,7 +130,7 @@ public class Engineer extends Turret {
         () -> {
           turretMods.add(t -> t.addBuff(new DelayedTrigger<Turret>(turr -> {
             world.aoeDamage((int) turr.getX(), (int) turr.getY(), 400, 200, DamageType.TRUE);
-            world.explosionVisual((int) turr.getX(), (int) turr.getY(), 200, false, "Explosion1-0");
+            world.explosionVisual((int) turr.getX(), (int) turr.getY(), 200, false, "Explosion1");
           }, true)));
         }, 4000);
   }
@@ -157,7 +157,7 @@ public class Engineer extends Turret {
           turretLauncher.addProjectileModifier(p -> p.addBeforeDeath(proj -> {
             world.aoeDamage((int) proj.getX(), (int) proj.getY(), 200, proj.getPower(),
                 DamageType.TRUE);
-            world.explosionVisual((int) proj.getX(), (int) proj.getY(), 200, false, "Explosion2-0");
+            world.explosionVisual((int) proj.getX(), (int) proj.getY(), 200, false, "Explosion2");
           }));
         }, 800);
   }

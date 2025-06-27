@@ -210,7 +210,7 @@ public class Necromancer extends Turret {
                 mine.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag));
                 Sprite ms = mine.getSprite();
                 ms.setLayer(5);
-                ms.playAnimation(ms.new BasicAnimation("Bomb-0", .1f).loop());
+                ms.playAnimation(ms.new BasicAnimation("Bomb", .1f).loop());
 
               }, megaMineId
           );
@@ -238,14 +238,14 @@ public class Necromancer extends Turret {
   protected Upgrade up001() {
     return new Upgrade("Bomb-0", new Description("zombies explode when destroyed."),
         () -> bulletLauncher.addProjectileModifier(
-            p -> p.addBeforeDeath(proj -> explode(proj, 5, 150, "Explosion1-0"))), 500);
+            p -> p.addBeforeDeath(proj -> explode(proj, 5, 150, "Explosion1"))), 500);
   }
 
   @Override
   protected Upgrade up002() {
     return new Upgrade("Duck", new Description("zombies also explode on contact."),
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
-          explode(proj, 7F, 100F, "Explosion2-0", (int) mob.getX(), (int) mob.getY());
+          explode(proj, 7F, 100F, "Explosion2", (int) mob.getX(), (int) mob.getY());
           return true;
         })), 2000);
   }
@@ -258,7 +258,7 @@ public class Necromancer extends Turret {
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Turret.Stats.pierce, 2));
           bulletLauncher.addProjectileModifier(p -> p.addBuff(
-              new OnTickBuff<Projectile>(proj -> explode(proj, 20, 50, "Explosion2-0"))));
+              new OnTickBuff<Projectile>(proj -> explode(proj, 20, 50, "Explosion2"))));
         }, 12000);
   }
 
