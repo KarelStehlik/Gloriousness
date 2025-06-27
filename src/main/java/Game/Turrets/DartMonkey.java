@@ -42,8 +42,7 @@ public class DartMonkey extends Turret {
       ArrayList<TdMob> targets = target((int) getStats()[ExtraStats.maxTargets]);
       if (!targets.isEmpty()) {
         List<Float> rotations = new ArrayList<>(targets.size());
-        for (int i = 0; i < targets.size(); i++) {
-          TdMob target = targets.get(i);
+        for (TdMob target : targets) {
           rotations.add(Util.get_rotation(target.getX() - x, target.getY() - y));
         }
         while (bulletLauncher.canAttack()) {
@@ -52,11 +51,6 @@ public class DartMonkey extends Turret {
           }
         }
         setRotation(rotations.get(0));
-      }
-    } else {
-      TdMob target = target();
-      if (target != null) {
-        setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
       }
     }
 
@@ -68,9 +62,7 @@ public class DartMonkey extends Turret {
     return new Upgrade("sharper",
         new Description("Sharper darts"
             , "Throws razor sharp darts that can pop 2 layers at once"),
-        () -> {
-          addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
-        }, 40);
+        () -> addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1)), 40);
   }
 
   @Override
@@ -132,22 +124,11 @@ public class DartMonkey extends Turret {
     return new Upgrade("doubleshot", new Description("Doubleshot",
         "We've had one dart yes, but what about second dart?",
         "I don't think he knows about second dart"),
-        () -> {
-          addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.maxTargets, 1));
-        }, 100);
+        () -> addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.maxTargets, 1)), 100);
   }
 
   private boolean upgraded = false;
-
-  private void explodfunc(Projectile proj) {
-    if (upgraded) {
-      explodfuncUpgraded(proj);
-      return;
-    }
-    proj.addBeforeDeath(
-        new Explosive<Projectile>(1, 120)
-    );
-  }
+  private final Explosive<Projectile> explosive = new Explosive<Projectile>(1, 120);
 
   @Override
   protected Upgrade up300() {
@@ -157,19 +138,17 @@ public class DartMonkey extends Turret {
         () -> {
           sprite.setImage("cyborg");
           bulletLauncher.setImage("drtex");
-          bulletLauncher.addProjectileModifier(this::explodfunc);
+          bulletLauncher.addProjectileModifier(p->p.addBeforeDeath(explosive));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.75f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
         }, 175);
   }
 
-  private void explodfuncUpgraded(Projectile proj) {
-    Explosive<Projectile> explode = new Explosive<Projectile>(getStats()[Stats.pierce], 180);
-    explode.addEffect(
-        (TdMob mob) -> mob.addBuff(new Ignite<>(originalStats[Stats.aspd], 4 * 1000)));
-    proj.addBeforeDeath(
-        explode
-    );
+  @Override
+  protected void extraStatsUpdate(){
+    if(upgraded) {
+      explosive.damage = getStats()[Stats.pierce];
+    }
   }
 
   @Override
@@ -183,6 +162,8 @@ public class DartMonkey extends Turret {
           sprite.setImage("bombsuit");
           bulletLauncher.setImage("drtbomb");
           upgraded = true;
+          explosive.setRadius(180);
+          explosive.addEffect(mob -> mob.addBuff(new Ignite<>(originalStats[Stats.aspd], 4 * 1000)));
 
         }, 650);
   }
