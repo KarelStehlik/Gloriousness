@@ -143,15 +143,15 @@ public class DartMonkey extends Turret {
         () -> {
           sprite.setImage("cyborg");
           bulletLauncher.setImage("drtex");
-          bulletLauncher.addProjectileModifier(p->p.addBeforeDeath(explosive));
+          bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(explosive));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.75f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
         }, 175);
   }
 
   @Override
-  protected void extraStatsUpdate(){
-    if(upgraded) {
+  protected void extraStatsUpdate() {
+    if (upgraded) {
       explosive.damage = getStats()[Stats.pierce];
     }
   }
@@ -168,7 +168,8 @@ public class DartMonkey extends Turret {
           bulletLauncher.setImage("drtbomb");
           upgraded = true;
           explosive.setRadius(180);
-          explosive.addEffect(mob -> mob.addBuff(new Ignite<>(originalStats[Stats.aspd], 4 * 1000)));
+          explosive.addEffect(
+              mob -> mob.addBuff(new Ignite<>(originalStats[Stats.aspd], 4 * 1000)));
 
         }, 650);
   }

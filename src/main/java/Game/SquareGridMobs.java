@@ -2,13 +2,11 @@ package Game;
 
 import Game.Enums.TargetingOption;
 import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.TrackProgress;
 import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.function.Predicate;
@@ -59,21 +57,28 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
       l.sort(Comparator.comparing(TdMob::getProgress).reversed());
     }
   }
-  public TdMob search(Point centre, int radius, TargetingOption targeting){
-    ArrayList<TdMob> found=search(centre,radius,targeting,null,1);
-    return found.isEmpty() ? null:found.get(0);
+
+  public TdMob search(Point centre, int radius, TargetingOption targeting) {
+    ArrayList<TdMob> found = search(centre, radius, targeting, null, 1);
+    return found.isEmpty() ? null : found.get(0);
   }
-  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting,int maxCount){
-    return search(centre,radius,targeting,null,maxCount);
+
+  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting,
+      int maxCount) {
+    return search(centre, radius, targeting, null, maxCount);
   }
-  public TdMob search(Point centre, int radius, TargetingOption targeting, Predicate<? super TdMob> condition){
-    ArrayList<TdMob> found=search(centre,radius,targeting,condition,1);
-    return found.isEmpty() ? null:found.get(0);
+
+  public TdMob search(Point centre, int radius, TargetingOption targeting,
+      Predicate<? super TdMob> condition) {
+    ArrayList<TdMob> found = search(centre, radius, targeting, condition, 1);
+    return found.isEmpty() ? null : found.get(0);
   }
-  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting, Predicate<? super TdMob> condition,int maxCount) {
+
+  public ArrayList<TdMob> search(Point centre, int radius, TargetingOption targeting,
+      Predicate<? super TdMob> condition, int maxCount) {
     idOfSearch++;
-    if(condition==null){
-      condition=mob -> true;
+    if (condition == null) {
+      condition = mob -> true;
     }
     int bottom = Math.max((centre.y - radius >> squareSizePow2) - bottomSquares, 0);
     int left = Math.max((centre.x - radius >> squareSizePow2) - leftSquares, 0);
@@ -84,7 +89,8 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
     ArrayList<TdMob> result = new ArrayList<>(maxCount) {
       @Override
       public boolean add(TdMob obj) {
-        int index = Collections.binarySearch(this, obj, comp); //finds index at which this would be sorted
+        int index = Collections.binarySearch(this, obj,
+            comp); //finds index at which this would be sorted
         //if element is not present it's -index-1
         //I guess so that 0 index not present is distinct
         if (index < 0) {
@@ -102,18 +108,19 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
           if (bloon == null) {
             break;
           }
-          if (leastGood!=null&&(comp.compare(bloon,leastGood)<=0)) {
+          if (leastGood != null && (comp.compare(bloon, leastGood) <= 0)) {
             break;
           }
-          if(bloon.lastChecked == idOfSearch){
-            if(maxCount==1){// this is the index best bloon in the square. if we have already seen it, no other one can be better.
+          if (bloon.lastChecked == idOfSearch) {
+            if (maxCount
+                == 1) {// this is the index best bloon in the square. if we have already seen it, no other one can be better.
               break;
             }
             continue;
           }
           bloon.lastChecked = idOfSearch;
           if (Util.distanceSquared(bloon.x - centre.x, bloon.y - centre.y)
-                  < radius * radius && condition.test(bloon)) {
+              < radius * radius && condition.test(bloon)) {
 
             if (result.size() == maxCount) {
               result.remove(0);
@@ -124,7 +131,7 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
             if (result.size() == maxCount) {
               leastGood = result.get(0);
             }
-            if(maxCount==1){
+            if (maxCount == 1) {
               break;
             }
           }
@@ -133,32 +140,36 @@ public class SquareGridMobs extends SquareGrid<TdMob> {
     }
     return result;
   }
-  public TdMob getBesiInBox(int x, int y, int index,TargetingOption targeting){//returns index best bloon according to condition
-    ArrayList<TdMob> byProgress=data.get(x + y * widthSquares);                                                       //in box x y
-    if(index>=byProgress.size()){
+
+  public TdMob getBesiInBox(int x, int y, int index,
+      TargetingOption targeting) {//returns index best bloon according to condition
+    ArrayList<TdMob> byProgress = data.get(
+        x + y * widthSquares);                                                       //in box x y
+    if (index >= byProgress.size()) {
       return null;
     }
-    switch (targeting){
+    switch (targeting) {
       case FIRST -> {
         return byProgress.get(index);
       }
       case STRONG -> {
-        if(index==0){
+        if (index == 0) {
           return strongest.get(x + y * widthSquares);
         }
-        TdMob improvise=byProgress.get(index-1);
-        if(improvise==strongest.get(x + y * widthSquares)){ //to not return strongest twice, gets last
-                                                            //this should be second strongest and we will pretend that it is
-          return byProgress.get(byProgress.size()-1);
-        }else{
+        TdMob improvise = byProgress.get(index - 1);
+        if (improvise == strongest.get(
+            x + y * widthSquares)) { //to not return strongest twice, gets last
+          //this should be second strongest and we will pretend that it is
+          return byProgress.get(byProgress.size() - 1);
+        } else {
           return improvise;
         }
       }
       case LAST -> {
-        return byProgress.get(byProgress.size()-1-index);
+        return byProgress.get(byProgress.size() - 1 - index);
       }
       default -> {
-        Log.write("UNKNOWN PRIORITY STRATEGY OF "+targeting);
+        Log.write("UNKNOWN PRIORITY STRATEGY OF " + targeting);
         return null;
       }
     }

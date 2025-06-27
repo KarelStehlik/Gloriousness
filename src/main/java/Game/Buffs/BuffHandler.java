@@ -35,6 +35,7 @@ public class BuffHandler<T extends GameObject> {
       buffs.tick(target);
     }
   }
+
   public void delete() {
     var onDeath = find(DelayedTrigger.class);
     if (onDeath != null) {

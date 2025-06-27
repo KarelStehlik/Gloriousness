@@ -1,5 +1,7 @@
 package windowStuff;
 
+import static java.lang.Character.isDigit;
+
 import general.Constants;
 import general.Log;
 import general.Util;
@@ -8,10 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import static java.lang.Character.isDigit;
-import static java.lang.Character.isISOControl;
-
-public class SimpleText implements Text{
+public class SimpleText implements Text {
 
   private static final double textureHeight =
       128d / 4096d; //the height of a glyph sub-texture, in uv coordinates
@@ -32,21 +31,26 @@ public class SimpleText implements Text{
   private int lineCount = 1;
 
   public SimpleText(String value, String font, int width, int x, int y, int layer, float size,
-                    SpriteBatching bs) {
+      SpriteBatching bs) {
     this(value, font, width, x, y, layer, size, bs, "basic", null);
   }
-  public SimpleText(TextGenerator value, String font, int width, int x, int y, int layer, float size,
-                    SpriteBatching bs) {
-    this(value, font, width, x, y, layer, size, bs, "basic", null);
-  }
-  public SimpleText(String value, String font, int width, int x, int y, int layer, float size,
-                    SpriteBatching bs, String shader, String backgroundImage) {
-    this(()->value, font, width, x, y, layer, size, bs, shader, backgroundImage);
-  }
-  public SimpleText(TextGenerator value, String font, int width, int x, int y, int layer, float size,
-                    SpriteBatching bs, String shader, String backgroundImage) {
 
-    this.textupdater=value;
+  public SimpleText(TextGenerator value, String font, int width, int x, int y, int layer,
+      float size,
+      SpriteBatching bs) {
+    this(value, font, width, x, y, layer, size, bs, "basic", null);
+  }
+
+  public SimpleText(String value, String font, int width, int x, int y, int layer, float size,
+      SpriteBatching bs, String shader, String backgroundImage) {
+    this(() -> value, font, width, x, y, layer, size, bs, shader, backgroundImage);
+  }
+
+  public SimpleText(TextGenerator value, String font, int width, int x, int y, int layer,
+      float size,
+      SpriteBatching bs, String shader, String backgroundImage) {
+
+    this.textupdater = value;
     fontSize = size;
     this.x = x;
     this.bs = bs;
@@ -62,42 +66,51 @@ public class SimpleText implements Text{
       background = new Sprite(backgroundImage, layer, shader).setSize(width, fontSize);
       background.addToBs(bs);
     }
-    symbols=new ArrayList<>(0);
-    if(value.get()!=null){
+    symbols = new ArrayList<>(0);
+    if (value.get() != null) {
       setText(value.get());
-    }else{
-      text=null;
+    } else {
+      text = null;
       hide();
     }
   }
+
   @Override
-  public void update(){
-    if(textupdater!=null){
+  public void update() {
+    if (textupdater != null) {
       setText(textupdater.get());
     }
   }
-  public boolean isHidden(){
+
+  public boolean isHidden() {
     return hidden;
   }
+
   @Override
   public int getX() {
     return x;
   }
+
   public int getMaxWidth() {
     return maxWidth;
   }
-  public float getHeight(){
-    return (lineCount+1)*fontSize;
+
+  public float getHeight() {
+    return (lineCount + 1) * fontSize;
   }
-  public String getText(){
+
+  public String getText() {
     return text;
   }
-  public int getLayer(){
+
+  public int getLayer() {
     return layer;
   }
-  public void setLayer(int newval){
-    layer=newval;
+
+  public void setLayer(int newval) {
+    layer = newval;
   }
+
   @Override
   public int getY() {
     return y;
@@ -138,25 +151,27 @@ public class SimpleText implements Text{
       symbol.updateScale();
     }
   }
+
   public void setText(String value) {
-    if(value==null){
-      text=null;
+    if (value == null) {
+      text = null;
       hide();
       return;
     }
-    if(Objects.equals(value, text)){
-     return;
+    if (Objects.equals(value, text)) {
+      return;
     }
     generateSymbols(value);
-    if(text==null){
+    if (text == null) {
       show();
     }
-    text=value;
+    text = value;
     arrange();
   }
+
   private void generateSymbols(String value) {
-    float[] originalColors=colors;
-    float originalFontSize=fontSize;
+    float[] originalColors = colors;
+    float originalFontSize = fontSize;
     ArrayList<Symbol> newSymbols = new ArrayList<>(value.length());
     Iterator<Symbol> existing = symbols.listIterator();
     String[] strings = value.split("\\|");
@@ -169,50 +184,54 @@ public class SimpleText implements Text{
       }
     }
     while (existing.hasNext()) {
-      Symbol unusedSymbol=existing.next();
+      Symbol unusedSymbol = existing.next();
       unusedSymbol.delete();
     }
-    colors=originalColors;
-    fontSize=originalFontSize;
+    colors = originalColors;
+    fontSize = originalFontSize;
     symbols.clear();
     symbols = newSymbols;
   }
-  private static boolean isModifier(String string){ //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
-    for(String s:string.split("\\.")){
-      if(!s.startsWith("#")){
+
+  private static boolean isModifier(
+      String string) { //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
+    for (String s : string.split("\\.")) {
+      if (!s.startsWith("#")) {
         return false;
       }
-      if(s.length()<2){
+      if (s.length() < 2) {
         return false;
       }
       for (char c : s.substring(1).toCharArray()) {
-        if(!isDigit(c)){
+        if (!isDigit(c)) {
           return false;
         }
       }
     }
     return true;
   }
-  private void applyMod(String string){ //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
-    String[] split=string.split("\\.");
-    switch(split.length){
+
+  private void applyMod(
+      String string) { //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
+    String[] split = string.split("\\.");
+    switch (split.length) {
       case 1 -> {
-        fontSize=Integer.parseInt( split[0].substring(1));
+        fontSize = Integer.parseInt(split[0].substring(1));
       }
       case 3 -> {
-        colors=Util.getColors(Integer.parseInt( split[0].substring(1))/255f
-                , Integer.parseInt( split[1].substring(1))/255f,
-                Integer.parseInt( split[2].substring(1))/255f);
+        colors = Util.getColors(Integer.parseInt(split[0].substring(1)) / 255f
+            , Integer.parseInt(split[1].substring(1)) / 255f,
+            Integer.parseInt(split[2].substring(1)) / 255f);
       }
-      default ->
-        Log.write("Invalid modifier:"+string);
+      default -> Log.write("Invalid modifier:" + string);
 
     }
   }
-  private void addToSymbols(String value,Iterator<Symbol> existing, List<Symbol> newSymbols){
+
+  private void addToSymbols(String value, Iterator<Symbol> existing, List<Symbol> newSymbols) {
     for (char c : value.toCharArray()) {
       if (existing.hasNext()) {
-        Symbol symbol=existing.next();
+        Symbol symbol = existing.next();
         newSymbols.add(symbol);
         if (symbol.character != c) {
           symbol.setCharacter(c);
@@ -278,8 +297,9 @@ public class SimpleText implements Text{
     background.setPosition(x + maxWidth / 2f, y - line * fontSize / 2 + fontSize * .1f);
     background.setSize(maxWidth, (line + 1.2f) * fontSize * 1.08f);
     for (var symbol : symbols) {
-      symbol.move(symbol.sprite.getX(), symbol.sprite.getY() + lineCount * fontSize); //text shows above cursor...
-                                                            // kind of a pain sometimes but like you don't want cursor blocking stuff
+      symbol.move(symbol.sprite.getX(),
+          symbol.sprite.getY() + lineCount * fontSize); //text shows above cursor...
+      // kind of a pain sometimes but like you don't want cursor blocking stuff
     }
   }
 

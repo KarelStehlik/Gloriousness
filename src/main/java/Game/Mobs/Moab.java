@@ -22,7 +22,7 @@ public class Moab extends TdMob {
   }
 
   @Override
-  public void onDeath(){
+  public void onDeath() {
     Log.write(stats[Stats.health]);
   }
 

@@ -125,7 +125,8 @@ public class IgniteTurret extends Turret {
         2500);
   }
 
-  private static ImageData ImFire = Graphics.getImage("fire");
+  private static final ImageData ImFire = Graphics.getImage("fire");
+
   private void makePuddle(TdMob mob) {
     var aggreg = mob.getBuffHandler().find(Ignite.class);
     if (!(aggreg instanceof Ignite<TdMob>.Aggregator ignite) || ignite.getDpTick() < 0.0001) {

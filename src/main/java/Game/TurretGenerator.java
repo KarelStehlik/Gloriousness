@@ -2,7 +2,6 @@ package Game;
 
 import Game.Turrets.Turret;
 import Game.Turrets.Turret.Stats;
-import general.Log;
 import windowStuff.Button;
 import windowStuff.NoSprite;
 import windowStuff.Sprite;

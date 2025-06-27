@@ -25,10 +25,11 @@ public final class Graphics {
     return loadedImages;
   }
 
-  public static ImageData getImage(String name){
+  public static ImageData getImage(String name) {
     return loadedImages.getImage(name);
   }
-  public static List<ImageData> getAnimation(String name){
+
+  public static List<ImageData> getAnimation(String name) {
     return loadedImages.getAnimation(name);
   }
 

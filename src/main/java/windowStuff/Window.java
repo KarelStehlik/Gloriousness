@@ -25,7 +25,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import Game.Game;
 import general.Log;
-import general.Log.Timer;
 import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
@@ -94,20 +93,20 @@ public final class Window {
     gameThread.start();
 
     float dt = 0;
-    int graphicsTicks=0;
-    float totalDt=0;
+    int graphicsTicks = 0;
+    float totalDt = 0;
     float frameStartTime = System.nanoTime();
     while (!glfwWindowShouldClose(window)) {
       loop(dt);
-      graphicsTicks+=1;
+      graphicsTicks += 1;
       float frameEndTime = System.nanoTime();
       dt = frameEndTime - frameStartTime;
-      totalDt+=dt;
+      totalDt += dt;
       frameStartTime = frameEndTime;
-      if(totalDt>1000000000){
-        Log.write("graphics tps: "+graphicsTicks);
-        graphicsTicks=0;
-        totalDt=0;
+      if (totalDt > 1000000000) {
+        Log.write("graphics tps: " + graphicsTicks);
+        graphicsTicks = 0;
+        totalDt = 0;
       }
     }
 
@@ -127,7 +126,6 @@ public final class Window {
 
     imGuiGlfw.newFrame();
     ImGui.newFrame();
-
 
     game.graphicsUpdate(dt / 1000000000);
     ImGui.render();

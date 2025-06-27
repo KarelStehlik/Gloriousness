@@ -89,7 +89,8 @@ public final class Game implements UserInputHandler {
     if (paused) {
       return;
     }
-    if (timer.elapsedNano(false) < tickIntervalMillis * 1000000 && !world.getOptions().isFastForward()) {
+    if (timer.elapsedNano(false) < tickIntervalMillis * 1000000 && !world.getOptions()
+        .isFastForward()) {
       return;
     }
     timer.elapsed(true);

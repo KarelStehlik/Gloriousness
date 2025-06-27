@@ -5,9 +5,6 @@ import Game.Buffs.DelayedTrigger;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.World;
-import general.Log;
-import general.Util;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MultiMoabCore extends TdMob {
@@ -26,35 +23,37 @@ public class MultiMoabCore extends TdMob {
     initComponents();
   }
 
-  private void initComponents(){
+  private void initComponents() {
     TdMob b = new MultiMoabBridge(world, waveNum);
-    b.movement = new HardFollow<>(this, sprite.getWidth()+b.sprite.getWidth(), 0);
+    b.movement = new HardFollow<>(this, sprite.getWidth() + b.sprite.getWidth(), 0);
     world.addEnemy(b);
 
     TdMob tail = new MultiMoabTail(world, waveNum);
-    tail.movement = new HardFollow<>(this, -sprite.getWidth()-tail.sprite.getWidth(), 0);
+    tail.movement = new HardFollow<>(this, -sprite.getWidth() - tail.sprite.getWidth(), 0);
     world.addEnemy(tail);
     tail.addBuff(new DelayedTrigger<TdMob>(
         Float.POSITIVE_INFINITY,
-        m->this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f)),
+        m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
         true, false
     ));
 
     TdMob uf = new MultiMoabUpperFin(world, waveNum);
-    uf.movement = new HardFollow<>(this, -sprite.getWidth(), sprite.getHeight()+uf.sprite.getHeight());
+    uf.movement = new HardFollow<>(this, -sprite.getWidth(),
+        sprite.getHeight() + uf.sprite.getHeight());
     world.addEnemy(uf);
     uf.addBuff(new DelayedTrigger<TdMob>(
         Float.POSITIVE_INFINITY,
-        m->this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f)),
+        m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
         true, false
     ));
 
     TdMob lf = new MultiMoabLowerFin(world, waveNum);
-    lf.movement = new HardFollow<>(this, -sprite.getWidth(), -sprite.getHeight()-lf.sprite.getHeight());
+    lf.movement = new HardFollow<>(this, -sprite.getWidth(),
+        -sprite.getHeight() - lf.sprite.getHeight());
     world.addEnemy(lf);
     lf.addBuff(new DelayedTrigger<TdMob>(
         Float.POSITIVE_INFINITY,
-        m->this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f)),
+        m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
         true, false
     ));
   }
