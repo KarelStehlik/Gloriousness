@@ -22,7 +22,7 @@ public class MultiMoabTail extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 175f;
     stats[Stats.speed] = 1.3f;
-    stats[Stats.health] = 400f;
+    stats[Stats.health] = 10000f;
     stats[Stats.value] = 200f;
     stats[Stats.damageTaken] = 1f;
   }

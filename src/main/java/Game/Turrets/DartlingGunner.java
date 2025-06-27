@@ -198,7 +198,7 @@ public class DartlingGunner extends Turret {
     }
     clusterLauncher.setPower(stats[Stats.power] * 0.5f);
     clusterLauncher.setSize(stats[Stats.bulletSize] * 0.7f);
-    clusterLauncher.setPierce((int) (stats[Stats.pierce] * 0.8f));
+    clusterLauncher.setPierce((int) (stats[Stats.pierce] * 1.4f));
     clusterLauncher.setSpeed(stats[Stats.speed] * 2);
   }
 

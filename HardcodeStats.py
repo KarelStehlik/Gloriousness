@@ -5,7 +5,7 @@ def refFloatify(string, statclass):
     name,eq,num=string.split(" ")
     if "??" in num:
         low,high = num.split("??")
-        num = f"Data.gameMechanicsRng.nextFloat({low}f,{high}f)"
+        num = f"Data.gameMechanicsRng.nextFloat({low}f, {high}f)"
     else:
         num=f"{num}f"
     return f"stats[{statclass}.{name}] = {num};"
