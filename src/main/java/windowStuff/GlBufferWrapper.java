@@ -13,7 +13,7 @@ import org.lwjgl.BufferUtils;
 
 public class GlBufferWrapper {
 
-  private static final int CPU_BUFFER_SIZE = Constants.SpriteSizeFloats * Float.BYTES * 512;
+  private static final int CPU_BUFFER_SIZE = Constants.SpriteSizeFloats * Float.BYTES * 1024;
 
   private final int id;
   private final int type;
@@ -36,17 +36,18 @@ public class GlBufferWrapper {
   public void alloc(int newSize, int usage) {
     bind();
     while (size < newSize) {
-      size = (int) (size * 1.5f);
+      size = (int) (newSize * 1.3f);
       Log.write("ALLOC: "+newSize);
       rebind=true;
     }
-    while (size > newSize*2) {
-      size = (int) (size / 1.5f);
+    while (size > newSize * 4 + CPU_BUFFER_SIZE) {
+      size = (int) (newSize * 2.5f);
       Log.write("ALLOC: "+newSize);
       rebind=true;
     }
     if(rebind) {
       rebind=false;
+      size = Math.ceilDiv(size, CPU_BUFFER_SIZE) * CPU_BUFFER_SIZE;
       glBufferData(type, size, usage);
     }
   }
