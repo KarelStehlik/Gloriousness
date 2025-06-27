@@ -7,18 +7,20 @@ import static org.lwjgl.opengl.GL15C.nglBufferSubData;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
 import general.Constants;
+import general.Log;
 import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 
 public class GlBufferWrapper {
 
-  private static final int CPU_BUFFER_SIZE = Constants.SpriteSizeFloats * Float.BYTES * 1000;
+  private static final int CPU_BUFFER_SIZE = Constants.SpriteSizeFloats * Float.BYTES * 512;
 
   private final int id;
   private final int type;
   private final ByteBuffer buffer;
   private int size;
   private long offset = 0;
+  private boolean rebind = true;
 
   public GlBufferWrapper(int size, int type) {
     this.id = glGenBuffers();
@@ -28,18 +30,32 @@ public class GlBufferWrapper {
   }
 
   public GlBufferWrapper(int type) {
-    this(1, type);
+    this(CPU_BUFFER_SIZE, type);
   }
 
   public void alloc(int newSize, int usage) {
     bind();
     while (size < newSize) {
       size = (int) (size * 1.5f);
+      Log.write("ALLOC: "+newSize);
+      rebind=true;
     }
-    glBufferData(type, size, usage);
+    while (size > newSize*2) {
+      size = (int) (size / 1.5f);
+      Log.write("ALLOC: "+newSize);
+      rebind=true;
+    }
+    if(rebind) {
+      rebind=false;
+      glBufferData(type, size, usage);
+    }
   }
 
   private void passBuffer() {
+    if(offset>size-CPU_BUFFER_SIZE){
+      Log.write("FUCK");
+      return;
+    }
     bind();
     buffer.rewind();
     nglBufferSubData(type, offset, Math.min(buffer.remaining(), size - offset), memAddress(buffer));
@@ -83,7 +99,9 @@ public class GlBufferWrapper {
   }
 
   public void doneBuffering() {
-    passBuffer();
+    if(buffer.position()>0) {
+      passBuffer();
+    }
     offset = 0;
   }
 }

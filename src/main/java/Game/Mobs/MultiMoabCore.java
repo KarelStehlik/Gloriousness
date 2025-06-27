@@ -36,8 +36,7 @@ public class MultiMoabCore extends TdMob {
     world.addEnemy(tail);
     tail.addBuff(new DelayedTrigger<TdMob>(
         Float.POSITIVE_INFINITY,
-        (m)->{this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f));
-          Log.write("nerf");},
+        m->this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f)),
         true, false
     ));
 
@@ -46,8 +45,7 @@ public class MultiMoabCore extends TdMob {
     world.addEnemy(uf);
     uf.addBuff(new DelayedTrigger<TdMob>(
         Float.POSITIVE_INFINITY,
-        (m)->{this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f));
-          Log.write("nerf");},
+        m->this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f)),
         true, false
     ));
 
@@ -56,8 +54,7 @@ public class MultiMoabCore extends TdMob {
     world.addEnemy(lf);
     lf.addBuff(new DelayedTrigger<TdMob>(
         Float.POSITIVE_INFINITY,
-        (m)->{this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f));
-          Log.write("nerf");},
+        m->this.addBuff(new StatBuff<TdMob>(Type.INCREASED,Stats.speed,-.3f)),
         true, false
     ));
   }
