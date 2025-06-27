@@ -48,6 +48,7 @@ public class GlBufferWrapper {
     if(rebind) {
       rebind=false;
       size = Math.ceilDiv(size, CPU_BUFFER_SIZE) * CPU_BUFFER_SIZE;
+      Log.write("ALLOC: "+size);
       glBufferData(type, size, usage);
     }
   }

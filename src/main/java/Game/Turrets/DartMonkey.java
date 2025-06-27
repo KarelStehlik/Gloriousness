@@ -75,9 +75,7 @@ public class DartMonkey extends Turret{
                 () -> {
                     if(getHighestTier()<2) {
                         sprite.setImage("beefdrtmonk");
-                        bulletLauncher.addProjectileModifier(p -> {
-                            p.getSprite().setImage("beefdrt");
-                        });
+                        bulletLauncher.setImage("beefdrt");
                     }
                     float aspdDebuf= (float) Math.sqrt( originalStats[Stats.speed]/19);
                     if(aspdDebuf<0.5){ //happens at 4 or less dartspeed
@@ -97,9 +95,7 @@ public class DartMonkey extends Turret{
                 () -> {
                     sprite.setImage("gorrila");
                     sprite.scale(1.4f,1.2f);
-                    bulletLauncher.addProjectileModifier(p -> {
-                        p.getSprite().setImage("beefyerdrt");
-                    });
+                    bulletLauncher.setImage("beefyerdrt");
                     int pierceBuff=(int)(originalStats[Stats.speed]/19*10)+3;
                     addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.bulletSize, 0.5f));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, pierceBuff));
@@ -112,9 +108,7 @@ public class DartMonkey extends Turret{
                 () -> {
                     if(getHighestTier()<2){
                         sprite.setImage("drtmonkS");
-                        bulletLauncher.addProjectileModifier(p -> {
-                            p.getSprite().setImage("drtS");
-                        });
+                        bulletLauncher.setImage("drtS");
                     }
                     addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.5f));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 2));
@@ -146,9 +140,7 @@ public class DartMonkey extends Turret{
                 "they deal 1 more damage, 1 dmg explosions, 75 percent more speedy"),
                 () -> {
                     sprite.setImage("cyborg");
-                    bulletLauncher.addProjectileModifier(p -> {
-                        p.getSprite().setImage("drtex");
-                    });
+                    bulletLauncher.setImage("drtex");
                     bulletLauncher.addProjectileModifier(this::explodfunc);
                     addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.75f));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
@@ -169,9 +161,7 @@ public class DartMonkey extends Turret{
                 "duration of 4s, burn damage is equal to base attackspeed, AOE is increased by 50%"),
                 () -> {
                     sprite.setImage("bombsuit");
-                    bulletLauncher.addProjectileModifier(p -> {
-                        p.getSprite().setImage("drtbomb");
-                    });
+                    bulletLauncher.setImage("drtbomb");
                     upgraded=true;
 
                 }, 650);

@@ -249,7 +249,10 @@ public abstract class Turret extends GameObject implements TickDetect {
     bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
     bulletLauncher.setCooldown(1000f / stats[Turret.Stats.aspd]);
     rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
+    extraStatsUpdate();
   }
+  
+  protected void extraStatsUpdate(){}
 
   public boolean blocksPlacement() {
     return true;
@@ -320,7 +323,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
       buttons.add(new Button(
           world.getBs(),
-          new Sprite("Sell", 10).setSize(190, 40).setPosition(X, Y - 180),
+          new Sprite("Sell", 11).setSize(190, 40).setPosition(X, Y - 180),
           (x, y) -> {
             close();
             sell();
@@ -329,7 +332,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
       buttons.add(new Button(
           world.getBs(),
-          new Sprite("Radar", 10).setSize(170, 40).setPosition(X, Y - 135),
+          new Sprite("Radar", 11).setSize(170, 40).setPosition(X, Y - 135),
           (x, y) -> {
             targeting = switch (targeting) {
               case FIRST -> LAST;
