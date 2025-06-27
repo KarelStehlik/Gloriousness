@@ -7,13 +7,13 @@ import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Enums.TargetingOption;
 import Game.Mobs.TdMob;
-import general.Log;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import windowStuff.ImageData;
 import windowStuff.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
@@ -65,11 +65,11 @@ public class Projectile extends GameObject implements TickDetect {
 
   private boolean multihit = false;
 
-  public Projectile(World world, String image, float X, float Y, float speed, float rotation,
+  public Projectile(World world, ImageData image, float X, float Y, float speed, float rotation,
       int width, float aspectRatio, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
-    sprite = new Sprite(image, X, Y, width, width*aspectRatio, 1, "basic");
-    this.aspectRatio=aspectRatio;
+    this.aspectRatio = aspectRatio;
+    sprite = new Sprite(image, 1, "basic").setPosition(X, Y).setSize(width, width * aspectRatio);
     sprite.setRotation(rotation - 90);
     world.getBs().addSprite(sprite);
     stats[Stats.pierce] = pierce;
@@ -173,19 +173,23 @@ public class Projectile extends GameObject implements TickDetect {
     super.move(_x, _y);
     sprite.setPosition(x, y);
   }
+
   public void moveRelative(float addX, float addY) {
-    super.move(x+addX, y+addY);
+    super.move(x + addX, y + addY);
     sprite.setPosition(x, y);
   }
-  public void setAspectRatio(float newval){
-    aspectRatio=newval;
+
+  public void setAspectRatio(float newval) {
+    aspectRatio = newval;
   }
-  public float getAspectRatio(){
+
+  public float getAspectRatio() {
     return aspectRatio;
   }
+
   @Override
   public void onStatsUpdate() {
-    sprite.setSize(stats[Stats.size], stats[Stats.size]*aspectRatio);
+    sprite.setSize(stats[Stats.size], stats[Stats.size] * aspectRatio);
     vx = Util.cos(rotation) * stats[Stats.speed];
     vy = Util.sin(rotation) * stats[Stats.speed];
   }
@@ -302,7 +306,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Projectile e) {
-    if (!active || !e.active || e==this || alreadyHitProjectiles.contains(e)) {
+    if (!active || !e.active || e == this || alreadyHitProjectiles.contains(e)) {
       return;
     }
     if (!multihit) {

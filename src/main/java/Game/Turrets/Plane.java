@@ -89,7 +89,7 @@ public class Plane extends Turret {
           pineapple.getPower(),
           DamageType.TRUE);
       world.explosionVisual((int) pineapple.getX(), (int) pineapple.getY(),
-          (int) stats[ExtraStats.PineRadius], false, "Explosion2-0");
+          (int) stats[ExtraStats.PineRadius], false, "Explosion2");
     }));
 
     for (int i = 0; i < 4; i++) {
@@ -147,7 +147,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Duck",  new Description( "drops pineapples"),
+    return new Upgrade("Duck", new Description("drops pineapples"),
         () -> {
           dropsPineapples = true;
         }, 200);
@@ -155,7 +155,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up020() {
-    return new Upgrade("Button",  new Description( "more pineapples"),
+    return new Upgrade("Button", new Description("more pineapples"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.PineAspd, 3));
         }, 1000);
@@ -164,7 +164,7 @@ public class Plane extends Turret {
   @Override
   protected Upgrade up030() {
     return new Upgrade("FastDart",
-         new Description( "pineapples have bigger explosions that do more damage"),
+        new Description("pineapples have bigger explosions that do more damage"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.PineRadius, 1.5f));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.PinePower, 20));
@@ -173,7 +173,8 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up040() {
-    return new Upgrade("BeefierDart",  new Description( "Pineapples fire darts 10 times. darts do more damage."),
+    return new Upgrade("BeefierDart",
+        new Description("Pineapples fire darts 10 times. darts do more damage."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 3));
           pineappleLauncher.addProjectileModifier(dart -> {
@@ -192,7 +193,7 @@ public class Plane extends Turret {
   @Override
   protected Upgrade up050() {
     return new Upgrade("FastDart",
-         new Description( "pineapples have massive explosions with crazy damage"),
+        new Description("pineapples have massive explosions with crazy damage"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.PineRadius, 2f));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.PinePower, 5000));
@@ -206,7 +207,7 @@ public class Plane extends Turret {
   @Override
   protected Upgrade up100() {
     return new Upgrade("Radar",
-         new Description( "neva miss"),
+        new Description("neva miss"),
         () -> {
           bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new OnTickBuff<Projectile>(g::tick));
@@ -216,7 +217,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("MoreRadar",  new Description( "fires 2x more often."),
+    return new Upgrade("MoreRadar", new Description("fires 2x more often."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2));
         }, 2000);
@@ -232,7 +233,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up300() {
-    return new Upgrade("Meteor",  new Description( "Beefy darts"),
+    return new Upgrade("Meteor", new Description("Beefy darts"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.bulletSize, 1.0f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 3f));
@@ -247,7 +248,8 @@ public class Plane extends Turret {
   @Override
   protected Upgrade up500() {
     return new Upgrade("InfiniDart",
-         new Description( "Grabs the nearest turret except plane or necromancer. Can be bought repeatedly."),
+        new Description(
+            "Grabs the nearest turret except plane or necromancer. Can be bought repeatedly."),
         () -> {
           Turret best = null;
           float dist = Float.POSITIVE_INFINITY;
@@ -272,7 +274,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up400() {
-    return new Upgrade("Button",  new Description( "Enemies hit explode"),
+    return new Upgrade("Button", new Description("Enemies hit explode"),
         () -> bulletLauncher.addProjectileModifier(p -> {
           p.getSprite().setColors(red);
           p.addMobCollide((proj, mob) -> {
@@ -293,19 +295,20 @@ public class Plane extends Turret {
   @Override
   protected Upgrade up001() {
     return new Upgrade("DoubleDart",
-        new Description(()->"", () -> "shoots 2x more darts, currently " + (int) stats[ExtraStats.Radial],()->""),
+        new Description(() -> "",
+            () -> "shoots 2x more darts, currently " + (int) stats[ExtraStats.Radial], () -> ""),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.Radial, 2f)), 550);
   }
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("TripleDart",  new Description( "shoots 3x more often."),
+    return new Upgrade("TripleDart", new Description("shoots 3x more often."),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3f)), 4000);
   }
 
   @Override
   protected Upgrade up003() {
-    return new Upgrade("QuadDart",  new Description( "shoots 4x more darts."),
+    return new Upgrade("QuadDart", new Description("shoots 4x more darts."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 4f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.speed, 2f));
@@ -315,7 +318,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up004() {
-    return new Upgrade("QuinDart",  new Description( "2 added damage. shoots 5x more often."),
+    return new Upgrade("QuinDart", new Description("2 added damage. shoots 5x more often."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.power, 2f));
@@ -325,7 +328,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("TenDart",  new Description( "5x damage. shoots 5x more darts."),
+    return new Upgrade("TenDart", new Description("5x damage. shoots 5x more darts."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 5f));

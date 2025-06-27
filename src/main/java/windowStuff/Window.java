@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import Game.Game;
+import general.Log;
 import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
@@ -92,12 +93,21 @@ public final class Window {
     gameThread.start();
 
     float dt = 0;
+    int graphicsTicks = 0;
+    float totalDt = 0;
     float frameStartTime = System.nanoTime();
     while (!glfwWindowShouldClose(window)) {
       loop(dt);
+      graphicsTicks += 1;
       float frameEndTime = System.nanoTime();
       dt = frameEndTime - frameStartTime;
+      totalDt += dt;
       frameStartTime = frameEndTime;
+      if (totalDt > 1000000000) {
+        Log.write("graphics tps: " + graphicsTicks);
+        graphicsTicks = 0;
+        totalDt = 0;
+      }
     }
 
     running = false;

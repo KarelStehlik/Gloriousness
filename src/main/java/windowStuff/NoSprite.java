@@ -38,6 +38,11 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
+  public AbstractSprite setImage(ImageData imageId) {
+    return this;
+  }
+
+  @Override
   public NoSprite setImage(String name) {
     return this;
   }
@@ -60,8 +65,9 @@ public class NoSprite implements AbstractSprite {
     h *= multiplier;
     return this;
   }
+
   @Override
-  public NoSprite scale(float multiplierX,float multiplierY) {
+  public NoSprite scale(float multiplierX, float multiplierY) {
     w *= multiplierX;
     h *= multiplierY;
     return this;

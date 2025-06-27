@@ -32,7 +32,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
     clearStats();
     healthPart = 1;
     input = Game.get().getUserInputListener();
-    sprite = new Sprite("Chestplates", WIDTH, HEIGHT, 2);
+    sprite = new Sprite("Chestplates", 2).setSize(WIDTH, HEIGHT);
     sprite.setPosition(960, 540);
     sprite.setShader("basic");
     world.getBs().addSprite(sprite);

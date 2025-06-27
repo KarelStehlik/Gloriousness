@@ -2,8 +2,6 @@ package Game.Mobs;
 
 
 import Game.World;
-import general.Util;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MultiMoabLowerFin extends TdMob {

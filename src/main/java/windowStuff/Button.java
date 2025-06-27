@@ -2,8 +2,6 @@ package windowStuff;
 
 import Game.MouseDetect;
 import Game.TickDetect;
-import general.Log;
-import org.lwjgl.system.NonnullDefault;
 
 public class Button implements MouseDetect, TickDetect {
 
@@ -19,7 +17,7 @@ public class Button implements MouseDetect, TickDetect {
   private boolean shown = true;
 
   public Button(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
-                  Text caption) {
+      Text caption) {
     this.sprite = sprite;
     this.onClick = foo;
     sprite.addToBs(bs);
@@ -28,6 +26,7 @@ public class Button implements MouseDetect, TickDetect {
       mouseoverText.hide();
     }
   }
+
   public Button(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
       SimpleText.TextGenerator caption) {
     this.sprite = sprite;
@@ -42,11 +41,13 @@ public class Button implements MouseDetect, TickDetect {
     }
   }
 
-  public Button(SpriteBatching bs,AbstractSprite sprite, ClickFunction foo) { //I dunno if this should ever be used,
-                                                                            // because it looks kinda sus ngl
-    this(sprite,foo);
+  public Button(SpriteBatching bs, AbstractSprite sprite,
+      ClickFunction foo) { //I dunno if this should ever be used,
+    // because it looks kinda sus ngl
+    this(sprite, foo);
     sprite.addToBs(bs);
   }
+
   public Button(AbstractSprite sprite, ClickFunction foo) {
     this.sprite = sprite;
     this.onClick = foo;

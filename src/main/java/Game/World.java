@@ -14,7 +14,18 @@ import Game.Buffs.VoidFunc;
 import Game.Enums.DamageType;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
-import Game.Turrets.*;
+import Game.Turrets.BasicTurret;
+import Game.Turrets.DartMonkey;
+import Game.Turrets.DartlingGunner;
+import Game.Turrets.Druid;
+import Game.Turrets.EatingTurret;
+import Game.Turrets.EmpoweringTurret;
+import Game.Turrets.Engineer;
+import Game.Turrets.IgniteTurret;
+import Game.Turrets.Necromancer;
+import Game.Turrets.Plane;
+import Game.Turrets.SlowTurret;
+import Game.Turrets.Turret;
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -27,9 +38,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.joml.Vector2f;
-import windowStuff.*;
+import windowStuff.Button;
+import windowStuff.ButtonArray;
+import windowStuff.NoSprite;
+import windowStuff.SimpleText;
+import windowStuff.SingleAnimationSprite;
+import windowStuff.Sprite;
+import windowStuff.SpriteBatching;
+import windowStuff.TextBox;
 
 public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
@@ -88,8 +105,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     String mapName = Data.listMaps()[MAP];
 
-    mapSprite = new Sprite(mapName, Constants.screenSize.x / 2f, Constants.screenSize.y / 2f,
-        Constants.screenSize.x, Constants.screenSize.y, 0, "basic");
+    mapSprite = new Sprite(mapName, 0).setPosition(Constants.screenSize.x / 2f,
+        Constants.screenSize.y / 2f).setSize(Constants.screenSize.x, Constants.screenSize.y);
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
@@ -113,7 +130,8 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator engi = Engineer.generator(this);
 
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test,drtmonk,dartling, testDotTurret, testSlowTurret,
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, drtmonk, dartling,
+        testDotTurret, testSlowTurret,
         testEmp, testEating, necro, druid, plane, engi};
 
     ButtonArray turretBar = new ButtonArray(2,
@@ -129,30 +147,31 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
-        explosionVisual(x, y, 100, true, "Explosion1-0");
+        explosionVisual(x, y, 100, true, "Explosion1");
       }
     }));
 
-    ArrayList<SimpleText> texts=new ArrayList<>();
-    SimpleText text= new SimpleText(() ->"Lives: " + health, "Calibri", 500,
-            0, 1050, 10, 40, bs);
+    ArrayList<SimpleText> texts = new ArrayList<>();
+    SimpleText text = new SimpleText(() -> "Lives: " + health, "Calibri", 500,
+        0, 1050, 10, 40, bs);
     text.setColors(Util.getColors(1, 1, 1));
     texts.add(text);
-    SimpleText text2= new SimpleText(() ->"Cash: " + (long) getMoney(), "Calibri", 500,
-            0, 1550, 10, 40, bs);
+    SimpleText text2 = new SimpleText(() -> "Cash: " + (long) getMoney(), "Calibri", 500,
+        0, 1550, 10, 40, bs);
     text2.setColors(Util.getColors(1, 1, 1));
     texts.add(text2);
-    SimpleText text3= new SimpleText(() ->"Wave " + mobSpawner.waveNum, "Calibri", 500,
-            0, 900, 10, 40, bs);
+    SimpleText text3 = new SimpleText(() -> "Wave " + mobSpawner.waveNum, "Calibri", 500,
+        0, 900, 10, 40, bs);
     text3.setColors(Util.getColors(1, 1, 1));
     texts.add(text3);
-    resourceTracker =new TextBox(250,975,500,true,texts);
+    resourceTracker = new TextBox(250, 975, 500, true, texts);
 
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
     mobSpawner.beginWave();
     calcSpacPoints();
   }
+
   public void addEvent(VoidFunc e) {
     queuedEvents.add(e);
   }
@@ -194,11 +213,13 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
     if (shockwave) {
       game.addTickable(
           new Animation(
-              new Sprite("Shockwave", x, y, size, size, 3, "basic").addToBs(bs).setOpacity(0.7f), 2
+              new Sprite("Shockwave", 3, "basic").setPosition(x, y).setSize(size, size).addToBs(bs)
+                  .setOpacity(0.7f), 2
           ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
       );
     }
-    Sprite sp = new SingleAnimationSprite(image, .4f, x, y, size * 2, size * 2, 4, "basic").
+    Sprite sp = new SingleAnimationSprite(image, .4f, 4, "basic").setPosition(x, y)
+        .setSize(size * 2, size * 2).
         addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
   }
 
@@ -595,7 +616,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       return ultimateCrosspathing;
     }
 
-    public boolean isFastForward() {return fastForward;}
+    public boolean isFastForward() {
+      return fastForward;
+    }
 
     private boolean fuckified = false;
     private boolean laggyGong = false;

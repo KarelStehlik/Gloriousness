@@ -7,18 +7,21 @@ import static org.lwjgl.opengl.GL15C.nglBufferSubData;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
 import general.Constants;
+import general.Log;
 import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 
 public class GlBufferWrapper {
 
-  private static final int CPU_BUFFER_SIZE = Constants.SpriteSizeFloats * Float.BYTES * 1000;
+  private static final int CPU_BUFFER_SIZE = Constants.SpriteSizeFloats * Float.BYTES * 1024;
 
   private final int id;
   private final int type;
   private final ByteBuffer buffer;
   private int size;
   private long offset = 0;
+  private boolean rebind = true;
+  private int recentSmallAllocs=0;
 
   public GlBufferWrapper(int size, int type) {
     this.id = glGenBuffers();
@@ -28,18 +31,39 @@ public class GlBufferWrapper {
   }
 
   public GlBufferWrapper(int type) {
-    this(1, type);
+    this(CPU_BUFFER_SIZE, type);
   }
 
   public void alloc(int newSize, int usage) {
     bind();
-    while (size < newSize) {
-      size *= 2;
+    if (size < newSize) {
+      size = (int) (newSize * 1.3f);
+      Log.write(id+"ALLOC^: " + newSize);
+      rebind = true;
     }
-    glBufferData(type, size, usage);
+    if (size > newSize * 4 + CPU_BUFFER_SIZE) {
+      recentSmallAllocs+=1;
+      if(recentSmallAllocs>16) {
+        size = (int) (newSize * 2.5f);
+        Log.write(id + "ALLOCv: " + newSize);
+        rebind = true;
+      }
+    }else{
+      recentSmallAllocs=0;
+    }
+    if (rebind) {
+      rebind = false;
+      size = Math.ceilDiv(size, CPU_BUFFER_SIZE) * CPU_BUFFER_SIZE;
+      Log.write(id+"ALLOC: " + size);
+      glBufferData(type, size, usage);
+    }
   }
 
   private void passBuffer() {
+    if (offset > size - CPU_BUFFER_SIZE) {
+      Log.write("FUCK");
+      return;
+    }
     bind();
     buffer.rewind();
     nglBufferSubData(type, offset, Math.min(buffer.remaining(), size - offset), memAddress(buffer));
@@ -83,7 +107,9 @@ public class GlBufferWrapper {
   }
 
   public void doneBuffering() {
-    passBuffer();
+    if (buffer.position() > 0) {
+      passBuffer();
+    }
     offset = 0;
   }
 }

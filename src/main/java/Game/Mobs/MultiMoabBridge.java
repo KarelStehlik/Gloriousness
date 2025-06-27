@@ -2,8 +2,6 @@ package Game.Mobs;
 
 
 import Game.World;
-import general.Util;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MultiMoabBridge extends TdMob {
@@ -20,7 +18,7 @@ public class MultiMoabBridge extends TdMob {
   public MultiMoabBridge(TdMob parent) {
     super(parent.world, "SmBridge", parent, parent.getChildrenSpread());
     initComponents();
-}
+  }
 
   private void initComponents() {
     TdMob b = new MultiMoabHead(world, waveNum);

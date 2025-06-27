@@ -5,12 +5,10 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import general.Constants;
 import imgui.ImGui;
-import org.joml.Vector2d;
-import org.joml.Vector2f;
-
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.joml.Vector2d;
 
 public class UserInputListener {
 
@@ -19,7 +17,7 @@ public class UserInputListener {
   private final UserInputHandler game;
   private final BlockingQueue<Event> events = new LinkedBlockingQueue<>();
   private double dx, dy, lastX, lastY, scrollX, scrollY;
-  private final Vector2d position=new Vector2d(); /*I want to be able to return this and at some point
+  private final Vector2d position = new Vector2d(); /*I want to be able to return this and at some point
                                          I heard vector creation has a cost so vectors should be reused instead of throwaway
                                         Now... I think there is absolutely no way that it could have a performance impact if a
                                         couple vecors are made from returning a new vector2d instead of reusing this one and
@@ -45,9 +43,11 @@ public class UserInputListener {
       events.remove().run();
     }
   }
-  public final Vector2d getPos(){
+
+  public final Vector2d getPos() {
     return position;
   }
+
   public float getX() {
     return (float) position.x;
   }

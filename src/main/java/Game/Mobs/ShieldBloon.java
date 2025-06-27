@@ -23,9 +23,9 @@ public class ShieldBloon extends TdMob {
   @Override
   protected void miscTickActions(int tick) {
     int frequency = 20;
-    if ((tick+id) % frequency == 0) {
+    if ((tick + id) % frequency == 0) {
       float f = frequency - .5f;
-      world.getMobsGrid().callForEachCircle(x, y, stats[Stats.size]/2,
+      world.getMobsGrid().callForEachCircle(x, y, stats[Stats.size] / 2,
           m -> m.addBuff(new StatBuff<TdMob>(
               Type.INCREASED, f * Game.tickIntervalMillis, Stats.health, 1))
       );

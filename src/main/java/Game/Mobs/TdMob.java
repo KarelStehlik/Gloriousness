@@ -39,7 +39,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
-    sprite = new Sprite(image, x, y, width, height, isMoab()?2:1, "basic");
+    sprite = new Sprite(image, isMoab() ? 2 : 1, "basic").setSize(width, height).setPosition(x, y);
     sprite.addToBs(world.getBs());
     sprite.setNaturalHeight();
     exists = true;
@@ -59,7 +59,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
-    sprite = new Sprite(image, x, y, width, height, isMoab()?2:1, "basic");
+    sprite = new Sprite(image, isMoab() ? 2 : 1, "basic").setSize(width, height).setPosition(x, y);
     sprite.addToBs(world.getBs());
     sprite.setNaturalHeight();
     exists = true;
@@ -111,7 +111,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     handleDeath();
   }
 
-  public void die(){
+  public void die() {
     world.setMoney(world.getMoney() + stats[Stats.value]);
     onDeath();
 
@@ -120,7 +120,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     delete();
   }
 
-  protected void handleDeath(){
+  protected void handleDeath() {
     if (healthPart <= 0.0000001 && exists) {
       die();
     }
@@ -181,22 +181,28 @@ public abstract class TdMob extends GameObject implements TickDetect {
     TdMob spawn(TdMob parent);
   }
 
-  public interface MovementAi<T extends GameObject>{
+  public interface MovementAi<T extends GameObject> {
+
     TrackProgress getProgress();
+
     boolean isDone();
+
     void tick(T target);
+
     float getOffsetX();
+
     float getOffsetY();
   }
 
   public static class HardFollow<T extends TdMob> implements MovementAi<T> {
+
     private final TdMob master;
     private final float offX, offY;
 
     public HardFollow(TdMob master, float offX, float offY) {
       this.master = master;
-      this.offX = -offY*.99f;
-      this.offY = offX*.99f;
+      this.offX = -offY * .99f;
+      this.offY = offX * .99f;
     }
 
     @Override
@@ -212,22 +218,24 @@ public abstract class TdMob extends GameObject implements TickDetect {
     @Override
     public void tick(T target) {
       target.setRotation(master.rotation);
-      float sin = Util.sin(master.rotation), cos=Util.cos(master.rotation);
-      target.move(master.getX() + offX*cos - offY*sin,
-          master.getY()  + offX*sin+ offY*cos);
-      if(master.WasDeleted()){
+      float sin = Util.sin(master.rotation), cos = Util.cos(master.rotation);
+      target.move(master.getX() + offX * cos - offY * sin,
+          master.getY() + offX * sin + offY * cos);
+      if (master.WasDeleted()) {
         target.die();
       }
     }
 
     @Override
     public float getOffsetX() {
-      return master.movement.getOffsetX() + offX*Util.cos(master.rotation) + offY*Util.sin(master.rotation);
+      return master.movement.getOffsetX() + offX * Util.cos(master.rotation) + offY * Util.sin(
+          master.rotation);
     }
 
     @Override
     public float getOffsetY() {
-      return master.movement.getOffsetX() + offX*Util.sin(master.rotation) + offY*Util.cos(master.rotation);
+      return master.movement.getOffsetX() + offX * Util.sin(master.rotation) + offY * Util.cos(
+          master.rotation);
     }
   }
 

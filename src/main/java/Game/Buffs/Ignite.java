@@ -57,14 +57,14 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     private float dpTick = 0;
     private Aggregator parentIgnites = null;
-    private int lastUpdate =0;
+    private int lastUpdate = 0;
     private float totalDpTick = 0;
 
     protected Aggregator() {
       var bs = Game.get().getSpriteBatching("main");
-      Sprite fs = new Sprite("Fireball-0", 3).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
+      Sprite fs = new Sprite("Fireball", 3).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
       fs.setRotation(180);
-      fs.playAnimation(fs.new BasicAnimation("Fireball-0", 1.1f).loop());
+      fs.playAnimation(fs.new BasicAnimation("Fireball", 1.1f).loop());
       fs.setHidden(true);
       fireSprite = fs;
     }
@@ -82,7 +82,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     private void update() {
       int tick = Game.get().getTicks();
-      if(lastUpdate == tick){
+      if (lastUpdate == tick) {
         return;
       }
       lastUpdate = tick;
@@ -99,7 +99,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
         dpTick -= ig.damagePerTick;
       }
 
-      totalDpTick = dpTick + (parentIgnites==null?0:parentIgnites.totalDpTick);
+      totalDpTick = dpTick + (parentIgnites == null ? 0 : parentIgnites.totalDpTick);
     }
 
     @Override

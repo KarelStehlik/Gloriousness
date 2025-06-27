@@ -34,7 +34,7 @@ public final class BasicCollides {
   }
 
   public static boolean explodeFunc(int x, int y, float power, float radius) {
-    return explodeFunc(x, y, power, radius, "Explosion1-0");
+    return explodeFunc(x, y, power, radius, "Explosion1");
   }
 
   public static boolean explodeFunc(int x, int y, float power, float radius, String animation) {
