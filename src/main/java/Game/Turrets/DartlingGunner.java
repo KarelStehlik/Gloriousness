@@ -2,9 +2,6 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.Buffs.AttackEffect;
-import Game.Buffs.Explosive;
-import Game.Buffs.Modifier;
-import Game.Buffs.OnTickBuff;
 import Game.Buffs.ProcTrigger;
 import Game.Buffs.SideWeapon;
 import Game.Buffs.StatBuff;
@@ -14,7 +11,6 @@ import Game.BulletLauncher;
 import Game.Game;
 import Game.TurretGenerator;
 import Game.World;
-import Game.Projectile;
 import general.Data;
 import general.Description;
 import general.Util;
@@ -197,20 +193,22 @@ public class DartlingGunner extends Turret {
 
   @Override
   protected void extraStatsUpdate() {
-    if(clusterLauncher==null){
+    if (clusterLauncher == null) {
       return;
     }
-    clusterLauncher.setPower(stats[Stats.power]*0.5f);
+    clusterLauncher.setPower(stats[Stats.power] * 0.5f);
     clusterLauncher.setSize(stats[Stats.bulletSize] * 0.7f);
-    clusterLauncher.setPierce((int) (stats[Stats.pierce]*0.8f));
-    clusterLauncher.setSpeed(stats[Stats.speed]*2);
+    clusterLauncher.setPierce((int) (stats[Stats.pierce] * 0.8f));
+    clusterLauncher.setSpeed(stats[Stats.speed] * 2);
   }
 
   BulletLauncher clusterLauncher;
-  private void ClusterAttack(float x, float y){
-    clusterLauncher.move(x,y);
-    clusterLauncher.attack(0,false);
+
+  private void ClusterAttack(float x, float y) {
+    clusterLauncher.move(x, y);
+    clusterLauncher.attack(0, false);
   }
+
   @Override
   protected Upgrade up040() {
     return new Upgrade("jugjugjug",
@@ -220,16 +218,17 @@ public class DartlingGunner extends Turret {
 
             "splits into 5-20 new projectiles depending on the size of your balls"),
         () -> {
-          clusterLauncher = new BulletLauncher(world,"juggerdrt");
+          clusterLauncher = new BulletLauncher(world, "juggerdrt");
           clusterLauncher.setSpread(180);
           clusterLauncher.setDuration(2);
-          clusterLauncher.radial = (int) (5 + (originalStats[Stats.bulletSize]-15)/2);
+          clusterLauncher.radial = (int) (5 + (originalStats[Stats.bulletSize] - 15) / 2);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 0.3f));
           extraStatsUpdate();
           clusterLauncher.addMobCollide(BasicCollides.damage);
           sprite.setImage("gunnerjugger");
           sprite.scale(1.5f);
-          bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(proj->this.ClusterAttack(proj.getX(),proj.getY())));
+          bulletLauncher.addProjectileModifier(
+              p -> p.addBeforeDeath(proj -> this.ClusterAttack(proj.getX(), proj.getY())));
         }, 2225);
   }
 
@@ -256,10 +255,10 @@ public class DartlingGunner extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 15f;
     stats[Stats.pierce] = 2f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(1.5f,6f);
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(1.5f, 6f);
     stats[Stats.projectileDuration] = 4f;
-    stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(15f,45f);
-    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(2f,25f);
+    stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(15f, 45f);
+    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(2f, 25f);
     stats[Stats.cost] = 250f;
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;

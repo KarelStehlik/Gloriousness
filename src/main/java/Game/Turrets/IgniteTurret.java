@@ -44,14 +44,14 @@ public class IgniteTurret extends Turret {
 
   @Override
   protected Upgrade up100() {
-    return new Upgrade("Button",  new Description( "ignites last 3x longer"),
+    return new Upgrade("Button", new Description("ignites last 3x longer"),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.igniteDuration, 3)),
         1000);
   }
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("Button",  new Description( "ignites last 69420x longer"),
+    return new Upgrade("Button", new Description("ignites last 69420x longer"),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.igniteDuration, 69420)),
         2500);
   }
@@ -59,7 +59,8 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up300() {
     return new Upgrade("Button",
-         new Description( "30% increased attack speed and range for every second this has been continuously attacking"),
+        new Description(
+            "30% increased attack speed and range for every second this has been continuously attacking"),
         () -> {
           final float increasePerTick = 0.001f * 0.30f * Game.tickIntervalMillis;
           RefFloat currentIncrease = new RefFloat(0);
@@ -79,7 +80,8 @@ public class IgniteTurret extends Turret {
 
   @Override
   protected Upgrade up400() {
-    return new Upgrade("Button",  new Description( "1% increased damage for every bloon hit directly recently."),
+    return new Upgrade("Button",
+        new Description("1% increased damage for every bloon hit directly recently."),
         () -> {
           bulletLauncher.addMobCollide((proj, mob) -> addBuff(
               new StatBuff<Turret>(Type.INCREASED, 4000, Stats.power, 0.01f)));
@@ -89,7 +91,7 @@ public class IgniteTurret extends Turret {
 
   @Override
   protected Upgrade up500() {
-    return new Upgrade("Button",  new Description( "+19 pierce."),
+    return new Upgrade("Button", new Description("+19 pierce."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 19));
           addBuff(new StatBuff<Turret>(Type.INCREASED, Stats.speed, 1));
@@ -99,7 +101,7 @@ public class IgniteTurret extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Button",  new Description( "aoe"),
+    return new Upgrade("Button", new Description("aoe"),
         () -> bulletLauncher.addMobCollide((proj, mob) ->
         {
           world.getMobsGrid().callForEachCircle((int) proj.getX(), (int) proj.getY(),
@@ -112,7 +114,7 @@ public class IgniteTurret extends Turret {
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("Button",  new Description( "bigger aoe, but 40% less damage"),
+    return new Upgrade("Button", new Description("bigger aoe, but 40% less damage"),
         () -> {
           sprite.setImage("Flamethrower1");
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.aoe, 100));
@@ -142,7 +144,8 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up003() {
     return new Upgrade("Zombie",
-         new Description( "Bloons hit directly leave behind a lava puddle on death based on the current ignite dps."),
+        new Description(
+            "Bloons hit directly leave behind a lava puddle on death based on the current ignite dps."),
         () -> bulletLauncher.addProjectileModifier(p -> {
               p.addMobCollide((zombie, bloon) -> {
                 if (!bloon.addBuff(new Tag<TdMob>(puddleId))) {
@@ -160,7 +163,7 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up004() {
     return new Upgrade("Zombie",
-         new Description( "lava puddles last 4x longer and do double damage."),
+        new Description("lava puddles last 4x longer and do double damage."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.puddleDuration, 4));
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.puddleDamage, 2));
@@ -172,7 +175,8 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up005() {
     return new Upgrade("Zombie",
-         new Description( "Hit bloons and their children also explode equal to 10 seconds worth of ignite dps"),
+        new Description(
+            "Hit bloons and their children also explode equal to 10 seconds worth of ignite dps"),
         () -> bulletLauncher.addProjectileModifier(p -> {
               p.addMobCollide((zombie, bloon) -> {
                 if (!bloon.addBuff(new Tag<TdMob>(ddId))) {
@@ -203,7 +207,8 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up050() {
     return new Upgrade("Button",
-         new Description( "also hits projectiles, causing them to do what this does (they cannot be hit by any flamethrower again)"),
+        new Description(
+            "also hits projectiles, causing them to do what this does (they cannot be hit by any flamethrower again)"),
         () -> {
           bulletLauncher.addProjectileModifier(p -> p.addBuff(new Tag<Projectile>(projCollideId)));
           bulletLauncher.addProjectileCollide((thisProj, otherProj) -> {
@@ -221,7 +226,7 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up020() {
     return new Upgrade("Button",
-         new Description( "also hits the player to grant 1% increased attack speed for 5 seconds."),
+        new Description("also hits the player to grant 1% increased attack speed for 5 seconds."),
         () -> {
           bulletLauncher.addPlayerCollide((thisProj, player) -> {
             player.addBuff(new StatBuff<Player>(Type.INCREASED, 5000, Player.Stats.aspd, 0.01f));
@@ -233,14 +238,15 @@ public class IgniteTurret extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Button",  new Description( "adds 3 pierce"),
+    return new Upgrade("Button", new Description("adds 3 pierce"),
         () -> addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 3)),
         1500);
   }
 
   @Override
   protected Upgrade up030() {
-    return new Upgrade("Button",  new Description( "also gives the player 1% increased damage for 5 seconds."),
+    return new Upgrade("Button",
+        new Description("also gives the player 1% increased damage for 5 seconds."),
         () -> bulletLauncher.addPlayerCollide((thisProj, player) -> {
           player.addBuff(
               new StatBuff<Player>(Type.INCREASED, 5000, Player.Stats.projPower, 0.01f));
@@ -254,7 +260,8 @@ public class IgniteTurret extends Turret {
   @Override
   protected Upgrade up040() {
     return new Upgrade("Button",
-         new Description( "Ability: every projectile that currently exists explodes, dealing aoe damage based on its power and pierce. Pierce above 2500 has no effect."),
+        new Description(
+            "Ability: every projectile that currently exists explodes, dealing aoe damage based on its power and pierce. Pierce above 2500 has no effect."),
         () -> {
           var a = Ability.add("Fireball-0", 10000, () -> "Boom",
               () -> {

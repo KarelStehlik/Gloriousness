@@ -18,8 +18,11 @@ import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
 import Game.World.TrackPoint;
-import general.*;
-
+import general.Data;
+import general.Description;
+import general.Log;
+import general.RefFloat;
+import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -93,7 +96,7 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up010() {
     return new Upgrade("ZombieDead",
-         new Description( "zombies are dead. The don't move but are more powerful."),
+        new Description("zombies are dead. The don't move but are more powerful."),
         () -> {
           bulletLauncher.setImage(path1Tier >= 2 ? "ZombieDeadPierce" : "ZombieDead");
           walking = false;
@@ -109,7 +112,8 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up020() {
     return new Upgrade("Zombie",
-         new Description( "zombies spin in their graves. this causes nearby non-MOAB bloons to slow down"),
+        new Description(
+            "zombies spin in their graves. this causes nearby non-MOAB bloons to slow down"),
         () -> {
           bulletLauncher.addProjectileModifier(p -> {
             if (rotates) {
@@ -135,7 +139,7 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up040() {
     return new Upgrade("Zombie",
-         new Description( "The first bloon that a zombie touches will spawn a new zombie on death."),
+        new Description("The first bloon that a zombie touches will spawn a new zombie on death."),
         () -> bulletLauncher.addProjectileModifier(p -> {
 
               RefFloat alreadyHit = new RefFloat(0);
@@ -160,7 +164,7 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up030() {
     return new Upgrade("Zombie",
-         new Description( "Zombies use mummification to preserve themselves 5x longer."),
+        new Description("Zombies use mummification to preserve themselves 5x longer."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 5));
           bulletLauncher.setImage("Mummy");
@@ -174,9 +178,10 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up050() {
     return new Upgrade("Mine",
-         new Description( "Cool never-before-seen ability"),
+        new Description("Cool never-before-seen ability"),
         () -> {
-          Ability a = Ability.add("fire", 120000, () -> "Probably weaker, smaller dick and lower balls than the one in btd8",
+          Ability a = Ability.add("fire", 120000,
+              () -> "Probably weaker, smaller dick and lower balls than the one in btd8",
               () -> {
                 var ui = Game.get().getUserInputListener();
                 float dx = ui.getX() - x;
@@ -231,14 +236,14 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("Bomb-0",  new Description( "zombies explode when destroyed."),
+    return new Upgrade("Bomb-0", new Description("zombies explode when destroyed."),
         () -> bulletLauncher.addProjectileModifier(
             p -> p.addBeforeDeath(proj -> explode(proj, 5, 150, "Explosion1-0"))), 500);
   }
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("Duck",  new Description( "zombies also explode on contact."),
+    return new Upgrade("Duck", new Description("zombies also explode on contact."),
         () -> bulletLauncher.addProjectileModifier(p -> p.addMobCollide((proj, mob) -> {
           explode(proj, 7F, 100F, "Explosion2-0", (int) mob.getX(), (int) mob.getY());
           return true;
@@ -248,7 +253,8 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up003() {
     return new Upgrade("Zombie",
-         new Description( "zombies also explode all the time. this is mostly for show. They get more pierce."),
+        new Description(
+            "zombies also explode all the time. this is mostly for show. They get more pierce."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Turret.Stats.pierce, 2));
           bulletLauncher.addProjectileModifier(p -> p.addBuff(
@@ -258,13 +264,13 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up004() {
-    return new Upgrade("Zombie",  new Description( "explosions also ignite things"),
+    return new Upgrade("Zombie", new Description("explosions also ignite things"),
         () -> ignites = true, 20000);
   }
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("Zombie",  new Description( "constantly ignites everything"),
+    return new Upgrade("Zombie", new Description("constantly ignites everything"),
         () -> addBuff(new OnTickBuff<Turret>(t -> world.getMobsList().forEach(
             mob -> mob.addBuff(new Ignite<>(stats[Stats.power] * stats[Stats.pierce], 3000))))),
         50000);
@@ -272,13 +278,13 @@ public class Necromancer extends Turret {
 
   @Override
   protected Upgrade up100() {
-    return new Upgrade("MoreZombies",  new Description( "produces zombies faster."),
+    return new Upgrade("MoreZombies", new Description("produces zombies faster."),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 1.8f)), 500);
   }
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("ZombiePierce",  new Description( "zombies have more pierce"),
+    return new Upgrade("ZombiePierce", new Description("zombies have more pierce"),
         () -> {
           bulletLauncher.setImage(path2Tier >= 1 ? "ZombieDeadPierce" : "ZombiePierce");
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.pierce, 2));
@@ -302,7 +308,7 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up300() {
     return new Upgrade("Inheritor",
-         new Description( "use genetic engineering to buff the next 3 necromancers. "
+        new Description("use genetic engineering to buff the next 3 necromancers. "
             + "Each tower can only have " + MAX_INHERITORS + " genetic modifications at once."),
         () -> inheritors.add(new Inheritor(3, getRandomInheritorEffect())), 2000);
   }
@@ -313,7 +319,7 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up400() {
     return new Upgrade("Inheritor2",
-         new Description( "apply 12 more genetic modifications to this (bypassing the normal limit)"),
+        new Description("apply 12 more genetic modifications to this (bypassing the normal limit)"),
         () -> {
           for (int i = 0; i < 12; i++) {
             getRandomInheritorEffect().mod(this);
@@ -324,7 +330,8 @@ public class Necromancer extends Turret {
   @Override
   protected Upgrade up500() {
     return new Upgrade("Inheritor3",
-         new Description( "sacrifices nearby towers, gain a genetic modification for every 2500 money sacrificed"),
+        new Description(
+            "sacrifices nearby towers, gain a genetic modification for every 2500 money sacrificed"),
         () -> {
           float sacced = 0;
           for (Turret t : world.getTurrets()) {
@@ -370,7 +377,8 @@ public class Necromancer extends Turret {
     }
     bulletLauncher.tickCooldown();
     TdMob target = world.getMobsGrid()
-        .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range], TargetingOption.FIRST);
+        .search(new Point((int) x, (int) y), (int) stats[Turret.Stats.range],
+            TargetingOption.FIRST);
     if (target != null) {
       setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
     }

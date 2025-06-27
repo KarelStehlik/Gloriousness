@@ -73,7 +73,8 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Dart",  new Description( "turrets also shoot behind them, and have +3 pierce"),
+    return new Upgrade("Dart",
+        new Description("turrets also shoot behind them, and have +3 pierce"),
         () -> {
           turretMods.add(t -> {
             t.bulletLauncher.radial = 2;
@@ -84,7 +85,7 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up030() {
-    return new Upgrade("Dart",  new Description( "turrets shoot 10 bullets radially."),
+    return new Upgrade("Dart", new Description("turrets shoot 10 bullets radially."),
         () -> {
           turretMods.add(t -> {
             t.bulletLauncher.radial = 10;
@@ -94,7 +95,7 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up040() {
-    return new Upgrade("BeefyDart",  new Description( "turrets have beefier lasers."),
+    return new Upgrade("BeefyDart", new Description("turrets have beefier lasers."),
         () -> {
           turretMods.add(t -> {
             t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.1f));
@@ -111,7 +112,8 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up050() {
-    return new Upgrade("Dart",  new Description( "turrets shoot a ring of death, but there's fewer turrets."),
+    return new Upgrade("Dart",
+        new Description("turrets shoot a ring of death, but there's fewer turrets."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spawnSpd, 0.3f));
           turretMods.add(t -> {
@@ -124,7 +126,7 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up300() {
-    return new Upgrade("MagnetDart",  new Description( "turrets explode on death"),
+    return new Upgrade("MagnetDart", new Description("turrets explode on death"),
         () -> {
           turretMods.add(t -> t.addBuff(new DelayedTrigger<Turret>(turr -> {
             world.aoeDamage((int) turr.getX(), (int) turr.getY(), 400, 200, DamageType.TRUE);
@@ -138,7 +140,7 @@ public class Engineer extends Turret {
   @Override
   protected Upgrade up100() {
     return new Upgrade("Radar",
-         new Description( "turret projectiles last longer and seek"),
+        new Description("turret projectiles last longer and seek"),
         () -> {
           turretLauncher.addProjectileModifier(p -> p.addBuff(new OnTickBuff<Projectile>(g::tick)));
           turretMods.add(t -> {
@@ -150,7 +152,7 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up200() {
-    return new Upgrade("MoreRadar",  new Description( "turret projectiles explode on depletion"),
+    return new Upgrade("MoreRadar", new Description("turret projectiles explode on depletion"),
         () -> {
           turretLauncher.addProjectileModifier(p -> p.addBeforeDeath(proj -> {
             world.aoeDamage((int) proj.getX(), (int) proj.getY(), 200, proj.getPower(),
@@ -162,7 +164,8 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up020() {
-    return new Upgrade("Dart",  new Description( "turrets have 20% more attack speed, range, damage, duration."),
+    return new Upgrade("Dart",
+        new Description("turrets have 20% more attack speed, range, damage, duration."),
         () -> {
           turretMods.add(t -> {
             t.addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 1.2f));
@@ -176,7 +179,7 @@ public class Engineer extends Turret {
   @Override
   protected Upgrade up500() {
     return new Upgrade("InfiniDart",
-         new Description( "projectiles last literally forever (i'm sure this isn't game breaking)"),
+        new Description("projectiles last literally forever (i'm sure this isn't game breaking)"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.projectileDuration,
               Float.POSITIVE_INFINITY));
@@ -185,7 +188,7 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up400() {
-    return new Upgrade("Goldfish",  new Description( "produces 5x more turrets, with less duration"),
+    return new Upgrade("Goldfish", new Description("produces 5x more turrets, with less duration"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spawnSpd, 5));
           turretMods.add(t -> t.addBuff(
@@ -195,27 +198,27 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("DoubleDart",  new Description( "shoots and makes turrets 2x faster."),
+    return new Upgrade("DoubleDart", new Description("shoots and makes turrets 2x faster."),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2f)), 100);
   }
 
   @Override
   protected Upgrade up002() {
-    return new Upgrade("TripleDart",  new Description( "shoots and makes turrets 3x faster."),
+    return new Upgrade("TripleDart", new Description("shoots and makes turrets 3x faster."),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 3f)), 1000);
   }
 
 
   @Override
   protected Upgrade up003() {
-    return new Upgrade("QuadDart", new Description( "???"),
-            () ->{
+    return new Upgrade("QuadDart", new Description("???"),
+        () -> {
         }, 8000);
   }
 
   @Override
   protected Upgrade up004() {
-    return new Upgrade("QuinDart",  new Description( "shoots 5x faster."),
+    return new Upgrade("QuinDart", new Description("shoots 5x faster."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           bulletLauncher.setSpread(10);
@@ -224,7 +227,7 @@ public class Engineer extends Turret {
 
   @Override
   protected Upgrade up005() {
-    return new Upgrade("TenDart",  new Description( "shoots 5x faster with double damage."),
+    return new Upgrade("TenDart", new Description("shoots 5x faster with double damage."),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 5f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 2f));

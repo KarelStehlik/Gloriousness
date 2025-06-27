@@ -27,7 +27,8 @@ import windowStuff.SpriteBatching;
 public abstract class Turret extends GameObject implements TickDetect {
 
   private static final Upgrade maxUpgrades = new Upgrade("MaxUpgrades",
-      new Description( ()->"LOCKED",() -> "here is a number. " + Game.get().getTicks(),()->"it's gameticks. I'm sorry for the demystification"), () -> {
+      new Description(() -> "LOCKED", () -> "here is a number. " + Game.get().getTicks(),
+          () -> "it's gameticks. I'm sorry for the demystification"), () -> {
   }, Float.POSITIVE_INFINITY);
   private static UpgradeMenu menu;
   protected final BulletLauncher bulletLauncher;
@@ -39,12 +40,13 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected float totalCost;
   protected final float[] originalStats;
   private TargetingOption targeting = FIRST;
-  private boolean imageRatio=false; // scales itself to the aspect ratio of the image
+  private final boolean imageRatio = false; // scales itself to the aspect ratio of the image
+
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
     clearStats();
-    originalStats=getStats().clone();
+    originalStats = getStats().clone();
 
     sprite = new Sprite(imageName, stats[Turret.Stats.spritesize], stats[Turret.Stats.spritesize],
         2);
@@ -75,8 +77,9 @@ public abstract class Turret extends GameObject implements TickDetect {
       }
     }));
   }
-  protected int getHighestTier(){
-    return Math.max(Math.max(path3Tier,path2Tier),path1Tier);
+
+  protected int getHighestTier() {
+    return Math.max(Math.max(path3Tier, path2Tier), path1Tier);
   }
 
   protected List<Upgrade> getUpgradePath1() {
@@ -171,6 +174,7 @@ public abstract class Turret extends GameObject implements TickDetect {
         new Point((int) x, (int) y), (int) stats[Turret.Stats.range], targeting
     );
   }
+
   protected ArrayList<TdMob> target(int maxTargets) {
     return world.getMobsGrid().search(
         new Point((int) x, (int) y), (int) stats[Turret.Stats.range], targeting, maxTargets
@@ -186,7 +190,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     TdMob target = target();
     if (target != null) {
       setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
-      while(bulletLauncher.canAttack()) {
+      while (bulletLauncher.canAttack()) {
         bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
       }
     }
@@ -251,8 +255,9 @@ public abstract class Turret extends GameObject implements TickDetect {
     rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
     extraStatsUpdate();
   }
-  
-  protected void extraStatsUpdate(){}
+
+  protected void extraStatsUpdate() {
+  }
 
   public boolean blocksPlacement() {
     return true;
@@ -380,13 +385,13 @@ public abstract class Turret extends GameObject implements TickDetect {
 
       buttons.add(
           new Button(bs, u1.makeSprite().setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
-              u1.description.getAsTextBox(sprite.getLayer()+10,bs,u1.cost)));
+              u1.description.getAsTextBox(sprite.getLayer() + 10, bs, u1.cost)));
       buttons.add(
           new Button(bs, u2.makeSprite().setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
-               u2.description.getAsTextBox(sprite.getLayer()+10,bs,u2.cost)));
+              u2.description.getAsTextBox(sprite.getLayer() + 10, bs, u2.cost)));
       buttons.add(
           new Button(bs, u3.makeSprite().setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
-              u3.description.getAsTextBox(sprite.getLayer()+10,bs,u3.cost)));
+              u3.description.getAsTextBox(sprite.getLayer() + 10, bs, u3.cost)));
 
       buttons.forEach(Game.get()::addMouseDetect);
       buttons.forEach(Game.get()::addTickable);
