@@ -9,7 +9,7 @@ public class SingleAnimationSprite extends Sprite {
   }
 
   public SingleAnimationSprite(String anim, float duration, int layer, String shader) {
-    super(anim+"-0", layer, shader);
+    super(anim + "-0", layer, shader);
     playAnimation(new BasicAnimation(Graphics.getAnimation(anim), duration));
   }
 

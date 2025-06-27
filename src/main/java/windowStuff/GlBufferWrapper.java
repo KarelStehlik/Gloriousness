@@ -37,24 +37,24 @@ public class GlBufferWrapper {
     bind();
     while (size < newSize) {
       size = (int) (newSize * 1.3f);
-      Log.write("ALLOC: "+newSize);
-      rebind=true;
+      Log.write("ALLOC: " + newSize);
+      rebind = true;
     }
     while (size > newSize * 4 + CPU_BUFFER_SIZE) {
       size = (int) (newSize * 2.5f);
-      Log.write("ALLOC: "+newSize);
-      rebind=true;
+      Log.write("ALLOC: " + newSize);
+      rebind = true;
     }
-    if(rebind) {
-      rebind=false;
+    if (rebind) {
+      rebind = false;
       size = Math.ceilDiv(size, CPU_BUFFER_SIZE) * CPU_BUFFER_SIZE;
-      Log.write("ALLOC: "+size);
+      Log.write("ALLOC: " + size);
       glBufferData(type, size, usage);
     }
   }
 
   private void passBuffer() {
-    if(offset>size-CPU_BUFFER_SIZE){
+    if (offset > size - CPU_BUFFER_SIZE) {
       Log.write("FUCK");
       return;
     }
@@ -101,7 +101,7 @@ public class GlBufferWrapper {
   }
 
   public void doneBuffering() {
-    if(buffer.position()>0) {
+    if (buffer.position() > 0) {
       passBuffer();
     }
     offset = 0;

@@ -32,7 +32,7 @@ public class ImageSet {
 
   public List<ImageData> getAnimation(String name) {
     var result = animations.get(name);
-    if(result==null){
+    if (result == null) {
       return List.of(getImage(name));
     }
     return result;
@@ -80,7 +80,7 @@ public class ImageSet {
 
     if (Pattern.matches(".*-\\d+", data[0])) {
       var animName = data[0].substring(0, data[0].lastIndexOf('-'));
-      animations.computeIfAbsent(animName, k-> new ArrayList<>(1)).add(img);
+      animations.computeIfAbsent(animName, k -> new ArrayList<>(1)).add(img);
     }
   }
 

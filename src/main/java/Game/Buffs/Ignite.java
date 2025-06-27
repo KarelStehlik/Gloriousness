@@ -57,7 +57,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     private float dpTick = 0;
     private Aggregator parentIgnites = null;
-    private int lastUpdate =0;
+    private int lastUpdate = 0;
     private float totalDpTick = 0;
 
     protected Aggregator() {
@@ -82,7 +82,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     private void update() {
       int tick = Game.get().getTicks();
-      if(lastUpdate == tick){
+      if (lastUpdate == tick) {
         return;
       }
       lastUpdate = tick;
@@ -99,7 +99,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
         dpTick -= ig.damagePerTick;
       }
 
-      totalDpTick = dpTick + (parentIgnites==null?0:parentIgnites.totalDpTick);
+      totalDpTick = dpTick + (parentIgnites == null ? 0 : parentIgnites.totalDpTick);
     }
 
     @Override

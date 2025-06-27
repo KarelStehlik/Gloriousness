@@ -23,7 +23,8 @@ public interface AbstractSprite {
   AbstractSprite setPosition(float X, float Y);
 
   AbstractSprite scale(float multiplier);
-  AbstractSprite scale(float multiplierX,float multiplierY);
+
+  AbstractSprite scale(float multiplierX, float multiplierY);
 
   AbstractSprite setSize(float w, float h);
 

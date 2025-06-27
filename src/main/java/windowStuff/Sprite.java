@@ -2,9 +2,7 @@ package windowStuff;
 
 import general.Constants;
 import general.Data;
-import general.Log;
 import general.Util;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -124,8 +122,9 @@ public class Sprite implements AbstractSprite {
     hasUnsavedChanges = true;
     return this;
   }
+
   @Override
-  public Sprite scale(float multiplierX,float multiplierY) {
+  public Sprite scale(float multiplierX, float multiplierY) {
     width *= multiplierX;
     height *= multiplierY;
     hasUnsavedChanges = true;
@@ -261,8 +260,8 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setNaturalHeight(){
-    setSize(2*width, 2*width / (texCoords[4]-texCoords[2]) * (texCoords[3]-texCoords[1]));
+  public void setNaturalHeight() {
+    setSize(2 * width, 2 * width / (texCoords[4] - texCoords[2]) * (texCoords[3] - texCoords[1]));
   }
 
   public synchronized void updateVertices() {
@@ -368,7 +367,7 @@ public class Sprite implements AbstractSprite {
       //Log.write(length);
       hasUnsavedChanges = true;
       if (frame >= length) {
-        image = images.get(length-1);
+        image = images.get(length - 1);
         animation = () -> {
         };
         onAnimationEnd();

@@ -18,10 +18,8 @@ import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.Stats;
 import Game.Mobs.Yellow;
 import general.Data;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Wave implements TickDetect {
@@ -72,10 +70,11 @@ public class Wave implements TickDetect {
 
   @Override
   public boolean WasDeleted() {
-    if(!MobsAliveFromEachWave.containsKey(waveNum)){
+    if (!MobsAliveFromEachWave.containsKey(waveNum)) {
       return true;
     }
-    if(MobsAliveFromEachWave.get(waveNum)==0 && Arrays.stream(spawns).allMatch(sp -> sp.done(elapsed))){
+    if (MobsAliveFromEachWave.get(waveNum) == 0 && Arrays.stream(spawns)
+        .allMatch(sp -> sp.done(elapsed))) {
       MobsAliveFromEachWave.remove(waveNum);
       return true;
     }
