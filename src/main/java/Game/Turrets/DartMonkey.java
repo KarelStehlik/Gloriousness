@@ -52,6 +52,11 @@ public class DartMonkey extends Turret {
         }
         setRotation(rotations.get(0));
       }
+    } else {
+      TdMob target = target();
+      if (target != null) {
+        setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
+      }
     }
 
     buffHandler.tick();
