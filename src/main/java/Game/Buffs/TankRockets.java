@@ -7,7 +7,7 @@ import windowStuff.ImageData;
 
 public class TankRockets implements Proc{
     Modifier<Projectile> explosive=(proj)->proj.addBeforeDeath(new Explosive<Projectile>(10,150));
-    private ImageData image= Graphics.getImage("Bomb-0");//ok this is kinda painful ngl this should be a sprite
+    private ImageData image= Graphics.getImage("Bomb-0");
     private ImageData prevImage;
     private boolean active=false;
     public TankRockets(ImageData originalImage){
