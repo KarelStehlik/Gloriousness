@@ -173,6 +173,10 @@ public class Projectile extends GameObject implements TickDetect {
     super.move(_x, _y);
     sprite.setPosition(x, y);
   }
+  public void moveRelative(float addX, float addY) {
+    super.move(x+addX, y+addY);
+    sprite.setPosition(x, y);
+  }
   public void setAspectRatio(float newval){
     aspectRatio=newval;
   }

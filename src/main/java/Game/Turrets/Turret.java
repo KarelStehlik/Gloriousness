@@ -39,6 +39,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected float totalCost;
   protected final float[] originalStats;
   private TargetingOption targeting = FIRST;
+  private boolean imageRatio=false; // scales itself to the aspect ratio of the image
   protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);

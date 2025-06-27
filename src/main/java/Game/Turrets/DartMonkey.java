@@ -152,7 +152,7 @@ public class DartMonkey extends Turret{
                     bulletLauncher.addProjectileModifier(this::explodfunc);
                     addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.75f));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
-                }, 125);
+                }, 175);
     }
     private void explodfuncUpgraded(Projectile proj){
         Explosive<Projectile> explode=new Explosive<Projectile>(getStats()[Stats.pierce],180);
@@ -166,7 +166,7 @@ public class DartMonkey extends Turret{
         return new Upgrade("incendiary", new Description( "Incendiary darts",
                 "Roasts bloons alive with extra large and powerful explosions, burn damage is better with attackspeed. " +
                         "Additionally sets base explosion damage to pierce.",
-                "duration of 4s, burn damage is equal to attackspeed, AOE is increased by 50%"),
+                "duration of 4s, burn damage is equal to base attackspeed, AOE is increased by 50%"),
                 () -> {
                     sprite.setImage("bombsuit");
                     bulletLauncher.addProjectileModifier(p -> {
@@ -174,7 +174,7 @@ public class DartMonkey extends Turret{
                     });
                     upgraded=true;
 
-                }, 400);
+                }, 650);
     }
 
     // generated stats
