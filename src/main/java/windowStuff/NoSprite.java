@@ -38,7 +38,7 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
-  public AbstractSprite setImage(int imageId) {
+  public AbstractSprite setImage(ImageData imageId) {
     return this;
   }
 

@@ -195,11 +195,11 @@ public class Text {
 
     Symbol(char c, float x, float y, String shader) {
       String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Graphics.getLoadedImages()
-          .getImageCoordinates(Graphics.getImageId(imageName));
+      ImageData img = Graphics.getImage(imageName);
+      float[] uv = img.textureCoordinates;
       float w = uv[0] - uv[2];
       width = w * scale;
-      sprite = new Sprite(imageName, layer, shader).setSize(width, fontSize);
+      sprite = new Sprite(img, layer, shader).setSize(width, fontSize);
       sprite.setX(x + width / 2);
       sprite.setY(y);
       character = c;
@@ -208,8 +208,8 @@ public class Text {
 
     void updateScale() {
       String imageName = fontName + '-' + Character.getName(character);
-      float[] uv = Graphics.getLoadedImages()
-          .getImageCoordinates(Graphics.getImageId(imageName));
+      ImageData img = Graphics.getImage(imageName);
+      float[] uv = img.textureCoordinates;
       float w = uv[0] - uv[2];
       width = w * scale;
       sprite.setSize(width, fontSize);
@@ -229,11 +229,11 @@ public class Text {
 
     void setCharacter(char c) {
       String imageName = fontName + '-' + Character.getName(c);
-      float[] uv = Graphics.getLoadedImages()
-          .getImageCoordinates(Graphics.getImageId(imageName));
+      ImageData img = Graphics.getImage(imageName);
+      float[] uv = img.textureCoordinates;
       float w = uv[0] - uv[2];
       width = w * scale;
-      sprite.setImage(imageName);
+      sprite.setImage(img);
       sprite.setSize(width, fontSize);
       character = c;
     }

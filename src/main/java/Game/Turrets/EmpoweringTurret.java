@@ -81,7 +81,7 @@ public class EmpoweringTurret extends Turret {
               m.takeDamage(stats[Stats.power] * stats[ExtraStats.assaDamageMult],
                   DamageType.TRUE);
               assa.delete();
-              world.explosionVisual(m.getX(), m.getY(), 70, true, "Explosion1-0");
+              world.explosionVisual(m.getX(), m.getY(), 70, true, "Explosion1");
             }, true));
             mob.addBuff(new OnTickBuff<TdMob>(stats[ExtraStats.assaDuration],
                 m -> assa.setPosition(
@@ -145,9 +145,9 @@ public class EmpoweringTurret extends Turret {
                 world.getMobsGrid().callForEachCircle(
                     x, y, 50, TdMob::delete
                 );
-                Sprite s = new Sprite("Explosion1-0", 5).setPosition(x, y).setSize(500, 500)
+                Sprite s = new Sprite("Explosion1", 5).setPosition(x, y).setSize(500, 500)
                     .addToBs(world.getBs());
-                s.playAnimation(s.new BasicAnimation("Explosion1-0", .2f))
+                s.playAnimation(s.new BasicAnimation("Explosion1", .2f))
                     .setDeleteOnAnimationEnd(true);
               }, abilityId);
           addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));

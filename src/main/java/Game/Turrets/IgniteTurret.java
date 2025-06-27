@@ -27,7 +27,7 @@ public class IgniteTurret extends Turret {
 
   public IgniteTurret(World world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Fireball-0"));
+        new BulletLauncher(world, "Fireball"));
     onStatsUpdate();
     bulletLauncher.addMobCollide((proj, mob) ->
     {
@@ -187,7 +187,7 @@ public class IgniteTurret extends Turret {
                       (int) mob.getY(), (int) (mob.getStats()[TdMob.Stats.size] * 1.5f),
                       ignite.getDpTick() * 10000 / Game.tickIntervalMillis, DamageType.TRUE);
                   world.explosionVisual(mob.getX(), mob.getY(), mob.getStats()[TdMob.Stats.size] * 1.5f,
-                      false, "Explosion2-0");
+                      false, "Explosion2");
                 }, true,
                     true));
                 return true;

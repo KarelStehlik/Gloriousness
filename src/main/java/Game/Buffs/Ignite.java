@@ -60,9 +60,9 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     protected Aggregator() {
       var bs = Game.get().getSpriteBatching("main");
-      Sprite fs = new Sprite("Fireball-0", 3).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
+      Sprite fs = new Sprite("Fireball", 3).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
       fs.setRotation(180);
-      fs.playAnimation(fs.new BasicAnimation("Fireball-0", 1.1f).loop());
+      fs.playAnimation(fs.new BasicAnimation("Fireball", 1.1f).loop());
       fs.setHidden(true);
       fireSprite = fs;
     }

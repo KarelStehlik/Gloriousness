@@ -4,7 +4,9 @@ import general.Constants;
 import general.Data;
 import general.Log;
 import general.Util;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class Sprite implements AbstractSprite {
@@ -25,7 +27,7 @@ public class Sprite implements AbstractSprite {
   private float[] texCoords = new float[8];
   private float rotation = 0;
   private float width, height;
-  private int imageId;
+  private ImageData image;
   private Animation animation;
 
   public Sprite(Sprite og) {
@@ -41,12 +43,12 @@ public class Sprite implements AbstractSprite {
     rotation = og.rotation;
     width = og.width;
     height = og.height;
-    imageId = og.imageId;
+    image = og.image;
     animation = () -> {
     };
   }
 
-  public Sprite(int image, int layer, String shader) {
+  public Sprite(ImageData image, int layer, String shader) {
     this.shader = Data.getShader(shader);
     this.layer = layer;
     setImage(image);
@@ -54,16 +56,16 @@ public class Sprite implements AbstractSprite {
     };
   }
 
-  public Sprite(int imageId, int layer) {
-    this(imageId, layer, "basic");
+  public Sprite(ImageData image, int layer) {
+    this(image, layer, "basic");
   }
 
   public Sprite(String image, int layer) {
-    this(Graphics.getImageId(image), layer, "basic");
+    this(Graphics.getImage(image), layer, "basic");
   }
 
   public Sprite(String image, int layer, String shader) {
-    this(Graphics.getImageId(image), layer, shader);
+    this(Graphics.getImage(image), layer, shader);
   }
 
 
@@ -91,9 +93,9 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public Sprite setImage(int imageId) {
-    this.imageId = imageId;
-    String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
+  public Sprite setImage(ImageData image) {
+    this.image = image;
+    String newTexture = image.textureName;
 
     if (!Objects.equals(this.textureName, newTexture)) {
       this.textureName = newTexture;
@@ -105,15 +107,7 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public Sprite setImage(String name) {
-    imageId = Graphics.getImageId(name);
-    String newTexture = Graphics.getLoadedImages().getImageTexture(imageId);
-
-    if (!Objects.equals(this.textureName, newTexture)) {
-      this.textureName = newTexture;
-      mustBeRebatched = true;
-    }
-    setUV();
-    return this;
+    return setImage(Graphics.getImage(name));
   }
 
   @Override
@@ -255,7 +249,7 @@ public class Sprite implements AbstractSprite {
   }
 
   private void setUV() {
-    texCoords = Graphics.getLoadedImages().getImageCoordinates(imageId);
+    texCoords = image.textureCoordinates;
   }
 
   @Override
@@ -319,7 +313,7 @@ public class Sprite implements AbstractSprite {
         + ", textureName='" + textureName + '\''
         + ", layer=" + layer
         + ", shader=" + shader
-        + ", imageId=" + imageId
+        + ", texture=" + image.textureName
         + '}';
   }
 
@@ -334,24 +328,22 @@ public class Sprite implements AbstractSprite {
     private final int length;
     private final float frameLengthNano;
     private final double startTime;
-    private final int end;
-    private final int first;
+    private final List<ImageData> images;
     private boolean loop = false;
 
     public BasicAnimation(String name, float duration) {
-      this(Graphics.getImageId(name), duration);
+      this(Graphics.getAnimation(name), duration);
     }
 
-    public BasicAnimation(int first, float duration) {
-      this(first, duration, first);
+    public BasicAnimation(ImageData img, float duration) {
+      this(List.of(img), duration);
     }
 
-    public BasicAnimation(int first, float duration, int endImageId) {
-      length = Graphics.getLoadedImages().getAnimationLength(first);
+    public BasicAnimation(List<ImageData> images, float duration) {
+      length = images.size();
       frameLengthNano = duration / length * 1000000000;
       startTime = System.nanoTime();
-      end = endImageId;
-      this.first = first;
+      this.images = images;
     }
 
     public BasicAnimation loop() {
@@ -363,17 +355,17 @@ public class Sprite implements AbstractSprite {
     public void update() {
       int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
       if (loop) {
-        frame %= length + 1;
+        frame %= length;
       }
       //Log.write(length);
       hasUnsavedChanges = true;
-      if (frame > length) {
-        imageId = end;
+      if (frame >= length) {
+        image = images.get(length-1);
         animation = () -> {
         };
         onAnimationEnd();
       } else {
-        imageId = first + frame;
+        image = images.get(frame);
       }
       setUV();
     }

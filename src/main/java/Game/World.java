@@ -131,7 +131,7 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       }
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
-        explosionVisual(x, y, 100, true, "Explosion1-0");
+        explosionVisual(x, y, 100, true, "Explosion1");
       }
     }, null));
 

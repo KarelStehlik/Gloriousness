@@ -14,7 +14,7 @@ public interface AbstractSprite {
 
   AbstractSprite setRotation(float r);
 
-  AbstractSprite setImage(int imageId);
+  AbstractSprite setImage(ImageData imageId);
 
   AbstractSprite setImage(String name);
 
