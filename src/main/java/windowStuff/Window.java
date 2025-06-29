@@ -104,7 +104,7 @@ public final class Window {
       totalDt += dt;
       frameStartTime = frameEndTime;
       if (totalDt > 1000000000) {
-        Log.write("graphics tps: " + graphicsTicks);
+        //Log.write("graphics tps: " + graphicsTicks);
         graphicsTicks = 0;
         totalDt = 0;
       }

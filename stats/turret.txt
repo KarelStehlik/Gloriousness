@@ -1,6 +1,5 @@
 turrets\basicTurret
     power=1|range=50 ?? 500|pierce=2|aspd=1.1 ?? 10|projectileDuration=2|bulletSize=5 ?? 100|speed=15|cost=100|size=50|spritesize=150
-    power=0|range=5000 ?? 50000|pierce=2|aspd=10 ?? 30|projectileDuration=2|bulletSize=5 ?? 100|speed=55|cost=100|size=50|spritesize=150
 ---
 turrets\empoweringTurret
     power=5|range=400|pierce=1|aspd=1.7|projectileDuration=2|bulletSize=50|speed=8|cost=100|size=50|spritesize=150

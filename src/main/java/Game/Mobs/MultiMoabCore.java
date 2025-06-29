@@ -64,7 +64,7 @@ public class MultiMoabCore extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 100f;
     stats[Stats.speed] = 1.3f;
-    stats[Stats.health] = 5000f;
+    stats[Stats.health] = 13500f;
     stats[Stats.value] = 200f;
     stats[Stats.damageTaken] = 1f;
   }
