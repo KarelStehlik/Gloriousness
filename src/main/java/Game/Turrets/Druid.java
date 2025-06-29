@@ -230,7 +230,7 @@ public class Druid extends Turret {
     proj.addBuff(
         new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.duration,
             stats[ExtraStats.bonusDuration]));
-    proj.special(0);
+    ((DruidBall)proj).special(0);
   }
 
   private void modProjectile(Projectile p) {

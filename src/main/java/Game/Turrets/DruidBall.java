@@ -44,7 +44,6 @@ public class DruidBall extends Projectile {
     sprite.setRotation(sprite.getRotation() - 8);
   }
 
-  @Override
   public void special(int i) {
     clearCollisions();
     res = new RespawningProjectile();
