@@ -84,24 +84,6 @@ public class Projectile extends GameObject implements TickDetect {
     stats[Stats.power] = power;
   }
 
-  public Projectile(Projectile og){
-    super(og.x, og.y, (int) og.stats[Stats.size], (int) og.stats[Stats.size], og.world);
-    sprite = new Sprite(og.sprite);
-    world.getBs().addSprite(sprite);
-    System.arraycopy(og.stats, 0, stats, 0, stats.length);
-    vx=og.vx;
-    vy=og.vy;
-    rotation=og.rotation;
-    alreadyHitMobs=(HashSet<TdMob>)og.alreadyHitMobs.clone();
-    alreadyHitProjectiles=(HashSet<Projectile>)og.alreadyHitProjectiles.clone();
-    aspectRatio=og.aspectRatio;
-    wasDeleted = og.wasDeleted;
-    active = og.active;
-    alreadyHitPlayer = og.alreadyHitPlayer;
-    multihit=og.multihit;
-    targetedMob=og.targetedMob;
-  }
-
   public static void bounce(Projectile p) {
     float s = p.stats[Stats.size] / 2;
     float minx = p.x - s;
