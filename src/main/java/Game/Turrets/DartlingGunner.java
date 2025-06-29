@@ -231,6 +231,7 @@ public class DartlingGunner extends Turret {
           clusterLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(proj -> proj.setRotation(
               proj.getRotation()+3f))));
           sprite.setImage("gunnerjugger");
+          bulletLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(Projectile::bounce)));
           sprite.scale(1.5f);
           bulletLauncher.addProjectileModifier(
               p -> p.addBeforeDeath(proj -> this.ClusterAttack(proj.getX(), proj.getY())));
