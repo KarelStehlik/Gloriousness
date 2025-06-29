@@ -96,7 +96,7 @@ public class DartlingGunner extends Turret {
           float bombchance = 0.05f + originalStats[Stats.aspd] / 72f;
           sprite.scale(2.5f);
 
-          bulletLauncher.addProjectileModifier(new ProcTrigger<>(new TankRockets(), bombchance));
+          bulletLauncher.addProjectileModifier(new TankRockets(bombchance));
 
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 1.5f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.5f));
