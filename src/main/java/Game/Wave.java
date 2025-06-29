@@ -81,7 +81,8 @@ public class Wave implements TickDetect {
     return false;
   }
 
-  private void add(TdMob e) {
+  public static void buff(TdMob e, int wave){
+    float scaling = getScaling(wave);
     final float hpScaling = scaling;
     final float spdScaling = (float) Math.pow(scaling, 0.1);
     e.addBuff(
@@ -90,6 +91,9 @@ public class Wave implements TickDetect {
     e.addBuff(
         new StatBuff<TdMob>(Type.MORE, Stats.speed,
             spdScaling));
+  }
+
+  private void add(TdMob e) {
     world.addEnemy(e);
   }
 

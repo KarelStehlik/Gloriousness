@@ -67,7 +67,7 @@ public class DartlingGunner extends Turret {
         () -> {
           setPrefix("double");
 
-          SideWeapon side = new SideWeapon(new Vector2f(-30, 0));
+          SideWeapon side = new SideWeapon(-30, 0);
           extraBarrels.add(side);
           bulletLauncher.addAttackEffect(side);
         }, 200);
@@ -79,7 +79,7 @@ public class DartlingGunner extends Turret {
         "The greed for barrels is strong, two was never enough"),
         () -> {
           setPrefix("triple");
-          SideWeapon side = new SideWeapon(new Vector2f(30, 0));
+          SideWeapon side = new SideWeapon(30, 0);
           extraBarrels.add(side);
           bulletLauncher.addAttackEffect(side);
         }, 200);
@@ -94,13 +94,13 @@ public class DartlingGunner extends Turret {
             " and the chance of an attack being bombs is 0.05+originalStats[Stats.aspd]/72d where 1 is 100%"),
         () -> {
           setPrefix("tank");
-          SideWeapon side = new SideWeapon(new Vector2f(-50, 0));
+          SideWeapon side = new SideWeapon(-15, 30);
           extraBarrels.add(side);
           bulletLauncher.addAttackEffect(side);
-          side = new SideWeapon(new Vector2f(50, 0));
+          side = new SideWeapon(15, 30);
           extraBarrels.add(side);
           bulletLauncher.addAttackEffect(side);
-          side = new SideWeapon(new Vector2f(0, 20));
+          side = new SideWeapon(0, 50);
           extraBarrels.add(side);
           bulletLauncher.addAttackEffect(side);
 
@@ -110,6 +110,7 @@ public class DartlingGunner extends Turret {
 
           bulletLauncher.addAttackEffect(
               new ProcTrigger<>(new TankRockets(bulletLauncher.getImage()), bombchance, true));
+
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 1.5f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.5f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.pierce, 2f));

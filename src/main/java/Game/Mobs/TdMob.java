@@ -47,6 +47,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
         new Point((int) x - world.getMapData().get(0).x,
             (int) y - world.getMapData().get(0).y), stats, Stats.speed, TdMob::passed);
+    Wave.buff(this, wave);
   }
 
   public TdMob(World world, String image, TdMob parent, int spread) {

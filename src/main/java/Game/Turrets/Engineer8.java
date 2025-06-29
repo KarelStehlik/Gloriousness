@@ -68,7 +68,7 @@ public class Engineer8 extends Turret {
         return new Upgrade("turretmenu",  new Description( "turrets have an additional firing slit to shoot two projectiles at once"),
                 () -> {
                     turretMods.add(t -> {
-                        t.addAttackEffect(new SideWeapon(5,5))
+                        t.bulletLauncher.addAttackEffect(new SideWeapon(5,5));
                     });
                 }, 50);
     }

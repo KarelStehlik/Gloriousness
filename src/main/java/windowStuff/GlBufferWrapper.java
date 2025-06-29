@@ -43,7 +43,7 @@ public class GlBufferWrapper {
     }
     if (size > newSize * 4 + CPU_BUFFER_SIZE) {
       recentSmallAllocs+=1;
-      if(recentSmallAllocs>16) {
+      if(recentSmallAllocs>48) {
         size = (int) (newSize * 2.5f);
         Log.write(id + "ALLOCv: " + newSize);
         rebind = true;
