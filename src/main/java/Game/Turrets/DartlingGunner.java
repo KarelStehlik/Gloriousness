@@ -178,7 +178,7 @@ public class DartlingGunner extends Turret {
           sprite.scale(1.5f);
           bulletLauncher.setImage("juggerdrt");
           int pierceBuff = 5;
-          int dmgBuff = 9;
+          int dmgBuff = 24;
           float atcSpeedDebuff = originalStats[Stats.speed] / 25f;
           if (atcSpeedDebuff <= 0.25f) {
             atcSpeedDebuff = 0;

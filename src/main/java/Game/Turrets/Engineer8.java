@@ -7,13 +7,14 @@ import Game.Mobs.TdMob;
 import general.Data;
 import general.Description;
 import general.Util;
+import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Engineer8 extends Turret {
 
-    public static final String image = "Engineer";
+    public static final String image = "engineer";
 
     private final BulletLauncher turretLauncher;
 
@@ -21,14 +22,15 @@ public class Engineer8 extends Turret {
 
     public Engineer8(World world, int X, int Y) {
         super(world, X, Y, image,
-                new BulletLauncher(world, "Spanner"));
+                new BulletLauncher(world, "spanner"));
         onStatsUpdate();
-        turretLauncher = new BulletLauncher(world, "Laser");
+        turretLauncher = new BulletLauncher(world, "nail");
         bulletLauncher.addMobCollide(BasicCollides.damage);
+        bulletLauncher.setRemainingCooldown(Float.MAX_VALUE);
     }
 
     public static TurretGenerator generator(World world) {
-        return new TurretGenerator(world, image, "Basic", () -> new Engineer(world, -1000, -1000));
+        return new TurretGenerator(world, image, "Engineer", () -> new Engineer8(world, -1000, -1000));
     }
 
     private float turretPlaceTimer = 0;
@@ -42,12 +44,13 @@ public class Engineer8 extends Turret {
         if(bulletLauncher.canAttack()) {
             TdMob target = target();
             if (target != null) {
+                float enemyRotat=Util.get_rotation(target.getX() - x, target.getY() - y);
                 while (bulletLauncher.canAttack()) {
-                    bulletLauncher.attack(rotation);
+                    bulletLauncher.attack(enemyRotat);
                 }
             }
         }
-        turretPlaceTimer += Game.tickIntervalMillis * stats[Stats.aspd] * stats[Engineer.ExtraStats.spawnSpd];
+        turretPlaceTimer += Game.tickIntervalMillis * stats[Stats.aspd] * stats[Engineer8.ExtraStats.spawnSpd];
         while (turretPlaceTimer >= 1000) {
             turretPlaceTimer -= 1000;
             float dist = (float) Math.sqrt(
@@ -68,7 +71,7 @@ public class Engineer8 extends Turret {
         return new Upgrade("turretmenu",  new Description( "turrets have an additional firing slit to shoot two projectiles at once"),
                 () -> {
                     turretMods.add(t -> {
-                        t.addAttackEffect(new SideWeapon(5,5))
+                        t.bulletLauncher.addAttackEffect(new SideWeapon(new Vector2f(5,5)));
                     });
                 }, 50);
     }
@@ -104,7 +107,7 @@ public class Engineer8 extends Turret {
     protected Upgrade up050() {
         return new Upgrade("Dart",  new Description( "turrets shoot a ring of death, but there's fewer turrets."),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Engineer.ExtraStats.spawnSpd, 0.3f));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Engineer8.ExtraStats.spawnSpd, 0.3f));
                     turretMods.add(t -> {
                         t.bulletLauncher.radial = 1000;
                     });
@@ -178,7 +181,7 @@ public class Engineer8 extends Turret {
     protected Upgrade up400() {
         return new Upgrade("Goldfish",  new Description( "produces 5x more turrets, with less duration"),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Engineer.ExtraStats.spawnSpd, 5));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Engineer8.ExtraStats.spawnSpd, 5));
                     turretMods.add(t -> t.addBuff(
                             new StatBuff<Turret>(StatBuff.Type.MORE, EngiTurret.ExtraStats.duration, 0.2f)));
                 }, 10000);
@@ -224,32 +227,32 @@ public class Engineer8 extends Turret {
     }
 
     // generated stats
-    @Override
-    public int getStatsCount() {
-        return 11;
+  @Override
+  public int getStatsCount() {
+    return 11;
+  }
+
+  @Override
+  public void clearStats() {
+    stats[Stats.power] = 1f;
+    stats[Stats.range] = 250f;
+    stats[Stats.pierce] = 2f;
+    stats[Stats.aspd] = 0.7f;
+    stats[Stats.projectileDuration] = 2f;
+    stats[Stats.bulletSize] = 30f;
+    stats[Stats.speed] = 15f;
+    stats[Stats.cost] = 75f;
+    stats[Stats.size] = 50f;
+    stats[Stats.spritesize] = 100f;
+    stats[ExtraStats.spawnSpd] = 0.6f;
+  }
+
+  public static final class ExtraStats {
+
+    public static final int spawnSpd = 10;
+
+    private ExtraStats() {
     }
-
-    @Override
-    public void clearStats() {
-        stats[Stats.power] = 1f;
-        stats[Stats.range] = 350f;
-        stats[Stats.pierce] = 2f;
-        stats[Stats.aspd] = 0.7f;
-        stats[Stats.projectileDuration] = 2f;
-        stats[Stats.bulletSize] = 30f;
-        stats[Stats.speed] = 15f;
-        stats[Stats.cost] = 100f;
-        stats[Stats.size] = 50f;
-        stats[Stats.spritesize] = 150f;
-        stats[Engineer.ExtraStats.spawnSpd] = 0.6f;
-    }
-
-    public static final class ExtraStats {
-
-        public static final int spawnSpd = 10;
-
-        private ExtraStats() {
-        }
-    }
-    // end of generated stats
+  }
+  // end of generated stats
 }
