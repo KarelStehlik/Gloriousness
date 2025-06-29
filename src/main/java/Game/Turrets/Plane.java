@@ -101,7 +101,7 @@ public class Plane extends Turret {
       b.hide();
       flyPoints.add(b);
     }
-    bulletLauncher.radial = 8;
+    bulletLauncher.cannons = BulletLauncher.radial(8);
   }
 
   @Override
@@ -114,7 +114,7 @@ public class Plane extends Turret {
   @Override
   public void onStatsUpdate() {
     super.onStatsUpdate();
-    bulletLauncher.radial = (int) stats[ExtraStats.Radial];
+    bulletLauncher.cannons = BulletLauncher.radial((int) stats[ExtraStats.Radial]);
     if (pineappleLauncher != null) {
       pineappleLauncher.setPower(stats[ExtraStats.PinePower] * stats[Stats.power]);
       pineappleLauncher.setCooldown(1000f / (stats[ExtraStats.PineAspd] * stats[Stats.aspd]));

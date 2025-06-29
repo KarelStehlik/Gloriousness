@@ -1,36 +1,23 @@
 package Game.Buffs;
 
 import Game.BulletLauncher;
+import Game.GameObject;
 import general.Data;
 
-public class ProcTrigger<T extends Proc> implements AttackEffect {//happens on some attacks
+public class ProcTrigger<T extends GameObject> implements Modifier<T> {//happens sometimes
 
-  private final T attackEffect;
-  private final boolean cooldownOnly;
-  private boolean triggered;
-  private final double chance;//between 0 and 1
+  private final Modifier<T> mod;
+  private final float chance;//between 0 and 1
 
-  public ProcTrigger(T effect, double chance) {
-    this(effect, chance, false);
-  }
-
-  public ProcTrigger(T effect, double chance, boolean cooldownOnly) {
-    attackEffect = effect;
-    this.chance = chance;
-    this.cooldownOnly = cooldownOnly;
+  public ProcTrigger(Modifier<T> effect, float chance) {
+    mod=effect;
+    this.chance=chance;
   }
 
   @Override
-  public void mod(BulletLauncher target, boolean cooldown, float angle) {
-    if (cooldownOnly && !cooldown) {
-      return;
-    }
-    if (Data.gameMechanicsRng.nextDouble(0, 1f) <= chance) {
-      triggered = true;
-      attackEffect.mod(target, cooldown, angle);
-    } else if (triggered) {
-      triggered = false;
-      attackEffect.endMod(target, cooldown, angle);
+  public void mod(T target) {
+    if (Data.gameMechanicsRng.nextFloat(0, 1f) <= chance) {
+      mod.mod(target);
     }
   }
 }

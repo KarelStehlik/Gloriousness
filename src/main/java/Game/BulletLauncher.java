@@ -1,6 +1,5 @@
 package Game;
 
-import Game.Buffs.AttackEffect;
 import Game.Buffs.Modifier;
 import Game.Mobs.TdMob;
 import Game.Projectile.OnCollideComponent;
@@ -13,7 +12,6 @@ import windowStuff.ImageData;
 
 public class BulletLauncher {
 
-  private final List<AttackEffect> onAttackEffects = new ArrayList<>(1);
   private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
@@ -22,7 +20,30 @@ public class BulletLauncher {
   private ImageData image;
   private float speed;
   private float aspectRatio = 1; //
-  public int radial = 1;
+  public List<Cannon> cannons = new ArrayList<>(1);
+
+  public static class Cannon {
+    public final float xOffset, yOffset, angle;
+
+    public Cannon(float xOffset, float yOffset) {
+      this.xOffset = xOffset;
+      this.yOffset = yOffset;
+      this.angle = 0;
+    }
+    public Cannon(float xOffset, float yOffset, float angle) {
+      this.xOffset = xOffset;
+      this.yOffset = yOffset;
+      this.angle = angle;
+    }
+  }
+
+  public static List<Cannon> radial(int number){
+    var re = new ArrayList<Cannon>(number);
+    for(int i=0;i<number;i++){
+      re.add(new BulletLauncher.Cannon(0,0,360f*i/number));
+    }
+    return re;
+  }
 
   public ImageData getImage() {
     return image;
@@ -77,6 +98,7 @@ public class BulletLauncher {
     this.cooldown = cooldownMs;
     this.remainingCooldown = cooldownMs;
     launcher = Projectile::new;
+    cannons.add(new Cannon(0,0));
   }
 
   public BulletLauncher(World world, String projectileImage) {
@@ -184,13 +206,6 @@ public class BulletLauncher {
     projectileCollides.add(component);
   }
 
-  public void addAttackEffect(AttackEffect component) {
-    onAttackEffects.add(component);
-  }
-
-  public void removeAttackEffect(AttackEffect component) {
-    onAttackEffects.remove(component);
-  }
 
   public void removeProjectileModifier(Modifier<Projectile> projectileModifier) {
     projectileModifiers.remove(projectileModifier);
@@ -222,39 +237,40 @@ public class BulletLauncher {
     return attack(angle, true);
   }
 
-  public Projectile attack(float angle, boolean triggerCooldown) {
-    for (AttackEffect effect : onAttackEffects) {
-      effect.mod(this, triggerCooldown, angle);
+  private Projectile fire(float xOffset, float yOffset, float angle){
+    float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
+    Projectile p = launcher.make(world, image, x+xOffset, y+yOffset, speed,
+        angle+deviation, width, aspectRatio, pierce, size, duration, power);
+
+    for (var pm : projectileModifiers) {
+      pm.mod(p);
     }
+    world.getProjectilesList().add(p);
+    p.getPlayerCollides().addAll(playerCollides);
+    p.getMobCollides().addAll(mobCollides);
+    p.getProjectileCollides().addAll(projectileCollides);
+    return p;
+  }
+
+  public Projectile attack(float angle, boolean triggerCooldown) {
     if (triggerCooldown) {
       remainingCooldown += cooldown;
     }
-    float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
 
-    for (int i = 0; i < radial; i++) {
-      Projectile p = launcher.make(world, image, x, y, speed, angle + 360f * i / radial + deviation,
-          width, aspectRatio,
-          pierce, size,
-          duration, power);
+      Projectile p = null;
 
-      for (var pm : projectileModifiers) {
-        pm.mod(p);
+      for(var ac : cannons){
+        float sin = (float) Math.sin(2 * Math.PI * angle / 360);
+        float cos = (float) Math.cos(2 * Math.PI * angle / 360);
+        float displaceX = ac.xOffset * sin + ac.yOffset * cos;
+        float displaceY = ac.yOffset * sin - ac.xOffset * cos;
+        var newProj = fire(displaceX,displaceY, angle+ac.angle);
+        if(p==null){
+          p=newProj;
+        }
       }
-      world.getProjectilesList().add(p);
-      for (var collide : playerCollides) {
-        p.addPlayerCollide(collide);
-      }
-      for (var collide : mobCollides) {
-        p.addMobCollide(collide);
-      }
-      for (var collide : projectileCollides) {
-        p.addProjectileCollide(collide);
-      }
-      if (i == radial - 1) {
-        return p;
-      }
-    }
-    return null;
+
+      return p;
   }
 
   public Projectile attack(float targetX, float targetY) {

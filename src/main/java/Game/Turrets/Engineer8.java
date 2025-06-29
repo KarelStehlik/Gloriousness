@@ -68,7 +68,7 @@ public class Engineer8 extends Turret {
         return new Upgrade("turretmenu",  new Description( "turrets have an additional firing slit to shoot two projectiles at once"),
                 () -> {
                     turretMods.add(t -> {
-                        t.bulletLauncher.addAttackEffect(new SideWeapon(5,5));
+                        t.bulletLauncher.cannons.add(new BulletLauncher.Cannon(5,5));
                     });
                 }, 50);
     }
@@ -78,7 +78,7 @@ public class Engineer8 extends Turret {
         return new Upgrade("Dart",  new Description( "turrets shoot 10 bullets radially."),
                 () -> {
                     turretMods.add(t -> {
-                        t.bulletLauncher.radial = 10;
+                        t.bulletLauncher.cannons = BulletLauncher.radial(10);
                     });
                 }, 1500);
     }
@@ -106,7 +106,7 @@ public class Engineer8 extends Turret {
                 () -> {
                     addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Engineer.ExtraStats.spawnSpd, 0.3f));
                     turretMods.add(t -> {
-                        t.bulletLauncher.radial = 1000;
+                        t.bulletLauncher.cannons = BulletLauncher.radial(1000);
                     });
                 }, 1500);
     }

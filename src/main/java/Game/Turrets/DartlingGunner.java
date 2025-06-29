@@ -1,14 +1,13 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
-import Game.Buffs.AttackEffect;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.ProcTrigger;
-import Game.Buffs.SideWeapon;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Buffs.TankRockets;
 import Game.BulletLauncher;
+import Game.BulletLauncher.Cannon;
 import Game.Game;
 import Game.Projectile;
 import Game.TurretGenerator;
@@ -17,9 +16,7 @@ import general.Data;
 import general.Description;
 import general.Util;
 import java.util.ArrayList;
-import java.util.List;
 import org.joml.Vector2d;
-import org.joml.Vector2f;
 import windowStuff.TextModifiers;
 
 public class DartlingGunner extends Turret {
@@ -27,7 +24,6 @@ public class DartlingGunner extends Turret {
   public static final String image = "gunner";
   private String imageSuffix = "";
   private String imagePrefix = "gunner";
-  private final List<AttackEffect> extraBarrels = new ArrayList<>();
 
   public DartlingGunner(World world, int X, int Y) {
     super(world, X, Y, image, new BulletLauncher(world, "drt"));
@@ -69,9 +65,7 @@ public class DartlingGunner extends Turret {
         () -> {
           setPrefix("double");
 
-          SideWeapon side = new SideWeapon(-30, 0);
-          extraBarrels.add(side);
-          bulletLauncher.addAttackEffect(side);
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-30,0));
         }, 200);
   }
 
@@ -81,9 +75,7 @@ public class DartlingGunner extends Turret {
         "The greed for barrels is strong, two was never enough"),
         () -> {
           setPrefix("triple");
-          SideWeapon side = new SideWeapon(30, 0);
-          extraBarrels.add(side);
-          bulletLauncher.addAttackEffect(side);
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(30, 0));
         }, 200);
   }
 
@@ -96,22 +88,15 @@ public class DartlingGunner extends Turret {
             " and the chance of an attack being bombs is 0.05+originalStats[Stats.aspd]/72d where 1 is 100%"),
         () -> {
           setPrefix("tank");
-          SideWeapon side = new SideWeapon(-15, 30);
-          extraBarrels.add(side);
-          bulletLauncher.addAttackEffect(side);
-          side = new SideWeapon(15, 30);
-          extraBarrels.add(side);
-          bulletLauncher.addAttackEffect(side);
-          side = new SideWeapon(0, 50);
-          extraBarrels.add(side);
-          bulletLauncher.addAttackEffect(side);
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-15,30));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(15,30));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0,50));
 
           bulletLauncher.setImage("blcdrt");
-          double bombchance = 0.05 + originalStats[Stats.aspd] / 72d;
+          float bombchance = 0.05f + originalStats[Stats.aspd] / 72f;
           sprite.scale(2.5f);
 
-          bulletLauncher.addAttackEffect(
-              new ProcTrigger<>(new TankRockets(bulletLauncher.getImage()), bombchance, true));
+          bulletLauncher.addProjectileModifier(new ProcTrigger<>(new TankRockets(), bombchance));
 
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 1.5f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.5f));
@@ -173,9 +158,8 @@ public class DartlingGunner extends Turret {
                 +
                 "and then reduced to third."),
         () -> {
-          for (AttackEffect effect : extraBarrels) {
-            bulletLauncher.removeAttackEffect(effect);
-          }
+          bulletLauncher.cannons.clear();
+          bulletLauncher.cannons.add(new Cannon(0, 20));
           path3Tier = 2;
           sprite.setImage("gunnerjugger");
           sprite.scale(1.5f);
@@ -222,14 +206,13 @@ public class DartlingGunner extends Turret {
             "splits into 5-20 new projectiles depending on the size of your balls"),
         () -> {
           clusterLauncher = new BulletLauncher(world, "juggerdrt");
-          clusterLauncher.setSpread(180);
-          clusterLauncher.setDuration(1.9f);
-          clusterLauncher.radial = (int) (5 + (originalStats[Stats.bulletSize] - 15) / 2);
+          clusterLauncher.setDuration(0.95f);
+          clusterLauncher.cannons = BulletLauncher.radial((int) (5 + (originalStats[Stats.bulletSize] - 15) / 2));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 0.3f));
           extraStatsUpdate();
           clusterLauncher.addMobCollide(BasicCollides.damage);
           clusterLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(proj -> proj.setRotation(
-              proj.getRotation()+3f))));
+              proj.getRotation()+6f))));
           sprite.setImage("gunnerjugger");
           bulletLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(Projectile::bounce)));
           sprite.scale(1.5f);

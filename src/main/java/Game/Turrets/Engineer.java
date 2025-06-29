@@ -77,7 +77,7 @@ public class Engineer extends Turret {
         new Description("turrets also shoot behind them, and have +3 pierce"),
         () -> {
           turretMods.add(t -> {
-            t.bulletLauncher.radial = 2;
+            t.bulletLauncher.cannons = BulletLauncher.radial(2);
             t.addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 3));
           });
         }, 150);
@@ -88,7 +88,7 @@ public class Engineer extends Turret {
     return new Upgrade("Dart", new Description("turrets shoot 10 bullets radially."),
         () -> {
           turretMods.add(t -> {
-            t.bulletLauncher.radial = 10;
+            t.bulletLauncher.cannons = BulletLauncher.radial(10);
           });
         }, 1500);
   }
@@ -117,7 +117,7 @@ public class Engineer extends Turret {
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spawnSpd, 0.3f));
           turretMods.add(t -> {
-            t.bulletLauncher.radial = 1000;
+            t.bulletLauncher.cannons = BulletLauncher.radial(1000);
           });
         }, 1500);
   }
