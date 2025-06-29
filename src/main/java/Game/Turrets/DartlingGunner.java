@@ -2,6 +2,7 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.Buffs.AttackEffect;
+import Game.Buffs.OnTickBuff;
 import Game.Buffs.ProcTrigger;
 import Game.Buffs.SideWeapon;
 import Game.Buffs.StatBuff;
@@ -9,6 +10,7 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.TankRockets;
 import Game.BulletLauncher;
 import Game.Game;
+import Game.Projectile;
 import Game.TurretGenerator;
 import Game.World;
 import general.Data;
@@ -200,7 +202,7 @@ public class DartlingGunner extends Turret {
     clusterLauncher.setPower(stats[Stats.power] * 0.5f);
     clusterLauncher.setSize(stats[Stats.bulletSize] * 0.7f);
     clusterLauncher.setPierce((int) (stats[Stats.pierce] * 1.4f));
-    clusterLauncher.setSpeed(stats[Stats.speed] * 2);
+    clusterLauncher.setSpeed(stats[Stats.speed] * 1f);
   }
 
   BulletLauncher clusterLauncher;
@@ -221,11 +223,13 @@ public class DartlingGunner extends Turret {
         () -> {
           clusterLauncher = new BulletLauncher(world, "juggerdrt");
           clusterLauncher.setSpread(180);
-          clusterLauncher.setDuration(2);
+          clusterLauncher.setDuration(1.9f);
           clusterLauncher.radial = (int) (5 + (originalStats[Stats.bulletSize] - 15) / 2);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 0.3f));
           extraStatsUpdate();
           clusterLauncher.addMobCollide(BasicCollides.damage);
+          clusterLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(proj -> proj.setRotation(
+              proj.getRotation()+3f))));
           sprite.setImage("gunnerjugger");
           sprite.scale(1.5f);
           bulletLauncher.addProjectileModifier(
