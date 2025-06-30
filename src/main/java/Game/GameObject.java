@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 public class GameObject {
 
   public final long id;
-  public final World world;
+  public final TdWorld world;
   protected final float[] stats = new float[getStatsCount()];
   private final Rectangle hitbox;
   public long lastChecked = -9223372036854775807L;
@@ -27,7 +27,7 @@ public class GameObject {
     }
   }
 
-  protected GameObject(float X, float Y, int W, int H, World w) {
+  protected GameObject(float X, float Y, int W, int H, TdWorld w) {
     x = X;
     y = Y;
     width = W;

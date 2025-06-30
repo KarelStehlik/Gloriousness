@@ -7,8 +7,8 @@ import Game.Buffs.StatBuff;
 import Game.BulletLauncher;
 import Game.Mobs.TdMob;
 import Game.Projectile;
+import Game.TdWorld;
 import Game.TurretGenerator;
-import Game.World;
 import general.Data;
 import general.Description;
 import general.Util;
@@ -20,14 +20,14 @@ public class DartMonkey extends Turret {
 
   public static final String image = "DartMonkey";
 
-  public DartMonkey(World world, int X, int Y) {
+  public DartMonkey(TdWorld world, int X, int Y) {
     super(world, X, Y, image, new BulletLauncher(world, "drt"));
     onStatsUpdate();
     bulletLauncher.setAspectRatio(1.5f);
     bulletLauncher.addMobCollide(BasicCollides.damage);
   }
 
-  public static TurretGenerator generator(World world) {
+  public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, image, "DartMonkey",
         () -> new DartMonkey(world, -1000, -1000));
   }

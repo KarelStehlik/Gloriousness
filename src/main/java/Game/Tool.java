@@ -7,7 +7,7 @@ public abstract class Tool implements MouseDetect, KeyboardDetect, TickDetect {
   protected final UserInputListener input;
   private boolean deleted = false;
 
-  public Tool(World world) {
+  public Tool(TdWorld world) {
     input = Game.get().getUserInputListener();
   }
 

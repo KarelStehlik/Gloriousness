@@ -9,8 +9,8 @@ import Game.Buffs.StatBuff.Type;
 import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.Projectile;
+import Game.TdWorld;
 import Game.TurretGenerator;
-import Game.World;
 import general.Data;
 import general.Description;
 import general.Util;
@@ -22,7 +22,7 @@ public class EatingTurret extends Turret {
   public static final String image = "EatingTower";
   static final long EatImmuneTag = Util.getUid();
 
-  public EatingTurret(World world, int X, int Y) {
+  public EatingTurret(TdWorld world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "Shockwave"));
     onStatsUpdate();
@@ -30,7 +30,7 @@ public class EatingTurret extends Turret {
     bulletLauncher.addProjectileModifier(this::modProjectile);
   }
 
-  public static TurretGenerator generator(World world) {
+  public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, image, "Eating", () -> new EatingTurret(world, -1000, -1000));
   }
 

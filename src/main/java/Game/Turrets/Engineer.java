@@ -12,8 +12,8 @@ import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;
 import Game.Projectile.Guided;
+import Game.TdWorld;
 import Game.TurretGenerator;
-import Game.World;
 import general.Data;
 import general.Description;
 import general.Util;
@@ -28,7 +28,7 @@ public class Engineer extends Turret {
 
   private final List<Modifier<EngiTurret>> turretMods = new ArrayList<>(1);
 
-  public Engineer(World world, int X, int Y) {
+  public Engineer(TdWorld world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "Dart"));
     onStatsUpdate();
@@ -36,7 +36,7 @@ public class Engineer extends Turret {
     bulletLauncher.addMobCollide(BasicCollides.damage);
   }
 
-  public static TurretGenerator generator(World world) {
+  public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, image, "Basic", () -> new Engineer(world, -1000, -1000));
   }
 

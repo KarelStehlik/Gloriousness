@@ -12,8 +12,9 @@ import Game.Enums.TargetingOption;
 import Game.Game;
 import Game.GameObject;
 import Game.Mobs.TdMob;
+import Game.TdWorld;
 import Game.TickDetect;
-import Game.World;
+import general.Data;
 import general.Description;
 import general.Util;
 import java.awt.Point;
@@ -27,8 +28,9 @@ import windowStuff.SpriteBatching;
 public abstract class Turret extends GameObject implements TickDetect {
 
   private static final Upgrade maxUpgrades = new Upgrade("MaxUpgrades",
-      new Description(() -> "LOCKED", () -> "here is a number. " + Game.get().getTicks(),
-          () -> "it's gameticks. I'm sorry for the demystification"), () -> {
+      new Description(() -> "LOCKED",
+          () -> "here is a number. " + Data.unstableRng.nextFloat() * 562874,
+          () -> "it's something else now."), () -> {
   }, Float.POSITIVE_INFINITY);
   private static UpgradeMenu menu;
   protected final BulletLauncher bulletLauncher;
@@ -42,7 +44,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   private TargetingOption targeting = FIRST;
   private final boolean imageRatio = false; // scales itself to the aspect ratio of the image
 
-  protected Turret(World world, int X, int Y, String imageName, BulletLauncher launcher) {
+  protected Turret(TdWorld world, int X, int Y, String imageName, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
     clearStats();

@@ -1,14 +1,14 @@
 package Game.Mobs;
 
 import Game.Enums.DamageType;
-import Game.World;
+import Game.TdWorld;
 import java.util.List;
 
 public class Lead extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Black::new, Black::new);
 
-  public Lead(World world, int wave) {
+  public Lead(TdWorld world, int wave) {
     super(world, "BloonLead", wave);
   }
 

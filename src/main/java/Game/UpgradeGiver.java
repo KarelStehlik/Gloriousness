@@ -22,10 +22,10 @@ public class UpgradeGiver {
   private final UpgradeType[] upgradeTypes = new UpgradeType[]{new AttackSpeed(), new Damage(),
       new Pierce(), new Explode()};
   private final List<Button> buttons = new ArrayList<>(2);
-  private final World world;
+  private final TdWorld world;
   private final Queue<Integer> requested = new LinkedList<>();
 
-  public UpgradeGiver(World w) {
+  public UpgradeGiver(TdWorld w) {
     world = w;
   }
 

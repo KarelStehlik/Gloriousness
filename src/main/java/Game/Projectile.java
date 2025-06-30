@@ -10,7 +10,6 @@ import Game.Mobs.TdMob;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import windowStuff.ImageData;
@@ -65,7 +64,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   private boolean multihit = false;
 
-  public Projectile(World world, ImageData image, float X, float Y, float speed, float rotation,
+  public Projectile(TdWorld world, ImageData image, float X, float Y, float speed, float rotation,
       int width, float aspectRatio, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
     this.aspectRatio = aspectRatio;
@@ -99,12 +98,12 @@ public class Projectile extends GameObject implements TickDetect {
       p.move(p.x, p.y - 2 * miny);
       p.setRotation(-p.rotation);
     }
-    if (maxx > World.WIDTH) {
-      p.move(2 * World.WIDTH - maxx - s, p.y);
+    if (maxx > TdWorld.WIDTH) {
+      p.move(2 * TdWorld.WIDTH - maxx - s, p.y);
       p.setRotation(180 - p.rotation);
     }
-    if (maxy > World.HEIGHT) {
-      p.move(p.x, 2 * World.HEIGHT - maxy - s);
+    if (maxy > TdWorld.HEIGHT) {
+      p.move(p.x, 2 * TdWorld.HEIGHT - maxy - s);
       p.setRotation(-p.rotation);
     }
     float x = Util.clamp(p.x, minx, maxx);

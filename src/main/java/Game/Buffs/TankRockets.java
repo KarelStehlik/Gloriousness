@@ -19,11 +19,11 @@ public class TankRockets implements Modifier<Projectile> {
 
   @Override
   public void mod(Projectile target) {
-    if(target.world.getTick() != lastFiringTick){
-      lastFiringTick=target.world.getTick();
-      rocketsThisTick = Data.gameMechanicsRng.nextFloat()<bombchance;
+    if (target.world.getTick() != lastFiringTick) {
+      lastFiringTick = target.world.getTick();
+      rocketsThisTick = Data.gameMechanicsRng.nextFloat() < bombchance;
     }
-    if(rocketsThisTick){
+    if (rocketsThisTick) {
       target.getSprite().setImage(image);
       target.addBeforeDeath(explosive);
     }

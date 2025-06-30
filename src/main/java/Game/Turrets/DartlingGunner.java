@@ -2,7 +2,6 @@ package Game.Turrets;
 
 import Game.BasicCollides;
 import Game.Buffs.OnTickBuff;
-import Game.Buffs.ProcTrigger;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Buffs.TankRockets;
@@ -10,12 +9,11 @@ import Game.BulletLauncher;
 import Game.BulletLauncher.Cannon;
 import Game.Game;
 import Game.Projectile;
+import Game.TdWorld;
 import Game.TurretGenerator;
-import Game.World;
 import general.Data;
 import general.Description;
 import general.Util;
-import java.util.ArrayList;
 import org.joml.Vector2d;
 import windowStuff.TextModifiers;
 
@@ -25,7 +23,7 @@ public class DartlingGunner extends Turret {
   private String imageSuffix = "";
   private String imagePrefix = "gunner";
 
-  public DartlingGunner(World world, int X, int Y) {
+  public DartlingGunner(TdWorld world, int X, int Y) {
     super(world, X, Y, image, new BulletLauncher(world, "drt"));
     float aspdBuff = (float) Math.pow(Data.gameMechanicsRng.nextFloat(1, (float) Math.sqrt(2)), 2);
     originalStats[Stats.aspd] *= aspdBuff;
@@ -36,7 +34,7 @@ public class DartlingGunner extends Turret {
     bulletLauncher.addMobCollide(BasicCollides.damage);
   }
 
-  public static TurretGenerator generator(World world) {
+  public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, image, "Dartling Gunner",
         () -> new DartlingGunner(world, -1000, -1000));
   }
@@ -65,7 +63,7 @@ public class DartlingGunner extends Turret {
         () -> {
           setPrefix("double");
 
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-30,0));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-30, 0));
         }, 200);
   }
 
@@ -88,9 +86,9 @@ public class DartlingGunner extends Turret {
             " and the chance of an attack being bombs is 0.05+originalStats[Stats.aspd]/72d where 1 is 100%"),
         () -> {
           setPrefix("tank");
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-15,30));
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(15,30));
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0,50));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-15, 30));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(15, 30));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, 50));
 
           bulletLauncher.setImage("blcdrt");
           float bombchance = 0.05f + originalStats[Stats.aspd] / 72f;
@@ -207,14 +205,17 @@ public class DartlingGunner extends Turret {
         () -> {
           clusterLauncher = new BulletLauncher(world, "juggerdrt");
           clusterLauncher.setDuration(0.95f);
-          clusterLauncher.cannons = BulletLauncher.radial((int) (5 + (originalStats[Stats.bulletSize] - 15) / 2));
+          clusterLauncher.cannons = BulletLauncher.radial(
+              (int) (5 + (originalStats[Stats.bulletSize] - 15) / 2));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.projectileDuration, 0.3f));
           extraStatsUpdate();
           clusterLauncher.addMobCollide(BasicCollides.damage);
-          clusterLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(proj -> proj.setRotation(
-              proj.getRotation()+6f))));
+          clusterLauncher.addProjectileModifier(
+              p -> p.addBuff(new OnTickBuff<Projectile>(proj -> proj.setRotation(
+                  proj.getRotation() + 6f))));
           sprite.setImage("gunnerjugger");
-          bulletLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(Projectile::bounce)));
+          bulletLauncher.addProjectileModifier(
+              p -> p.addBuff(new OnTickBuff<Projectile>(Projectile::bounce)));
           sprite.scale(1.5f);
           bulletLauncher.addProjectileModifier(
               p -> p.addBeforeDeath(proj -> this.ClusterAttack(proj.getX(), proj.getY())));
