@@ -2,10 +2,6 @@ package Game;
 
 import general.Constants;
 import general.Data;
-import general.Log;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
 import windowStuff.Sprite;
@@ -16,12 +12,12 @@ public class IntroScreen implements World {
   private final ButtonArray maps;
   private final SpriteBatching bs;
 
-  public IntroScreen(){
+  public IntroScreen() {
     bs = Game.get().getSpriteBatching("main");
     int mapCount = Data.listMaps().length;
     Button[] buttons = new Button[mapCount];
-    for(int i=0;i<mapCount;i++){
-      buttons[i]=makeMapButton(i);
+    for (int i = 0; i < mapCount; i++) {
+      buttons[i] = makeMapButton(i);
     }
 
     maps = new ButtonArray(2,
@@ -31,10 +27,10 @@ public class IntroScreen implements World {
     Game.get().addMouseDetect(maps);
   }
 
-  private Button makeMapButton(int id){
+  private Button makeMapButton(int id) {
     String mapName = Data.listMaps()[id];
-    Sprite sp = new Sprite(mapName,6).setSize(10,10);
-    Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x,y)-> {
+    Sprite sp = new Sprite(mapName, 6).setSize(10, 10);
+    Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x, y) -> {
       delete();
       Game.get().setWorld(new TdWorld(id));
     });

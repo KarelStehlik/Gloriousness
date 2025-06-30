@@ -39,8 +39,8 @@ public final class Game implements UserInputHandler {
   private int ticks = 0;
   private World world;
 
-  public void nuke(){
-    for(SpriteBatching batch : bs.values()){
+  public void nuke() {
+    for (SpriteBatching batch : bs.values()) {
       batch.nuke();
     }
     bs.clear();
@@ -59,6 +59,7 @@ public final class Game implements UserInputHandler {
   public void pause() {
     this.paused = true;
   }
+
   public void unpause() {
     this.paused = false;
   }
@@ -87,7 +88,7 @@ public final class Game implements UserInputHandler {
     world = new IntroScreen();
   }
 
-  public void setWorld(World w){
+  public void setWorld(World w) {
     world = w;
   }
 
