@@ -22,6 +22,7 @@ import Game.Turrets.EatingTurret;
 import Game.Turrets.EmpoweringTurret;
 import Game.Turrets.Engineer;
 import Game.Turrets.IgniteTurret;
+import Game.Turrets.Mortar;
 import Game.Turrets.Necromancer;
 import Game.Turrets.Plane;
 import Game.Turrets.SlowTurret;
@@ -116,6 +117,8 @@ public class TdWorld implements World {
     TurretGenerator drtmonk = DartMonkey.generator(this);
     TurretGenerator dartling = DartlingGunner.generator(this);
 
+    TurretGenerator mortar = Mortar.generator(this);
+
     TurretGenerator testDotTurret = IgniteTurret.generator(this);
 
     TurretGenerator testSlowTurret = SlowTurret.generator(this);
@@ -132,7 +135,7 @@ public class TdWorld implements World {
 
     TurretGenerator engi = Engineer.generator(this);
 
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, drtmonk, dartling,
+    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, drtmonk, dartling, mortar,
         testDotTurret, testSlowTurret,
         testEmp, testEating, necro, druid, plane, engi};
 

@@ -43,7 +43,6 @@ public final class Game implements UserInputHandler {
     for (SpriteBatching batch : bs.values()) {
       batch.nuke();
     }
-    bs.clear();
     tickables.clear();
     newTickables.clear();
     keyDetects.clear();

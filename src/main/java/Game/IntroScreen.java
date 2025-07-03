@@ -70,6 +70,7 @@ public class IntroScreen implements World {
   @Override
   public void delete() {
     maps.delete();
+    Game.get().nuke();
   }
 
   @Override
