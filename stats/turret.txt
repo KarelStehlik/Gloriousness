@@ -45,5 +45,5 @@ turrets\dartlinggunner
 
 ---
 turrets\mortar
-    power=2|range=0|pierce=0|aspd=0.4??0.9|projectileDuration=0.8|bulletSize=100??150|speed=0|cost=250|size=25|spritesize=100
-    spread=10??150|radius=100??150
+    power=2|range=0|pierce=0|aspd=0.4??0.8|projectileDuration=0.9|bulletSize=120??180|speed=0|cost=250|size=25|spritesize=100
+    spread=10??300|radius=100??150
