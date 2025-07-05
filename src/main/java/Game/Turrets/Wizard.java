@@ -5,6 +5,7 @@ import Game.Buffs.Explosive;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
+import Game.GameObject;
 import Game.Mobs.TdMob;
 import Game.Projectile;
 import Game.TdWorld;
@@ -27,6 +28,11 @@ public class Wizard extends Turret {
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     spells.add(bulletLauncher);
+  }
+
+  @Override
+  public void setRotation(float f) {
+    rotation=f % 360;
   }
 
   @Override
