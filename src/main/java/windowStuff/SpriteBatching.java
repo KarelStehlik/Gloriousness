@@ -9,4 +9,6 @@ public interface SpriteBatching {
   void useCamera(Camera cam);
 
   void draw();
+
+  void nuke();
 }

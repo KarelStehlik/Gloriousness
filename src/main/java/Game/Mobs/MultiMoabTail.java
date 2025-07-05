@@ -1,7 +1,7 @@
 package Game.Mobs;
 
 
-import Game.World;
+import Game.TdWorld;
 import java.util.List;
 
 public class MultiMoabTail extends TdMob {
@@ -9,7 +9,7 @@ public class MultiMoabTail extends TdMob {
   private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
       Lead::new, Lead::new);
 
-  public MultiMoabTail(World world, int wave) {
+  public MultiMoabTail(TdWorld world, int wave) {
     super(world, "SmTail", wave);
   }
 

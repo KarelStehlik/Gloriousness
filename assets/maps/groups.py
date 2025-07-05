@@ -1,2 +1,2 @@
 import pyglet
-g=[pyglet.graphics.OrderedGroup(i) for i in range(20)]
+g=[pyglet.graphics.Batch() for _ in range(20)]

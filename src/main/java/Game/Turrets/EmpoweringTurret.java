@@ -13,8 +13,8 @@ import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Player;
 import Game.Projectile;
+import Game.TdWorld;
 import Game.TurretGenerator;
-import Game.World;
 import general.Data;
 import general.Description;
 import general.RefFloat;
@@ -27,7 +27,7 @@ public class EmpoweringTurret extends Turret {
   public static final String image = "EmpoweringTower";
   private static final long projBuffId = Util.getUid();
 
-  public EmpoweringTurret(World world, int X, int Y) {
+  public EmpoweringTurret(TdWorld world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "Buff"));
     onStatsUpdate();
@@ -36,7 +36,7 @@ public class EmpoweringTurret extends Turret {
     })));
   }
 
-  public static TurretGenerator generator(World world) {
+  public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, image, "Empowering",
         () -> new EmpoweringTurret(world, -1000, -1000));
   }

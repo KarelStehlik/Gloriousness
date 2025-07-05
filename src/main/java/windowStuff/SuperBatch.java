@@ -19,7 +19,6 @@ import static org.lwjgl.opengles.GLES20.GL_STREAM_DRAW;
 
 import general.Constants;
 import general.Data;
-import general.Log;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,7 @@ public class SuperBatch implements SpriteBatching {
   private int eboSize = 1042;
   private Camera camera;
   private boolean visible = true;
+  private boolean nukeNextTick = false;
 
   public SuperBatch() {
     this.images = Graphics.getLoadedImages();
@@ -110,6 +110,11 @@ public class SuperBatch implements SpriteBatching {
 
   @Override
   public void draw() {
+    if (nukeNextTick) {
+      nukeNextTick = false;
+      batches.clear();
+      spritesToRebatch.clear();
+    }
     if (!visible) {
       return;
     }
@@ -186,6 +191,14 @@ public class SuperBatch implements SpriteBatching {
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
 
       drawStart = drawEnd;
+    }
+  }
+
+  @Override
+  public void nuke() {
+    nukeNextTick = true;
+    synchronized (spritesToAdd) {
+      spritesToAdd.clear();
     }
   }
 

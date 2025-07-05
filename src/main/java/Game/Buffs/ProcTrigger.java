@@ -1,6 +1,5 @@
 package Game.Buffs;
 
-import Game.BulletLauncher;
 import Game.GameObject;
 import general.Data;
 
@@ -10,8 +9,8 @@ public class ProcTrigger<T extends GameObject> implements Modifier<T> {//happens
   private final float chance;//between 0 and 1
 
   public ProcTrigger(Modifier<T> effect, float chance) {
-    mod=effect;
-    this.chance=chance;
+    mod = effect;
+    this.chance = chance;
   }
 
   @Override

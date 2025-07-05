@@ -1,27 +1,31 @@
 package Game.Turrets;
 
-import Game.*;
+import Game.Ability;
+import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.Tag;
+import Game.BulletLauncher;
+import Game.Projectile;
+import Game.TdWorld;
 import general.Constants;
 import general.Data;
 import general.Description;
 import general.Util;
 
-public class EngiTurret8  extends Turret {
+public class EngiTurret8 extends Turret {
 
     public static final String image = "turret";
 
-    public EngiTurret8(World world, int X, int Y, BulletLauncher templateLauncher) {
-        super(world, X, Y, image,
-                new BulletLauncher(templateLauncher));
-        onStatsUpdate();
-        bulletLauncher.addMobCollide(BasicCollides.damage);
-        addBuff(new DelayedTrigger<Turret>(stats[EngiTurret.ExtraStats.duration], Turret::delete, false));
-    }
-
+  public EngiTurret8(TdWorld world, int X, int Y, BulletLauncher templateLauncher) {
+    super(world, X, Y, image,
+        new BulletLauncher(templateLauncher));
+    onStatsUpdate();
+    bulletLauncher.addMobCollide(BasicCollides.damage);
+    addBuff(
+        new DelayedTrigger<Turret>(stats[EngiTurret.ExtraStats.duration], Turret::delete, false));
+  }
     @Override
     public boolean blocksPlacement() {
         return false;

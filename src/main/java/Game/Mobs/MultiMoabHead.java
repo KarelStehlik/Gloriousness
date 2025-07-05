@@ -1,7 +1,7 @@
 package Game.Mobs;
 
 
-import Game.World;
+import Game.TdWorld;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class MultiMoabHead extends TdMob {
 
   private final List<TdMob> components = new ArrayList<>();
 
-  public MultiMoabHead(World world, int wave) {
+  public MultiMoabHead(TdWorld world, int wave) {
     super(world, "SmHead", wave);
   }
 

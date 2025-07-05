@@ -1,7 +1,7 @@
 package Game.Mobs;
 
 
-import Game.World;
+import Game.TdWorld;
 import java.util.List;
 
 public class MultiMoabLowerFin extends TdMob {
@@ -9,7 +9,7 @@ public class MultiMoabLowerFin extends TdMob {
   private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
       Lead::new, Lead::new);
 
-  public MultiMoabLowerFin(World world, int wave) {
+  public MultiMoabLowerFin(TdWorld world, int wave) {
     super(world, "SmDownFin", wave);
   }
 
