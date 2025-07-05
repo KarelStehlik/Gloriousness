@@ -1,3 +1,4 @@
 Background
 btd_map
 fancy_map
+monkey_meadow

@@ -3,6 +3,7 @@ package Game;
 import Game.Buffs.Modifier;
 import Game.Mobs.TdMob;
 import Game.Projectile.OnCollideComponent;
+import Game.Turrets.Turret;
 import general.Data;
 import general.Util;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class BulletLauncher {
   private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(1);
   private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
-  private final World world;
+  private final TdWorld world;
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
   private ImageData image;
   private float speed;
@@ -23,6 +24,7 @@ public class BulletLauncher {
   public List<Cannon> cannons = new ArrayList<>(1);
 
   public static class Cannon {
+
     public final float xOffset, yOffset, angle;
 
     public Cannon(float xOffset, float yOffset) {
@@ -30,6 +32,7 @@ public class BulletLauncher {
       this.yOffset = yOffset;
       this.angle = 0;
     }
+
     public Cannon(float xOffset, float yOffset, float angle) {
       this.xOffset = xOffset;
       this.yOffset = yOffset;
@@ -37,12 +40,21 @@ public class BulletLauncher {
     }
   }
 
-  public static List<Cannon> radial(int number){
+  public static List<Cannon> radial(int number) {
     var re = new ArrayList<Cannon>(number);
-    for(int i=0;i<number;i++){
-      re.add(new BulletLauncher.Cannon(0,0,360f*i/number));
+    for (int i = 0; i < number; i++) {
+      re.add(new BulletLauncher.Cannon(0, 0, 360f * i / number));
     }
     return re;
+  }
+
+  public void updateStats(float[] stats) {
+    setDuration(stats[Turret.Stats.projectileDuration]);
+    setPierce((int) stats[Turret.Stats.pierce]);
+    setPower(stats[Turret.Stats.power]);
+    setSize(stats[Turret.Stats.bulletSize]);
+    setSpeed(stats[Turret.Stats.speed]);
+    setCooldown(1000f / stats[Turret.Stats.aspd]);
   }
 
   public ImageData getImage() {
@@ -81,7 +93,7 @@ public class BulletLauncher {
 
   private float remainingCooldown;
 
-  public BulletLauncher(World world, String projectileImage, float x, float y,
+  public BulletLauncher(TdWorld world, String projectileImage, float x, float y,
       float projectileSpeed,
       int projectileSpriteWidth, int projectileSpriteHeight, int pierce, int size, float duration,
       int power, float cooldownMs) {
@@ -98,14 +110,17 @@ public class BulletLauncher {
     this.cooldown = cooldownMs;
     this.remainingCooldown = cooldownMs;
     launcher = Projectile::new;
-    cannons.add(new Cannon(0,0));
+    cannons.add(new Cannon(0, 0));
+    aspectRatio =
+        (image.textureCoordinates[1] - image.textureCoordinates[3]) / (image.textureCoordinates[2]
+            - image.textureCoordinates[0]);
   }
 
-  public BulletLauncher(World world, String projectileImage) {
+  public BulletLauncher(TdWorld world, String projectileImage) {
     this(world, projectileImage, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   }
 
-  public BulletLauncher(World world, String projectileImage, ProjectileNewFunction f) {
+  public BulletLauncher(TdWorld world, String projectileImage, ProjectileNewFunction f) {
     this(world, projectileImage);
     launcher = f;
   }
@@ -219,7 +234,7 @@ public class BulletLauncher {
   @FunctionalInterface
   public interface ProjectileNewFunction {
 
-    Projectile make(World world, ImageData image, float X, float Y, float speed, float rotation,
+    Projectile make(TdWorld world, ImageData image, float X, float Y, float speed, float rotation,
         int W, float AR, int pierce, float size, float duration, float power);
   }
 
@@ -237,10 +252,10 @@ public class BulletLauncher {
     return attack(angle, true);
   }
 
-  private Projectile fire(float xOffset, float yOffset, float angle){
+  private Projectile fire(float xOffset, float yOffset, float angle) {
     float deviation = (Data.gameMechanicsRng.nextFloat() - .5f) * spread;
-    Projectile p = launcher.make(world, image, x+xOffset, y+yOffset, speed,
-        angle+deviation, width, aspectRatio, pierce, size, duration, power);
+    Projectile p = launcher.make(world, image, x + xOffset, y + yOffset, speed,
+        angle + deviation, width, aspectRatio, pierce, size, duration, power);
 
     for (var pm : projectileModifiers) {
       pm.mod(p);
@@ -257,20 +272,20 @@ public class BulletLauncher {
       remainingCooldown += cooldown;
     }
 
-      Projectile p = null;
+    Projectile p = null;
 
-      for(var ac : cannons){
-        float sin = (float) Math.sin(2 * Math.PI * angle / 360);
-        float cos = (float) Math.cos(2 * Math.PI * angle / 360);
-        float displaceX = ac.xOffset * sin + ac.yOffset * cos;
-        float displaceY = ac.yOffset * sin - ac.xOffset * cos;
-        var newProj = fire(displaceX,displaceY, angle+ac.angle);
-        if(p==null){
-          p=newProj;
-        }
+    for (var ac : cannons) {
+      float sin = (float) Math.sin(2 * Math.PI * angle / 360);
+      float cos = (float) Math.cos(2 * Math.PI * angle / 360);
+      float displaceX = ac.xOffset * sin + ac.yOffset * cos;
+      float displaceY = ac.yOffset * sin - ac.xOffset * cos;
+      var newProj = fire(displaceX, displaceY, angle + ac.angle);
+      if (p == null) {
+        p = newProj;
       }
+    }
 
-      return p;
+    return p;
   }
 
   public Projectile attack(float targetX, float targetY) {

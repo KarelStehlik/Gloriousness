@@ -1,6 +1,6 @@
 package Game.Mobs;
 
-import Game.World;
+import Game.TdWorld;
 import java.util.List;
 
 public class SmallMoab extends TdMob {
@@ -9,7 +9,7 @@ public class SmallMoab extends TdMob {
       Ceramic::new, Ceramic::new,
       Ceramic::new, Ceramic::new, Ceramic::new, Ceramic::new);
 
-  public SmallMoab(World world, int wave) {
+  public SmallMoab(TdWorld world, int wave) {
     super(world, "BloonSmallMoab", wave);
     sprite.setSize(getStats()[Stats.size] * 1.1f, getStats()[Stats.size] * 0.8f);
     sprite.setLayer(2);

@@ -51,3 +51,11 @@ turrets\dartmonkey
 ---
 turrets\dartlinggunner
     power=2|range=15|pierce=2|aspd=1.5??6|projectileDuration=4|bulletSize=15??45|speed=2??25|cost=250|size=25|spritesize=100
+
+---
+turrets\mortar
+    power=2|range=0|pierce=0|aspd=0.4??0.8|projectileDuration=0.9|bulletSize=120??180|speed=0|cost=250|size=25|spritesize=100
+    spread=10??300|radius=100??150
+---
+turrets\wizard
+    power=2|range=250??500|pierce=2??4|aspd=0.8??1.5|projectileDuration=2|bulletSize=20??100|speed=15|cost=100|size=50|spritesize=150

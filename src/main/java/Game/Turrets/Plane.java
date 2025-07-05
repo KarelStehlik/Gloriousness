@@ -9,8 +9,8 @@ import Game.Enums.DamageType;
 import Game.Game;
 import Game.Projectile;
 import Game.Projectile.Guided;
+import Game.TdWorld;
 import Game.TurretGenerator;
-import Game.World;
 import general.Data;
 import general.Description;
 import general.Util;
@@ -77,7 +77,7 @@ public class Plane extends Turret {
   private final BulletLauncher pineappleLauncher = new BulletLauncher(world, "Duck");
   private boolean dropsPineapples = false;
 
-  public Plane(World world, int X, int Y) {
+  public Plane(TdWorld world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "Dart"));
     onStatsUpdate();
@@ -141,7 +141,7 @@ public class Plane extends Turret {
     }
   }
 
-  public static TurretGenerator generator(World world) {
+  public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, image, "Basic", () -> new Plane(world, -1000, -1000));
   }
 
