@@ -14,18 +14,7 @@ import Game.Buffs.VoidFunc;
 import Game.Enums.DamageType;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
-import Game.Turrets.BasicTurret;
-import Game.Turrets.DartMonkey;
-import Game.Turrets.DartlingGunner;
-import Game.Turrets.Druid;
-import Game.Turrets.EatingTurret;
-import Game.Turrets.EmpoweringTurret;
-import Game.Turrets.Engineer;
-import Game.Turrets.IgniteTurret;
-import Game.Turrets.Necromancer;
-import Game.Turrets.Plane;
-import Game.Turrets.SlowTurret;
-import Game.Turrets.Turret;
+import Game.Turrets.*;
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -128,11 +117,12 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
 
     TurretGenerator plane = Plane.generator(this);
 
-    TurretGenerator engi = Engineer.generator(this);
+    TurretGenerator engineer = Engineer.generator(this);
+    TurretGenerator engi = Engineer8.generator(this);
 
     TurretGenerator[] availableTurrets = new TurretGenerator[]{test, drtmonk, dartling,
         testDotTurret, testSlowTurret,
-        testEmp, testEating, necro, druid, plane, engi};
+        testEmp, testEating, necro, druid, plane, engi,engineer};
 
     ButtonArray turretBar = new ButtonArray(2,
         Arrays.stream(availableTurrets).map(tg -> tg.makeButton()).toArray(Button[]::new),

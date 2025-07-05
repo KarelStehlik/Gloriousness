@@ -31,9 +31,18 @@ turrets\engineer
     power=1|range=350|pierce=2|aspd=0.7|projectileDuration=2|bulletSize=30|speed=15|cost=100|size=50|spritesize=150
     spawnSpd=0.6
 ---
+turrets\engineer8
+    power=1|range=250|pierce=2|aspd=0.7|projectileDuration=2|bulletSize=30|speed=15|cost=75|size=50|spritesize=100
+    spawnSpd=0.6
+---
+
 turrets\engiTurret
     power=1|range=350|pierce=2|aspd=0.9|projectileDuration=2|bulletSize=30|speed=15|cost=0|size=30|spritesize=75
     duration=5000
+---
+turrets\engiTurret8
+    power=1|range=250|pierce=1|aspd=0.45??1.2|projectileDuration=2|bulletSize=30|speed=1??19|cost=25|size=15|spritesize=70
+    duration=5000|maxTargets=1
 ---
 turrets\dartmonkey
     power=1|range=250|pierce=1|aspd=0.45??1.2|projectileDuration=2|bulletSize=30|speed=1??19|cost=25|size=25|spritesize=100
