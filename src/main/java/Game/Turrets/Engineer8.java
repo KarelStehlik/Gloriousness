@@ -23,13 +23,13 @@ import java.util.List;
 public class Engineer8 extends Turret {
 
 
-  public static final String image = "Engineer";
+  public static final String image = "engineer";
   private final BulletLauncher turretLauncher;
 
   private final List<Modifier<EngiTurret8>> turretMods = new ArrayList<>(1);
   public Engineer8(TdWorld world, int X, int Y) {
     super(world, X, Y, image,
-        new BulletLauncher(world, "Spanner"));
+        new BulletLauncher(world, "spanner"));
       onStatsUpdate();
       turretLauncher = new BulletLauncher(world, "nail");
       bulletLauncher.addMobCollide(BasicCollides.damage);
@@ -37,7 +37,7 @@ public class Engineer8 extends Turret {
   }
 
     public static TurretGenerator generator(TdWorld world) {
-        return new TurretGenerator(world, image, "Engineer", () -> new Engineer8(world, -1000, -1000));
+        return new TurretGenerator(world, image, "engineer", () -> new Engineer8(world, -1000, -1000));
     }
 
   private float turretPlaceTimer = 0;
@@ -242,16 +242,16 @@ public class Engineer8 extends Turret {
   @Override
   public void clearStats() {
     stats[Stats.power] = 1f;
-    stats[Stats.range] = 350f;
+    stats[Stats.range] = 250f;
     stats[Stats.pierce] = 2f;
     stats[Stats.aspd] = 0.7f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 30f;
     stats[Stats.speed] = 15f;
-    stats[Stats.cost] = 100f;
+    stats[Stats.cost] = 75f;
     stats[Stats.size] = 50f;
-    stats[Stats.spritesize] = 150f;
-    stats[Engineer.ExtraStats.spawnSpd] = 0.6f;
+    stats[Stats.spritesize] = 100f;
+    stats[ExtraStats.spawnSpd] = 0.6f;
   }
 
   public static final class ExtraStats {
