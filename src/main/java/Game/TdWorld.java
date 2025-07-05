@@ -14,20 +14,7 @@ import Game.Buffs.VoidFunc;
 import Game.Enums.DamageType;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
-import Game.Turrets.BasicTurret;
-import Game.Turrets.DartMonkey;
-import Game.Turrets.DartlingGunner;
-import Game.Turrets.Druid;
-import Game.Turrets.EatingTurret;
-import Game.Turrets.EmpoweringTurret;
-import Game.Turrets.Engineer;
-import Game.Turrets.IgniteTurret;
-import Game.Turrets.Mortar;
-import Game.Turrets.Necromancer;
-import Game.Turrets.Plane;
-import Game.Turrets.SlowTurret;
-import Game.Turrets.Turret;
-import Game.Turrets.Wizard;
+import Game.Turrets.*;
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -126,6 +113,7 @@ public class TdWorld implements World {
         Druid.generator(this).makeButton(),
         Plane.generator(this).makeButton(),
         Engineer.generator(this).makeButton(),
+        Engineer8.generator(this).makeButton(),
         Wizard.generator(this).makeButton(),
     };
 
