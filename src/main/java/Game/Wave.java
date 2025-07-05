@@ -36,7 +36,7 @@ public class Wave implements TickDetect {
   }
 
   public final int waveNum;
-  private final TdWorld world;
+  private final World world;
   private final float scaling;
   private int elapsed = 0;
   private final SpawnSequence[] spawns;
@@ -47,7 +47,7 @@ public class Wave implements TickDetect {
 
   private final float elapsedMillis = 0;
 
-  private Wave(TdWorld world, int n, SpawnSequence[] s) {
+  private Wave(World world, int n, SpawnSequence[] s) {
     MobsAliveFromEachWave.put(n, 0);
     this.world = world;
     this.waveNum = n;
@@ -81,7 +81,7 @@ public class Wave implements TickDetect {
     return false;
   }
 
-  public static void buff(TdMob e, int wave) {
+  public static void buff(TdMob e, int wave){
     float scaling = getScaling(wave);
     final float hpScaling = scaling;
     final float spdScaling = (float) Math.pow(scaling, 0.1);
@@ -97,7 +97,7 @@ public class Wave implements TickDetect {
     world.addEnemy(e);
   }
 
-  public static Wave get(TdWorld w, int num) {
+  public static Wave get(World w, int num) {
     if (num >= waves.length) {
       return new Wave(w, num, waves[Data.gameMechanicsRng.nextInt(waves.length - 5, waves.length)]);
     }
@@ -107,7 +107,7 @@ public class Wave implements TickDetect {
   @FunctionalInterface
   private interface BloonNew {
 
-    TdMob create(TdWorld w, int wave);
+    TdMob create(World w, int wave);
   }
 
   private static final class SpawnSequence {

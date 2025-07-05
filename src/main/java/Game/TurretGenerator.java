@@ -8,12 +8,12 @@ import windowStuff.Sprite;
 
 public class TurretGenerator {
 
-  private final TdWorld world;
+  private final World world;
   private final String image, label;
   private final MakeTurret func;
   private Turret pending = null;
 
-  public TurretGenerator(TdWorld world, String image, String label, MakeTurret make) {
+  public TurretGenerator(World world, String image, String label, MakeTurret make) {
     this.world = world;
     this.image = image;
     this.label = label;

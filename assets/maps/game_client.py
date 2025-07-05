@@ -7,11 +7,12 @@ import constants
 
 class Game:
 
-    def __init__(self, mapname):
+    def __init__(self, mapname, batch):
         self.mapname = mapname
         print(mapname)
+        self.batch = batch
         self.background = pyglet.sprite.Sprite(images.data[mapname], x=constants.SCREEN_WIDTH / 2,
-                                               y=constants.SCREEN_HEIGHT / 2, batch=groups.g[0])
+                                               y=constants.SCREEN_HEIGHT / 2, batch=batch, group=groups.g[0])
         self.background.scale_y = constants.SCREEN_HEIGHT / self.background.height
         self.background.scale_x = constants.SCREEN_WIDTH / self.background.width
         self.UI_toolbars = []
@@ -24,8 +25,7 @@ class Game:
 
     def tick(self):
         [e.graphics_update(1 / 60) for e in self.drawables]
-        for b in groups.g:
-            b.draw()
+        self.batch.draw()
 
     def mouse_move(self, x, y, dx, dy):
         [e.mouse_move(x, y) for e in self.UI_toolbars]
@@ -90,7 +90,7 @@ class TrackNode:
     def __init__(self, x, y, order, game):
         self.x = x
         self.y = y
-        self.sprite = pyglet.sprite.Sprite(images.images.Waypoint, x, y, batch=groups.g[7])
+        self.sprite = pyglet.sprite.Sprite(images.images.Waypoint, x, y, batch=game.batch, group=groups.g[7])
         self.sprite.scale = self.size / self.sprite.width
         self.id = order
         self.game = game
@@ -100,7 +100,7 @@ class TrackNode:
         game.drawables.append(self)
         self.text = pyglet.text.Label(str(order), x=self.x,
                                       y=self.y, color=(255, 255, 0, 255),
-                                      batch=groups.g[8], font_size=self.size // 2,
+                                      batch=game.batch, group=groups.g[8], font_size=self.size // 2,
                                       anchor_x="center", align="center", anchor_y="center")
         self.selected = 0
         self.selX, self.selY = 0, 0

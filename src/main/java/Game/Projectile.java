@@ -10,6 +10,7 @@ import Game.Mobs.TdMob;
 import general.Util;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import windowStuff.ImageData;
@@ -35,19 +36,19 @@ public class Projectile extends GameObject implements TickDetect {
     return projectileCollides;
   }
 
-  protected final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
-  protected final HashSet<TdMob> alreadyHitMobs;
-  protected final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
-  protected final HashSet<Projectile> alreadyHitProjectiles;
-  protected final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
-  protected final List<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
-  protected final BuffHandler<Projectile> bh = new BuffHandler<>(this);
+  private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
+  private final HashSet<TdMob> alreadyHitMobs;
+  private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
+  private final HashSet<Projectile> alreadyHitProjectiles;
+  private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
+  private final List<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
+  private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
   protected float vx;
   private float aspectRatio;
   protected float vy;
   private boolean wasDeleted = false;
   protected boolean active = true;
-  protected boolean alreadyHitPlayer = false;
+  private boolean alreadyHitPlayer = false;
 
   public boolean isMultihit() {
     return multihit;
@@ -64,7 +65,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   private boolean multihit = false;
 
-  public Projectile(TdWorld world, ImageData image, float X, float Y, float speed, float rotation,
+  public Projectile(World world, ImageData image, float X, float Y, float speed, float rotation,
       int width, float aspectRatio, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
     this.aspectRatio = aspectRatio;
@@ -98,12 +99,12 @@ public class Projectile extends GameObject implements TickDetect {
       p.move(p.x, p.y - 2 * miny);
       p.setRotation(-p.rotation);
     }
-    if (maxx > TdWorld.WIDTH) {
-      p.move(2 * TdWorld.WIDTH - maxx - s, p.y);
+    if (maxx > World.WIDTH) {
+      p.move(2 * World.WIDTH - maxx - s, p.y);
       p.setRotation(180 - p.rotation);
     }
-    if (maxy > TdWorld.HEIGHT) {
-      p.move(p.x, 2 * TdWorld.HEIGHT - maxy - s);
+    if (maxy > World.HEIGHT) {
+      p.move(p.x, 2 * World.HEIGHT - maxy - s);
       p.setRotation(-p.rotation);
     }
     float x = Util.clamp(p.x, minx, maxx);
@@ -130,7 +131,7 @@ public class Projectile extends GameObject implements TickDetect {
     return stats[Stats.power];
   }
 
-  public void changePierce(int amount) {
+  protected void changePierce(int amount) {
     addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Stats.pierce, amount));
     if (stats[Stats.pierce] <= 0) {
       for (var eff : beforeDeath) {
@@ -216,9 +217,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   @Override
   public void delete() {
-    bh.delete();
-    alreadyHitMobs.clear();
-    alreadyHitProjectiles.clear();
+    onDelete();
     active = false;
     wasDeleted = true;
     sprite.delete();
@@ -323,7 +322,7 @@ public class Projectile extends GameObject implements TickDetect {
     projectileCollides.add(component);
   }
 
-  protected TdMob targetedMob;
+  private TdMob targetedMob;
 
   public static class Guided {
 
@@ -369,6 +368,12 @@ public class Projectile extends GameObject implements TickDetect {
           strength * target.getSpeed() * .1f);
 
     }
+  }
+
+  private void onDelete() {
+    bh.delete();
+    alreadyHitMobs.clear();
+    alreadyHitProjectiles.clear();
   }
 
   @FunctionalInterface

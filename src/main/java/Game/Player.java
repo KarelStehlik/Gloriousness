@@ -27,7 +27,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   protected double healthPart;
   private float vx, vy;
 
-  public Player(TdWorld world) {
+  public Player(World world) {
     super(0, 0, WIDTH, HEIGHT, world);
     clearStats();
     healthPart = 1;

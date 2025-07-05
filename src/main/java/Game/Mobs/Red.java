@@ -1,13 +1,13 @@
 package Game.Mobs;
 
-import Game.TdWorld;
+import Game.World;
 import java.util.List;
 
 public class Red extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of();
 
-  public Red(TdWorld world, int wave) {
+  public Red(World world, int wave) {
     super(world, "BloonRed", wave);
   }
 

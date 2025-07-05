@@ -5,7 +5,7 @@ import Game.Buffs.StatBuff.Type;
 import Game.CallAfterDuration;
 import Game.Enums.DamageType;
 import Game.Game;
-import Game.TdWorld;
+import Game.World;
 import general.Constants;
 import general.Util;
 import java.util.List;
@@ -28,7 +28,7 @@ public class GoldenBloon extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of();
 
-  public GoldenBloon(TdWorld world, int wave) {
+  public GoldenBloon(World world, int wave) {
     super(world, "Buff", wave);
   }
 

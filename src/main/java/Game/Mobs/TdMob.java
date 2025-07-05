@@ -6,9 +6,9 @@ import Game.Buffs.Modifier;
 import Game.Enums.DamageType;
 import Game.GameObject;
 import Game.SquareGrid;
-import Game.TdWorld;
 import Game.TickDetect;
 import Game.Wave;
+import Game.World;
 import general.Constants;
 import general.Data;
 import general.Util;
@@ -28,7 +28,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected float vx, vy;
   protected final int waveNum;
 
-  public TdMob(TdWorld world, String image, int wave) {
+  public TdMob(World world, String image, int wave) {
     super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread),
         world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
@@ -50,7 +50,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     Wave.buff(this, wave);
   }
 
-  public TdMob(TdWorld world, String image, TdMob parent, int spread) {
+  public TdMob(World world, String image, TdMob parent, int spread) {
     super(parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),
         parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),
         0, 0, world);

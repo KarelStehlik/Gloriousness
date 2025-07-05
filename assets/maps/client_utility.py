@@ -46,19 +46,20 @@ class TextureBindGroup(pyglet.graphics.Group):
 
 
 class button:
-    def __init__(self, func, x, y, width, height, image=images.Button, text="", args=(), layer=5,
+    def __init__(self, func, x, y, width, height, batch, image=images.Button, text="", args=(), layer=5,
                  mouseover=lambda:(), mouseoff=lambda:(), mover_args=(), moff_args=()):
-        self.sprite = pyglet.sprite.Sprite(image, x=x + width / 2, y=y + height / 2, batch=groups.g[layer])
+        self.sprite = pyglet.sprite.Sprite(image, x=x + width / 2, y=y + height / 2, batch=batch, group=groups.g[layer])
         self.layer = layer
         self.sprite.scale_x = width / self.sprite.width
         self.sprite.scale_y = height / self.sprite.height
         self.func = func
         self.fargs = args
+        self.batch = batch
         self.x, self.y, self.width, self.height = x, y, width, height
         self.ogx, self.ogy = x, y
         self.text = pyglet.text.Label(text, x=self.x + self.width // 2,
                                       y=self.y + self.height * 4 / 7, color=(255, 255, 0, 255),
-                                      batch=groups.g[layer + 1], font_size=int(self.height / 2),
+                                      batch=batch, group=groups.g[layer + 1], font_size=int(self.height / 2),
                                       anchor_x="center", align="center", anchor_y="center")
         self.down = False
         self.big = 0
@@ -205,7 +206,7 @@ class animation(pyglet.sprite.Sprite):
             return
         super().__init__(self.img if img is None else img, x=x * SPRITE_SIZE_MULT - game.camx,
                          y=y * SPRITE_SIZE_MULT - game.camy,
-                         batch=groups.g[group if group is not None else self.layer])
+                         batch=game.batch, group=groups.g[group if group is not None else self.layer])
         self.rotation = random.randint(0, 360)
         self.scale = size / (self.img if img is None else img).get_max_width()
         self.true_x, self.true_y = x, y

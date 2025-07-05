@@ -26,7 +26,6 @@ public final class Game implements UserInputHandler {
 
   public static final int tickIntervalMillis = 1000 / 60;
   private final UserInputListener userInputListener;
-  public boolean fastForward = false;
   private final Graphics graphics;
   private final Map<String, SpriteBatching> bs = new HashMap<>(1);
   private final Collection<TickDetect> tickables = new ArrayList<>(1);
@@ -38,31 +37,6 @@ public final class Game implements UserInputHandler {
   private final Log.Timer timer = new Timer();
   private int ticks = 0;
   private World world;
-
-  public void nuke() {
-    for (SpriteBatching batch : bs.values()) {
-      batch.nuke();
-    }
-    tickables.clear();
-    newTickables.clear();
-    keyDetects.clear();
-    newKeyDetects.clear();
-    mouseDetects.clear();
-    newMouseDetects.clear();
-  }
-
-  public boolean isPaused() {
-    return paused;
-  }
-
-  public void pause() {
-    this.paused = true;
-  }
-
-  public void unpause() {
-    this.paused = false;
-  }
-
   private boolean paused = false;
 
   private Game() {
@@ -84,11 +58,7 @@ public final class Game implements UserInputHandler {
 
   public void init() {
     graphics.init();
-    world = new IntroScreen();
-  }
-
-  public void setWorld(World w) {
-    world = w;
+    world = new World();
   }
 
   public void addTickable(TickDetect t) {
@@ -119,10 +89,10 @@ public final class Game implements UserInputHandler {
     if (paused) {
       return;
     }
-    if (timer.elapsedNano(false) < tickIntervalMillis * 1000000 && !fastForward) {
+    if (timer.elapsedNano(false) < tickIntervalMillis * 1000000 && !world.getOptions()
+        .isFastForward()) {
       return;
     }
-
     timer.elapsed(true);
 
     ticks++;
