@@ -35,19 +35,19 @@ public class Projectile extends GameObject implements TickDetect {
     return projectileCollides;
   }
 
-  private final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
-  private final HashSet<TdMob> alreadyHitMobs;
-  private final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
-  private final HashSet<Projectile> alreadyHitProjectiles;
-  private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
-  private final List<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
-  private final BuffHandler<Projectile> bh = new BuffHandler<>(this);
+  protected final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
+  protected final HashSet<TdMob> alreadyHitMobs;
+  protected final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
+  protected final HashSet<Projectile> alreadyHitProjectiles;
+  protected final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
+  protected final List<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
+  protected final BuffHandler<Projectile> bh = new BuffHandler<>(this);
   protected float vx;
   private float aspectRatio;
   protected float vy;
   private boolean wasDeleted = false;
   protected boolean active = true;
-  private boolean alreadyHitPlayer = false;
+  protected boolean alreadyHitPlayer = false;
 
   public boolean isMultihit() {
     return multihit;
@@ -130,7 +130,7 @@ public class Projectile extends GameObject implements TickDetect {
     return stats[Stats.power];
   }
 
-  protected void changePierce(int amount) {
+  public void changePierce(int amount) {
     addBuff(new StatBuff<Projectile>(Type.FINALLY_ADDED, Stats.pierce, amount));
     if (stats[Stats.pierce] <= 0) {
       for (var eff : beforeDeath) {
@@ -216,7 +216,9 @@ public class Projectile extends GameObject implements TickDetect {
 
   @Override
   public void delete() {
-    onDelete();
+    bh.delete();
+    alreadyHitMobs.clear();
+    alreadyHitProjectiles.clear();
     active = false;
     wasDeleted = true;
     sprite.delete();
@@ -321,7 +323,7 @@ public class Projectile extends GameObject implements TickDetect {
     projectileCollides.add(component);
   }
 
-  private TdMob targetedMob;
+  protected TdMob targetedMob;
 
   public static class Guided {
 
@@ -367,12 +369,6 @@ public class Projectile extends GameObject implements TickDetect {
           strength * target.getSpeed() * .1f);
 
     }
-  }
-
-  private void onDelete() {
-    bh.delete();
-    alreadyHitMobs.clear();
-    alreadyHitProjectiles.clear();
   }
 
   @FunctionalInterface

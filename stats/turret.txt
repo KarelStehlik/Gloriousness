@@ -47,3 +47,6 @@ turrets\dartlinggunner
 turrets\mortar
     power=2|range=0|pierce=0|aspd=0.4??0.8|projectileDuration=0.9|bulletSize=120??180|speed=0|cost=250|size=25|spritesize=100
     spread=10??300|radius=100??150
+---
+turrets\wizard
+    power=1|range=50 ?? 500|pierce=2|aspd=1.1 ?? 10|projectileDuration=2|bulletSize=5 ?? 100|speed=15|cost=100|size=50|spritesize=150

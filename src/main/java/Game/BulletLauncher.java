@@ -3,7 +3,9 @@ package Game;
 import Game.Buffs.Modifier;
 import Game.Mobs.TdMob;
 import Game.Projectile.OnCollideComponent;
+import Game.Turrets.Turret;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,15 @@ public class BulletLauncher {
       re.add(new BulletLauncher.Cannon(0, 0, 360f * i / number));
     }
     return re;
+  }
+
+  public void updateStats(float[] stats){
+    setDuration(stats[Turret.Stats.projectileDuration]);
+    setPierce((int) stats[Turret.Stats.pierce]);
+    setPower(stats[Turret.Stats.power]);
+    setSize(stats[Turret.Stats.bulletSize]);
+    setSpeed(stats[Turret.Stats.speed]);
+    setCooldown(1000f / stats[Turret.Stats.aspd]);
   }
 
   public ImageData getImage() {
@@ -101,6 +112,7 @@ public class BulletLauncher {
     this.remainingCooldown = cooldownMs;
     launcher = Projectile::new;
     cannons.add(new Cannon(0, 0));
+    aspectRatio = (image.textureCoordinates[1]-image.textureCoordinates[3])/(image.textureCoordinates[2]-image.textureCoordinates[0]);
   }
 
   public BulletLauncher(TdWorld world, String projectileImage) {

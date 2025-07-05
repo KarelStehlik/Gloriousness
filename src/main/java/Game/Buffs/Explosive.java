@@ -33,15 +33,8 @@ public class Explosive<T extends GameObject> implements Modifier<T> {
           for (Modifier<TdMob> effect : effects) {
             effect.mod(m);
           }
+          m.takeDamage(damage, damageType);
         });
-    if (damage != 0) {
-      target.world.aoeDamage((int) target.getX(),
-          (int) target.getY(),
-          radius,
-          damage,
-          damageType
-      );
-    }
     target.world.lesserExplosionVisual((int) target.getX(),
         (int) target.getY(),
         visualRadius);

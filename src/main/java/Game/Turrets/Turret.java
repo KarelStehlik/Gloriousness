@@ -248,12 +248,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   @Override
   public void onStatsUpdate() {
-    bulletLauncher.setDuration(stats[Turret.Stats.projectileDuration]);
-    bulletLauncher.setPierce((int) stats[Turret.Stats.pierce]);
-    bulletLauncher.setPower(stats[Turret.Stats.power]);
-    bulletLauncher.setSize(stats[Turret.Stats.bulletSize]);
-    bulletLauncher.setSpeed(stats[Turret.Stats.speed]);
-    bulletLauncher.setCooldown(1000f / stats[Turret.Stats.aspd]);
+    bulletLauncher.updateStats(stats);
     rangeDisplay.setSize(stats[Stats.range] * 2, stats[Stats.range] * 2);
     extraStatsUpdate();
   }

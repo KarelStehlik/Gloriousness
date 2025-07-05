@@ -27,6 +27,7 @@ import Game.Turrets.Necromancer;
 import Game.Turrets.Plane;
 import Game.Turrets.SlowTurret;
 import Game.Turrets.Turret;
+import Game.Turrets.Wizard;
 import general.Constants;
 import general.Data;
 import general.Log;
@@ -36,7 +37,6 @@ import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.joml.Vector2f;
@@ -113,34 +113,24 @@ public class TdWorld implements World {
     bs.addSprite(mapSprite);
     mapData = Data.getMapData(mapName);
 
-    TurretGenerator test = BasicTurret.generator(this);
-    TurretGenerator drtmonk = DartMonkey.generator(this);
-    TurretGenerator dartling = DartlingGunner.generator(this);
-
-    TurretGenerator mortar = Mortar.generator(this);
-
-    TurretGenerator testDotTurret = IgniteTurret.generator(this);
-
-    TurretGenerator testSlowTurret = SlowTurret.generator(this);
-
-    TurretGenerator testEmp = EmpoweringTurret.generator(this);
-
-    TurretGenerator testEating = EatingTurret.generator(this);
-
-    TurretGenerator necro = Necromancer.generator(this);
-
-    TurretGenerator druid = Druid.generator(this);
-
-    TurretGenerator plane = Plane.generator(this);
-
-    TurretGenerator engi = Engineer.generator(this);
-
-    TurretGenerator[] availableTurrets = new TurretGenerator[]{test, drtmonk, dartling, mortar,
-        testDotTurret, testSlowTurret,
-        testEmp, testEating, necro, druid, plane, engi};
+    Button[] turretButtons = new Button[]{
+        BasicTurret.generator(this).makeButton(),
+        DartMonkey.generator(this).makeButton(),
+        DartlingGunner.generator(this).makeButton(),
+        Mortar.generator(this).makeButton(),
+        IgniteTurret.generator(this).makeButton(),
+        SlowTurret.generator(this).makeButton(),
+        EmpoweringTurret.generator(this).makeButton(),
+        EatingTurret.generator(this).makeButton(),
+        Necromancer.generator(this).makeButton(),
+        Druid.generator(this).makeButton(),
+        Plane.generator(this).makeButton(),
+        Engineer.generator(this).makeButton(),
+        Wizard.generator(this).makeButton(),
+    };
 
     turretBar = new ButtonArray(2,
-        Arrays.stream(availableTurrets).map(tg -> tg.makeButton()).toArray(Button[]::new),
+        turretButtons,
         new Sprite("Button", 4).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
         1, 1);
     game.addMouseDetect(turretBar);
