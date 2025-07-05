@@ -1,12 +1,8 @@
 package Game;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengles.GLES20.GL_ONE;
-import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
+public interface World extends TickDetect, MouseDetect, KeyboardDetect {
 
+<<<<<<< HEAD
 import Game.Ability.AbilityGroup;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
@@ -654,4 +650,9 @@ public class World implements TickDetect, MouseDetect, KeyboardDetect {
       upgrades.gib(num + 1);
     }
   }
+=======
+  void showPauseMenu();
+
+  int getTick();
+>>>>>>> e817b6cb452cf9eb73b4cd2347986c345302c6a1
 }

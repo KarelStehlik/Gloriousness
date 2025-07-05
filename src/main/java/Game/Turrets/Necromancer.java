@@ -15,9 +15,9 @@ import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Mobs.TdMob.MoveAlongTrack;
 import Game.Projectile;
+import Game.TdWorld;
+import Game.TdWorld.TrackPoint;
 import Game.TurretGenerator;
-import Game.World;
-import Game.World.TrackPoint;
 import general.Data;
 import general.Description;
 import general.Log;
@@ -65,7 +65,7 @@ public class Necromancer extends Turret {
 
   private static final List<Inheritor> inheritors = new ArrayList<>(1);
 
-  public Necromancer(World world, int X, int Y) {
+  public Necromancer(TdWorld world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "Zombie"));
     onStatsUpdate();
@@ -88,7 +88,7 @@ public class Necromancer extends Turret {
     });
   }
 
-  public static TurretGenerator generator(World world) {
+  public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, image, "Necromancer",
         () -> new Necromancer(world, -1000, -1000));
   }

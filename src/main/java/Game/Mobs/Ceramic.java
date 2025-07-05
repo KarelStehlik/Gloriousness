@@ -1,13 +1,13 @@
 package Game.Mobs;
 
-import Game.World;
+import Game.TdWorld;
 import java.util.List;
 
 public class Ceramic extends TdMob {
 
   private static final List<TdMob.ChildSpawner> spawns = List.of(Lead::new, Lead::new);
 
-  public Ceramic(World world, int wave) {
+  public Ceramic(TdWorld world, int wave) {
     super(world, "BloonCeramic", wave);
   }
 

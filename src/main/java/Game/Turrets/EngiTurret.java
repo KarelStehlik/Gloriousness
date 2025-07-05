@@ -10,7 +10,7 @@ import Game.Buffs.Tag;
 import Game.BulletLauncher;
 import Game.Projectile;
 import Game.Projectile.Guided;
-import Game.World;
+import Game.TdWorld;
 import general.Constants;
 import general.Description;
 import general.Util;
@@ -19,7 +19,7 @@ public class EngiTurret extends Turret {
 
   public static final String image = "BasicTower";
 
-  public EngiTurret(World world, int X, int Y, BulletLauncher templateLauncher) {
+  public EngiTurret(TdWorld world, int X, int Y, BulletLauncher templateLauncher) {
     super(world, X, Y, image,
         new BulletLauncher(templateLauncher));
     onStatsUpdate();
