@@ -1,36 +1,28 @@
 package Game.Turrets;
 
-import Game.BasicCollides;
-import Game.Buffs.DelayedTrigger;
 import Game.Buffs.Explosive;
 import Game.Buffs.Ignite;
-import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.Buffs.TankRockets;
 import Game.BulletLauncher;
 import Game.BulletLauncher.Cannon;
 import Game.Game;
 import Game.Projectile;
 import Game.TdWorld;
 import Game.TurretGenerator;
-import Game.Turrets.EmpoweringTurret.ExtraStats;
 import general.Data;
 import general.Description;
 import general.Util;
 import org.joml.Vector2d;
-import windowStuff.Sprite;
-import windowStuff.Sprite.BasicAnimation;
-import windowStuff.TextModifiers;
 
 public class Mortar extends Turret {
 
   public static final String image = "mortar";
-  private final Explosive<Projectile> explosive = new Explosive<>(0,0);
+  private final Explosive<Projectile> explosive = new Explosive<>(0, 0);
 
   @Override
-  protected void extraStatsUpdate(){
-    if(explosive!=null) {
+  protected void extraStatsUpdate() {
+    if (explosive != null) {
       explosive.damage = stats[Stats.power];
       explosive.setRadius((int) stats[ExtraStats.radius]);
     }
@@ -38,9 +30,12 @@ public class Mortar extends Turret {
 
   public Mortar(TdWorld world, int X, int Y) {
     super(world, X, Y, image, new BulletLauncher(world, "drt"));
-    bulletLauncher.addProjectileModifier(p->p.addBeforeDeath(this.explosive));
-    bulletLauncher.addProjectileModifier(p->p.moveRelative((Data.gameMechanicsRng.nextFloat()-0.5f)*stats[ExtraStats.spread], (Data.gameMechanicsRng.nextFloat()-0.5f)*stats[ExtraStats.spread]));
-    bulletLauncher.addProjectileModifier(p->p.getSprite().playAnimation(p.getSprite().new BasicAnimation("Explosion1",this.getStats()[Stats.projectileDuration])));
+    bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
+    bulletLauncher.addProjectileModifier(
+        p -> p.moveRelative((Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread],
+            (Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread]));
+    bulletLauncher.addProjectileModifier(p -> p.getSprite().playAnimation(
+        p.getSprite().new BasicAnimation("Explosion1", this.getStats()[Stats.projectileDuration])));
     onStatsUpdate();
   }
 
@@ -57,7 +52,7 @@ public class Mortar extends Turret {
             "Doubles... the bombs.",
             "Genius."),
         () -> {
-          bulletLauncher.cannons.add(new Cannon(0,0));
+          bulletLauncher.cannons.add(new Cannon(0, 0));
         }, 300);
   }
 
@@ -69,7 +64,7 @@ public class Mortar extends Turret {
             "Adds 3 more bombs, but bombs are smaller.",
             "Doesn't actually focus shit"),
         () -> {
-          for(int i=0;i<3;i++) {
+          for (int i = 0; i < 3; i++) {
             bulletLauncher.cannons.add(new Cannon(0, 0));
           }
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.bulletSize, 0.6f));
@@ -85,7 +80,7 @@ public class Mortar extends Turret {
             "Increases attack speed based on spread",
             ""),
         () -> {
-          float attackArea = Util.square(originalStats[ExtraStats.spread]/100);
+          float attackArea = Util.square(originalStats[ExtraStats.spread] / 100);
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, attackArea));
         }, 300);
   }
@@ -115,7 +110,7 @@ public class Mortar extends Turret {
         () -> {
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
-          float radiusBuff = 1+originalStats[ExtraStats.spread]/200f;
+          float radiusBuff = 1 + originalStats[ExtraStats.spread] / 200f;
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, radiusBuff));
           addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spread, 1.5f));
         }, 300);
@@ -130,7 +125,7 @@ public class Mortar extends Turret {
             "fire",
             ""),
         () -> {
-          explosive.addEffect(mob->mob.addBuff(new Ignite<>(this.stats[Stats.power], 2000)));
+          explosive.addEffect(mob -> mob.addBuff(new Ignite<>(this.stats[Stats.power], 2000)));
         }, 300);
   }
 
@@ -147,7 +142,7 @@ public class Mortar extends Turret {
     setRotation(Util.get_rotation((float) mousePos.x - x, (float) mousePos.y - y));
 
     while (bulletLauncher.canAttack()) {
-      bulletLauncher.move((float)mousePos.x,(float)mousePos.y);
+      bulletLauncher.move((float) mousePos.x, (float) mousePos.y);
       bulletLauncher.attack(rotation, true);
     }
 
