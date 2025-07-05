@@ -3,14 +3,14 @@ package Game.Mobs;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.Game;
-import Game.TdWorld;
+import Game.World;
 import java.util.List;
 
 public class ShieldBloon extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Blue::new);
 
-  public ShieldBloon(TdWorld world, int wave) {
+  public ShieldBloon(World world, int wave) {
     super(world, "BloonShield", wave);
     sprite.setLayer(3);
   }

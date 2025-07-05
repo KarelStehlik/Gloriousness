@@ -21,7 +21,7 @@ public class GlBufferWrapper {
   private int size;
   private long offset = 0;
   private boolean rebind = true;
-  private int recentSmallAllocs = 0;
+  private int recentSmallAllocs=0;
 
   public GlBufferWrapper(int size, int type) {
     this.id = glGenBuffers();
@@ -38,23 +38,23 @@ public class GlBufferWrapper {
     bind();
     if (size < newSize) {
       size = (int) (newSize * 1.3f);
-      Log.write(id + "ALLOC^: " + newSize);
+      Log.write(id+"ALLOC^: " + newSize);
       rebind = true;
     }
     if (size > newSize * 4 + CPU_BUFFER_SIZE) {
-      recentSmallAllocs += 1;
-      if (recentSmallAllocs > 48) {
+      recentSmallAllocs+=1;
+      if(recentSmallAllocs>48) {
         size = (int) (newSize * 2.5f);
         Log.write(id + "ALLOCv: " + newSize);
         rebind = true;
       }
-    } else {
-      recentSmallAllocs = 0;
+    }else{
+      recentSmallAllocs=0;
     }
     if (rebind) {
       rebind = false;
       size = Math.ceilDiv(size, CPU_BUFFER_SIZE) * CPU_BUFFER_SIZE;
-      Log.write(id + "ALLOC: " + size);
+      Log.write(id+"ALLOC: " + size);
       glBufferData(type, size, usage);
     }
   }

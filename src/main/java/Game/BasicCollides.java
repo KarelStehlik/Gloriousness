@@ -26,7 +26,7 @@ public final class BasicCollides {
             -proj.stats[Projectile.Stats.power]));
     return true;
   };
-  private static TdWorld _world;
+  private static World _world;
   public static final Projectile.OnCollideComponent<TdMob> explode = (proj, target) -> explodeFunc(
       (int) proj.x, (int) proj.y, proj.getPower(), proj.getPower());
 
@@ -44,7 +44,7 @@ public final class BasicCollides {
     return true;
   }
 
-  static void init(TdWorld world) {
+  static void init(World world) {
     _world = world;
   }
 }

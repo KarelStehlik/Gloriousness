@@ -11,8 +11,8 @@ import Game.BulletLauncher;
 import Game.Enums.DamageType;
 import Game.Mobs.TdMob;
 import Game.Projectile;
-import Game.TdWorld;
 import Game.TurretGenerator;
+import Game.World;
 import general.Description;
 import general.RefFloat;
 import general.Util;
@@ -22,7 +22,7 @@ public class Druid extends Turret {
   public static final String image = "Druid";
   private final String ballImage = "DruidBall";
 
-  public Druid(TdWorld world, int X, int Y) {
+  public Druid(World world, int X, int Y) {
     super(world, X, Y, image, new BulletLauncher(world, ""));
     bulletLauncher.setLauncher(
         (world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power) -> new DruidBall(
@@ -34,7 +34,7 @@ public class Druid extends Turret {
     bulletLauncher.addProjectileModifier(this::modProjectile);
   }
 
-  public static TurretGenerator generator(TdWorld world) {
+  public static TurretGenerator generator(World world) {
     return new TurretGenerator(world, image, "Druid", () -> new Druid(world, -1000, -1000));
   }
 
@@ -230,7 +230,7 @@ public class Druid extends Turret {
     proj.addBuff(
         new StatBuff<Projectile>(Type.ADDED, Projectile.Stats.duration,
             stats[ExtraStats.bonusDuration]));
-    ((DruidBall) proj).special(0);
+    ((DruidBall)proj).special(0);
   }
 
   private void modProjectile(Projectile p) {

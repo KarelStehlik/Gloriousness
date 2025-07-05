@@ -13,7 +13,7 @@ public class PlaceObjectTool extends Tool {
   private onMove move;
   private voidf onDelete;
 
-  public PlaceObjectTool(TdWorld world, AbstractSprite sprite, onClick onclick) {
+  public PlaceObjectTool(World world, AbstractSprite sprite, onClick onclick) {
     super(world);
     click = onclick;
     sprites.add(sprite);

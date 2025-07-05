@@ -4,7 +4,8 @@ package Game.Mobs;
 import Game.Buffs.DelayedTrigger;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
-import Game.TdWorld;
+import Game.World;
+import general.Log;
 import java.util.List;
 
 public class MultiMoabCore extends TdMob {
@@ -13,7 +14,7 @@ public class MultiMoabCore extends TdMob {
       Lead::new, Lead::new);
 
 
-  public MultiMoabCore(TdWorld world, int wave) {
+  public MultiMoabCore(World world, int wave) {
     super(world, "SmCore", wave);
     initComponents();
   }
