@@ -10,7 +10,8 @@ import constants
 
 
 class mode:
-    def __init__(self, win):
+    def __init__(self, win, batch):
+        self.batch = batch
         self.mousex = self.mousey = 0
         self.win = win
 
@@ -44,18 +45,18 @@ class mode:
 
 
 class mode_intro(mode):
-    def __init__(self, win):
-        super().__init__(win)
+    def __init__(self, win, batch):
+        super().__init__(win, batch)
         self.buttons = []
         with open("mapNames.txt", "r") as names:
             i=0
             for line in names.read().split("\n"):
                 self.buttons.append(
                     client_utility.button(lambda l=line: self.join(l), i,constants.SCREEN_HEIGHT *.33,
-                                          constants.SCREEN_WIDTH * .2, constants.SCREEN_HEIGHT *.3,
+                                          constants.SCREEN_WIDTH * .2, constants.SCREEN_HEIGHT *.3, batch,
                                           image = images.__getattr__(line)))
                 i+=constants.SCREEN_WIDTH * .2
-        self.bg = pyglet.sprite.Sprite(images.Intro, x=constants.SCREEN_WIDTH/2, y=constants.SCREEN_HEIGHT/2, batch=groups.g[0])
+        self.bg = pyglet.sprite.Sprite(images.Intro, x=constants.SCREEN_WIDTH/2, y=constants.SCREEN_HEIGHT/2, group=groups.g[0], batch=batch)
         self.bg.scale_x, self.bg.scale_y = constants.SCREEN_WIDTH / self.bg.width, constants.SCREEN_HEIGHT / self.bg.height
         self.joined = False
 
@@ -73,15 +74,14 @@ class mode_intro(mode):
     def join(self, bg):
         print(bg)
         self.end()
-        self.win.start_game(game_stuff.Game(bg))
+        self.win.start_game(game_stuff.Game(bg, self.batch))
 
     def mouse_drag(self, x, y, dx, dy, button, modifiers):
         self.mouse_move(x, y, dx, dy)
 
     def tick(self):
         super().tick()
-        for b in groups.g:
-            b.draw()
+        self.batch.draw()
 
     def end(self):
         self.bg.delete()
@@ -90,8 +90,8 @@ class mode_intro(mode):
 
 
 class mode_main(mode):
-    def __init__(self, win, game):
-        super().__init__(win)
+    def __init__(self, win, batch, game):
+        super().__init__(win, batch)
         self.game = game
 
     def tick(self):
@@ -126,17 +126,19 @@ class mode_main(mode):
 class windoo(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.batch = pyglet.graphics.Batch()
         self.sec = time.time()
         self.frames = 0
-        self.fpscount = pyglet.text.Label(x=5, y=5, text="0", color=(255, 255, 255, 255), batch=groups.g[11])
+        self.fpscount = pyglet.text.Label(x=5, y=5, text="0", color=(255, 255, 255, 255),
+                                          group=groups.g[11], batch=self.batch)
         self.mouseheld = False
-        self.current_mode = mode_intro(self)
+        self.current_mode = mode_intro(self, self.batch)
         self.keys = key.KeyStateHandler()
         self.push_handlers(self.keys)
         self.last_tick = time.time()
 
     def start_game(self, game):
-        self.current_mode = mode_main(self, game)
+        self.current_mode = mode_main(self, self.batch, game)
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.current_mode.mouse_move(x, y, dx, dy)
@@ -146,6 +148,7 @@ class windoo(pyglet.window.Window):
 
     def on_close(self):
         self.close()
+        connection.close()
         raise KeyboardInterrupt()
 
     def error_close(self):

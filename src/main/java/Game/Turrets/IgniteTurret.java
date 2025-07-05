@@ -14,8 +14,8 @@ import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Player;
 import Game.Projectile;
-import Game.TdWorld;
 import Game.TurretGenerator;
+import Game.World;
 import general.Data;
 import general.Description;
 import general.RefFloat;
@@ -28,7 +28,7 @@ public class IgniteTurret extends Turret {
 
   public static final String image = "Flamethrower";
 
-  public IgniteTurret(TdWorld world, int X, int Y) {
+  public IgniteTurret(World world, int X, int Y) {
     super(world, X, Y, image,
         new BulletLauncher(world, "Fireball-0"));
     onStatsUpdate();
@@ -40,7 +40,7 @@ public class IgniteTurret extends Turret {
     bulletLauncher.setSpread(45);
   }
 
-  public static TurretGenerator generator(TdWorld world) {
+  public static TurretGenerator generator(World world) {
     return new TurretGenerator(world, image, "Fire", () -> new IgniteTurret(world, -1000, -1000));
   }
 

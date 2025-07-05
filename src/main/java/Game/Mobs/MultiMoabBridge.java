@@ -1,7 +1,7 @@
 package Game.Mobs;
 
 
-import Game.TdWorld;
+import Game.World;
 import java.util.List;
 
 public class MultiMoabBridge extends TdMob {
@@ -10,7 +10,7 @@ public class MultiMoabBridge extends TdMob {
       Lead::new, Lead::new);
 
 
-  public MultiMoabBridge(TdWorld world, int wave) {
+  public MultiMoabBridge(World world, int wave) {
     super(world, "SmBridge", wave);
     initComponents();
   }
