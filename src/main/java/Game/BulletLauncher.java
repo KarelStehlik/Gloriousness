@@ -21,7 +21,7 @@ public class BulletLauncher {
   private ImageData image;
   private float speed;
   private float aspectRatio = 1; //
-  public List<Cannon> cannons = new ArrayList<>(1);
+  public ArrayList<Cannon> cannons = new ArrayList<>(1);
 
   public static class Cannon {
 
@@ -40,7 +40,7 @@ public class BulletLauncher {
     }
   }
 
-  public static List<Cannon> radial(int number) {
+  public static ArrayList<Cannon> radial(int number) {
     var re = new ArrayList<Cannon>(number);
     for (int i = 0; i < number; i++) {
       re.add(new BulletLauncher.Cannon(0, 0, 360f * i / number));
@@ -143,6 +143,7 @@ public class BulletLauncher {
     projectileCollides.addAll(og.projectileCollides);
     projectileModifiers.addAll(og.projectileModifiers);
     launcher = og.launcher;
+    cannons = (ArrayList<Cannon>)og.cannons.clone();
   }
 
   public void addProjectileModifier(Modifier<Projectile> projectileModifier) {
