@@ -20,13 +20,6 @@ public class DruidBall extends Projectile {
   }
 
   @Override
-  public void setRotation(float rotation) {
-    super.setRotation(rotation);
-    vx = Util.cos(rotation) * stats[Stats.speed];
-    vy = Util.sin(rotation) * stats[Stats.speed];
-  }
-
-  @Override
   public void delete() {
     super.delete();
     if (res != null) {

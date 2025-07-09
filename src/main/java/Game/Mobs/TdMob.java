@@ -109,7 +109,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
     double resistance = stats[Stats.damageTaken];
     double eDamage = amount * resistance / stats[Stats.health];
     healthPart -= eDamage;
-    handleDeath();
+    if (healthPart <= 0.0000001 && exists) {
+      die();
+    }
   }
 
   public void die() {
@@ -121,13 +123,20 @@ public abstract class TdMob extends GameObject implements TickDetect {
     delete();
   }
 
-  protected void handleDeath() {
-    if (healthPart <= 0.0000001 && exists) {
-      die();
-    }
+  public void onDeath() {
   }
 
-  public void onDeath() {
+  @Override
+  public void delete() {
+    sprite.delete();
+    exists = false;
+    buffHandler.delete();
+    Wave.decreaseMobsInWave(waveNum);
+  }
+
+  @Override
+  public boolean WasDeleted() {
+    return !exists;
   }
 
   protected abstract List<ChildSpawner> children();
@@ -150,19 +159,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
   public void onGameTickP2(int tick) {
     buffHandler.tick();
     miscTickActions(tick);
-  }
-
-  @Override
-  public void delete() {
-    sprite.delete();
-    exists = false;
-    buffHandler.delete();
-    Wave.decreaseMobsInWave(waveNum);
-  }
-
-  @Override
-  public boolean WasDeleted() {
-    return !exists;
   }
 
   protected void miscTickActions(int tick) {

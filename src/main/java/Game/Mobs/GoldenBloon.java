@@ -44,9 +44,8 @@ public class GoldenBloon extends TdMob {
   }
 
   @Override
-  public void delete() {
+  public void onDeath() {
     gainMoney((long) stats[Stats.value], 5000);
-    super.delete();
   }
 
   // generated stats

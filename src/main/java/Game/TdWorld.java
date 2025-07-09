@@ -115,6 +115,7 @@ public class TdWorld implements World {
         Engineer.generator(this).makeButton(),
         Engineer8.generator(this).makeButton(),
         Wizard.generator(this).makeButton(),
+        Druid8.generator(this).makeButton(),
     };
 
     turretBar = new ButtonArray(2,
