@@ -15,43 +15,49 @@ import general.Data;
 import general.Description;
 import general.Util;
 import org.joml.Vector2d;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 import windowStuff.TextModifiers;
 
 public class DartlingGunner extends Turret {
 
-  public static final String image = "gunner";
-  private String imageSuffix = "";
-  private String imagePrefix = "gunner";
+  @Override
+  protected ImageData getImage(){
+    String prefix = switch (path1Tier) {
+      case 0 -> "";
+      case 1 -> "double";
+      case 2 -> "triple";
+      case 3 -> "tank";
+      default -> "error";
+    };
+    String suffix = switch(path2Tier){
+      case 0, 1 ->"Gunner";
+      case 2->"GunnerWide";
+      case 3->"Jugg";
+      default->"error";
+    };
+    if(suffix.equals("Jugg")){
+      prefix = "";
+    }
+    if(prefix.equals("tank")){
+      suffix="";
+    }
+    return Graphics.getImage(prefix+suffix);
+  }
 
   public DartlingGunner(TdWorld world, int X, int Y) {
-    super(world, X, Y, image, new BulletLauncher(world, "drt"));
+    super(world, X, Y, new BulletLauncher(world, "drt"));
     float aspdBuff = (float) Math.pow(Data.gameMechanicsRng.nextFloat(1, (float) Math.sqrt(2)), 2);
     originalStats[Stats.aspd] *= aspdBuff;
     getStats()[Stats.aspd] *= aspdBuff;
     onStatsUpdate();
-    calcImage();
     bulletLauncher.setAspectRatio(1.5f);
     bulletLauncher.addMobCollide(BasicCollides.damage);
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Dartling Gunner",
+    return new TurretGenerator(world, "gunner", "Dartling Gunner",
         () -> new DartlingGunner(world, -1000, -1000));
-  }
-
-  private void setSuffix(String suffix) {
-    this.imageSuffix = suffix;
-    calcImage();
-  }
-
-  private void setPrefix(String prefix) {
-    this.imagePrefix = prefix;
-    calcImage();
-  }
-
-  private void calcImage() {
-    sprite.setImage(imagePrefix + imageSuffix);
-    sprite.setNaturalHeight();
   }
 
   @Override
@@ -61,8 +67,6 @@ public class DartlingGunner extends Turret {
             "Shoots darts from an additional barrel",
             "buffs work on the second barrel (apart from on attack effects that happen on no cooldown trigger I guess)"),
         () -> {
-          setPrefix("double");
-
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(-30, 0));
         }, 200);
   }
@@ -72,7 +76,6 @@ public class DartlingGunner extends Turret {
     return new Upgrade("barells", new Description("Triple Barrel",
         "The greed for barrels is strong, two was never enough"),
         () -> {
-          setPrefix("triple");
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(30, 0));
         }, 200);
   }
@@ -85,7 +88,6 @@ public class DartlingGunner extends Turret {
             "Pierce and damage is doubled, attackspeed *1.5. bombs deal 10 AOE damage (each)," +
             " and the chance of an attack being bombs is 0.05+originalStats[Stats.aspd]/72d where 1 is 100%"),
         () -> {
-          setPrefix("tank");
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(-15, 30));
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(15, 30));
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, 50));
@@ -132,8 +134,6 @@ public class DartlingGunner extends Turret {
             "Superior barrels accomodate the greater darts, increasing all basic stats, especially attackspeed",
             "50% attackspeed 40% dartspeed, +1 pierce and damage"),
         () -> {
-          setSuffix("wide");
-
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, 1.5f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.4f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 1f));

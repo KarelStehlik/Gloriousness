@@ -14,10 +14,16 @@ import general.Data;
 import general.Description;
 import general.Util;
 import org.joml.Vector2d;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class Mortar extends Turret {
 
-  public static final String image = "mortar";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("mortar");
+  }
+
   private final Explosive<Projectile> explosive = new Explosive<>(0, 0);
 
   @Override
@@ -29,7 +35,7 @@ public class Mortar extends Turret {
   }
 
   public Mortar(TdWorld world, int X, int Y) {
-    super(world, X, Y, image, new BulletLauncher(world, "drt"));
+    super(world, X, Y, new BulletLauncher(world, "drt"));
     bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
     bulletLauncher.addProjectileModifier(
         p -> p.moveRelative((Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread],
@@ -40,7 +46,7 @@ public class Mortar extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Mortar",
+    return new TurretGenerator(world, "mortar", "Mortar",
         () -> new Mortar(world, -1000, -1000));
   }
 

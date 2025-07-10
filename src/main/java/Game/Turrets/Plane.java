@@ -18,11 +18,16 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.DragableButton;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 import windowStuff.Sprite;
 
 public class Plane extends Turret {
 
-  public static final String image = "BasicTower";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("BasicTower");
+  }
 
   private final float speed = 10;
 
@@ -78,8 +83,7 @@ public class Plane extends Turret {
   private boolean dropsPineapples = false;
 
   public Plane(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "Dart"));
+    super(world, X, Y, new BulletLauncher(world, "Dart"));
     onStatsUpdate();
     sprite.setLayer(3);
     bulletLauncher.addMobCollide(BasicCollides.damage);
@@ -142,7 +146,7 @@ public class Plane extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Basic", () -> new Plane(world, -1000, -1000));
+    return new TurretGenerator(world, "BasicTower", "Basic", () -> new Plane(world, -1000, -1000));
   }
 
   @Override

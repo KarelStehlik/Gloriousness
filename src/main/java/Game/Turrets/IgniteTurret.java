@@ -26,11 +26,13 @@ import windowStuff.ImageData;
 
 public class IgniteTurret extends Turret {
 
-  public static final String image = "Flamethrower";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("Flamethrower");
+  }
 
   public IgniteTurret(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "Fireball-0"));
+    super(world, X, Y, new BulletLauncher(world, "Fireball-0"));
     onStatsUpdate();
     bulletLauncher.addMobCollide((proj, mob) ->
     {
@@ -41,7 +43,7 @@ public class IgniteTurret extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Fire", () -> new IgniteTurret(world, -1000, -1000));
+    return new TurretGenerator(world, "Flamethrower", "Fire", () -> new IgniteTurret(world, -1000, -1000));
   }
 
   @Override

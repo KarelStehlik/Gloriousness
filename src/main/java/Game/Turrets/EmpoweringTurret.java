@@ -19,16 +19,21 @@ import general.Data;
 import general.Description;
 import general.RefFloat;
 import general.Util;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 import windowStuff.SimpleText;
 import windowStuff.Sprite;
 
 public class EmpoweringTurret extends Turret {
 
-  public static final String image = "EmpoweringTower";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("EmpoweringTower");
+  }
   private static final long projBuffId = Util.getUid();
 
   public EmpoweringTurret(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
+    super(world, X, Y,
         new BulletLauncher(world, "Buff"));
     onStatsUpdate();
     bulletLauncher.addProjectileCollide(this::collide);
@@ -37,7 +42,7 @@ public class EmpoweringTurret extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Empowering",
+    return new TurretGenerator(world, "EmpoweringTower", "Empowering",
         () -> new EmpoweringTurret(world, -1000, -1000));
   }
 

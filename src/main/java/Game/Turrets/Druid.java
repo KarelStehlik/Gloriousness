@@ -16,14 +16,19 @@ import Game.TurretGenerator;
 import general.Description;
 import general.RefFloat;
 import general.Util;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class Druid extends Turret {
 
-  public static final String image = "Druid";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("Druid");
+  }
   private final String ballImage = "DruidBall";
 
   public Druid(TdWorld world, int X, int Y) {
-    super(world, X, Y, image, new BulletLauncher(world, ""));
+    super(world, X, Y, new BulletLauncher(world, ""));
     bulletLauncher.setLauncher(
         (world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power) -> new DruidBall(
             world1, image1, x1, y1, speed, rotation1, w, pierce, size, duration, power,
@@ -35,7 +40,7 @@ public class Druid extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Druid", () -> new Druid(world, -1000, -1000));
+    return new TurretGenerator(world, "Druid", "Druid", () -> new Druid(world, -1000, -1000));
   }
 
   @Override

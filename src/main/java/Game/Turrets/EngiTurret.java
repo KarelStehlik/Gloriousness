@@ -14,14 +14,18 @@ import Game.TdWorld;
 import general.Constants;
 import general.Description;
 import general.Util;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class EngiTurret extends Turret {
 
-  public static final String image = "BasicTower";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("BasicTower");
+  }
 
   public EngiTurret(TdWorld world, int X, int Y, BulletLauncher templateLauncher) {
-    super(world, X, Y, image,
-        new BulletLauncher(templateLauncher));
+    super(world, X, Y, new BulletLauncher(templateLauncher));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     addBuff(new DelayedTrigger<Turret>(stats[ExtraStats.duration], Turret::delete, false));

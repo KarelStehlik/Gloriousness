@@ -21,6 +21,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 import windowStuff.NoSprite;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
@@ -44,13 +46,13 @@ public abstract class Turret extends GameObject implements TickDetect {
   private TargetingOption targeting = FIRST;
   private final boolean imageRatio = false; // scales itself to the aspect ratio of the image
 
-  protected Turret(TdWorld world, int X, int Y, String imageName, BulletLauncher launcher) {
+  protected Turret(TdWorld world, int X, int Y, BulletLauncher launcher) {
     super(X, Y, 0, 0, world);
     setSize((int) stats[Turret.Stats.size], (int) stats[Turret.Stats.size]);
     clearStats();
     originalStats = getStats().clone();
 
-    sprite = new Sprite(imageName, 2).setSize(stats[Turret.Stats.spritesize],
+    sprite = new Sprite(getImage(), 2).setSize(stats[Turret.Stats.spritesize],
         stats[Turret.Stats.spritesize]);
     sprite.setPosition(x, y);
     sprite.setShader("basic");
@@ -78,6 +80,10 @@ public abstract class Turret extends GameObject implements TickDetect {
         openUpgradeMenu();
       }
     }));
+  }
+
+  protected ImageData getImage(){
+    return Graphics.getImage("");
   }
 
   protected int getHighestTier() {
@@ -401,6 +407,8 @@ public abstract class Turret extends GameObject implements TickDetect {
       u.apply.apply();
       upgradePicked(path);
       totalCost += u.cost;
+      sprite.setImage(getImage());
+      sprite.setNaturalHeight();
       openUpgradeMenu();
     }
 

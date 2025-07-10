@@ -5,14 +5,18 @@ import Game.Buffs.DelayedTrigger;
 import Game.BulletLauncher;
 import Game.TdWorld;
 import general.Data;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class EngiTurret8 extends Turret {
 
-  public static final String image = "turret";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("turret");
+  }
 
   public EngiTurret8(TdWorld world, int X, int Y, BulletLauncher templateLauncher) {
-    super(world, X, Y, image,
-        new BulletLauncher(templateLauncher));
+    super(world, X, Y, new BulletLauncher(templateLauncher));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     addBuff(

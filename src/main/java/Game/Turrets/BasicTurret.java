@@ -17,20 +17,24 @@ import general.Data;
 import general.Description;
 import general.Log;
 import general.Util;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class BasicTurret extends Turret {
 
-  public static final String image = "BasicTower";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("BasicTower");
+  }
 
   public BasicTurret(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "Dart"));
+    super(world, X, Y, new BulletLauncher(world, "Dart"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Basic", () -> new BasicTurret(world, -1000, -1000));
+    return new TurretGenerator(world, "BasicTower", "Basic", () -> new BasicTurret(world, -1000, -1000));
   }
 
   @Override

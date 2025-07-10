@@ -14,21 +14,41 @@ import general.Description;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 import windowStuff.TextModifiers;
 
 public class DartMonkey extends Turret {
 
-  public static final String image = "DartMonkey";
+  @Override
+  protected ImageData getImage(){
+    if(path1Tier==4){
+      return Graphics.getImage("bombsuit");
+    }
+    if(path1Tier==3){
+      return Graphics.getImage("cyborg");
+    }
+    if(path2Tier==3){
+      return Graphics.getImage("gorrila");
+    }
+    if(path2Tier==2){
+      return Graphics.getImage("beefdrtmonk");
+    }
+    if(path1Tier>=1){
+      return Graphics.getImage("drtmonkS");
+    }
+    return Graphics.getImage("DartMonkey");
+  }
 
   public DartMonkey(TdWorld world, int X, int Y) {
-    super(world, X, Y, image, new BulletLauncher(world, "drt"));
+    super(world, X, Y, new BulletLauncher(world, "drt"));
     onStatsUpdate();
     bulletLauncher.setAspectRatio(1.5f);
     bulletLauncher.addMobCollide(BasicCollides.damage);
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "DartMonkey",
+    return new TurretGenerator(world, "DartMonkey", "DartMonkey",
         () -> new DartMonkey(world, -1000, -1000));
   }
 
@@ -80,7 +100,6 @@ public class DartMonkey extends Turret {
             "1-19 drtspeed, atcspd*=sqrt(drtspeed/19), if atcpd were halved or more it is set to 0"),
         () -> {
           if (getHighestTier() < 2) {
-            sprite.setImage("beefdrtmonk");
             bulletLauncher.setImage("beefdrt");
           }
           float aspdDebuf = (float) Math.sqrt(originalStats[Stats.speed] / 19);
@@ -100,7 +119,6 @@ public class DartMonkey extends Turret {
             , "increases pierce by up to 13 depending on dartspeed",
             "1-19 drtspeed, pierce+=drtspeed/19*10+3"),
         () -> {
-          sprite.setImage("gorrila");
           sprite.scale(1.4f, 1.2f);
           bulletLauncher.setImage("beefyerdrt");
           int pierceBuff = (int) (originalStats[Stats.speed] / 19 * 10) + 3;
@@ -116,7 +134,6 @@ public class DartMonkey extends Turret {
         "increases dartspeed times 1.5"),
         () -> {
           if (getHighestTier() < 2) {
-            sprite.setImage("drtmonkS");
             bulletLauncher.setImage("drtS");
           }
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.5f));
@@ -141,7 +158,6 @@ public class DartMonkey extends Turret {
         "Darts explode, have increased projectile speed and deal more damage.",
         "they deal 1 more damage, 1 dmg explosions, 75 percent more speedy"),
         () -> {
-          sprite.setImage("cyborg");
           bulletLauncher.setImage("drtex");
           bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(explosive));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.75f));
@@ -164,7 +180,6 @@ public class DartMonkey extends Turret {
             "Additionally sets base explosion damage to pierce.",
         "duration of 4s, burn damage is equal to base attackspeed, AOE is increased by 50%"),
         () -> {
-          sprite.setImage("bombsuit");
           bulletLauncher.setImage("drtbomb");
           upgraded = true;
           explosive.setRadius(180);

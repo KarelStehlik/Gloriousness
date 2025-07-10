@@ -27,11 +27,17 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 import windowStuff.Sprite;
 
 public class Necromancer extends Turret {
 
-  public static final String image = "Necromancer";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("Necromancer");
+  }
+
   private final List<TrackPoint> spawnPoints = new ArrayList<>(1);
   private boolean walking = true;
 
@@ -66,8 +72,7 @@ public class Necromancer extends Turret {
   private static final List<Inheritor> inheritors = new ArrayList<>(1);
 
   public Necromancer(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "Zombie"));
+    super(world, X, Y, new BulletLauncher(world, "Zombie"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     bulletLauncher.addProjectileModifier(p -> {
@@ -89,7 +94,7 @@ public class Necromancer extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Necromancer",
+    return new TurretGenerator(world, "Necromancer", "Necromancer",
         () -> new Necromancer(world, -1000, -1000));
   }
 

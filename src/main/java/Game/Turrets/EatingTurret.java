@@ -16,14 +16,19 @@ import general.Description;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class EatingTurret extends Turret {
 
-  public static final String image = "EatingTower";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("EatingTower");
+  }
   static final long EatImmuneTag = Util.getUid();
 
   public EatingTurret(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
+    super(world, X, Y,
         new BulletLauncher(world, "Shockwave"));
     onStatsUpdate();
     bulletLauncher.setSpread(45);
@@ -31,7 +36,7 @@ public class EatingTurret extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Eating", () -> new EatingTurret(world, -1000, -1000));
+    return new TurretGenerator(world, "EatingTower", "Eating", () -> new EatingTurret(world, -1000, -1000));
   }
 
 

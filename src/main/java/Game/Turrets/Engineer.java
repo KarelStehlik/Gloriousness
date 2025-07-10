@@ -19,25 +19,29 @@ import general.Description;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class Engineer extends Turret {
 
-  public static final String image = "BasicTower";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("BasicTower");
+  }
 
   private final BulletLauncher turretLauncher;
 
   private final List<Modifier<EngiTurret>> turretMods = new ArrayList<>(1);
 
   public Engineer(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "Dart"));
+    super(world, X, Y, new BulletLauncher(world, "Dart"));
     onStatsUpdate();
     turretLauncher = new BulletLauncher(world, "Laser");
     bulletLauncher.addMobCollide(BasicCollides.damage);
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Basic", () -> new Engineer(world, -1000, -1000));
+    return new TurretGenerator(world, "BasicTower", "Basic", () -> new Engineer(world, -1000, -1000));
   }
 
   private float turretPlaceTimer = 0;

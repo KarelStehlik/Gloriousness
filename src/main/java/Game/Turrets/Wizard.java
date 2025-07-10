@@ -14,16 +14,20 @@ import general.Description;
 import general.Util;
 import java.util.ArrayList;
 import java.util.List;
+import windowStuff.Graphics;
+import windowStuff.ImageData;
 
 public class Wizard extends Turret {
 
-  public static final String image = "wizard";
+  @Override
+  protected ImageData getImage(){
+    return Graphics.getImage("wizard");
+  }
 
   private final List<BulletLauncher> spells = new ArrayList<>(1);
 
   public Wizard(TdWorld world, int X, int Y) {
-    super(world, X, Y, image,
-        new BulletLauncher(world, "skull"));
+    super(world, X, Y, new BulletLauncher(world, "skull"));
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     spells.add(bulletLauncher);
@@ -70,7 +74,7 @@ public class Wizard extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, image, "Wizard", () -> new Wizard(world, -1000, -1000));
+    return new TurretGenerator(world, "wizard", "Wizard", () -> new Wizard(world, -1000, -1000));
   }
 
   @Override
