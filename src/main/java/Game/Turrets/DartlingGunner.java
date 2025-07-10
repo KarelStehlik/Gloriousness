@@ -33,7 +33,7 @@ public class DartlingGunner extends Turret {
     String suffix = switch(path2Tier){
       case 0, 1 ->"Gunner";
       case 2->"GunnerWide";
-      case 3->"Jugg";
+      case 3,4->"Jugg";
       default->"error";
     };
     if(suffix.equals("Jugg")){
@@ -56,7 +56,7 @@ public class DartlingGunner extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, "gunner", "Dartling Gunner",
+    return new TurretGenerator(world, "Gunner", "Dartling Gunner",
         () -> new DartlingGunner(world, -1000, -1000));
   }
 
