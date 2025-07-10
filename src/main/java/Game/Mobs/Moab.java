@@ -34,6 +34,7 @@ public class Moab extends TdMob {
     stats[Stats.health] = 1200f;
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
+    stats[Stats.spawns] = 1f;
   }
   // end of generated stats
 

@@ -143,7 +143,7 @@ public class BulletLauncher {
     projectileCollides.addAll(og.projectileCollides);
     projectileModifiers.addAll(og.projectileModifiers);
     launcher = og.launcher;
-    cannons = (ArrayList<Cannon>)og.cannons.clone();
+    cannons = (ArrayList<Cannon>) og.cannons.clone();
   }
 
   public void addProjectileModifier(Modifier<Projectile> projectileModifier) {
@@ -216,6 +216,10 @@ public class BulletLauncher {
 
   public void addMobCollide(OnCollideComponent<TdMob> component, int index) {
     mobCollides.add(index, component);
+  }
+
+  public void removeMobCollide(OnCollideComponent<TdMob> component) {
+    mobCollides.remove(component);
   }
 
   public void addProjectileCollide(OnCollideComponent<Projectile> component) {

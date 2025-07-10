@@ -29,6 +29,7 @@ public class SmallMoab extends TdMob {
     stats[Stats.health] = 400f;
     stats[Stats.value] = 200f;
     stats[Stats.damageTaken] = 1f;
+    stats[Stats.spawns] = 1f;
   }
   // end of generated stats
 

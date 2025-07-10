@@ -51,7 +51,7 @@ public class GoldenBloon extends TdMob {
   // generated stats
   @Override
   public int getStatsCount() {
-    return 6;
+    return 7;
   }
 
   @Override
@@ -61,12 +61,13 @@ public class GoldenBloon extends TdMob {
     stats[Stats.health] = 200000f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
+    stats[Stats.spawns] = 1f;
     stats[ExtraStats.moneyPerDamage] = 1f;
   }
 
   public static final class ExtraStats {
 
-    public static final int moneyPerDamage = 5;
+    public static final int moneyPerDamage = 6;
 
     private ExtraStats() {
     }

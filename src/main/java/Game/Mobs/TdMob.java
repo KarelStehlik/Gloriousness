@@ -73,7 +73,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   @Override
   protected int getStatsCount() {
-    return 5;
+    return 6;
   }
 
   @Override
@@ -118,7 +118,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
     world.setMoney(world.getMoney() + stats[Stats.value]);
     onDeath();
 
-    spawnChildren(Math.max(0, (float) (-healthPart * stats[Stats.health])));
+    if (stats[Stats.spawns] > 0.5f) {
+      spawnChildren(Math.max(0, (float) (-healthPart * stats[Stats.health])));
+    }
 
     delete();
   }
@@ -324,11 +326,11 @@ public abstract class TdMob extends GameObject implements TickDetect {
   public static final class Stats {
 
     public static final int size = 0;
-
     public static final int speed = 1;
     public static final int health = 2;
     public static final int value = 3;
     public static final int damageTaken = 4;
+    public static final int spawns = 5;
 
     private Stats() {
     }

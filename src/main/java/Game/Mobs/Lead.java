@@ -24,7 +24,9 @@ public class Lead extends TdMob {
     amount = Math.max(0, amount);
     double eDamage = amount * resistance / stats[Stats.health];
     healthPart -= eDamage;
-    handleDeath();
+    if (healthPart <= 0.0000001 && exists) {
+      die();
+    }
   }
 
 
@@ -36,6 +38,7 @@ public class Lead extends TdMob {
     stats[Stats.health] = 10f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
+    stats[Stats.spawns] = 1f;
   }
   // end of generated stats
 

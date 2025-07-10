@@ -83,32 +83,54 @@ public class Projectile extends GameObject implements TickDetect {
     stats[Stats.power] = power;
   }
 
-  public static void bounce(Projectile p) {
+  public static boolean bounce(Projectile p) {
     float s = p.stats[Stats.size] / 2;
     float minx = p.x - s;
     float miny = p.y - s;
     float maxx = p.x + s;
     float maxy = p.y + s;
+    float x = p.getX();
+    float y = p.getY();
 
     if (minx < 0) {
-      p.move(p.x - 2 * minx, p.y);
+      x = p.x - 2 * minx;
       p.setRotation(180 - p.rotation);
     }
     if (miny < 0) {
-      p.move(p.x, p.y - 2 * miny);
+      y = p.y - 2 * miny;
       p.setRotation(-p.rotation);
     }
     if (maxx > TdWorld.WIDTH) {
-      p.move(2 * TdWorld.WIDTH - maxx - s, p.y);
+      x = 2 * TdWorld.WIDTH - maxx - s;
       p.setRotation(180 - p.rotation);
     }
     if (maxy > TdWorld.HEIGHT) {
-      p.move(p.x, 2 * TdWorld.HEIGHT - maxy - s);
+      y = 2 * TdWorld.HEIGHT - maxy - s;
       p.setRotation(-p.rotation);
     }
-    float x = Util.clamp(p.x, minx, maxx);
-    float y = Util.clamp(p.y, miny, maxy);
-    p.move(x, y);
+    x = Util.clamp(x, minx, maxx);
+    y = Util.clamp(y, miny, maxy);
+    if (x != p.getX() || y != p.getY()) {
+      p.move(x, y);
+      return true;
+    }
+    return false;
+  }
+
+  public static class LimitedBounce implements Modifier<Projectile> {
+
+    private int bounces;
+
+    public LimitedBounce(int bounces) {
+      this.bounces = bounces;
+    }
+
+    @Override
+    public void mod(Projectile proj) {
+      if (bounces > 0 && bounce(proj)) {
+        bounces -= 1;
+      }
+    }
   }
 
   public void clearCollisions() {

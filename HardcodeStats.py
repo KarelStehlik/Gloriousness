@@ -14,16 +14,19 @@ def toClassText(input):
     input = input.replace(" ", "")
     parts = input.replace("="," = ").split("\n")
 
-    className = parts[0]
+    className = parts[0].lower()
     baseStats = parts[1].split("|") if len(parts)>1 else []
     extraStats = parts[2].split("|") if len(parts) > 2 else []
 
     hasExtra = len(extraStats) != 0
-    hasBase = len(baseStats) != 0
     print(className, baseStats)
 
     extraNames = [s.split(" ")[0] for s in extraStats]
     extraStats = [refFloatify(x, "ExtraStats") for x in extraStats]
+
+    if className.startswith("mobs/"):
+        baseStats += ["damageTaken = 1", "spawns = 1"]
+
     baseStats = [refFloatify(x, "Stats") for x in baseStats]
 
     statsAssign = "    " + "\n    ".join(baseStats+extraStats)

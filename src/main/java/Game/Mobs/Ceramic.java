@@ -23,6 +23,7 @@ public class Ceramic extends TdMob {
     stats[Stats.health] = 30f;
     stats[Stats.value] = 0f;
     stats[Stats.damageTaken] = 1f;
+    stats[Stats.spawns] = 1f;
   }
   // end of generated stats
 

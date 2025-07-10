@@ -1,57 +1,57 @@
 Mobs/Red
-    size=50.0 | speed=3 | health=1 | value=1 | damageTaken=1
+    size=50.0 | speed=3 | health=1 | value=1
 ---
 Mobs/Blue
-    size=60.0 | speed=3.2 | health=1 | value=1 | damageTaken=1
+    size=60.0 | speed=3.2 | health=1 | value=1
 ---
 Mobs/Green
-    size=68.0 | speed=3.7 | health=1 | value=1 | damageTaken=1
+    size=68.0 | speed=3.7 | health=1 | value=1
 ---
 Mobs/Yellow
-    size=68.0 | speed=7 | health=1 | value=1 | damageTaken=1
+    size=68.0 | speed=7 | health=1 | value=1
 ---
 Mobs/Pink
-    size=76.0 | speed=8 | health=1 | value=1 | damageTaken=1
+    size=76.0 | speed=8 | health=1 | value=1
 ---
 Mobs/Black
-    size=44.0 | speed=4.5 | health=2 | value=1 | damageTaken=1
+    size=44.0 | speed=4.5 | health=2 | value=1
 ---
 Mobs/Lead
-    size=80.0 | speed=2 | health=10 | value=1 | damageTaken=1
+    size=80.0 | speed=2 | health=10 | value=1
 ---
 Mobs/Ceramic
-    size=78.0 | speed=5.8 | health=30 | value=0 | damageTaken=1
+    size=78.0 | speed=5.8 | health=30 | value=0
 ---
 Mobs/SmallMoab
-    size=300.0 | speed=1.3 | health=400 | value=200 | damageTaken=1
+    size=300.0 | speed=1.3 | health=400 | value=200
 ---
 Mobs/Moab
-    size=300.0 | speed=5 | health=1200 | value=100 | damageTaken=1
+    size=300.0 | speed=5 | health=1200 | value=100
 ---
 Player  
     speed=10 | health=100 | aspd=1 | projSize=18 | projSpeed=20 | projPierce=2 | projDuration=2 | projPower=1
 ---
 Mobs/GoldenBloon
-    size=68.0 | speed=7 | health=200000 | value=1 | damageTaken=1
+    size=68.0 | speed=7 | health=200000 | value=1
     moneyPerDamage=1
 ---
 Mobs/ShieldBloon
-    size=400.0 | speed=1 | health=60 | value=100 | damageTaken=1
+    size=400.0 | speed=1 | health=60 | value=100
 ---
 mobs/MultiMoabCore
-    size=100 | speed=1.3 | health=13500 | value=200 | damageTaken=1
+    size=100 | speed=1.3 | health=13500 | value=200
 ---
 mobs/MultiMoabHead
-    size=150 | speed=1.3 | health=10000 | value=200 | damageTaken=1
+    size=150 | speed=1.3 | health=10000 | value=200
 ---
 mobs/MultiMoabTail
-    size=175 | speed=1.3 | health=10000 | value=200 | damageTaken=1
+    size=175 | speed=1.3 | health=10000 | value=200
 ---
 mobs/MultiMoabBridge
-    size=200 | speed=1.3 | health=10000 | value=200 | damageTaken=1
+    size=200 | speed=1.3 | health=10000 | value=200
 ---
 mobs/MultiMoabLowerFin
-    size=300 | speed=1.3 | health=10000 | value=200 | damageTaken=1
+    size=300 | speed=1.3 | health=10000 | value=200
 ---
 mobs/MultiMoabUpperFin
-    size=300 | speed=1.3 | health=10000 | value=200 | damageTaken=1
+    size=300 | speed=1.3 | health=10000 | value=200
