@@ -131,7 +131,7 @@ public class Mortar extends Turret {
             "fire",
             ""),
         () -> {
-          explosive.addEffect(mob -> mob.addBuff(new Ignite<>(this.stats[Stats.power], 2000)));
+          explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(this.stats[Stats.power], 2000)));
         }, 300);
   }
 

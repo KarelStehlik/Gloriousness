@@ -6,6 +6,7 @@ public class TextModifiers {//mb this should be an enum but I can't really think
   //then again mixing color with sprite was always kinda cursed so I guess it's whatever...
 
   public static final String red = "|#765.#25.#25|";
+  public static final String resetColor = "|#999.#999.#999|";//999 is a special value that resets the color to the original
   public static final String green = "|#25.#765.#25|";
   public static final String blue = "|#25.#25.#765|";
   public static final String white = "|#255.#255.#255|";

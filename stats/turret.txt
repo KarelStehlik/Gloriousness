@@ -32,8 +32,8 @@ turrets\engineer
     spawnSpd=0.6
 ---
 turrets\engineer8
-    power=1|range=250|pierce=2|aspd=0.7|projectileDuration=2|bulletSize=30|speed=15|cost=75|size=50|spritesize=100
-    spawnSpd=0.6
+    power=2|range=250|pierce=7|aspd=0.5|projectileDuration=2|bulletSize=30|speed=15|cost=75|size=50|spritesize=100
+    spawnSpd=0.6|originalTurretAspd=0.45??1.2|originalTurretSpeed=1??19
 ---
 
 turrets\engiTurret
@@ -41,7 +41,7 @@ turrets\engiTurret
     duration=5000
 ---
 turrets\engiTurret8
-    power=1|range=250|pierce=1|aspd=0.45??1.2|projectileDuration=2|bulletSize=30|speed=1??19|cost=25|size=15|spritesize=70
+    power=1|range=250|pierce=1|aspd=1|projectileDuration=2|bulletSize=30|speed=1|cost=25|size=15|spritesize=70
     duration=5000|maxTargets=1
 ---
 turrets\dartmonkey

@@ -3,24 +3,48 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.DelayedTrigger;
 import Game.BulletLauncher;
+import Game.Mobs.TdMob;
+import Game.Projectile;
 import Game.TdWorld;
-import general.Data;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
+import windowStuff.Sprite;
 
 public class EngiTurret8 extends Turret {
 
   @Override
   protected ImageData getImage(){
+
     return Graphics.getImage("turret");
   }
-
+    public Sprite baseSprite;
   public EngiTurret8(TdWorld world, int X, int Y, BulletLauncher templateLauncher) {
-    super(world, X, Y, new BulletLauncher(templateLauncher));
+    super(world, X, Y,
+            new BulletLauncher(templateLauncher));
+    baseSprite = new Sprite("Base", 1).setSize(stats[Turret.Stats.spritesize]*0.75f,
+            stats[Turret.Stats.spritesize]*0.75f);
+    baseSprite.setPosition(x, y);
+    baseSprite.setShader("basic");
+    sprite.setNaturalWidth();
+    sprite.setY(sprite.getY()+baseSprite.getHeight()/2+sprite.getHeight()/2);
+    world.getBs().addSprite(baseSprite);
+
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     addBuff(
-        new DelayedTrigger<Turret>(stats[EngiTurret.ExtraStats.duration], Turret::delete, false));
+            new DelayedTrigger<Turret>(stats[EngiTurret.ExtraStats.duration], Turret::delete, false));
+  }
+  @Override
+  public void delete() {
+    sprite.delete();
+    baseSprite.delete();
+    buffHandler.delete();
+    rangeDisplay.delete();
+  }
+
+  @Override
+  public boolean WasDeleted() {
+    return sprite.isDeleted()&&baseSprite.isDeleted();
   }
 
   @Override
@@ -39,10 +63,10 @@ public class EngiTurret8 extends Turret {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 250f;
     stats[Stats.pierce] = 1f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.45f, 1.2f);
+    stats[Stats.aspd] = 1f;
     stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 30f;
-    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(1f, 19f);
+    stats[Stats.speed] = 1f;
     stats[Stats.cost] = 25f;
     stats[Stats.size] = 15f;
     stats[Stats.spritesize] = 70f;

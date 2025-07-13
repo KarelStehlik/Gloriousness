@@ -263,6 +263,10 @@ public class Sprite implements AbstractSprite {
   public void setNaturalHeight() {
     setSize(2 * width, 2 * width / (texCoords[4] - texCoords[2]) * (texCoords[3] - texCoords[1]));
   }
+  @Override
+  public void setNaturalWidth() {
+    setSize(2 * height* (texCoords[4] - texCoords[2]) / (texCoords[3] - texCoords[1]), 2 * height);
+  }
 
   public synchronized void updateVertices() {
     animation.update();

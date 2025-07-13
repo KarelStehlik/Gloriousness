@@ -18,6 +18,7 @@ public class BulletLauncher {
   private final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(1);
   private final TdWorld world;
   private final List<Modifier<Projectile>> projectileModifiers = new ArrayList<>(0);
+  private final List<Modifier<BulletLauncher>> attackEffects = new ArrayList<>(0);
   private ImageData image;
   private float speed;
   private float aspectRatio = 1; //
@@ -80,7 +81,7 @@ public class BulletLauncher {
   private float power;
   private float duration;
   private float x, y;
-  private float cooldown;
+  public float cooldown;
   private float spread = 0;
 
   public float getRemainingCooldown() {
@@ -136,6 +137,7 @@ public class BulletLauncher {
     duration = og.duration;
     spread = og.spread;
     x = og.x;
+    attackEffects.addAll(og.attackEffects);
     y = og.y;
     cooldown = og.cooldown;
     playerCollides.addAll(og.playerCollides);
@@ -148,6 +150,9 @@ public class BulletLauncher {
 
   public void addProjectileModifier(Modifier<Projectile> projectileModifier) {
     projectileModifiers.add(projectileModifier);
+  }
+  public void addAttackEffect(Modifier<BulletLauncher> projectileModifier) {
+    attackEffects.add(projectileModifier);
   }
 
   public void setImage(ImageData image) {
@@ -273,7 +278,11 @@ public class BulletLauncher {
   }
 
   public Projectile attack(float angle, boolean triggerCooldown) {
+
     if (triggerCooldown) {
+      for(Modifier<BulletLauncher> mod: attackEffects){
+        mod.mod(this);
+      }
       remainingCooldown += cooldown;
     }
 
