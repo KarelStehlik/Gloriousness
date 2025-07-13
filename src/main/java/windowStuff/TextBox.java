@@ -2,6 +2,8 @@ package windowStuff;
 
 import java.util.ArrayList;
 
+import static general.Constants.screenSize;
+
 public class TextBox implements Text { //not sure if imgonna use this,
 
   // but it should allow you to manage several texts better eg:title+subtexts
@@ -157,6 +159,15 @@ public class TextBox implements Text { //not sure if imgonna use this,
 
   @Override
   public void move(int newX, int newY) {
+    if(newX>screenSize.x-maxWidth/2){
+      newX=screenSize.x-maxWidth/2;
+    }else if(newX<maxWidth/2){
+      newX=maxWidth/2;
+    }
+    if(newY>screenSize.y-getHeight()){
+      newY=screenSize.y-getHeight();
+    }
+
     int displaceX = newX - x;
     int displaceY = newY - y;
     for (SimpleText text : texts) {

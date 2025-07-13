@@ -5,6 +5,8 @@ import static java.lang.Character.isDigit;
 import general.Constants;
 import general.Log;
 import general.Util;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -178,7 +180,7 @@ public class SimpleText implements Text {
 
     for (String s : strings) {
       if (isModifier(s)) {//for stuff like color
-        applyMod(s);
+        applyMod(s,originalColors);
       } else {
         addToSymbols(s, existing, newSymbols);
       }
@@ -212,16 +214,19 @@ public class SimpleText implements Text {
   }
 
   private void applyMod(
-      String string) { //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
+          String string, float[] originalColor) { //modifiers have segemnts that start with '#', are split by '|' and are purely numeric
     String[] split = string.split("\\.");
     switch (split.length) {
       case 1 -> {
         fontSize = Integer.parseInt(split[0].substring(1));
       }
       case 3 -> {
-        colors = Util.getColors(Integer.parseInt(split[0].substring(1)) / 255f
-            , Integer.parseInt(split[1].substring(1)) / 255f,
-            Integer.parseInt(split[2].substring(1)) / 255f);
+        int red=Integer.parseInt(split[0].substring(1));
+        int green=Integer.parseInt(split[1].substring(1));
+        int blue=Integer.parseInt(split[2].substring(1));
+        colors = Util.getColors(red==999? originalColor[0]: red/ 255f
+            , green==999? originalColor[1]: green/ 255f,
+            blue==999? originalColor[2]: blue/ 255f);
       }
       default -> Log.write("Invalid modifier:" + string);
 

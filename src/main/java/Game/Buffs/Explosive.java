@@ -11,7 +11,8 @@ public class Explosive<T extends GameObject> implements Modifier<T> {
   public float damage;
   private int radius;
   private int visualRadius;
-  private final List<Modifier<TdMob>> effects = new ArrayList<>();
+  private final List<Modifier<TdMob>> preEffects = new ArrayList<>();
+  private final List<Modifier<TdMob>> postEffects = new ArrayList<>();
   DamageType damageType = DamageType.PHYSICAL;
 
   public Explosive(float damage, int radius) {
@@ -30,10 +31,13 @@ public class Explosive<T extends GameObject> implements Modifier<T> {
     target.world.getMobsGrid().callForEachCircle((int) target.getX(),
         (int) target.getY(),
         radius, m -> {
-          for (Modifier<TdMob> effect : effects) {
+          for (Modifier<TdMob> effect : preEffects) {
             effect.mod(m);
           }
           m.takeDamage(damage, damageType);
+          for (Modifier<TdMob> effect : postEffects) {
+            effect.mod(m);
+          }
         });
     target.world.lesserExplosionVisual((int) target.getX(),
         (int) target.getY(),
@@ -50,7 +54,10 @@ public class Explosive<T extends GameObject> implements Modifier<T> {
     visualRadius *= multiplier;
   }
 
-  public void addEffect(Modifier<TdMob> effect) {
-    effects.add(effect);
+  public void addPreEffect(Modifier<TdMob> effect) {
+    preEffects.add(effect);
+  }
+  public void addPostEffect(Modifier<TdMob> effect) {
+    postEffects.add(effect);
   }
 }

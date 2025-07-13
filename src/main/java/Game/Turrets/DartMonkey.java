@@ -168,7 +168,7 @@ public class DartMonkey extends Turret {
           bulletLauncher.setImage("drtbomb");
           upgraded = true;
           explosive.setRadius(180);
-          explosive.addEffect(
+          explosive.addPreEffect(
               mob -> mob.addBuff(new Ignite<>(originalStats[Stats.aspd], 4 * 1000)));
 
         }, 650);

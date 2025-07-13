@@ -19,6 +19,7 @@ public interface AbstractSprite {
   AbstractSprite setImage(String name);
 
   void setNaturalHeight();
+  void setNaturalWidth();
 
   AbstractSprite setPosition(float X, float Y);
 
