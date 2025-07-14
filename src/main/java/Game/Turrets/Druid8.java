@@ -49,7 +49,7 @@ public class Druid8 extends Turret {
     float durationMs = 3000;
     mob.addBuff(new StatBuff<TdMob>(Type.MORE, durationMs, TdMob.Stats.speed, 1 / slow));
     mob.addBuff(new StatBuff<TdMob>(Type.ADDED, durationMs, TdMob.Stats.spawns, -1));
-    Sprite roots = new Sprite("root", 3).setSize(100, 100).addToBs(world.getBs());
+    Sprite roots = new Sprite("thorns", 3).setSize(100, 100).addToBs(world.getBs());
     mob.addBuff(new OnTickBuff<TdMob>(m -> roots.setPosition(mob.getX(), mob.getY())));
     mob.addBuff(new DelayedTrigger<TdMob>(durationMs, m -> roots.delete(), true));
     return true;
@@ -81,8 +81,11 @@ public class Druid8 extends Turret {
   protected Upgrade up300() {
     return new Upgrade("demoncore",
         new Description("The Shadow Core", "does more damage to MOABs and less to regular bloons",
-            ""),
+            "5 times damage to moabs and 5 times less to bloons. Also multiplies damage by pierce and sets it to one"),
         () -> {
+          float pierceChange=getStats()[Stats.pierce];
+          addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 1-pierceChange));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, pierceChange));
           sprite.setImage("Druid2");
           bulletLauncher.setImage("voidball");
           bulletLauncher.removeMobCollide(BasicCollides.damage);

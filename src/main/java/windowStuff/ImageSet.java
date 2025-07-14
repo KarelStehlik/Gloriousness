@@ -5,13 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -76,7 +70,7 @@ public class ImageSet {
     assert data.length == 9 : "invalid image location data : " + Arrays.toString(data);
     ImageData img = new ImageData(tex, List.of(data).subList(1, 9).stream().map(
         Float::parseFloat).collect(Collectors.toList()));
-    images.put(data[0], img);
+    images.put(data[0].toLowerCase(Locale.getDefault()), img);
 
     if (Pattern.matches(".*-\\d+", data[0])) {
       var animName = data[0].substring(0, data[0].lastIndexOf('-'));

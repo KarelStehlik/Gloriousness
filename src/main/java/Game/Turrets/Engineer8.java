@@ -32,11 +32,19 @@ public class Engineer8 extends Turret {
 
   @Override
   protected ImageData getImage(){
-    return Graphics.getImage("engineer");
+      String img;
+      switch (path3Tier){
+          case 0 ->
+              img = "engineer";
+          case 1->
+              img = "engineer2";
+          case 2->
+              img="grmn";
+          default->
+              img="error";
+      }
+    return Graphics.getImage(img);
   }
-
-  public static final String image = "engineer";
-  private String turretImage="turret";
 
   private final BulletLauncher turretLauncher;
 
@@ -88,6 +96,10 @@ public class Engineer8 extends Turret {
                   (int) (x + dist * Util.cos(angle)),
                   (int) (y + dist * Util.sin(angle)),
                   turretLauncher);
+          t.path1Tier=path1Tier;
+          t.path2Tier=path2Tier;
+          t.path3Tier=path3Tier;
+          t.sprite.setImage(t.getImage());
           t.place();
           turretMods.forEach(m -> m.mod(t));
       }
@@ -98,9 +110,6 @@ public class Engineer8 extends Turret {
     protected Upgrade up010() {
         return new Upgrade("turretmenu",  new Description("Double slits", "turrets have an additional firing slit to shoot two projectiles at once"),
                 () -> {
-                    if(turretImage.equals("turret")) {
-                        turretImage = "turret2";
-                    }
                     turretMods.add(t -> {
                         t.bulletLauncher.cannons.add(new BulletLauncher.Cannon(5,5));
                     });
@@ -114,7 +123,6 @@ public class Engineer8 extends Turret {
                         "with "+getStats()[Stats.pierce]+" pierce, "+getStats()[Stats.power]+" damage and 69% chance for 6.9 times the cd." +
                         "The random penalty is then lowered by 1/19 for every turret dartspeed where 19 (max dartspeed) cancels it completely"),
                 () -> {
-                    sprite.setImage("engineer2");
                     bulletLauncher.setRemainingCooldown(turretLauncher.cooldown);
                     bulletLauncher.addAttackEffect(new ProcTrigger<BulletLauncher>(
                             launcher->{
@@ -137,8 +145,6 @@ public class Engineer8 extends Turret {
                 "spanner damage is tripled",
                 "increases turret attack speed by 25%; Explosion radius is smol. increases dartspeed by 80%"),
                 () -> {
-                    turretImage="tureet";
-                    sprite.setImage("grmn");
                     addBuff(new StatBuff<Turret>(MORE, Stats.power, 3f));
                     turretMods.add(t -> {
                         t.addBuff(new StatBuff<Turret>(MORE,Stats.aspd,1.8f));

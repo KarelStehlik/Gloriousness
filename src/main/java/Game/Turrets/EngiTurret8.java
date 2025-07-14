@@ -14,18 +14,26 @@ public class EngiTurret8 extends Turret {
 
   @Override
   protected ImageData getImage(){
-
-    return Graphics.getImage("turret");
+    String img="turret";
+    if(path2Tier>0){
+      img="turret2";
+    }
+    if(path3Tier>1){
+      img="tureet";
+    }
+    if(baseSprite!=null) {
+      baseSprite.setImage(img + "Base");
+    }
+    return Graphics.getImage(img+"Head");
   }
     public Sprite baseSprite;
   public EngiTurret8(TdWorld world, int X, int Y, BulletLauncher templateLauncher) {
     super(world, X, Y,
             new BulletLauncher(templateLauncher));
-    baseSprite = new Sprite("Base", 1).setSize(stats[Turret.Stats.spritesize]*0.75f,
-            stats[Turret.Stats.spritesize]*0.75f);
+    baseSprite = new Sprite("turretBase", 1).setSize(sprite.getWidth()*1.5f*2,
+            sprite.getHeight()*0.8f*2);
     baseSprite.setPosition(x, y);
     baseSprite.setShader("basic");
-    sprite.setNaturalWidth();
     sprite.setY(sprite.getY()+baseSprite.getHeight()/2+sprite.getHeight()/2);
     world.getBs().addSprite(baseSprite);
 
@@ -69,7 +77,7 @@ public class EngiTurret8 extends Turret {
     stats[Stats.speed] = 1f;
     stats[Stats.cost] = 25f;
     stats[Stats.size] = 15f;
-    stats[Stats.spritesize] = 70f;
+    stats[Stats.spritesize] = 25f;
     stats[ExtraStats.duration] = 5000f;
     stats[ExtraStats.maxTargets] = 1f;
   }

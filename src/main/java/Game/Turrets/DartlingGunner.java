@@ -24,23 +24,20 @@ public class DartlingGunner extends Turret {
   @Override
   protected ImageData getImage(){
     String prefix = switch (path1Tier) {
-      case 0 -> "";
-      case 1 -> "double";
-      case 2 -> "triple";
+      case 0 -> "Gunner";
+      case 1 -> "doubleGunner";
+      case 2 -> "tripleGunner";
       case 3 -> "tank";
       default -> "error";
     };
     String suffix = switch(path2Tier){
-      case 0, 1 ->"Gunner";
-      case 2->"GunnerWide";
+      case 0, 1 ->"";
+      case 2->"Wide";
       case 3,4->"Jugg";
       default->"error";
     };
     if(suffix.equals("Jugg")){
       prefix = "";
-    }
-    if(prefix.equals("tank")){
-      suffix="";
     }
     return Graphics.getImage(prefix+suffix);
   }
@@ -158,7 +155,7 @@ public class DartlingGunner extends Turret {
         () -> {
           bulletLauncher.cannons.clear();
           bulletLauncher.cannons.add(new Cannon(0, 20));
-          path3Tier = 2;
+          path1Tier = 2;
           sprite.setImage("gunnerjugger");
           sprite.scale(1.5f);
           bulletLauncher.setImage("juggerdrt");

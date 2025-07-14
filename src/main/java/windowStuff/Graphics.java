@@ -13,6 +13,8 @@ import general.Log;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+
 import org.joml.Vector3f;
 
 public final class Graphics {
@@ -26,7 +28,7 @@ public final class Graphics {
   }
 
   public static ImageData getImage(String name) {
-    return loadedImages.getImage(name);
+    return loadedImages.getImage(name.toLowerCase(Locale.getDefault()));
   }
 
   public static List<ImageData> getAnimation(String name) {
