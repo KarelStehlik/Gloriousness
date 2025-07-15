@@ -39,6 +39,11 @@ public class Druid8 extends Turret {
     bulletLauncher.addMobCollide(BasicCollides.damage);
     bulletLauncher.addProjectileModifier(this::modProjectile);
   }
+  private void modProjectile(Projectile p) {
+    var respawnsLeft = new RefFloat(stats[Druid8.ExtraStats.respawns]);
+    p.addBeforeDeath(proj -> regrow(respawnsLeft, proj));
+  }
+
 
   public static TurretGenerator generator(TdWorld world) {
     return new TurretGenerator(world, "Druid", "Druid", () -> new Druid8(world, -1000, -1000));
@@ -53,11 +58,6 @@ public class Druid8 extends Turret {
     mob.addBuff(new OnTickBuff<TdMob>(m -> roots.setPosition(mob.getX(), mob.getY())));
     mob.addBuff(new DelayedTrigger<TdMob>(durationMs, m -> roots.delete(), true));
     return true;
-  }
-  private void modProjectile(Projectile p) {
-    var respawnsLeft = new RefFloat(stats[Druid.ExtraStats.respawns]);
-    p.addMobCollide(BasicCollides.damage);
-    p.addBeforeDeath(proj -> regrow(respawnsLeft, proj));
   }
   @Override
   protected Upgrade up100() {
