@@ -114,7 +114,7 @@ public class Druid8 extends Turret {
         new Description("Tome", "Increases attack speed, balls get bigger when they regrow","atcspd*2 and balls get +1 pierce per regrow"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2));
-          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.pierceScaling, 1.5f));
+          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.pierceScaling, 1f));
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.sizeScaling, 0.11f));
         }, 380);
   }
