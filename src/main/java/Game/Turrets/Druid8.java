@@ -13,6 +13,7 @@ import Game.TdWorld;
 import Game.TurretGenerator;
 import general.Data;
 import general.Description;
+import general.Log;
 import general.RefFloat;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
@@ -36,8 +37,7 @@ public class Druid8 extends Turret {
     bulletLauncher.setImage("DruidBall");
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
-    bulletLauncher.addProjectileModifier(
-        p -> p.addBeforeDeath(proj -> regrow(new RefFloat(this.stats[ExtraStats.respawns]), proj)));
+    bulletLauncher.addProjectileModifier(this::modProjectile);
   }
 
   public static TurretGenerator generator(TdWorld world) {
@@ -54,7 +54,11 @@ public class Druid8 extends Turret {
     mob.addBuff(new DelayedTrigger<TdMob>(durationMs, m -> roots.delete(), true));
     return true;
   }
-
+  private void modProjectile(Projectile p) {
+    var respawnsLeft = new RefFloat(stats[Druid.ExtraStats.respawns]);
+    p.addMobCollide(BasicCollides.damage);
+    p.addBeforeDeath(proj -> regrow(respawnsLeft, proj));
+  }
   @Override
   protected Upgrade up100() {
     return new Upgrade("brambles", new Description("roots", "roots bloons. +3 damage and +1 pierce",
@@ -107,12 +111,11 @@ public class Druid8 extends Turret {
   @Override
   protected Upgrade up020() {
     return new Upgrade("druidbook",
-        new Description("Tome", "Increases attack speed, balls get bigger when they regrow"),
+        new Description("Tome", "Increases attack speed, balls get bigger when they regrow","atcspd*2 and balls get +1 pierce per regrow"),
         () -> {
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 2));
-          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.pierceScaling, 0.5f));
-          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.powScaling, 0.5f));
-          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.sizeScaling, 0.3f));
+          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.pierceScaling, 1f));
+          addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.sizeScaling, 0.09f));
         }, 380);
   }
 
