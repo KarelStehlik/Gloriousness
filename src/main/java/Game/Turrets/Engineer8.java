@@ -167,6 +167,23 @@ public class Engineer8 extends Turret {
     }
     @Override
     protected Upgrade up002() {
+        return new Upgrade("timemen",  new Description("Sands of time", "Bloons hit go backwards, doesn't affect moabs"),
+                () -> {
+                    bulletLauncher.addMobCollide((proj, mob) -> {
+                          mob.addProgress(-1);
+                          return true;
+                        },0);
+                    turretMods.add(t -> {
+                        t.bulletLauncher.addMobCollide((proj, mob) -> {
+                            mob.addProgress(-1);
+                            return true;
+                        },0);
+                    });
+
+                    }, 80);
+    }
+    @Override
+    protected Upgrade up003() {
         return new Upgrade("gears",  new Description("Gears", "turrets shoot faster and their projectiles explude (in a smol area), " +
                 "spanner damage is tripled",
                 "increases turret attack speed by 25%; Explosion radius is smol. increases dartspeed by 80%"),
@@ -180,8 +197,8 @@ public class Engineer8 extends Turret {
                 }, 175);
     }
     @Override
-    protected Upgrade up003() {
-        return new Upgrade("timemen",  new Description("Overtime",
+    protected Upgrade up004() {
+        return new Upgrade("timermen",  new Description("Overtime",
                 "Occasionally goes turbo. Increased power with additional turret dartspeed, has up to 1 big + 5 small arrows",
                 "Affects turrets and spanner. " +
                         "multiply turret spawn speed for 2s  and spanner attackspeed for 5s every 32s by" +

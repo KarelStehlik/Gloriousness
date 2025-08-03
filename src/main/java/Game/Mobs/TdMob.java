@@ -157,6 +157,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
     grid.add(this);
     sprite.setPosition(x, y);
   }
+  public void addProgress(int addProgress){
+    movement.addProgress(this,addProgress);
+  }
 
   public void onGameTickP2(int tick) {
     buffHandler.tick();
@@ -187,6 +190,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     boolean isDone();
 
     void tick(T target);
+    void addProgress(T target,int a);
 
     float getOffsetX();
 
@@ -223,6 +227,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
       if (master.WasDeleted()) {
         target.die();
       }
+    }
+
+    @Override
+    public void addProgress(T target, int a) {
     }
 
     @Override
@@ -296,10 +304,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
       progress = new TrackProgress(nextMapPoint, approxDistance);
       if (approxDistance < stats[speedStat]) {
         target.move(nextPoint.x + offset.x, nextPoint.y + offset.y);
-        nextMapPoint += reverse ? -1 : 1;
-        if (isDone()) {
-          onFinish.mod(target);
-        }
+        addProgressUnsafe(target,reverse ? -1 : 1);
       } else {
         float rotationToNextPoint = Util.get_rotation(nextPoint.x + offset.x - target.getX(),
             nextPoint.y + offset.y - target.getY());
@@ -310,6 +315,21 @@ public abstract class TdMob extends GameObject implements TickDetect {
           target.setRotation(rotationToNextPoint - 90f);
         }
       }
+    }
+    public void addProgressUnsafe(T target,int a){
+      nextMapPoint += a;
+      if (isDone()) {
+        onFinish.mod(target);
+      }
+    }
+    @Override
+    public void addProgress(T target,int a){
+      a=Math.min(Math.max(-nextMapPoint,a),mapData.size()-nextMapPoint-1);
+      addProgressUnsafe(target,a);
+      Point nextPoint = mapData.get(nextMapPoint);
+      int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.getX()) + Math.abs(
+              nextPoint.y + offset.y - target.getY()));
+      progress = new TrackProgress(nextMapPoint, approxDistance);
     }
 
     @Override
