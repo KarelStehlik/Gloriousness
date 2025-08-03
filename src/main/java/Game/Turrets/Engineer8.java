@@ -14,6 +14,7 @@ import general.Data;
 import general.Description;
 import general.RefFloat;
 import general.Util;
+import windowStuff.Sprite;
 import windowStuff.TextModifiers;
 
 import java.awt.*;
@@ -29,7 +30,15 @@ import static Game.Turrets.Engineer8.ExtraStats.originalTurretSpeed;
 public class Engineer8 extends Turret {
 
 
-
+    @Override
+    public void delete() {
+        sprite.delete();
+        buffHandler.delete();
+        rangeDisplay.delete();
+        for (Sprite sprit:alignmentAnimation){
+            sprit.delete();
+        }
+    }
   @Override
   protected ImageData getImage(){
       String img;
@@ -38,15 +47,20 @@ public class Engineer8 extends Turret {
               img = "engineer";
           case 1->
               img = "engineer2";
-          case 2->
+          case 2,3->
               img="grmn";
           default->
-              img="error";
+              img="error, No Engi image";
       }
     return Graphics.getImage(img);
   }
 
   private final BulletLauncher turretLauncher;
+  private int alignmentCd=Integer.MAX_VALUE;
+  private List<Sprite> alignmentAnimation=new ArrayList<Sprite>(3);
+  private float alignmentTimer=Integer.MAX_VALUE;
+  private float alignmentDmg;
+  private boolean alignment=false;
 
   private final List<Modifier<EngiTurret8>> turretMods = new ArrayList<>(1);
 
@@ -86,7 +100,7 @@ public class Engineer8 extends Turret {
               }
           }
       }
-      turretPlaceTimer += Game.tickIntervalMillis * stats[Stats.aspd] * stats[Engineer8.ExtraStats.spawnSpd];
+          turretPlaceTimer += Game.tickIntervalMillis * stats[Engineer8.ExtraStats.spawnSpd];
       while (turretPlaceTimer >= 1000) {
           turretPlaceTimer -= 1000;
           float dist = (float) Math.sqrt(
@@ -104,6 +118,20 @@ public class Engineer8 extends Turret {
           turretMods.forEach(m -> m.mod(t));
       }
       buffHandler.tick();
+      if(alignment){
+          alignmentTimer-=Game.tickIntervalMillis;
+          for(int i=1;i<alignmentAnimation.size();i++){
+              alignmentAnimation.get(i).setRotation(180*alignmentTimer/alignmentCd*i);
+          }
+          if(alignmentTimer<0){
+              alignmentTimer=alignmentCd;
+              bulletLauncher.setRemainingCooldown(0);
+              addBuff(new StatBuff<Turret>(MORE,5_000, Stats.aspd, alignmentDmg));
+              addBuff(new StatBuff<Turret>(MORE,2_000, ExtraStats.spawnSpd, alignmentDmg));
+          }
+
+      }
+
   }
 
     @Override
@@ -133,9 +161,7 @@ public class Engineer8 extends Turret {
 
                             }
                                                             ,0.69f));
-                    turretMods.add(t -> {
-                        t.addBuff(new StatBuff<Turret>(MORE, ExtraStats.spawnSpd, 1.8f));
-                    });
+                    addBuff(new StatBuff<Turret>(MORE, ExtraStats.spawnSpd, 1.8f));
 
                 }, 50);
     }
@@ -152,6 +178,36 @@ public class Engineer8 extends Turret {
                         t.bulletLauncher.addProjectileModifier( p->p.addBeforeDeath( new Explosive(1f,35)));
                     });
                 }, 175);
+    }
+    @Override
+    protected Upgrade up003() {
+        return new Upgrade("timemen",  new Description("Overtime",
+                "Occasionally goes turbo. Increased power with additional turret dartspeed, has up to 1 big + 5 small arrows",
+                "Affects turrets and spanner. " +
+                        "multiply turret spawn speed for 2s  and spanner attackspeed for 5s every 32s by" +
+                        " 5 times per arrow (additional arrow count is (turretdartspeed-2)/4 rounded up) "),
+                () -> {
+                    alignment=true;
+                    alignmentCd=32*1000;
+                    alignmentTimer=alignmentCd;
+                    alignmentDmg=5;
+                    int animationposY=100;
+                    var bs = Game.get().getSpriteBatching("main");
+                    Sprite base=new Sprite("timercentre", 15).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(100, 100);
+                    alignmentAnimation.add(base);
+                    Sprite corner = new Sprite("timercorner", 18).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(110, 110);
+                    Sprite arrow = new Sprite("timerarrow", 19).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(140, 140);
+                    alignmentAnimation.add(corner);
+                    alignmentAnimation.add(arrow);
+                    for(int i=2;i<getStats()[originalTurretSpeed];i+=4) {
+                        alignmentDmg+=5;
+                        corner = new Sprite("timercorner", 16).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(100, 100);
+                        arrow = new Sprite("timerarrow", 17).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(110, 110);
+                        alignmentAnimation.add(corner);
+                        alignmentAnimation.add(arrow);
+                    }
+
+                }, 75);
     }
     protected static float demonDamage =2;
     @Override
@@ -186,26 +242,9 @@ public class Engineer8 extends Turret {
     @Override
     protected Upgrade up200() {
         return new Upgrade("demoncore",  new Description("Demoncore",
-                "",
+                "Bloons hit are unstable, becoming extra fast but taking additional damage for every hit",
                 "Affects turrets and spanner."),
                 () -> {
-                    Explosive<Engineer8> explod=new Explosive<>(demonDamage,275);
-                    RefFloat atcSpeedBuff=  new RefFloat(1);
-                    explod.addPostEffect(mob->{
-                        if(mob.WasDeleted()) {
-                            if (atcSpeedBuff.get() < 2) {
-                                atcSpeedBuff.add(0.05f);
-                            } else {
-                                atcSpeedBuff.add(0.01f);
-                            }
-                        }
-                    });
-                    explod.mod(this);
-                    demonDamage+=1;
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, atcSpeedBuff.get()));
-                    turretMods.add(t -> {
-                        t.addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, atcSpeedBuff.get()));
-                    });
 
                 }, 75);
     }

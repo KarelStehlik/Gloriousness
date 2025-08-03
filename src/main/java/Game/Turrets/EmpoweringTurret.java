@@ -234,7 +234,7 @@ public class EmpoweringTurret extends Turret {
     world.setMoney(world.getMoney() + amount);
     var t = new SimpleText("+" + amount, "Calibri", 500,
         (int) x - 130 + Data.unstableRng.nextInt(0, 150),
-        (int) y - 85 + Data.unstableRng.nextInt(0, 150), 6, 50, world.getBs());
+        (int) y - 85 + Data.unstableRng.nextInt(0, 150), 60, 50, world.getBs());
     t.setColors(Util.getColors(1.5f, 1.5f, 0));
     Game.get().addTickable(new CallAfterDuration(t::delete, duration));
   }

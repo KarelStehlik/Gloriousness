@@ -12,13 +12,13 @@ public class Moab extends TdMob {
   public Moab(TdWorld world, int wave) {
     super(world, "BloonMoab", wave);
     sprite.setSize(getStats()[Stats.size] * 1.5f, getStats()[Stats.size] * 0.7f);
-    sprite.setLayer(2);
+    sprite.setLayer(20);
   }
 
   public Moab(TdMob parent) {
     super(parent.world, "BloonMoab", parent, parent.getChildrenSpread());
     sprite.setSize(getStats()[Stats.size] * 1.5f, getStats()[Stats.size] * 0.7f);
-    sprite.setLayer(2);
+    sprite.setLayer(20);
   }
 
   @Override

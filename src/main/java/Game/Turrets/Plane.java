@@ -85,7 +85,7 @@ public class Plane extends Turret {
   public Plane(TdWorld world, int X, int Y) {
     super(world, X, Y, new BulletLauncher(world, "Dart"));
     onStatsUpdate();
-    sprite.setLayer(3);
+    sprite.setLayer(30);
     bulletLauncher.addMobCollide(BasicCollides.damage);
     pineappleLauncher.addProjectileModifier(p -> p.addBeforeDeath(pineapple -> {
       world.aoeDamage(

@@ -214,7 +214,7 @@ public class Necromancer extends Turret {
                     (int) p.getY(), p.getPower() * 500, 2000));
                 mine.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag));
                 Sprite ms = mine.getSprite();
-                ms.setLayer(5);
+                ms.setLayer(50);
                 ms.playAnimation(ms.new BasicAnimation("Bomb", .1f).loop());
 
               }, megaMineId

@@ -152,15 +152,15 @@ public class TdWorld implements World {
 
     ArrayList<SimpleText> texts = new ArrayList<>();
     SimpleText text = new SimpleText(() -> "Lives: " + health, "Calibri", 500,
-        0, 1050, 10, 40, bs);
+        0, 1050, 100, 40, bs);
     text.setColors(Util.getColors(1, 1, 1));
     texts.add(text);
     SimpleText text2 = new SimpleText(() -> "Cash: " + (long) getMoney(), "Calibri", 500,
-        0, 1550, 10, 40, bs);
+        0, 1550, 100, 40, bs);
     text2.setColors(Util.getColors(1, 1, 1));
     texts.add(text2);
     SimpleText text3 = new SimpleText(() -> "Wave " + mobSpawner.waveNum, "Calibri", 500,
-        0, 900, 10, 40, bs);
+        0, 900, 100, 40, bs);
     text3.setColors(Util.getColors(1, 1, 1));
     texts.add(text3);
     resourceTracker = new TextBox(250, 975, 500, true, texts);

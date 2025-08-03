@@ -2,7 +2,7 @@ package Game.Buffs;
 
 import Game.GameObject;
 
-public interface BuffAggregator<T extends GameObject> {
+public interface BuffAggregator<T> {
 
   boolean add(Buff<T> b, T target);
 

@@ -52,7 +52,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     clearStats();
     originalStats = getStats().clone();
 
-    sprite = new Sprite(getImage(), 2).setSize(stats[Turret.Stats.spritesize],
+    sprite = new Sprite(getImage(), 20).setSize(stats[Turret.Stats.spritesize],
         stats[Turret.Stats.spritesize]);
     sprite.setNaturalHeight();
     sprite.setPosition(x, y);
@@ -282,7 +282,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
 
     public Sprite makeSprite() {
-      return new Sprite(image, 11).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
+      return new Sprite(image, 29).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
     }
   }
 
@@ -321,18 +321,18 @@ public abstract class Turret extends GameObject implements TickDetect {
       float X = Util.clamp(x, 110, 1810), Y = Util.clamp(y, 190, 870);
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
-      sprites.add(new Sprite("Button", 10).
+      sprites.add(new Sprite("Button", sprite.getLayer() + 5).
           setSize(220, 420).
           setPosition(X, Y).
           addToBs(bs)
       );
       buttons.add(new Button(
-          new NoSprite().setLayer(9).setSize(5000, 5000).setPosition(X, Y - 150),
+          new NoSprite().setLayer(sprite.getLayer() + 6).setSize(5000, 5000).setPosition(X, Y - 150),
           (x, y) -> close()));
 
       buttons.add(new Button(
           world.getBs(),
-          new Sprite("Sell", 11).setSize(190, 40).setPosition(X, Y - 180),
+          new Sprite("Sell", sprite.getLayer() + 9).setSize(190, 40).setPosition(X, Y - 180),
           (x, y) -> {
             close();
             sell();
@@ -341,7 +341,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
       buttons.add(new Button(
           world.getBs(),
-          new Sprite("Radar", 11).setSize(170, 40).setPosition(X, Y - 135),
+          new Sprite("Radar", sprite.getLayer() + 10).setSize(170, 40).setPosition(X, Y - 135),
           (x, y) -> {
             targeting = switch (targeting) {
               case FIRST -> LAST;
