@@ -207,7 +207,7 @@ public class Engineer8 extends Turret {
                         alignmentAnimation.add(arrow);
                     }
 
-                }, 75);
+                }, 350);
     }
     protected static float demonDamage =2;
     @Override
