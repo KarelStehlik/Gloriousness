@@ -4,9 +4,5 @@ build/
 *.bin
 build_log.txt
 imgui.ini
-assets/final images/T0.png
-assets/final images/T1.png
-assets/final images/T2.png
-assets/image coordinates/T0.txt
-assets/image coordinates/T1.txt
-assets/image coordinates/T2.txt
+assets/final images/
+assets/image coordinates/
