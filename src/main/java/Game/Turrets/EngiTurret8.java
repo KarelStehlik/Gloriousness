@@ -18,11 +18,16 @@ public class EngiTurret8 extends Turret {
     if(path2Tier>0){
       img="turret2";
     }
-    if(path3Tier>1){
+    if(path3Tier>2){
       img="tureet";
     }
     if(path1Tier>1){
       img="greed";
+    }
+    if(path1Tier>1){
+      bulletLauncher.setImage("greedbolt");
+    }else if(path3Tier>2){
+      bulletLauncher.setImage("explodrt");
     }
     if(baseSprite!=null) {
       baseSprite.setImage(img + "Base");

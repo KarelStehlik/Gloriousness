@@ -282,10 +282,13 @@ public class Engineer8 extends Turret {
                                 m.bulletLauncher.attack(Data.gameMechanicsRng.nextFloat(0, 360));
                             }
                         }, true));
+                        turret.addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 1));
                     });
-                    turretMods.add(t -> {
-                        t.addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 1));
-                    });
+                    turretLauncher.addProjectileModifier(p -> {
+                        p.setAspectRatio(2);
+                            }
+
+                    );
                 }, 80);
     }
     @Override

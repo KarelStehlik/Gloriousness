@@ -42,6 +42,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
   protected boolean notYetPlaced = true;
   protected float totalCost;
+  public float resaleValue=1;
   protected final float[] originalStats;
   protected TargetingOption targeting = FIRST;
   private final boolean imageRatio = false; // scales itself to the aspect ratio of the image
@@ -303,12 +304,15 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
 
   }
+  public float getSellprice(){
+    return totalCost*resaleValue;
+  }
 
   private void sell() {
     if (sprite.isDeleted()) {
       return;
     }
-    world.setMoney(world.getMoney() + totalCost * .8);
+    world.setMoney(world.getMoney()+ this.getSellprice());
     delete();
   }
 
@@ -337,7 +341,7 @@ public abstract class Turret extends GameObject implements TickDetect {
             close();
             sell();
           },
-          () -> "Sell for: " + totalCost * 0.8f));
+          () -> "Sell for: " + getSellprice()));
 
       buttons.add(new Button(
           world.getBs(),
@@ -408,6 +412,9 @@ public abstract class Turret extends GameObject implements TickDetect {
       u.apply.apply();
       upgradePicked(path);
       totalCost += u.cost;
+      if(resaleValue==1){
+        resaleValue=0.8f;
+      }
       sprite.setImage(getImage());
       sprite.setNaturalHeight();
       openUpgradeMenu();
