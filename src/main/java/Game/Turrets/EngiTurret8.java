@@ -21,6 +21,9 @@ public class EngiTurret8 extends Turret {
     if(path3Tier>1){
       img="tureet";
     }
+    if(path1Tier>1){
+      img="greed";
+    }
     if(baseSprite!=null) {
       baseSprite.setImage(img + "Base");
     }

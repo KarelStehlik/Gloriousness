@@ -167,11 +167,17 @@ public class Engineer8 extends Turret {
         return new Upgrade("timemen",  new Description("Sands of time", "Bloons hit go backwards, doesn't affect moabs"),
                 () -> {
                     bulletLauncher.addMobCollide((proj, mob) -> {
+                        if(mob.isMoab()){
+                            return true;
+                        }
                           mob.addProgress(-1);
                           return true;
                         },0);
                     turretMods.add(t -> {
                         t.bulletLauncher.addMobCollide((proj, mob) -> {
+                            if(mob.isMoab()){
+                                return true;
+                            }
                             mob.addProgress(-1);
                             return true;
                         },0);
@@ -224,6 +230,7 @@ public class Engineer8 extends Turret {
                 }, 350);
     }
     protected static float demonDamage =2;
+    private int bloonsAbsorbed =0;
     @Override
     protected Upgrade up100() {
         return new Upgrade("demonsprout",  new Description("Demonsprout",
@@ -237,6 +244,7 @@ public class Engineer8 extends Turret {
                     RefFloat atcSpeedBuff=  new RefFloat(1);
                     explod.addPostEffect(mob->{
                         if(mob.WasDeleted()) {
+                            bloonsAbsorbed++;
                             if (atcSpeedBuff.get() < 2) {
                                 atcSpeedBuff.add(0.05f);
                             } else {
@@ -258,13 +266,30 @@ public class Engineer8 extends Turret {
         if(mob.isMoab()){
             speed/=20;
         }
-        float durationMs = 3000;
-        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, durationMs, TdMob.Stats.speed, speed));
-        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, durationMs, TdMob.Stats.damageTaken, speed));
+        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.INCREASED, TdMob.Stats.speed, speed));
+        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.INCREASED, TdMob.Stats.damageTaken, speed));
         return true;
     }
     @Override
     protected Upgrade up200() {
+        return new Upgrade("greed",  new Description("Power siphon",
+                "pumps turrets full of demonic power, increasing their pierce by 1. They shoot on death proportional to the amount of bloons absorbed by demonsprout.",
+                ""),
+                () -> {
+                    turretMods.add(turret -> {
+                        turret.addBuff(new DelayedTrigger<Turret>(Integer.MAX_VALUE, (Turret m) -> {
+                            for(int i = 0; i<= bloonsAbsorbed; i+=2*i+2){
+                                m.bulletLauncher.attack(Data.gameMechanicsRng.nextFloat(0, 360));
+                            }
+                        }, true));
+                    });
+                    turretMods.add(t -> {
+                        t.addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 1));
+                    });
+                }, 80);
+    }
+    @Override
+    protected Upgrade up300() {
         return new Upgrade("demoncore",  new Description("Demoncore",
                 "Bloons hit are unstable, becoming extra fast but taking additional damage for every hit",
                 "Affects turrets and spanner. Adds 1*damage taken and speed, 20 times reduced for moabs"),
