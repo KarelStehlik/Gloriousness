@@ -42,6 +42,10 @@ public class GoldenBloon extends TdMob {
     addBuff(new StatBuff<TdMob>(Type.ADDED, Stats.value,
         (long) stats[ExtraStats.moneyPerDamage] * amount));
   }
+  @Override
+  public void addProgress(int addProgress){
+    return;
+  }
 
   @Override
   public void onDeath() {

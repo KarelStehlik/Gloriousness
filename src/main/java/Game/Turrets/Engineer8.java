@@ -1,10 +1,7 @@
 package Game.Turrets;
 
 import Game.BasicCollides;
-import Game.Buffs.Explosive;
-import Game.Buffs.Modifier;
-import Game.Buffs.ProcTrigger;
-import Game.Buffs.StatBuff;
+import Game.Buffs.*;
 import Game.BulletLauncher;
 import Game.Game;
 import Game.Mobs.TdMob;
@@ -47,7 +44,7 @@ public class Engineer8 extends Turret {
               img = "engineer";
           case 1->
               img = "engineer2";
-          case 2,3->
+          case 2,3,4->
               img="grmn";
           default->
               img="error, No Engi image";
@@ -202,12 +199,12 @@ public class Engineer8 extends Turret {
                 "Occasionally goes turbo. Increased power with additional turret dartspeed, has up to 1 big + 5 small arrows",
                 "Affects turrets and spanner. " +
                         "multiply turret spawn speed for 2s  and spanner attackspeed for 5s every 32s by" +
-                        " 5 times per arrow (additional arrow count is (turretdartspeed-2)/4 rounded up) "),
+                        " 4 times per arrow (additional arrow count is (turretdartspeed-2)/4 rounded up) "),
                 () -> {
                     alignment=true;
                     alignmentCd=32*1000;
                     alignmentTimer=alignmentCd;
-                    alignmentDmg=5;
+                    alignmentDmg=4;
                     int animationposY=100;
                     var bs = Game.get().getSpriteBatching("main");
                     Sprite base=new Sprite("timercentre", 15).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(100, 100);
@@ -217,7 +214,7 @@ public class Engineer8 extends Turret {
                     alignmentAnimation.add(corner);
                     alignmentAnimation.add(arrow);
                     for(int i=2;i<getStats()[originalTurretSpeed];i+=4) {
-                        alignmentDmg+=5;
+                        alignmentDmg+=4;
                         corner = new Sprite("timercorner", 16).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(100, 100);
                         arrow = new Sprite("timerarrow", 17).setPosition(getX(), getY()+animationposY).addToBs(bs).setSize(110, 110);
                         alignmentAnimation.add(corner);
@@ -256,14 +253,29 @@ public class Engineer8 extends Turret {
 
                 }, 75);
     }
+    private boolean demonSpeed(TdMob mob) {
+        float speed = 1f;
+        if(mob.isMoab()){
+            speed/=20;
+        }
+        float durationMs = 3000;
+        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, durationMs, TdMob.Stats.speed, speed));
+        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, durationMs, TdMob.Stats.damageTaken, speed));
+        return true;
+    }
     @Override
     protected Upgrade up200() {
         return new Upgrade("demoncore",  new Description("Demoncore",
                 "Bloons hit are unstable, becoming extra fast but taking additional damage for every hit",
-                "Affects turrets and spanner."),
+                "Affects turrets and spanner. Adds 1*damage taken and speed, 20 times reduced for moabs"),
                 () -> {
-
-                }, 75);
+                    bulletLauncher.addMobCollide((p, m) -> demonSpeed(m));
+                    turretLauncher.addMobCollide((p, m) -> demonSpeed(m));
+                    turretMods.add(t -> {
+                        t.addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
+                        t.addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 3));
+                    });
+                }, 300);
     }
     // generated stats
   @Override
