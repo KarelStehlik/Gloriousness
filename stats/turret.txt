@@ -33,7 +33,7 @@ turrets\engineer
 ---
 turrets\engineer8
     power=2|range=250|pierce=7|aspd=0.5|projectileDuration=2|bulletSize=30|speed=15|cost=75|size=50|spritesize=100
-    spawnSpd=0.6|originalTurretAspd=0.45??1.2|originalTurretSpeed=1??19
+    spawnSpd=0.2??1|originalTurretAspd=0.45??1.2|originalTurretSpeed=1??19
 ---
 
 turrets\engiTurret

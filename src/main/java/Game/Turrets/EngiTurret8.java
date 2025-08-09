@@ -1,14 +1,16 @@
 package Game.Turrets;
 
-import Game.BasicCollides;
+import Game.*;
 import Game.Buffs.DelayedTrigger;
-import Game.BulletLauncher;
+import Game.Buffs.StatBuff;
 import Game.Mobs.TdMob;
-import Game.Projectile;
-import Game.TdWorld;
+import general.Log;
+import general.Util;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.Sprite;
+
+import static Game.Buffs.StatBuff.Type.ADDED;
 
 public class EngiTurret8 extends Turret {
 
@@ -38,17 +40,35 @@ public class EngiTurret8 extends Turret {
   public EngiTurret8(TdWorld world, int X, int Y, BulletLauncher templateLauncher) {
     super(world, X, Y,
             new BulletLauncher(templateLauncher));
+    resaleValue=0;
     baseSprite = new Sprite("turretBase", 1).setSize(sprite.getWidth()*1.5f*2,
             sprite.getHeight()*0.8f*2);
-    baseSprite.setPosition(x, y);
-    baseSprite.setShader("basic");
-    sprite.setY(sprite.getY()+baseSprite.getHeight()/2+sprite.getHeight()/2);
+    baseSprite.setPosition(sprite.getX(),sprite.getY()-baseSprite.getHeight());
     world.getBs().addSprite(baseSprite);
-
+    baseSprite.setShader("basic");
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
-    addBuff(
-            new DelayedTrigger<Turret>(stats[EngiTurret.ExtraStats.duration], Turret::delete, false));
+  }
+  @Override
+  public void onGameTick(int tick) {
+    if (notYetPlaced) {
+      return;
+    }
+    addBuff(new StatBuff<Turret>(ADDED, EngiTurret8.ExtraStats.duration,-Game.tickIntervalMillis));
+    if(getStats()[ExtraStats.duration]<=0){
+      delete();
+      return;
+    }
+    bulletLauncher.tickCooldown();
+    TdMob target = target();
+    if (target != null) {
+      setRotation(Util.get_rotation(target.getX() - x, target.getY() - y));
+      while (bulletLauncher.canAttack()) {
+        bulletLauncher.attack(Util.get_rotation(target.getX() - x, target.getY() - y));
+      }
+    }
+
+    buffHandler.tick();
   }
   @Override
   public void delete() {
@@ -72,6 +92,12 @@ public class EngiTurret8 extends Turret {
   @Override
   public int getStatsCount() {
     return 12;
+  }
+  @Override
+  public void scale(float _width,float _height){
+    sprite.scale(_width,_height);
+    baseSprite.scale(_width,_height);
+    baseSprite.setPosition(sprite.getX(),sprite.getY()-baseSprite.getHeight());
   }
 
   @Override
