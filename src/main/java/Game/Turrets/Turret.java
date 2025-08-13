@@ -178,6 +178,9 @@ public abstract class Turret extends GameObject implements TickDetect {
   public boolean addBuff(Buff<Turret> b) {
     return buffHandler.add(b);
   }
+  public void scale(float _width,float _height){
+    sprite.scale(_width,_height);
+  }
 
   protected TdMob target() {
     return world.getMobsGrid().search(
@@ -308,7 +311,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     return totalCost*resaleValue;
   }
 
-  private void sell() {
+  protected void sell() {
     if (sprite.isDeleted()) {
       return;
     }

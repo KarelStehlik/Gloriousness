@@ -87,7 +87,7 @@ public class DartMonkey extends Turret {
     return new Upgrade("sharper",
         new Description("Sharper darts"
             , "Throws razor sharp darts that can pop 2 layers at once"),
-        () -> addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1)), 40);
+        () -> addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1)), 30);
   }
 
   @Override
@@ -126,6 +126,22 @@ public class DartMonkey extends Turret {
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, pierceBuff));
         }, 100);
   }
+
+  public void stunPoison(Projectile proj,TdMob mob){
+
+  }
+    @Override
+    protected Upgrade up001() {
+        return new Upgrade("Rough", new Description("Material enhancements","Bloons hit are stunned by a rough surface and darts fly farther"),
+                () -> {
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.range, 0.25f));
+                    bulletLauncher.addMobCollide((proj,mob)->{
+                        float duration= proj.getStats()[Stats.power]* 120 / mob.getStats()[TdMob.Stats.health];
+                        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE,duration, TdMob.Stats.speed, 0));
+                        return true;
+                    },0);
+                }, 25);
+    }
 
   @Override
   protected Upgrade up100() {

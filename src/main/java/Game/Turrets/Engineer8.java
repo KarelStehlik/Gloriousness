@@ -7,10 +7,7 @@ import Game.Game;
 import Game.Mobs.TdMob;
 import Game.TdWorld;
 import Game.TurretGenerator;
-import general.Data;
-import general.Description;
-import general.RefFloat;
-import general.Util;
+import general.*;
 import windowStuff.Sprite;
 import windowStuff.TextModifiers;
 
@@ -20,6 +17,7 @@ import java.util.List;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 
+import static Game.Buffs.StatBuff.Type.ADDED;
 import static Game.Buffs.StatBuff.Type.MORE;
 import static Game.Turrets.Engineer8.ExtraStats.originalTurretAspd;
 import static Game.Turrets.Engineer8.ExtraStats.originalTurretSpeed;
@@ -97,7 +95,7 @@ public class Engineer8 extends Turret {
               }
           }
       }
-          turretPlaceTimer += Game.tickIntervalMillis * stats[Engineer8.ExtraStats.spawnSpd];
+      turretPlaceTimer += Game.tickIntervalMillis * stats[Engineer8.ExtraStats.spawnSpd];
       while (turretPlaceTimer >= 1000) {
           turretPlaceTimer -= 1000;
           float dist = (float) Math.sqrt(
@@ -130,24 +128,50 @@ public class Engineer8 extends Turret {
       }
 
   }
-
-    @Override
-    protected Upgrade up010() {
-        return new Upgrade("turretmenu",  new Description("Double slits", "turrets have an additional firing slit to shoot two projectiles at once"),
-                () -> {
-                    turretMods.add(t -> {
-                        t.bulletLauncher.cannons.add(new BulletLauncher.Cannon(5,5));
-                    });
-                }, 50);
-    }
+    private RefInt turretCount = new RefInt(0);
+    private RefInt minTurrets;
     @Override
     protected Upgrade up001() {
-        return new Upgrade("spannermen",  new Description("Spanner", "turrets are built faster and occasionally throws le spanner, " +
+        return new Upgrade("maintenance",  new Description("Persistent maintenace", "turrets get stronger over time and expire slower when there are 3 or less",
+                "turrets get double pierce after 80% of lifespan and double damage after 200% of lifespan with visual indicators. expire 95% slower"),
+                () -> {
+                    minTurrets=new RefInt(3);
+                    turretMods.add(t -> {
+                        t.addBuff(new DelayedTrigger<Turret>(Integer.MAX_VALUE, (Turret m) -> {
+                            turretCount.add(-1);
+                        }, true));
+                        turretCount.add(1);
+                        RefFloat currentIncrease = new RefFloat(0);
+                        RefInt aliveturrets = new RefInt(0);
+                        t.addBuff(new DelayedTrigger<Turret>(t.getStats()[EngiTurret8.ExtraStats.duration]*0.8f,
+                                (Turret turret)->{
+                            turret.addBuff(new StatBuff<Turret>(MORE, Stats.pierce, 2f));
+                            turret.scale(1.25f,1.25f);
+                            turret.addBuff(new StatBuff<Turret>(MORE, Stats.bulletSize, 1.25f));
+                        },false));
+                        t.addBuff(new DelayedTrigger<Turret>(t.getStats()[EngiTurret8.ExtraStats.duration]*2f,
+                                (Turret turret)->{
+                                    turret.addBuff(new StatBuff<Turret>(MORE, Stats.power, 2f));
+                                    turret.scale(1.25f,1.25f);
+                                    turret.addBuff(new StatBuff<Turret>(MORE, Stats.bulletSize, 1.25f));
+                                },false));
+                        t.addBuff(new OnTickBuff<Turret>(turret -> {
+                            if(turretCount.get()<=minTurrets.get()){
+                                t.addBuff(new StatBuff<Turret>(ADDED, EngiTurret8.ExtraStats.duration, Game.tickIntervalMillis*0.95f));
+                            }
+                        }));
+                    });
+                }, 40);
+    }
+    @Override
+    protected Upgrade up002() {
+        return new Upgrade("spannermen",  new Description("Spanner", "Can maintain up to 6 turrets, increases turret build speed by 100% and occasionally throws le spanner, " +
                 "better spanner attack speed with turret projectile speed",
-                "increases turret building speed by 80%,"+ TextModifiers.blue +"Spanner: "+TextModifiers.white+"Base attack speed of spanner is "+(int)(10f*getStats()[Stats.aspd])/10f+" every sec," +
+                "100% more I don't like increased but I like the word. "+TextModifiers.blue +"Spanner: "+TextModifiers.white+"Base attack speed of spanner is "+(int)(10f*getStats()[Stats.aspd])/10f+" every sec," +
                         "with "+getStats()[Stats.pierce]+" pierce, "+getStats()[Stats.power]+" damage and 69% chance for 6.9 times the cd." +
                         "The random penalty is then lowered by 1/19 for every turret dartspeed where 19 (max dartspeed) cancels it completely"),
                 () -> {
+                    addBuff(new StatBuff<Turret>(MORE, ExtraStats.spawnSpd, 2));
                     bulletLauncher.setRemainingCooldown(turretLauncher.cooldown);
                     bulletLauncher.addAttackEffect(new ProcTrigger<BulletLauncher>(
                             launcher->{
@@ -157,13 +181,22 @@ public class Engineer8 extends Turret {
                                 );//is 6.9 because the cooldown is also added normally
 
                             }
-                                                            ,0.69f));
-                    addBuff(new StatBuff<Turret>(MORE, ExtraStats.spawnSpd, 1.8f));
+                            ,0.69f));
+                    minTurrets.set(5);
 
-                }, 50);
+                }, 120);
     }
     @Override
-    protected Upgrade up002() {
+    protected Upgrade up010() {
+        return new Upgrade("turretmenu",  new Description("Double slits", "turrets have an additional firing slit to shoot two projectiles at once"),
+                () -> {
+                    turretMods.add(t -> {
+                        t.bulletLauncher.cannons.add(new BulletLauncher.Cannon(5,5));
+                    });
+                }, 60);
+    }
+    @Override
+    protected Upgrade up020() {
         return new Upgrade("timemen",  new Description("Sands of time", "Bloons hit go backwards, doesn't affect moabs"),
                 () -> {
                     bulletLauncher.addMobCollide((proj, mob) -> {
@@ -186,7 +219,7 @@ public class Engineer8 extends Turret {
                     }, 80);
     }
     @Override
-    protected Upgrade up003() {
+    protected Upgrade up030() {
         return new Upgrade("gears",  new Description("Gears", "turrets shoot faster and their projectiles explude (in a smol area), " +
                 "spanner damage is tripled",
                 "increases turret attack speed by 25%; Explosion radius is smol. increases dartspeed by 80%"),
@@ -200,7 +233,7 @@ public class Engineer8 extends Turret {
                 }, 175);
     }
     @Override
-    protected Upgrade up004() {
+    protected Upgrade up040() {
         return new Upgrade("timermen",  new Description("Overtime",
                 "Occasionally goes turbo. Increased power with additional turret dartspeed, has up to 1 big + 5 small arrows",
                 "Affects turrets and spanner. " +
@@ -305,6 +338,15 @@ public class Engineer8 extends Turret {
                     });
                 }, 300);
     }
+    @Override
+    protected void sell() {
+        super.sell();
+        if(minTurrets!=null){
+            minTurrets.set(0);
+        }
+
+    }
+
     // generated stats
   @Override
   public int getStatsCount() {
@@ -323,7 +365,7 @@ public class Engineer8 extends Turret {
     stats[Stats.cost] = 75f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 100f;
-    stats[ExtraStats.spawnSpd] = 0.6f;
+    stats[ExtraStats.spawnSpd] = 0.2f;
     stats[ExtraStats.originalTurretAspd] = Data.gameMechanicsRng.nextFloat(0.45f, 1.2f);
     stats[ExtraStats.originalTurretSpeed] = Data.gameMechanicsRng.nextFloat(1f, 19f);
   }
