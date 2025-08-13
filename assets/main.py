@@ -3,6 +3,8 @@ import os
 import shutil
 TEXSIZE = 4096
 
+targetfolder = "."
+
 class Animation:  # contains images that may be swapped between frequently. this must be saved in one texture.
     def __init__(self):
         self.images = []
@@ -127,8 +129,8 @@ class TestSetup:
         images.sort(key=sortingKey)
 
         text = ''.join(images)
-        new.save("final images/T" + str(n_textures) + ".png")
-        file = open(f"image coordinates/T{n_textures}.txt", "w")
+        new.save(f"{targetfolder}/final images/T{n_textures}.png")
+        file = open(f"{targetfolder}/image coordinates/T{n_textures}.txt", "w")
         file.write(text[1::])
 
 animations = {}
@@ -160,15 +162,17 @@ def add(fromFolder, e):
         img.name = e.split(".")[0]
         img.pixelCount = img.size[0] * img.size[1]
         files.append(img)
+
 def addInFolder(folder):
     for e in os.listdir(folder):
         add(folder+"/", e)
+
 def main():
     global n_textures
-    for e in os.listdir("final images"):
-        os.remove(f"final images/{e}")
-    for e in os.listdir("image coordinates"):
-        os.remove(f"image coordinates/{e}")
+    for e in os.listdir(f"{targetfolder}/final images"):
+        os.remove(f"{targetfolder}/final images/{e}")
+    for e in os.listdir(f"{targetfolder}/image coordinates"):
+        os.remove(f"{targetfolder}/image coordinates/{e}")
 
     addInFolder("rawImages")
     addInFolder("convert/fonts")

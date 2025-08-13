@@ -16,6 +16,7 @@ import general.Description;
 import general.Util;
 import java.util.List;
 import org.joml.Vector2d;
+import windowStuff.Audio;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.SingleAnimationSprite;
@@ -64,6 +65,7 @@ public class DartlingGunner extends Turret {
       world.getBs().addSprite(new SingleAnimationSprite(boom,duration,21).
           setPosition(p.getX(),p.getY()).setSize(barrelExplosionSize,barrelExplosionSize).
           setRotation(p.getRotation()));
+      Audio.play("ting", 0.8f);
     });
 
     bulletLauncher.cannons.clear();

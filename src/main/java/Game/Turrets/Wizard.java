@@ -19,6 +19,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector2f;
+import windowStuff.Audio;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.Sprite;

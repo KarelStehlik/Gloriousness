@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.joml.Vector2f;
+import windowStuff.Audio;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
 import windowStuff.NoSprite;
@@ -139,7 +140,7 @@ public class TdWorld implements World {
         1, 1);
     game.addMouseDetect(turretBar);
 
-    game.addMouseDetect(new Button(bs, new NoSprite().setSize(100, 100).setPosition(410, 660)
+    game.addMouseDetect(new Button(bs, new Sprite("hhg",5).setSize(80, 40).setPosition(1103, 1020).addToBs(bs).setOpacity(0.2f)
         , (button, action) -> {
       if (action == 0) {
         return;
@@ -147,6 +148,7 @@ public class TdWorld implements World {
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
         explosionVisual(x, y, 100, true, "Explosion1");
+        Audio.play("ting", 1);
       }
     }));
 

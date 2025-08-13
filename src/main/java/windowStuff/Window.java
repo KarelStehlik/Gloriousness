@@ -38,6 +38,11 @@ public final class Window {
   private final Game game;
   private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
   private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
+
+  public boolean isRunning() {
+    return running;
+  }
+
   private volatile boolean running = false;
 
   private Window() {
@@ -111,6 +116,7 @@ public final class Window {
 
     running = false;
 
+    Audio.kill();
     glfwFreeCallbacks(window);
     glfwDestroyWindow(window);
     glfwTerminate();
