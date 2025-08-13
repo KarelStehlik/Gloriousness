@@ -80,6 +80,15 @@ public class BulletLauncher {
   private float size;
   private float power;
   private float duration;
+
+  public float getX() {
+    return x;
+  }
+
+  public float getY() {
+    return y;
+  }
+
   private float x, y;
   public float cooldown;
   private float spread = 0;

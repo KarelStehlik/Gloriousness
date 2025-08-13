@@ -14,10 +14,14 @@ import Game.TurretGenerator;
 import general.Data;
 import general.Description;
 import general.Util;
+import java.util.List;
 import org.joml.Vector2d;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
+import windowStuff.SingleAnimationSprite;
+import windowStuff.Sprite;
 import windowStuff.TextModifiers;
+import Game.Animation;
 
 public class DartlingGunner extends Turret {
 
@@ -42,6 +46,9 @@ public class DartlingGunner extends Turret {
     return Graphics.getImage(prefix+suffix);
   }
 
+  private float barrelLength = 82;
+  private float barrelExplosionSize = 60;
+
   public DartlingGunner(TdWorld world, int X, int Y) {
     super(world, X, Y, new BulletLauncher(world, "drt"));
     float aspdBuff = (float) Math.pow(Data.gameMechanicsRng.nextFloat(1, (float) Math.sqrt(2)), 2);
@@ -50,6 +57,17 @@ public class DartlingGunner extends Turret {
     onStatsUpdate();
     bulletLauncher.setAspectRatio(1.5f);
     bulletLauncher.addMobCollide(BasicCollides.damage);
+
+    final List<ImageData> boom = Graphics.getAnimation("Explosion1");
+    final float duration=0.2f;
+    bulletLauncher.addProjectileModifier(p->{
+      world.getBs().addSprite(new SingleAnimationSprite(boom,duration,21).
+          setPosition(p.getX(),p.getY()).setSize(barrelExplosionSize,barrelExplosionSize).
+          setRotation(p.getRotation()));
+    });
+
+    bulletLauncher.cannons.clear();
+    bulletLauncher.cannons.add(new Cannon(0, barrelLength));
   }
 
   public static TurretGenerator generator(TdWorld world) {
@@ -64,7 +82,7 @@ public class DartlingGunner extends Turret {
             "Shoots darts from an additional barrel",
             "buffs work on the second barrel (apart from on attack effects that happen on no cooldown trigger I guess)"),
         () -> {
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-30, 0));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-30, barrelLength));
         }, 200);
   }
 
@@ -73,7 +91,7 @@ public class DartlingGunner extends Turret {
     return new Upgrade("barells", new Description("Triple Barrel",
         "The greed for barrels is strong, two was never enough"),
         () -> {
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(30, 0));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(30, barrelLength));
         }, 200);
   }
 
@@ -85,9 +103,15 @@ public class DartlingGunner extends Turret {
             "Pierce and damage is doubled, attackspeed *1.5. bombs deal 10 AOE damage (each)," +
             " and the chance of an attack being bombs is 0.05+originalStats[Stats.aspd]/72d where 1 is 100%"),
         () -> {
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-15, 30));
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(15, 30));
-          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, 50));
+          barrelLength = 140;
+          bulletLauncher.cannons.clear();
+
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-40, barrelLength+50));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(40, barrelLength+50));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, barrelLength+50));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(-20, barrelLength+25));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(20, barrelLength+25));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, barrelLength));
 
           bulletLauncher.setImage("blcdrt");
           float bombchance = 0.05f + originalStats[Stats.aspd] / 72f;
@@ -120,6 +144,7 @@ public class DartlingGunner extends Turret {
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, atcSpeedDebuff));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, extraPierce));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
+          barrelExplosionSize = 90;
         }, 300);
   }
 
@@ -153,8 +178,11 @@ public class DartlingGunner extends Turret {
                 +
                 "and then reduced to third."),
         () -> {
+          barrelLength = 190;
           bulletLauncher.cannons.clear();
-          bulletLauncher.cannons.add(new Cannon(0, 20));
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, barrelLength));
+          barrelExplosionSize = 220;
+
           path1Tier = 2;
           sprite.setImage("gunnerjugger");
           sprite.scale(1.5f);
@@ -200,6 +228,11 @@ public class DartlingGunner extends Turret {
 
             "splits into 5-20 new projectiles depending on the size of your balls"),
         () -> {
+          barrelLength = 250;
+          bulletLauncher.cannons.clear();
+          bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, barrelLength));
+          barrelExplosionSize = 350;
+
           clusterLauncher = new BulletLauncher(world, "juggerdrt");
           clusterLauncher.setDuration(0.95f);
           clusterLauncher.cannons = BulletLauncher.radial(

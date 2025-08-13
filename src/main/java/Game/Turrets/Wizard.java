@@ -1,7 +1,10 @@
 package Game.Turrets;
 
+import Game.Game;
+import Game.Animation;
 import Game.BasicCollides;
 import Game.Buffs.Explosive;
+import Game.Buffs.Modifier;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
@@ -12,10 +15,13 @@ import Game.TurretGenerator;
 import general.Data;
 import general.Description;
 import general.Util;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
+import org.joml.Vector2f;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
+import windowStuff.Sprite;
 
 public class Wizard extends Turret {
 
@@ -31,6 +37,31 @@ public class Wizard extends Turret {
     onStatsUpdate();
     bulletLauncher.addMobCollide(BasicCollides.damage);
     spells.add(bulletLauncher);
+    bulletLauncher.addAttackEffect(new CastAnimation("wizCast", 500, 2, 2));
+    bulletLauncher.addAttackEffect(new CastAnimation("wizCast", 300, 4, 1.5f));
+  }
+
+  private static class CastAnimation implements Modifier<BulletLauncher>{
+    private final ImageData img;
+    protected String shader = "basic";
+    protected final float size;
+    protected float spin;
+    protected float duration;
+    protected CastAnimation(String img, float size, float spin, float duration){
+      this.img = Graphics.getImage(img);
+      this.size=size;
+      this.spin=spin;
+      this.duration = duration;
+    }
+
+    @Override
+    public void mod(BulletLauncher target) {
+      Game.get().addTickable(new Animation(
+              new Sprite(img, 3, shader).setPosition(target.getX(), target.getY()).
+                  setSize(size, size).addToBs(Game.get().getSpriteBatching("main")).setRotation(Data.unstableRng.nextFloat(360)), duration
+          ).setOpacityScaling(-1/(1000*duration/Game.tickIntervalMillis)).setSpinning(spin)
+      );
+    }
   }
 
   @Override
@@ -102,6 +133,7 @@ public class Wizard extends Turret {
                   )
               )
           );
+          fireballs.addAttackEffect(new CastAnimation("fireRune", 600, 1,3));
           fireballs.addMobCollide(BasicCollides.damage);
           fireballs.updateStats(stats);
           fireballs.addProjectileModifier(p -> p.addBeforeDeath(explosive));
@@ -135,6 +167,7 @@ public class Wizard extends Turret {
           lightning.addMobCollide(BasicCollides.damage);
           lightning.updateStats(stats);
           lightning.setAspectRatio(5);
+          lightning.addAttackEffect(new CastAnimation("zaprot", 450, 0,0.3f));
           spells.add(lightning);
         }, 1000);
   }
