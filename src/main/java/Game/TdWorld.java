@@ -329,6 +329,11 @@ public class TdWorld implements World {
       if (ImGui.checkbox("Gong lag", gong)) {
         options.laggyGong = gong.get();
       }
+      ImBoolean sound = new ImBoolean(Audio.isActive());
+      if (ImGui.checkbox("Sound", sound)) {
+        Audio.setActive(sound.get());
+      }
+
       if (ImGui.button("surrender")) {
         delete();
         Game.get().setWorld(new IntroScreen());

@@ -1,11 +1,9 @@
 package windowStuff;
 
-import general.Log;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.sound.sampled.AudioFormat;
@@ -19,16 +17,35 @@ import javax.sound.sampled.SourceDataLine;
 
 
 public final class Audio {
+
   private static final HashMap<String, byte[]> sounds = new HashMap<>(5);
   private static final AudioFormat audioFormat = new AudioFormat(
       Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
   private static final Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-  private static List<SoundThread> players = new ArrayList<>();
-
+  private static final List<SoundPlayer> players = new ArrayList<>();
+  private static final List<SoundToPlay> queued = new ArrayList<>();
+  private static final byte[] EMPTY = new byte[0];
+  private static final Lock inactiveLock = new ReentrantLock();
+  private static boolean active = true;
+  private static boolean deleteAllSounds = false;
   private Audio() {
   }
 
-  public static byte[] load(String name){
+  public static boolean isActive() {
+    return active;
+  }
+
+  public static void setActive(boolean active) {
+    Audio.active = active;
+    if (active) {
+      inactiveLock.unlock();
+    } else {
+      deleteAllSounds = true;
+      inactiveLock.lock();
+    }
+  }
+
+  public static byte[] load(String name) {
     try {
       URL url = Audio.class.getResource("/sounds/" + name + ".wav");
       // The wav file named above was obtained from https://freesound.org/people/Robinhood76/sounds/371535/
@@ -38,105 +55,129 @@ public final class Audio {
       byte[] buffer = audioInputStream.readAllBytes();
       audioInputStream.close();
       return buffer;
-    }catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
-    return new byte[0];
+    return EMPTY;
   }
 
-  public static void play(String name, float volume){
-    if(players.isEmpty()){
-      init();
+  public static void play(String name, float volume) {
+    if (!active) {
+      return;
     }
-    for(var player : players){
-      if(player.open){
-        player.play(name,volume);
+    synchronized (queued) {
+      queued.add(new SoundToPlay(name, volume));
+    }
+  }
+
+  public static void playNow(SoundToPlay sound) {
+    SoundPlayer minPlayer = players.get(0);
+    for (var player : players) {
+      if (player.remaining() <= 0) {
+        player.play(sound);
         return;
       }
+      if (player.remaining() < minPlayer.remaining()) {
+        minPlayer = player;
+      }
     }
+    minPlayer.play(sound);
   }
 
-  private static void init(){
-    for(int i=0;i<99;i++){
-      var p = new SoundThread();
+  public static void init() {
+    new Thread(Audio::loop).start();
+  }
+
+  private static void loop() {
+    for (int i = 0; i < 20; i++) {
+      var p = new SoundPlayer();
       players.add(p);
-      Thread t = new Thread(()->{
-        while(Window.get().isRunning()){p.tick();}
-        p.delete();
-      });
-      t.start();
     }
-  }
-
-  public static void kill(){
-    for(var player : players){
+    while (Window.get().isRunning()) {
+      if (deleteAllSounds) {
+        for (var player : players) {
+          player.flush();
+        }
+        deleteAllSounds = false;
+      }
+      inactiveLock.lock();
+      inactiveLock.unlock();
+      List<SoundToPlay> dequeued;
+      synchronized (queued) {
+        dequeued = new ArrayList<>(queued);
+        queued.clear();
+      }
+      for (var sound : dequeued) {
+        playNow(sound);
+      }
+      for (var player : players) {
+        player.tick();
+      }
+    }
+    for (var player : players) {
       player.delete();
     }
   }
 
-  private static class SoundThread{
+  private static class SoundToPlay {
+
+    String name;
+    float volume;
+
+    SoundToPlay(String name, float volume) {
+      this.name = name;
+      this.volume = volume;
+    }
+  }
+
+  private static class SoundPlayer {
+
     SourceDataLine sourceDataLine;
-    byte[] buffer = new byte[0];
+    byte[] buffer = EMPTY;
     int read = 0;
     FloatControl noiseCtrl;
-    boolean open = true;
 
-    Lock openLock = new ReentrantLock();
-    final Condition workCompleted = openLock.newCondition();
-
-    SoundThread(){
+    SoundPlayer() {
       try {
         sourceDataLine = (SourceDataLine) AudioSystem.getLine(info);
         sourceDataLine.open(audioFormat);
         sourceDataLine.start();
         noiseCtrl = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
-      }catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
 
-    void play(String name, float volume){
-      try {
-        openLock.lock();
-        noiseCtrl.setValue(
-            noiseCtrl.getMinimum() + (noiseCtrl.getMaximum() - noiseCtrl.getMinimum()) * volume);
-        synchronized (sounds) {
-          buffer = sounds.computeIfAbsent(name, Audio::load);
-        }
-        read = 0;
-        open = false;
-        workCompleted.signalAll();
-      }finally {
-        openLock.unlock();
-      }
+    public int remaining() {
+      return buffer.length - read;
     }
 
-    void tick(){
-      try {
-        openLock.lock();
-        if (open) {
-          workCompleted.await();
-        }
-
-        read += sourceDataLine.write(buffer, read, buffer.length);
-        sourceDataLine.drain();
-        open = read >= buffer.length;
-      }catch (Exception e) {
-        e.printStackTrace();
-      }finally{
-        openLock.unlock();
-      }
+    void play(SoundToPlay sound) {
+      noiseCtrl.setValue(
+          noiseCtrl.getMinimum()
+              + (noiseCtrl.getMaximum() - noiseCtrl.getMinimum()) * sound.volume);
+      buffer = sounds.computeIfAbsent(sound.name, Audio::load);
+      read = 0;
+      sourceDataLine.flush();
     }
 
-    void delete(){
-      try {
-        openLock.lock();
+    void flush() {
+      read = 0;
+      sourceDataLine.flush();
+      buffer = EMPTY;
+    }
+
+    void tick() {
+      if (remaining() <= 0) {
+        return;
+      }
+      read += sourceDataLine.write(buffer, read,
+          Math.min(sourceDataLine.available(), remaining()));
+    }
+
+    void delete() {
       sourceDataLine.drain();
       sourceDataLine.close();
-        workCompleted.signalAll();
-      }finally {
-        openLock.unlock();
-      }
     }
   }
 }

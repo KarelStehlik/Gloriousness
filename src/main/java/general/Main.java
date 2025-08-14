@@ -1,6 +1,7 @@
 package general;
 
 import org.lwjgl.Version;
+import windowStuff.Audio;
 import windowStuff.Window;
 
 public final class Main {
@@ -10,6 +11,7 @@ public final class Main {
 
   public static void main(String[] args) {
     Log.write(Version.getVersion());
+    Audio.init();
     var win = Window.get();
     win.run();
   }

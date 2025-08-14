@@ -116,7 +116,6 @@ public final class Window {
 
     running = false;
 
-    Audio.kill();
     glfwFreeCallbacks(window);
     glfwDestroyWindow(window);
     glfwTerminate();
