@@ -142,7 +142,7 @@ public class DartlingGunner extends Turret {
             "dartspeed is 2-25. pierce is +1 or +2 (if dartspeed is above 9), damage is +1. " +
                 "Attacks and dartspeeds 20% slower or 10% if dartspeed is decent."),
         () -> {
-          sound.volume=.9f;
+          sound = new SoundToPlay("gunshot", 0.9f);
           int extraPierce = originalStats[Stats.aspd] > 9 ? 2 : 1;
           float atcSpeedDebuff = originalStats[Stats.aspd] > 9 ? 0.9f : 0.8f;
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
@@ -235,7 +235,7 @@ public class DartlingGunner extends Turret {
 
             "splits into 5-20 new projectiles depending on the size of your balls"),
         () -> {
-          sound = new SoundToPlay("explosionBig", 0.8f);
+          sound = new SoundToPlay("explosionBig", 1f);
           barrelLength = 250;
           bulletLauncher.cannons.clear();
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, barrelLength));

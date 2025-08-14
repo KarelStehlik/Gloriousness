@@ -48,6 +48,9 @@ public final class Audio {
   public static byte[] load(String name) {
     try {
       URL url = Audio.class.getResource("/sounds/" + name + ".wav");
+      if(url==null){
+        return null;
+      }
       // The wav file named above was obtained from https://freesound.org/people/Robinhood76/sounds/371535/
       // and matches the audioFormat.
       AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
@@ -58,7 +61,20 @@ public final class Audio {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return EMPTY;
+    return null;
+  }
+
+  private static byte[] getSound(String name){
+    var found = sounds.get(name);
+    if(found!=null){
+      return found;
+    }
+    var generated = load(name);
+    if(generated==null){
+      return getSound("notFound");
+    }
+    sounds.put(name, generated);
+    return generated;
   }
 
   public static void play(String name, float volume) {
@@ -125,8 +141,8 @@ public final class Audio {
 
   public static class SoundToPlay {
 
-    public String name;
-    public float volume;
+    public final String name;
+    public final float volume;
 
     public SoundToPlay(String name, float volume) {
       this.name = name;
@@ -157,10 +173,10 @@ public final class Audio {
     }
 
     void play(SoundToPlay sound) {
-      noiseCtrl.setValue(
-          noiseCtrl.getMinimum()
-              + (noiseCtrl.getMaximum() - noiseCtrl.getMinimum()) * sound.volume);
-      buffer = sounds.computeIfAbsent(sound.name, Audio::load);
+      final float VOLUME_RANGE = 35;
+      noiseCtrl.setValue(Math.max(noiseCtrl.getMinimum(), noiseCtrl.getMaximum() - (1-sound.volume) * VOLUME_RANGE ));
+
+      buffer = getSound(sound.name);
       read = 0;
       sourceDataLine.flush();
     }

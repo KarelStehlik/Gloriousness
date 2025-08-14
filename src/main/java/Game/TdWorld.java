@@ -401,7 +401,7 @@ public class TdWorld implements World {
       return;
     }
     if(GLFW_KEY_0 <= key && key<= GLFW_KEY_9 && action==1){
-      turretBar.trigger(key-GLFW_KEY_0);
+      turretBar.trigger((key-GLFW_KEY_0+9)%10);
       return;
     }
     if(key==GLFW_KEY_R && lastTurret!=null){
