@@ -1,9 +1,12 @@
 package windowStuff;
 
+import general.Log;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.sound.sampled.AudioFormat;
@@ -20,28 +23,102 @@ public final class Audio {
 
   private static final HashMap<String, byte[]> sounds = new HashMap<>(5);
   private static final AudioFormat audioFormat = new AudioFormat(
-      Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+      Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
   private static final Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-  private static final List<SoundPlayer> players = new ArrayList<>();
-  private static final List<SoundToPlay> queued = new ArrayList<>();
   private static final byte[] EMPTY = new byte[0];
-  private static final Lock inactiveLock = new ReentrantLock();
-  private static boolean active = true;
-  private static boolean deleteAllSounds = false;
+  private static final Map<String, AudioGroup> groups;
+  static{
+    List<String> soundTypes = List.of("sfx", "music");
+    groups = new HashMap<>(soundTypes.size());
+    for(String s : soundTypes){
+      groups.put(s, new AudioGroup());
+    }
+  }
+
+  public static Set<String> getGroups(){
+    return groups.keySet();
+  }
+
+  public static AudioGroup getGroup(String name){
+    return groups.get(name);
+  }
+
   private Audio() {
   }
 
-  public static boolean isActive() {
-    return active;
-  }
+  public static class AudioGroup{
+    private final Lock inactiveLock = new ReentrantLock();
+    private boolean active = true;
+    private boolean deleteAllSounds = false;
+    private final List<SoundPlayer> players = new ArrayList<>();
+    private final List<SoundToPlay> queued = new ArrayList<>();
 
-  public static void setActive(boolean active) {
-    Audio.active = active;
-    if (active) {
-      inactiveLock.unlock();
-    } else {
-      deleteAllSounds = true;
-      inactiveLock.lock();
+    public boolean isActive() {
+      return active;
+    }
+
+    public void setActive(boolean active) {
+      this.active = active;
+      if (active) {
+        inactiveLock.unlock();
+      } else {
+        deleteAllSounds = true;
+        inactiveLock.lock();
+      }
+    }
+
+    public void play(SoundToPlay sound) {
+      if (!active) {
+        return;
+      }
+      synchronized (queued) {
+        queued.add(sound);
+      }
+    }
+
+    private void playNow(SoundToPlay sound) {
+      SoundPlayer minPlayer = players.get(0);
+      for (var player : players) {
+        if (player.remaining() <= 0) {
+          player.play(sound);
+          return;
+        }
+        if (player.remaining() < minPlayer.remaining() && player.looping==null) {
+          minPlayer = player;
+        }
+      }
+      minPlayer.play(sound);
+    }
+
+    private void loop() {
+      for (int i = 0; i < 20; i++) {
+        var p = new SoundPlayer();
+        players.add(p);
+      }
+      while (Window.get().isRunning()) {
+        if (deleteAllSounds) {
+          for (var player : players) {
+            player.flush();
+          }
+          deleteAllSounds = false;
+        }
+        inactiveLock.lock();
+        inactiveLock.unlock();
+        List<SoundToPlay> dequeued;
+        synchronized (queued) {
+          dequeued = new ArrayList<>(queued);
+          queued.clear();
+        }
+        for (var sound : dequeued) {
+          playNow(sound);
+        }
+        for (var player : players) {
+          player.tick();
+        }
+      }
+      for (var player : players) {
+        player.delete();
+      }
     }
   }
 
@@ -77,65 +154,26 @@ public final class Audio {
     return generated;
   }
 
+  public static void play(String name, float volume, String type) {
+    play(new SoundToPlay(name, volume, type));
+  }
+
   public static void play(String name, float volume) {
     play(new SoundToPlay(name, volume));
   }
 
   public static void play(SoundToPlay sound) {
-    if (!active) {
-      return;
-    }
-    synchronized (queued) {
-      queued.add(sound);
+    try{
+      groups.get(sound.type).play(sound);
+    }catch (NullPointerException e) {
+      Log.write("noo such sound type: "+sound.type);
     }
   }
 
-  public static void playNow(SoundToPlay sound) {
-    SoundPlayer minPlayer = players.get(0);
-    for (var player : players) {
-      if (player.remaining() <= 0) {
-        player.play(sound);
-        return;
-      }
-      if (player.remaining() < minPlayer.remaining()) {
-        minPlayer = player;
-      }
-    }
-    minPlayer.play(sound);
-  }
 
   public static void init() {
-    new Thread(Audio::loop).start();
-  }
-
-  private static void loop() {
-    for (int i = 0; i < 20; i++) {
-      var p = new SoundPlayer();
-      players.add(p);
-    }
-    while (Window.get().isRunning()) {
-      if (deleteAllSounds) {
-        for (var player : players) {
-          player.flush();
-        }
-        deleteAllSounds = false;
-      }
-      inactiveLock.lock();
-      inactiveLock.unlock();
-      List<SoundToPlay> dequeued;
-      synchronized (queued) {
-        dequeued = new ArrayList<>(queued);
-        queued.clear();
-      }
-      for (var sound : dequeued) {
-        playNow(sound);
-      }
-      for (var player : players) {
-        player.tick();
-      }
-    }
-    for (var player : players) {
-      player.delete();
+    for(var g : groups.values()){
+      new Thread(g::loop).start();
     }
   }
 
@@ -143,10 +181,22 @@ public final class Audio {
 
     public final String name;
     public final float volume;
+    public final String type;
+    public final boolean loop;
 
     public SoundToPlay(String name, float volume) {
+      this(name,volume,"sfx");
+    }
+
+    public SoundToPlay(String name, float volume, String type) {
+      this(name,volume,type, false);
+    }
+
+    public SoundToPlay(String name, float volume, String type, boolean loop) {
       this.name = name;
       this.volume = volume;
+      this.type=type;
+      this.loop=loop;
     }
   }
 
@@ -156,6 +206,7 @@ public final class Audio {
     byte[] buffer = EMPTY;
     int read = 0;
     FloatControl noiseCtrl;
+    private SoundToPlay looping = null;
 
     SoundPlayer() {
       try {
@@ -179,16 +230,21 @@ public final class Audio {
       buffer = getSound(sound.name);
       read = 0;
       sourceDataLine.flush();
+      looping = sound.loop ? sound : null;
     }
 
     void flush() {
       read = 0;
       sourceDataLine.flush();
       buffer = EMPTY;
+      looping=null;
     }
 
     void tick() {
       if (remaining() <= 0) {
+        if(looping!=null){
+          play(looping);
+        }
         return;
       }
       read += sourceDataLine.write(buffer, read,

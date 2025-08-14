@@ -2,6 +2,8 @@ package Game;
 
 import general.Constants;
 import general.Data;
+import windowStuff.Audio;
+import windowStuff.Audio.SoundToPlay;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
 import windowStuff.Sprite;
@@ -13,6 +15,7 @@ public class IntroScreen implements World {
   private final SpriteBatching bs;
 
   public IntroScreen() {
+    Audio.play(new SoundToPlay("legion",0.6f, "music", true));
     bs = Game.get().getSpriteBatching("main");
     int mapCount = Data.listMaps().length;
     Button[] buttons = new Button[mapCount];
@@ -71,6 +74,8 @@ public class IntroScreen implements World {
   public void delete() {
     maps.delete();
     Game.get().nuke();
+    Audio.getGroup("music").setActive(false);
+    Audio.getGroup("music").setActive(true);
   }
 
   @Override

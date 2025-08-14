@@ -44,8 +44,11 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Audio;
+import windowStuff.Audio.AudioGroup;
+import windowStuff.Audio.SoundToPlay;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
 import windowStuff.NoSprite;
@@ -152,7 +155,7 @@ public class TdWorld implements World {
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
         explosionVisual(x, y, 100, true, "Explosion1");
-        Audio.play("ting", 1);
+        Audio.play(new SoundToPlay("ting",1, "sfx", true));
       }
     }));
 
@@ -175,6 +178,8 @@ public class TdWorld implements World {
     currentTool.delete();
     mobSpawner.beginWave();
     calcSpacPoints();
+
+    Audio.play(new SoundToPlay("sotw",0.8f, "music", true));
   }
 
   public void addEvent(VoidFunc e) {
@@ -333,9 +338,15 @@ public class TdWorld implements World {
       if (ImGui.checkbox("Gong lag", gong)) {
         options.laggyGong = gong.get();
       }
-      ImBoolean sound = new ImBoolean(Audio.isActive());
-      if (ImGui.checkbox("Sound", sound)) {
-        Audio.setActive(sound.get());
+      for(String g : Audio.getGroups()) {
+        AudioGroup ag = Audio.getGroup(g);
+        ImBoolean sound = new ImBoolean(ag.isActive());
+        if (ImGui.checkbox(g, sound)) {
+          ag.setActive(sound.get());
+          if(g=="music" && sound.get()){
+            Audio.play(new SoundToPlay("sotw",0.8f, "music", true));
+          }
+        }
       }
 
       if (ImGui.button("surrender")) {

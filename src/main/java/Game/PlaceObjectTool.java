@@ -1,5 +1,6 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 
 import java.util.ArrayList;
@@ -32,7 +33,9 @@ public class PlaceObjectTool extends Tool {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-
+    if(key==GLFW_KEY_ESCAPE){
+      delete();
+    }
   }
 
   @Override
