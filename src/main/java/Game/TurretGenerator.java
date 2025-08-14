@@ -37,6 +37,9 @@ public class TurretGenerator {
         new NoSprite(),
         this::generate);
     world.setCurrentTool(tool);
+    this.pending.move(Game.get().getUserInputListener().getX(),
+        Game.get().getUserInputListener().getY());
+    world.lastTurret=this;
 
     tool.
         setOnMove((x, y) -> this.pending.move(x, y)).setOnDelete(() -> {

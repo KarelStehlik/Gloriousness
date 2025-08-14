@@ -100,6 +100,10 @@ public class Button implements MouseDetect, TickDetect {
     return false;
   }
 
+  public void trigger(){
+    onClick.onClick(0, 1);
+  }
+
   @Override
   public boolean onScroll(double scroll) {
     return false;

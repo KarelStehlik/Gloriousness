@@ -68,6 +68,10 @@ public class ButtonArray implements MouseDetect, TickDetect {
     return false;
   }
 
+  public void trigger(int button){
+    buttons[button].trigger();
+  }
+
   @Override
   public boolean onScroll(double scroll) {
     float x = Game.get().getUserInputListener().getX();

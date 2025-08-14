@@ -1,5 +1,8 @@
 package Game;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_0;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_9;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -93,6 +96,7 @@ public class TdWorld implements World {
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 100;
+  public TurretGenerator lastTurret;
 
   public TdWorld(int map) {
     Game game = Game.get();
@@ -394,6 +398,14 @@ public class TdWorld implements World {
     }
     if (key == GLFW_KEY_SPACE && action == 0) {
       mobSpawner.beginWave();
+      return;
+    }
+    if(GLFW_KEY_0 <= key && key<= GLFW_KEY_9 && action==1){
+      turretBar.trigger(key-GLFW_KEY_0);
+      return;
+    }
+    if(key==GLFW_KEY_R && lastTurret!=null){
+      lastTurret.select();
     }
   }
 
