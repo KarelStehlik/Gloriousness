@@ -29,6 +29,7 @@ public class Sprite implements AbstractSprite {
   private float width, height;
   private ImageData image;
   private Animation animation;
+  private int lastGt;
 
   public Sprite(Sprite og) {
     textureName = og.textureName;
@@ -45,6 +46,7 @@ public class Sprite implements AbstractSprite {
     height = og.height;
     image = og.image;
     animation = noAnim;
+    lastGt = og.lastGt;
   }
 
   public Sprite(ImageData image, int layer, String shader) {
@@ -52,6 +54,7 @@ public class Sprite implements AbstractSprite {
     this.layer = layer;
     setImage(image);
     this.animation = noAnim;
+    lastGt = Game.get().getTicks();
   }
 
   public Sprite(ImageData image, int layer) {
@@ -210,7 +213,13 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public void setHidden(boolean hidden) {
+    if(hidden==this.hidden){
+      return;
+    }
     this.hidden = hidden;
+    if(!hidden){
+      lastGt=Game.get().getTicks();
+    }
   }
 
   public float getOpacity() {
@@ -269,8 +278,17 @@ public class Sprite implements AbstractSprite {
   }
 
   public synchronized void updateVertices() {
-    animation.update(this);
-    if (!hasUnsavedChanges || hidden) {
+    if(hidden){
+      return;
+    }
+    {
+      int ticks = Game.get().getTicks() - lastGt;
+      lastGt += ticks;
+      for (int i = 0; i < ticks; i++) {
+        animation.update(this);
+      }
+    }
+    if (!hasUnsavedChanges) {
       return;
     }
     float rotationSin = Util.sin(rotation);
@@ -388,7 +406,7 @@ public class Sprite implements AbstractSprite {
 
     private final int length;
     private final float frameLengthGt;
-    private final int startTime;
+    private int lifetime = 0;
     private final List<ImageData> images;
     private boolean loop = false;
 
@@ -403,7 +421,6 @@ public class Sprite implements AbstractSprite {
     public FrameAnimation(List<ImageData> images, float duration) {
       length = images.size();
       frameLengthGt = 1000 * duration / (length * Game.tickIntervalMillis);
-      startTime = Game.get().getTicks();
       this.images = images;
     }
 
@@ -414,7 +431,8 @@ public class Sprite implements AbstractSprite {
 
     @Override
     public void update(Sprite sprite) {
-      int frame = (int) ((Game.get().getTicks() - startTime) / frameLengthGt);
+      lifetime++;
+      int frame = (int) (lifetime / frameLengthGt);
       if (loop) {
         frame %= length;
       }
