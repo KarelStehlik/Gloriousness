@@ -21,9 +21,7 @@ import windowStuff.Audio.SoundToPlay;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.SingleAnimationSprite;
-import windowStuff.Sprite;
 import windowStuff.TextModifiers;
-import Game.Animation;
 
 public class DartlingGunner extends Turret {
 

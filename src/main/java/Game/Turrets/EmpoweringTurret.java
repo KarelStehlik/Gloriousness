@@ -23,6 +23,7 @@ import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.SimpleText;
 import windowStuff.Sprite;
+import windowStuff.Sprite.FrameAnimation;
 
 public class EmpoweringTurret extends Turret {
 
@@ -52,7 +53,7 @@ public class EmpoweringTurret extends Turret {
           world.aoeDamage((int) proj2.getX(), (int) proj2.getY(), (int) stats[ExtraStats.radius],
               pow, DamageType.TRUE);
           world.lesserExplosionVisual(proj2.getX(), proj2.getY(), stats[ExtraStats.radius])
-              .getSprite().setOpacity(.8f);
+              .setOpacity(.8f);
           return true;
         });
   }
@@ -156,7 +157,7 @@ public class EmpoweringTurret extends Turret {
                 );
                 Sprite s = new Sprite("Explosion1", 5).setPosition(x, y).setSize(500, 500)
                     .addToBs(world.getBs());
-                s.playAnimation(s.new BasicAnimation("Explosion1", .2f))
+                s.playAnimation(new FrameAnimation("Explosion1", .2f))
                     .setDeleteOnAnimationEnd(true);
               }, abilityId);
           addBuff(new DelayedTrigger<Turret>(t -> a.delete(), true));

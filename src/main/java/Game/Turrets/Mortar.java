@@ -17,6 +17,7 @@ import org.joml.Vector2d;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.Sprite;
+import windowStuff.Sprite.FrameAnimation;
 
 public class Mortar extends Turret {
 
@@ -58,7 +59,7 @@ public class Mortar extends Turret {
         p -> p.moveRelative((Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread],
             (Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread]));
     bulletLauncher.addProjectileModifier(p -> p.getSprite().playAnimation(
-        p.getSprite().new BasicAnimation("Explosion1", this.getStats()[Stats.projectileDuration])));
+        new FrameAnimation("Explosion1", this.getStats()[Stats.projectileDuration])));
 
     badgeSprite = new Sprite("turretBase", 22).setSize(sprite.getWidth()*2*0.75f,
             sprite.getWidth()*2*0.75f);

@@ -30,6 +30,7 @@ import java.util.List;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.Sprite;
+import windowStuff.Sprite.FrameAnimation;
 
 public class Necromancer extends Turret {
 
@@ -156,7 +157,7 @@ public class Necromancer extends Turret {
                 bloon.addBuff(new DelayedTrigger<TdMob>(Float.POSITIVE_INFINITY, mob -> {
                   var newZombie = bulletLauncher.attack(0, false);
                   newZombie.move(mob.getX(), mob.getY());
-                  world.lesserExplosionVisual(mob.getX(), mob.getY(), 100).getSprite()
+                  world.lesserExplosionVisual(mob.getX(), mob.getY(), 100)
                       .setColors(Util.getColors(0, 2.5f, 0.5f));
                 }, true, false));
                 return true;
@@ -215,7 +216,7 @@ public class Necromancer extends Turret {
                 mine.addBuff(new Tag<Projectile>(EatingTurret.EatImmuneTag));
                 Sprite ms = mine.getSprite();
                 ms.setLayer(50);
-                ms.playAnimation(ms.new BasicAnimation("Bomb", .1f).loop());
+                ms.playAnimation(new FrameAnimation("Bomb", .1f).loop());
 
               }, megaMineId
           );

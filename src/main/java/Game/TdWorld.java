@@ -39,13 +39,11 @@ import general.Log;
 import general.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
-import imgui.type.ImFloat;
 import imgui.type.ImInt;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.joml.Options;
 import org.joml.Vector2f;
 import windowStuff.Audio;
 import windowStuff.Audio.AudioGroup;
@@ -209,25 +207,21 @@ public class TdWorld implements World {
     }
   }
 
-  public Animation lesserExplosionVisual(float x, float y, float size) {
+  public Sprite lesserExplosionVisual(float x, float y, float size) {
     float duration = .2f;
     float scaling = size * 2 / 1000 * Game.tickIntervalMillis / duration;
     Sprite sp = new Sprite("Shockwave", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
         .setColors(Util.getColors(2.4f, .6f, 0));
-    var anim = new Animation(sp, duration).setLinearScaling(new Vector2f(scaling, scaling));
-    Game.get().addTickable(anim);
-    return anim;
+    sp.playAnimation(new TransformAnimation(duration).setLinearScaling(new Vector2f(scaling, scaling)));
+    return sp;
   }
 
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
     Game game = Game.get();
     if (shockwave) {
-      game.addTickable(
-          new Animation(
-              new Sprite("Shockwave", 3, "basic").setPosition(x, y).setSize(size, size).addToBs(bs)
-                  .setOpacity(0.7f), 2
-          ).setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f)
-      );
+      new Sprite("Shockwave", 3, "basic").setPosition(x, y).setSize(size, size).
+          addToBs(bs).setOpacity(0.7f).playAnimation(new TransformAnimation(2).
+              setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f));
     }
     Sprite sp = new SingleAnimationSprite(image, .4f, 4, "basic").setPosition(x, y)
         .setSize(size * 2, size * 2).

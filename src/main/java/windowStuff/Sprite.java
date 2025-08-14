@@ -1,8 +1,10 @@
 package windowStuff;
 
+import Game.Game;
 import general.Constants;
 import general.Data;
 import general.Util;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -42,16 +44,14 @@ public class Sprite implements AbstractSprite {
     width = og.width;
     height = og.height;
     image = og.image;
-    animation = () -> {
-    };
+    animation = noAnim;
   }
 
   public Sprite(ImageData image, int layer, String shader) {
     this.shader = Data.getShader(shader);
     this.layer = layer;
     setImage(image);
-    this.animation = () -> {
-    };
+    this.animation = noAnim;
   }
 
   public Sprite(ImageData image, int layer) {
@@ -247,7 +247,7 @@ public class Sprite implements AbstractSprite {
     return this;
   }
 
-  private boolean deleteOnAnimationEnd = false;
+  private boolean deleteOnAnimationEnd = true;
 
   protected void onAnimationEnd() {
     if (deleteOnAnimationEnd) {
@@ -269,7 +269,7 @@ public class Sprite implements AbstractSprite {
   }
 
   public synchronized void updateVertices() {
-    animation.update();
+    animation.update(this);
     if (!hasUnsavedChanges || hidden) {
       return;
     }
@@ -328,57 +328,105 @@ public class Sprite implements AbstractSprite {
         + '}';
   }
 
-  @FunctionalInterface
-  interface Animation {
+  public static final Animation noAnim = new Animation() {
+    @Override
+    public void update(Sprite sprite) {
 
-    void update();
+    }
+  };
+
+  public abstract static class Animation {
+    private boolean ended = false;
+    public abstract void update(Sprite sprite);
+    public void end(Sprite sprite){
+      if(Objects.equals(sprite.animation, this)) {
+        sprite.animation = noAnim;
+        sprite.onAnimationEnd();
+      }
+      ended=true;
+    }
+    public boolean hasEnded(){
+      return ended;
+    }
+
+    protected List<Animation> baseAnimations(){
+      return List.of(this);
+    }
+
+    public final Animation and(Animation other){
+      var l = new ArrayList<Animation>(2);
+      l.addAll(baseAnimations());
+      l.addAll(other.baseAnimations());
+      return new CompoundAnimation(l);
+    }
   }
 
-  public class BasicAnimation implements Animation {
+  public static class CompoundAnimation extends Animation{
+    private final List<Animation> animations;
+    public CompoundAnimation(List<Animation> anims){
+      animations=anims;
+    }
+
+    @Override
+    public void update(Sprite sprite) {
+      animations.removeIf(Animation::hasEnded);
+      for(Animation a : animations){
+        a.update(sprite);
+      }
+      if(animations.isEmpty()){
+        end(sprite);
+      }
+    }
+
+    @Override
+    protected List<Animation> baseAnimations(){
+      return animations;
+    }
+  }
+
+  public static class FrameAnimation extends Animation {
 
     private final int length;
-    private final float frameLengthNano;
-    private final double startTime;
+    private final float frameLengthGt;
+    private final int startTime;
     private final List<ImageData> images;
     private boolean loop = false;
 
-    public BasicAnimation(String name, float duration) {
+    public FrameAnimation(String name, float duration) {
       this(Graphics.getAnimation(name), duration);
     }
 
-    public BasicAnimation(ImageData img, float duration) {
+    public FrameAnimation(ImageData img, float duration) {
       this(List.of(img), duration);
     }
 
-    public BasicAnimation(List<ImageData> images, float duration) {
+    public FrameAnimation(List<ImageData> images, float duration) {
       length = images.size();
-      frameLengthNano = duration / length * 1000000000;
-      startTime = System.nanoTime();
+      frameLengthGt = 1000 * duration / (length * Game.tickIntervalMillis);
+      startTime = Game.get().getTicks();
       this.images = images;
     }
 
-    public BasicAnimation loop() {
+    public FrameAnimation loop() {
       loop = true;
       return this;
     }
 
     @Override
-    public void update() {
-      int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
+    public void update(Sprite sprite) {
+      int frame = (int) ((Game.get().getTicks() - startTime) / frameLengthGt);
       if (loop) {
         frame %= length;
       }
       //Log.write(length);
-      hasUnsavedChanges = true;
+      sprite.hasUnsavedChanges = true;
       if (frame >= length) {
-        image = images.get(length - 1);
-        animation = () -> {
-        };
-        onAnimationEnd();
+        sprite.image = images.get(length - 1);
+        end(sprite);
       } else {
-        image = images.get(frame);
+        sprite.image = images.get(frame);
       }
-      setUV();
+      sprite.setUV();
     }
   }
 }

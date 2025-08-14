@@ -1,7 +1,7 @@
 package Game.Turrets;
 
 import Game.Game;
-import Game.Animation;
+import Game.TransformAnimation;
 import Game.BasicCollides;
 import Game.Buffs.Explosive;
 import Game.Buffs.Modifier;
@@ -15,14 +15,12 @@ import Game.TurretGenerator;
 import general.Data;
 import general.Description;
 import general.Util;
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
-import org.joml.Vector2f;
-import windowStuff.Audio;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.Sprite;
+import windowStuff.Sprite.FrameAnimation;
 
 public class Wizard extends Turret {
 
@@ -57,11 +55,11 @@ public class Wizard extends Turret {
 
     @Override
     public void mod(BulletLauncher target) {
-      Game.get().addTickable(new Animation(
-              new Sprite(img, 3, shader).setPosition(target.getX(), target.getY()).
-                  setSize(size, size).addToBs(Game.get().getSpriteBatching("main")).setRotation(Data.unstableRng.nextFloat(360)), duration
-          ).setOpacityScaling(-1/(1000*duration/Game.tickIntervalMillis)).setSpinning(spin)
-      );
+      new Sprite(img, 3, shader).setPosition(target.getX(), target.getY()).
+          setSize(size, size).addToBs(Game.get().getSpriteBatching("main"))
+          .setRotation(Data.unstableRng.nextFloat(360))
+          .playAnimation(new TransformAnimation(duration)
+          .setOpacityScaling(-1/(1000*duration/Game.tickIntervalMillis)).setSpinning(spin));
     }
   }
 
@@ -129,7 +127,7 @@ public class Wizard extends Turret {
           };
           fireballs.addProjectileModifier(
               p -> p.getSprite().playAnimation(
-                  p.getSprite().new BasicAnimation(
+                  new FrameAnimation(
                       "Fireball", p.getStats()[Projectile.Stats.duration]
                   )
               )

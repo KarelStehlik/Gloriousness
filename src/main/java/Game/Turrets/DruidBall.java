@@ -1,6 +1,6 @@
 package Game.Turrets;
 
-import Game.Animation;
+import Game.TransformAnimation;
 import Game.Projectile;
 import Game.TdWorld;
 import Game.TickDetect;
@@ -46,27 +46,26 @@ public class DruidBall extends Projectile {
 
   class RespawningProjectile implements TickDetect {
 
-    private final Animation sprite;
+    private final Sprite sprite;
 
     RespawningProjectile() {
       float size = getStats()[Projectile.Stats.size];
 
       float scaling = .015f / regrowTime;
-      this.sprite = new Animation(
+      this.sprite =
           new Sprite(DruidBall.this.sprite).setSize(0, 0).setShader("colorCycle2").
               setOpacity(0.5f).addToBs(world.getBs()).
               setColors(Util.getCycle2colors(1f)
-              )
-          , regrowTime
-      ).setLinearScaling(new Vector2f(size * scaling, size * scaling)).setOpacityScaling(scaling)
-          .setSpinning(-20f);
+              ).playAnimation(new TransformAnimation(regrowTime)
+              .setLinearScaling(new Vector2f(size * scaling, size * scaling))
+              .setOpacityScaling(scaling)
+              .setSpinning(-20f));
     }
 
     @Override
     public void onGameTick(int tick) {
-      sprite.onGameTick(tick);
-      sprite.getSprite().setHidden(false);
-      if (sprite.WasDeleted()) {
+      sprite.setHidden(false);
+      if (sprite.isDeleted()) {
         delete();
       }
     }
@@ -78,7 +77,7 @@ public class DruidBall extends Projectile {
 
     @Override
     public boolean WasDeleted() {
-      return sprite.WasDeleted();
+      return sprite.isDeleted();
     }
   }
 }
