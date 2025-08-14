@@ -62,11 +62,15 @@ public final class Audio {
   }
 
   public static void play(String name, float volume) {
+    play(new SoundToPlay(name, volume));
+  }
+
+  public static void play(SoundToPlay sound) {
     if (!active) {
       return;
     }
     synchronized (queued) {
-      queued.add(new SoundToPlay(name, volume));
+      queued.add(sound);
     }
   }
 
@@ -119,12 +123,12 @@ public final class Audio {
     }
   }
 
-  private static class SoundToPlay {
+  public static class SoundToPlay {
 
-    String name;
-    float volume;
+    public String name;
+    public float volume;
 
-    SoundToPlay(String name, float volume) {
+    public SoundToPlay(String name, float volume) {
       this.name = name;
       this.volume = volume;
     }

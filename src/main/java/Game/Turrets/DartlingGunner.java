@@ -17,6 +17,7 @@ import general.Util;
 import java.util.List;
 import org.joml.Vector2d;
 import windowStuff.Audio;
+import windowStuff.Audio.SoundToPlay;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.SingleAnimationSprite;
@@ -50,6 +51,8 @@ public class DartlingGunner extends Turret {
   private float barrelLength = 82;
   private float barrelExplosionSize = 60;
 
+  private SoundToPlay sound = new SoundToPlay("gunshot", 0.8f);
+
   public DartlingGunner(TdWorld world, int X, int Y) {
     super(world, X, Y, new BulletLauncher(world, "drt"));
     float aspdBuff = (float) Math.pow(Data.gameMechanicsRng.nextFloat(1, (float) Math.sqrt(2)), 2);
@@ -65,7 +68,7 @@ public class DartlingGunner extends Turret {
       world.getBs().addSprite(new SingleAnimationSprite(boom,duration,21).
           setPosition(p.getX(),p.getY()).setSize(barrelExplosionSize,barrelExplosionSize).
           setRotation(p.getRotation()));
-      Audio.play("ting", 0.8f);
+      Audio.play(sound);
     });
 
     bulletLauncher.cannons.clear();
@@ -139,6 +142,7 @@ public class DartlingGunner extends Turret {
             "dartspeed is 2-25. pierce is +1 or +2 (if dartspeed is above 9), damage is +1. " +
                 "Attacks and dartspeeds 20% slower or 10% if dartspeed is decent."),
         () -> {
+          sound.volume=.9f;
           int extraPierce = originalStats[Stats.aspd] > 9 ? 2 : 1;
           float atcSpeedDebuff = originalStats[Stats.aspd] > 9 ? 0.9f : 0.8f;
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
@@ -180,6 +184,7 @@ public class DartlingGunner extends Turret {
                 +
                 "and then reduced to third."),
         () -> {
+          sound = new SoundToPlay("explosionSmall", 0.9f);
           barrelLength = 190;
           bulletLauncher.cannons.clear();
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, barrelLength));
@@ -230,6 +235,7 @@ public class DartlingGunner extends Turret {
 
             "splits into 5-20 new projectiles depending on the size of your balls"),
         () -> {
+          sound = new SoundToPlay("explosionBig", 0.8f);
           barrelLength = 250;
           bulletLauncher.cannons.clear();
           bulletLauncher.cannons.add(new BulletLauncher.Cannon(0, barrelLength));

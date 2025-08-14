@@ -140,7 +140,7 @@ public class TdWorld implements World {
         1, 1);
     game.addMouseDetect(turretBar);
 
-    game.addMouseDetect(new Button(bs, new Sprite("hhg",5).setSize(80, 40).setPosition(1103, 1020).addToBs(bs).setOpacity(0.2f)
+    game.addMouseDetect(new Button(bs, new NoSprite().setSize(80, 40).setPosition(1103, 1020)
         , (button, action) -> {
       if (action == 0) {
         return;
