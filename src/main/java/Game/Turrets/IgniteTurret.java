@@ -27,7 +27,7 @@ import windowStuff.ImageData;
 public class IgniteTurret extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("Flamethrower");
   }
 

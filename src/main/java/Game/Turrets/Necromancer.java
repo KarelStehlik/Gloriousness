@@ -34,7 +34,7 @@ import windowStuff.Sprite;
 public class Necromancer extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("Necromancer");
   }
 

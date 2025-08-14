@@ -15,7 +15,7 @@ import static Game.Buffs.StatBuff.Type.ADDED;
 public class EngiTurret8 extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     String img="turret";
     if(path2Tier>0){
       img="turret2";
@@ -92,12 +92,6 @@ public class EngiTurret8 extends Turret {
   @Override
   public int getStatsCount() {
     return 12;
-  }
-  @Override
-  public void scale(float _width,float _height){
-    sprite.scale(_width,_height);
-    baseSprite.scale(_width,_height);
-    baseSprite.setPosition(sprite.getX(),sprite.getY()-baseSprite.getHeight());
   }
 
   @Override

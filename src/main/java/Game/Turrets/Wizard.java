@@ -20,7 +20,7 @@ import windowStuff.ImageData;
 public class Wizard extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("wizard");
   }
 

@@ -22,7 +22,7 @@ import windowStuff.ImageData;
 public class EatingTurret extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("EatingTower");
   }
   static final long EatImmuneTag = Util.getUid();

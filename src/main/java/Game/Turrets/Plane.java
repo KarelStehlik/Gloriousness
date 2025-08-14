@@ -25,7 +25,7 @@ import windowStuff.Sprite;
 public class Plane extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("BasicTower");
   }
 

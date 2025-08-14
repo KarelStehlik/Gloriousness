@@ -35,7 +35,7 @@ public class Engineer8 extends Turret {
         }
     }
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
       String img;
       switch (path3Tier){
           case 0 ->
@@ -108,7 +108,7 @@ public class Engineer8 extends Turret {
           t.path1Tier=path1Tier;
           t.path2Tier=path2Tier;
           t.path3Tier=path3Tier;
-          t.sprite.setImage(t.getImage());
+          t.sprite.setImage(t.getImageUpdate());
           t.place();
           turretMods.forEach(m -> m.mod(t));
       }
@@ -365,7 +365,7 @@ public class Engineer8 extends Turret {
     stats[Stats.cost] = 75f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 100f;
-    stats[ExtraStats.spawnSpd] = 0.2f;
+    stats[ExtraStats.spawnSpd] = Data.gameMechanicsRng.nextFloat(0.2f, 1f);
     stats[ExtraStats.originalTurretAspd] = Data.gameMechanicsRng.nextFloat(0.45f, 1.2f);
     stats[ExtraStats.originalTurretSpeed] = Data.gameMechanicsRng.nextFloat(1f, 19f);
   }

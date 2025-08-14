@@ -20,7 +20,7 @@ import windowStuff.ImageData;
 public class EngiTurret extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("BasicTower");
   }
 
