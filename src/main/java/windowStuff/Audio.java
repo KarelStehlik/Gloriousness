@@ -52,6 +52,18 @@ public final class Audio {
     private boolean deleteAllSounds = false;
     private final List<SoundPlayer> players = new ArrayList<>();
     private final List<SoundToPlay> queued = new ArrayList<>();
+    private boolean updateVolume=false;
+
+    public float getVolumeMultiplier() {
+      return volumeMultiplier;
+    }
+
+    public void setVolumeMultiplier(float volumeMultiplier) {
+      this.volumeMultiplier = volumeMultiplier;
+      updateVolume=true;
+    }
+
+    private float volumeMultiplier = 1;
 
     public boolean isActive() {
       return active;
@@ -83,7 +95,7 @@ public final class Audio {
           player.play(sound);
           return;
         }
-        if (player.remaining() < minPlayer.remaining() && player.looping==null) {
+        if (player.remaining() < minPlayer.remaining() && player.currentSound ==null) {
           minPlayer = player;
         }
       }
@@ -104,6 +116,12 @@ public final class Audio {
         }
         inactiveLock.lock();
         inactiveLock.unlock();
+        if (updateVolume) {
+          for (var player : players) {
+            player.setVolumeMultiplier(volumeMultiplier);
+          }
+          updateVolume = false;
+        }
         List<SoundToPlay> dequeued;
         synchronized (queued) {
           dequeued = new ArrayList<>(queued);
@@ -206,7 +224,8 @@ public final class Audio {
     byte[] buffer = EMPTY;
     int read = 0;
     FloatControl noiseCtrl;
-    private SoundToPlay looping = null;
+    private SoundToPlay currentSound = null;
+    private float volumeMultiplier = 1;
 
     SoundPlayer() {
       try {
@@ -223,27 +242,39 @@ public final class Audio {
       return buffer.length - read;
     }
 
+    private void updateVolume(){
+      final float VOLUME_RANGE = 50;
+      if(currentSound==null){
+        return;
+      }
+      noiseCtrl.setValue(Math.max(noiseCtrl.getMinimum(), noiseCtrl.getMaximum() - (1-currentSound.volume*volumeMultiplier) * VOLUME_RANGE));
+    }
+
     void play(SoundToPlay sound) {
-      final float VOLUME_RANGE = 35;
-      noiseCtrl.setValue(Math.max(noiseCtrl.getMinimum(), noiseCtrl.getMaximum() - (1-sound.volume) * VOLUME_RANGE ));
+      currentSound = sound;
+      updateVolume();
 
       buffer = getSound(sound.name);
       read = 0;
       sourceDataLine.flush();
-      looping = sound.loop ? sound : null;
+    }
+
+    void setVolumeMultiplier(float value){
+      volumeMultiplier=value;
+      updateVolume();
     }
 
     void flush() {
       read = 0;
       sourceDataLine.flush();
       buffer = EMPTY;
-      looping=null;
+      currentSound =null;
     }
 
     void tick() {
       if (remaining() <= 0) {
-        if(looping!=null){
-          play(looping);
+        if(currentSound !=null && currentSound.loop){
+          play(currentSound);
         }
         return;
       }

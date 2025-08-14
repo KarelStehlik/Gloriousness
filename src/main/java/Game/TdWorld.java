@@ -39,6 +39,7 @@ import general.Log;
 import general.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
+import imgui.type.ImFloat;
 import imgui.type.ImInt;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class TdWorld implements World {
       float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
       for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
         explosionVisual(x, y, 100, true, "Explosion1");
-        Audio.play(new SoundToPlay("ting",1, "sfx", true));
+        Audio.play(new SoundToPlay("ting",1, "sfx"));
       }
     }));
 
@@ -179,7 +180,7 @@ public class TdWorld implements World {
     mobSpawner.beginWave();
     calcSpacPoints();
 
-    Audio.play(new SoundToPlay("sotw",0.8f, "music", true));
+    Audio.play(new SoundToPlay("sotw",1f, "music", true));
   }
 
   public void addEvent(VoidFunc e) {
@@ -344,8 +345,12 @@ public class TdWorld implements World {
         if (ImGui.checkbox(g, sound)) {
           ag.setActive(sound.get());
           if(g=="music" && sound.get()){
-            Audio.play(new SoundToPlay("sotw",0.8f, "music", true));
+            Audio.play(new SoundToPlay("sotw",1f, "music", true));
           }
+        }
+        float[] volume = new float[]{ag.getVolumeMultiplier()};
+        if(ImGui.sliderFloat(g+" volume",volume,0,1)){
+          ag.setVolumeMultiplier(volume[0]);
         }
       }
 
