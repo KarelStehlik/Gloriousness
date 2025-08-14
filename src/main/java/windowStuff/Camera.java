@@ -1,5 +1,6 @@
 package windowStuff;
 
+import general.Log;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -27,6 +28,14 @@ public class Camera {
   }
 
   public Matrix4f getViewMatrix() {
+//    for(int i=0;i<4;i++){
+//      String s="";
+//      for(int r=0;r<4;r++){
+//        s=s+" "+view.getRowColumn(r,i);
+//      }
+//      Log.write(s);
+//    }
+//    Log.write("end");
     return view;
   }
 

@@ -22,7 +22,7 @@ import windowStuff.ImageData;
 public class Druid extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("Druid");
   }
   private final String ballImage = "DruidBall";

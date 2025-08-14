@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import general.Log;
 import java.io.IOException;
@@ -29,6 +30,8 @@ import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
+
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.lwjgl.BufferUtils;
 
@@ -48,6 +51,7 @@ public class Shader {
 
       String vertexSource = null;
       String fragmentSource = null;
+      String geometrySource=null;
       try {
         String[] sources = COMPILE.split(Files.readString(Paths.get(path)));
         for (String source : sources) {
@@ -55,6 +59,8 @@ public class Shader {
             fragmentSource = source.substring(source.indexOf('#'));
           } else if (source.startsWith("vertex")) {
             vertexSource = source.substring(source.indexOf('#'));
+          }else if (source.startsWith("geometry")) {
+            geometrySource = source.substring(source.indexOf('#'));
           }
         }
       } catch (IOException e) {
@@ -75,6 +81,12 @@ public class Shader {
         Log.write(glGetShaderInfoLog(vertexID, len));
         assert false : "";
       }
+      int geoID=0;
+      if(geometrySource!=null){
+        geoID=glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geoID, geometrySource);
+        glCompileShader(geoID);
+      }
 
       int fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
       glShaderSource(fragmentID, fragmentSource);
@@ -86,10 +98,19 @@ public class Shader {
         Log.write(glGetShaderInfoLog(fragmentID, len));
         assert false : "";
       }
+      if (geometrySource!=null && (glGetShaderi(fragmentID, GL_COMPILE_STATUS) == GL_FALSE)) {
+        int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
+        Log.write("F shader compile failed. " + name);
+        Log.write(glGetShaderInfoLog(fragmentID, len));
+        assert false : "";
+      }
 
       shaderID = glCreateProgram();
       glAttachShader(shaderID, vertexID);
       glAttachShader(shaderID, fragmentID);
+      if (geometrySource!=null){
+        glAttachShader(shaderID, geoID);
+      }
       glLinkProgram(shaderID);
 
       if (glGetProgrami(shaderID, GL_LINK_STATUS) == GL_FALSE) {
@@ -101,6 +122,9 @@ public class Shader {
 
       glDeleteShader(vertexID);
       glDeleteShader(fragmentID);
+      if (geometrySource!=null){
+        glDeleteShader(geoID);
+      }
     }
   }
 
@@ -131,7 +155,9 @@ public class Shader {
     use();
     glUniform1f(varLocation, value);
   }
-
+  public void uploadMatrix(String uniformName, Matrix4f value) {
+    uploadUniform(uniformName, value);
+  }
   public void uploadTexture(String uniformName, int slot) {
     use();
     int varLocation = glGetUniformLocation(shaderID, uniformName);

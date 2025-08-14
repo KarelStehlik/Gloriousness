@@ -53,7 +53,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     clearStats();
     originalStats = getStats().clone();
 
-    sprite = new Sprite(getImage(), 20).setSize(stats[Turret.Stats.spritesize],
+    sprite = new Sprite(getImageUpdate(), 20).setSize(stats[Turret.Stats.spritesize],
         stats[Turret.Stats.spritesize]);
     sprite.setNaturalHeight();
     sprite.setPosition(x, y);
@@ -84,7 +84,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     }));
   }
 
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("");
   }
 
@@ -418,7 +418,7 @@ public abstract class Turret extends GameObject implements TickDetect {
       if(resaleValue==1){
         resaleValue=0.8f;
       }
-      sprite.setImage(getImage());
+      sprite.setImage(getImageUpdate());
       sprite.setNaturalHeight();
       openUpgradeMenu();
     }

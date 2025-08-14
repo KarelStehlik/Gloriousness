@@ -16,15 +16,29 @@ import general.Util;
 import org.joml.Vector2d;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
+import windowStuff.Sprite;
 
 public class Mortar extends Turret {
 
-  @Override
-  protected ImageData getImage(){
-    return Graphics.getImage("mortar");
-  }
+
+    @Override
+    protected ImageData getImageUpdate(){
+        String monkimg="mortarMonkey";
+        String badgeimg="mortarBadge";
+        String mortarimg="mortar";
+
+
+        if(badgeSprite!=null){
+            badgeSprite.setImage(badgeimg);
+        }
+        if(monkeySprite!=null){
+            monkeySprite.setImage(monkimg);
+        }
+        return Graphics.getImage(mortarimg);
+    }
 
   private final Explosive<Projectile> explosive = new Explosive<>(0, 0);
+
 
   @Override
   protected void extraStatsUpdate() {
@@ -34,6 +48,9 @@ public class Mortar extends Turret {
     }
   }
 
+  public Sprite badgeSprite;
+  public Sprite monkeySprite;
+
   public Mortar(TdWorld world, int X, int Y) {
     super(world, X, Y, new BulletLauncher(world, "drt"));
     bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
@@ -42,6 +59,19 @@ public class Mortar extends Turret {
             (Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread]));
     bulletLauncher.addProjectileModifier(p -> p.getSprite().playAnimation(
         p.getSprite().new BasicAnimation("Explosion1", this.getStats()[Stats.projectileDuration])));
+
+    badgeSprite = new Sprite("turretBase", 22).setSize(sprite.getWidth()*2*0.75f,
+            sprite.getWidth()*2*0.75f);
+    world.getBs().addSprite(badgeSprite);
+    badgeSprite.setShader("basic");
+
+    monkeySprite = new Sprite("turretBase", 22).setSize(sprite.getWidth()*1.75f,
+          0);
+    monkeySprite.setNaturalHeight();
+    world.getBs().addSprite(monkeySprite);
+    monkeySprite.setShader("rotator");
+    move(X,Y);
+    getImageUpdate();
     onStatsUpdate();
   }
 
@@ -49,6 +79,22 @@ public class Mortar extends Turret {
     return new TurretGenerator(world, "mortar", "Mortar",
         () -> new Mortar(world, -1000, -1000));
   }
+
+
+    @Override
+    public void move(float _x, float _y) {
+        super.move(_x, _y);
+        sprite.setPosition(_x, _y);
+        badgeSprite.setPosition(sprite.getX(),sprite.getY()-sprite.getHeight()*0.2f);
+        monkeySprite.setPosition(sprite.getX()+sprite.getWidth()+monkeySprite.getWidth(),sprite.getY()-sprite.getHeight()+monkeySprite.getHeight());
+        rangeDisplay.setPosition(_x, _y);
+        if (world.canFitTurret((int) x, (int) y, stats[Stats.size])) {
+            rangeDisplay.setColors(Util.getColors(0, 0, 0));
+        } else {
+            rangeDisplay.setColors(Util.getColors(9, 0, 0));
+        }
+        bulletLauncher.move(_x, _y);
+    }
 
   @Override
   protected Upgrade up100() {
@@ -145,8 +191,6 @@ public class Mortar extends Turret {
 
     Vector2d mousePos = Game.get().getUserInputListener().getPos();
 
-    setRotation(Util.get_rotation((float) mousePos.x - x, (float) mousePos.y - y));
-
     while (bulletLauncher.canAttack()) {
       bulletLauncher.move((float) mousePos.x, (float) mousePos.y);
       bulletLauncher.attack(rotation, true);
@@ -154,6 +198,14 @@ public class Mortar extends Turret {
 
     buffHandler.tick();
   }
+    @Override
+    public void delete() {
+        sprite.delete();
+        badgeSprite.delete();
+        monkeySprite.delete();
+        buffHandler.delete();
+        rangeDisplay.delete();
+    }
 
   // generated stats
   @Override
@@ -166,7 +218,7 @@ public class Mortar extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 0f;
     stats[Stats.pierce] = 0f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.4f, 0.8f);
+    stats[Stats.aspd] = 0f;
     stats[Stats.projectileDuration] = 0.9f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(120f, 180f);
     stats[Stats.speed] = 0f;

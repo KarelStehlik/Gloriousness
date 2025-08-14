@@ -28,7 +28,7 @@ import Game.Animation;
 public class DartlingGunner extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     String prefix = switch (path1Tier) {
       case 0 -> "Gunner";
       case 1 -> "doubleGunner";

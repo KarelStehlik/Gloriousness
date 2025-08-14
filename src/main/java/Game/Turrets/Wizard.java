@@ -27,7 +27,7 @@ import windowStuff.Sprite;
 public class Wizard extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("wizard");
   }
 

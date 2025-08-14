@@ -27,7 +27,7 @@ import windowStuff.Sprite;
 public class EmpoweringTurret extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("EmpoweringTower");
   }
   private static final long projBuffId = Util.getUid();

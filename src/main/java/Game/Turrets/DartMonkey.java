@@ -21,7 +21,7 @@ import windowStuff.TextModifiers;
 public class DartMonkey extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     if(path1Tier==4){
       return Graphics.getImage("bombsuit");
     }

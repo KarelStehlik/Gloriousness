@@ -22,7 +22,7 @@ import windowStuff.Sprite;
 public class Druid8 extends Turret {
 
   @Override
-  protected ImageData getImage(){
+  protected ImageData getImageUpdate(){
     return Graphics.getImage("Druid");
   }
 
