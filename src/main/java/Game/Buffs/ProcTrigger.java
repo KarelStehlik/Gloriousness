@@ -1,6 +1,5 @@
 package Game.Buffs;
 
-import Game.GameObject;
 import general.Data;
 
 public class ProcTrigger<T> implements Modifier<T> {//happens sometimes

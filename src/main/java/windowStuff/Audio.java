@@ -88,6 +88,10 @@ public final class Audio {
       }
     }
 
+    public void clear(){
+      deleteAllSounds = true;
+    }
+
     public void play(SoundToPlay sound) {
       if (!active) {
         return;

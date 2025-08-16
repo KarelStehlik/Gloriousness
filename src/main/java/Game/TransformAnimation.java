@@ -1,6 +1,5 @@
 package Game;
 
-import general.Log;
 import org.joml.Vector2f;
 import windowStuff.Sprite;
 

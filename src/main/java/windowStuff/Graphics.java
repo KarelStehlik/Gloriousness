@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
 import org.joml.Vector3f;
 
 public final class Graphics {

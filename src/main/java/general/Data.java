@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.joml.Matrix4f;
-import windowStuff.Camera;
 import windowStuff.Graphics;
 import windowStuff.ImageSet;
 import windowStuff.Shader;

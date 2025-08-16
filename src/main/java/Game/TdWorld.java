@@ -528,6 +528,7 @@ public class TdWorld implements World {
   public void delete() {
     mapSprite.delete();
     turretBar.delete();
+    Audio.getGroup("music").clear();
     Game.get().nuke();
   }
 

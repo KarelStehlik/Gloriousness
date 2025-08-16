@@ -6,6 +6,7 @@ import windowStuff.Audio;
 import windowStuff.Audio.SoundToPlay;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
+import windowStuff.SimpleText;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
 
@@ -15,7 +16,7 @@ public class IntroScreen implements World {
   private final SpriteBatching bs;
 
   public IntroScreen() {
-    Audio.play(new SoundToPlay("legion",0.6f, "music", true));
+    Audio.play(new SoundToPlay("legion",0.85f, "music", true));
     bs = Game.get().getSpriteBatching("main");
     int mapCount = Data.listMaps().length;
     Button[] buttons = new Button[mapCount];
@@ -29,6 +30,8 @@ public class IntroScreen implements World {
         1, 1);
     Game.get().addMouseDetect(maps);
   }
+
+
 
   private Button makeMapButton(int id) {
     String mapName = Data.listMaps()[id];
@@ -67,15 +70,13 @@ public class IntroScreen implements World {
 
   @Override
   public void onGameTick(int tick) {
-
   }
 
   @Override
   public void delete() {
     maps.delete();
     Game.get().nuke();
-    Audio.getGroup("music").setActive(false);
-    Audio.getGroup("music").setActive(true);
+    Audio.getGroup("music").clear();
   }
 
   @Override

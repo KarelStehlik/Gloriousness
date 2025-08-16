@@ -1,26 +1,34 @@
 package Game.Turrets;
 
+import static Game.Buffs.StatBuff.Type.ADDED;
+import static Game.Buffs.StatBuff.Type.MORE;
+import static Game.Turrets.Engineer8.ExtraStats.originalTurretAspd;
+import static Game.Turrets.Engineer8.ExtraStats.originalTurretSpeed;
+
 import Game.BasicCollides;
-import Game.Buffs.*;
+import Game.Buffs.DelayedTrigger;
+import Game.Buffs.Explosive;
+import Game.Buffs.Modifier;
+import Game.Buffs.OnTickBuff;
+import Game.Buffs.ProcTrigger;
+import Game.Buffs.StatBuff;
 import Game.BulletLauncher;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.TdWorld;
 import Game.TurretGenerator;
-import general.*;
-import windowStuff.Sprite;
-import windowStuff.TextModifiers;
-
-import java.awt.*;
+import general.Data;
+import general.Description;
+import general.RefFloat;
+import general.RefInt;
+import general.Util;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
-
-import static Game.Buffs.StatBuff.Type.ADDED;
-import static Game.Buffs.StatBuff.Type.MORE;
-import static Game.Turrets.Engineer8.ExtraStats.originalTurretAspd;
-import static Game.Turrets.Engineer8.ExtraStats.originalTurretSpeed;
+import windowStuff.Sprite;
+import windowStuff.TextModifiers;
 
 public class Engineer8 extends Turret {
 
