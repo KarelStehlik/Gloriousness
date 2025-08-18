@@ -57,6 +57,10 @@ public class IntroScreen implements World {
       buttons[i] = makeMapButton(i);
     }
 
+    new Sprite("introScreen", 2).addToBs(bs).
+        setPosition(Constants.screenSize.x/2f, Constants.screenSize.y*0.65f ).
+        setSize(1024, 1536).scale(0.6f);
+
     StringBuilder lst = new StringBuilder(" ".repeat(80));
     for(String s : Util.shuffle(loadingScreenTips, Data.unstableRng)){
       lst.append(s).append(TextModifiers.gigaReset).append(" ".repeat(35));
