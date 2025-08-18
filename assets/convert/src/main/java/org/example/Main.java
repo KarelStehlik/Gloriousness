@@ -27,7 +27,7 @@ public final class Main {
     FileTime now = FileTime.fromMillis(System.currentTimeMillis());
     Files.setLastModifiedTime(Paths.get("fonts"), now);
 
-    String key = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789/*-+{}[]()<>?!|.,:'\"_%$#@&=~ \n";
+    String key = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789°/*-+{}[]()<>?!|.,:'\"_%$#@&=~ \n";
 
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     Graphics g2d = img.createGraphics();

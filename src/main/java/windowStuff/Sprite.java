@@ -11,6 +11,12 @@ import java.util.Objects;
 
 public class Sprite implements AbstractSprite {
 
+  public static final Animation noAnim = new Animation() {
+    @Override
+    public void update(Sprite sprite) {
+
+    }
+  };
   private final float[] positions = new float[8];
   protected boolean hasUnsavedChanges = true;
   protected String textureName;
@@ -30,6 +36,7 @@ public class Sprite implements AbstractSprite {
   private ImageData image;
   private Animation animation;
   private int lastGt;
+  private boolean deleteOnAnimationEnd = true;
 
   public Sprite(Sprite og) {
     textureName = og.textureName;
@@ -65,32 +72,13 @@ public class Sprite implements AbstractSprite {
     this(Graphics.getImage(image), layer, "basic");
   }
 
+
   public Sprite(String image, int layer, String shader) {
     this(Graphics.getImage(image), layer, shader);
   }
 
-
-  public Shader getShader() {
-    return shader;
-  }
-
-  @Override
-  public Sprite setShader(String shader) {
-    this.shader = Data.getShader(shader);
-    this.mustBeRebatched = true;
-    return this;
-  }
-
-  @Override
-  public float getRotation() {
-    return rotation;
-  }
-
-  @Override
-  public Sprite setRotation(float r) {
-    rotation = r;
-    hasUnsavedChanges = true;
-    return this;
+  public ImageData getImage() {
+    return image;
   }
 
   @Override
@@ -109,6 +97,16 @@ public class Sprite implements AbstractSprite {
   @Override
   public Sprite setImage(String name) {
     return setImage(Graphics.getImage(name));
+  }
+
+  @Override
+  public void setNaturalHeight() {
+    setSize(2 * width, 2 * width / (texCoords[4] - texCoords[2]) * (texCoords[3] - texCoords[1]));
+  }
+
+  @Override
+  public void setNaturalWidth() {
+    setSize(2 * height * (texCoords[4] - texCoords[2]) / (texCoords[3] - texCoords[1]), 2 * height);
   }
 
   @Override
@@ -138,6 +136,29 @@ public class Sprite implements AbstractSprite {
   public Sprite setSize(float w, float h) {
     width = w / 2;
     height = h / 2;
+    hasUnsavedChanges = true;
+    return this;
+  }
+
+  public Shader getShader() {
+    return shader;
+  }
+
+  @Override
+  public Sprite setShader(String shader) {
+    this.shader = Data.getShader(shader);
+    this.mustBeRebatched = true;
+    return this;
+  }
+
+  @Override
+  public float getRotation() {
+    return rotation;
+  }
+
+  @Override
+  public Sprite setRotation(float r) {
+    rotation = r;
     hasUnsavedChanges = true;
     return this;
   }
@@ -213,12 +234,12 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public void setHidden(boolean hidden) {
-    if(hidden==this.hidden){
+    if (hidden == this.hidden) {
       return;
     }
     this.hidden = hidden;
-    if(!hidden){
-      lastGt=Game.get().getTicks();
+    if (!hidden) {
+      lastGt = Game.get().getTicks();
     }
   }
 
@@ -256,8 +277,6 @@ public class Sprite implements AbstractSprite {
     return this;
   }
 
-  private boolean deleteOnAnimationEnd = true;
-
   protected void onAnimationEnd() {
     if (deleteOnAnimationEnd) {
       delete();
@@ -268,17 +287,8 @@ public class Sprite implements AbstractSprite {
     texCoords = image.textureCoordinates;
   }
 
-  @Override
-  public void setNaturalHeight() {
-    setSize(2 * width, 2 * width / (texCoords[4] - texCoords[2]) * (texCoords[3] - texCoords[1]));
-  }
-  @Override
-  public void setNaturalWidth() {
-    setSize(2 * height* (texCoords[4] - texCoords[2]) / (texCoords[3] - texCoords[1]), 2 * height);
-  }
-
   public synchronized void updateVertices() {
-    if(hidden){
+    if (hidden) {
       return;
     }
     {
@@ -346,32 +356,29 @@ public class Sprite implements AbstractSprite {
         + '}';
   }
 
-  public static final Animation noAnim = new Animation() {
-    @Override
-    public void update(Sprite sprite) {
-
-    }
-  };
-
   public abstract static class Animation {
+
     private boolean ended = false;
+
     public abstract void update(Sprite sprite);
-    public void end(Sprite sprite){
-      if(Objects.equals(sprite.animation, this)) {
+
+    public void end(Sprite sprite) {
+      if (Objects.equals(sprite.animation, this)) {
         sprite.animation = noAnim;
         sprite.onAnimationEnd();
       }
-      ended=true;
+      ended = true;
     }
-    public boolean hasEnded(){
+
+    public boolean hasEnded() {
       return ended;
     }
 
-    protected List<Animation> baseAnimations(){
+    protected List<Animation> baseAnimations() {
       return List.of(this);
     }
 
-    public final Animation and(Animation other){
+    public final Animation and(Animation other) {
       var l = new ArrayList<Animation>(2);
       l.addAll(baseAnimations());
       l.addAll(other.baseAnimations());
@@ -379,25 +386,27 @@ public class Sprite implements AbstractSprite {
     }
   }
 
-  public static class CompoundAnimation extends Animation{
+  public static class CompoundAnimation extends Animation {
+
     private final List<Animation> animations;
-    public CompoundAnimation(List<Animation> anims){
-      animations=anims;
+
+    public CompoundAnimation(List<Animation> anims) {
+      animations = anims;
     }
 
     @Override
     public void update(Sprite sprite) {
       animations.removeIf(Animation::hasEnded);
-      for(Animation a : animations){
+      for (Animation a : animations) {
         a.update(sprite);
       }
-      if(animations.isEmpty()){
+      if (animations.isEmpty()) {
         end(sprite);
       }
     }
 
     @Override
-    protected List<Animation> baseAnimations(){
+    protected List<Animation> baseAnimations() {
       return animations;
     }
   }
@@ -406,8 +415,8 @@ public class Sprite implements AbstractSprite {
 
     private final int length;
     private final float frameLengthGt;
-    private int lifetime = 0;
     private final List<ImageData> images;
+    private int lifetime = 0;
     private boolean loop = false;
 
     public FrameAnimation(String name, float duration) {

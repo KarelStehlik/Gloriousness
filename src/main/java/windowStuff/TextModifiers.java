@@ -1,5 +1,9 @@
 package windowStuff;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+
 public class TextModifiers {//mb this should be an enum but I can't really think of a reason why it would work better that way?
   //the color is in RGB but like there's a problem because the shader doesn't really work the way one might think it does.
   //until I make a new shader after bitching about the current one max saturation can only be achieved if R+G+B==765(three times 255).
@@ -14,4 +18,17 @@ public class TextModifiers {//mb this should be an enum but I can't really think
   public static final String titleSize = "|#70|";
   public static final String normalSize = "|#35|";
   public static final String smallSize = "|#25|";
+  public static final String reset = "|#<|";
+  public static final String gigaReset = "|#<<|";
+  public static String colors(float[] colors){
+    StringBuilder str = new StringBuilder("|color:");
+    for(int i=0;i<colors.length;i++){
+      if(i!=0){
+        str.append(',');
+      }
+      str.append(colors[i]);
+    }
+    str.append("|");
+    return str.toString();
+  }
 }

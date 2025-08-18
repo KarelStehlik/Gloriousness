@@ -1,5 +1,10 @@
 package general;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 public final class Util {
 
   // number of table entries per degree
@@ -59,6 +64,17 @@ public final class Util {
   public static long getUid() {
     id++;
     return id;
+  }
+
+  public static <T> List<T> shuffle(List<T> input, Random rng){
+    List<T> newList = new ArrayList<T>(input);
+    for(int i=0;i<newList.size()-1; i++){
+      T item = newList.get(i);
+      int swapWith = rng.nextInt(i, newList.size());
+      newList.set(i, newList.get(swapWith));
+      newList.set(swapWith, item);
+    }
+    return newList;
   }
 
   public static float sin(float a) {

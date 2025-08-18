@@ -68,13 +68,13 @@ class TestSetup:
     def add(self, e, poi):
         loc = self.fallDown(*poi, *e.size)
 
-        a = (loc[0], loc[1] + e.size[1])
-        b = (loc[0] + e.size[0], loc[1])
+        a = (loc[0], loc[1] + e.size[1]+1)
+        b = (loc[0] + e.size[0]+1, loc[1])
         self.POIs.append(a)
         self.POIs.append(b)
         self.POIs.remove(poi)
         self.POIs.sort(key=lambda p: p[0] + p[1])
-        self.covered.append((*loc, *e.size))
+        self.covered.append((*loc, e.size[0]+1, e.size[1]+1))
         self.images.append(e)
         self.imageLocations.append(loc)
         self.spaceLeft -= e.pixelCount
@@ -106,13 +106,9 @@ class TestSetup:
             poi = self.imageLocations[i]
             e = self.images[i]
             new.paste(e, poi)
-            b, l, t, r = poi[1] / TEXSIZE, poi[0] / TEXSIZE, (poi[1] + e.size[1]) / TEXSIZE, (
+            b, l, t, r = (poi[1]) / TEXSIZE, (poi[0]) / TEXSIZE, (poi[1] + e.size[1]) / TEXSIZE, (
                     poi[0] + e.size[0]) / TEXSIZE
 
-            b += 1 / TEXSIZE
-            l += 1 / TEXSIZE
-            t -= 1 / TEXSIZE
-            r -= 1 / TEXSIZE
             images += [f"\n{e.name}|{r}|{b}|{l}|{t}|{r}|{t}|{l}|{b}"]
 
         def sortingKey(string):
