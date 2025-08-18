@@ -55,7 +55,7 @@ public class IntroScreen implements World {
       lst.append(s).append(TextModifiers.gigaReset).append(" ".repeat(35));
     }
     text = new ScrollingText(lst.toString(), 1500, 3, 100, bs, "path");
-    text.setSpeed(4.5);
+    text.setSpeed(4.5f);
     text.move(200,200);
 
     maps = new ButtonArray(2,
