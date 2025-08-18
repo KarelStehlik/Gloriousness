@@ -36,9 +36,16 @@ public class IntroScreen implements World {
       "BIG DAMAGE is effective against bloons, whereas against MOABs you'll want |#200|"+TextModifiers.red+"HUGE DAMAGE.",
       "|#16|Path of Exile.",
       "Meth is very healthy for babies, says scientific study |#28|sponsored by Big Beautiful 'Murican Meth inc.",
-      "Buying monkeys to fight a war for you is not slavery. It's actually...       Fucking |#25|Dude wtf you want me to say???         You can't be serious.          Bro- No you're fired!       What do you mean i'm not the boss - you know what, fuck this, i quit!     Never wanted to be a fucking reporter anyway.          Yes it IS good for me! As for you, you can suck on my - Hey! What are you calling security for?      Hey! No! Wait!",
+      "Buying monkeys to fight a war for you is not slavery. It's actually...       Fucking |#25|Dude wtf you want me to say???         You can't be serious.          Bro- No YOU're fired!       What do you mean i'm not the boss - you know what, fuck this, i quit!     Never wanted to be a fucking reporter anyway.          Yes it IS good for me! As for you, you can suck on my - Hey! What are you calling security for?      Hey! No! Wait!",
       "If Einstein was so smart, then where is all his |#400.#350.#0|GOLD?|#<|              |#65|Also how much of it is there, what are the security measures on it, what's the guard schedule, and where are the camera blind spots?",
-      "Please stand by while we launch a nuclear warhead into our backyard (i think i saw a green bloon)"
+      "Please stand by while we launch a nuclear warhead into our backyard (i think i saw a green bloon)",
+      "Camo bloons don't currently exist. Or maybe they're just hidden so well that you don't know it? |#20|#20.#20.#20|boo.",
+      "Monkey wizards are scientific proof that magic is real. Scientific proof means that wizards are now consistent with science, say scientists. Thus, magic is not real.",
+      "How do you slay that which has no life? With fire, i guess? Most things will die to fire.",
+      "Druids harness the power of nature. Indeed, glowing green balls that destroy bloons and regrow from nothing when depleted are very natural.",
+      "The dart monkey can also throw babies. It's not very effective, but hey, if you provide him with babies he can do that i guess.",
+      "Necromancers drain the souls of their victims and sell them on the dark web. |#35|Anyone want some? Buy 40, get 10 free!",
+      "Engineers did not help in the creation of this game. Lazy fucks."
   );
 
   public IntroScreen() {
