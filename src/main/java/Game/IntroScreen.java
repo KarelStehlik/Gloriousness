@@ -25,15 +25,20 @@ public class IntroScreen implements World {
   private static final List<String> loadingScreenTips = List.of(
       TextModifiers.colors(Util.getCycle2colors(1))+"shader:colorCycle2|#200|OBSERVE",
       TextModifiers.colors(Util.getCycle2colors(1))+"shader:colorCycle2|#150|PINK FLUFFY UNICORNS|#<|#<|#<|#16|#100.#100.#100|not included",
-      "Scientists prove that they can't prove shit",
+      "Scientists prove that they can't prove shit.",
       "Fun fact: There are no aliens on Earth. Especially not at 38\u00B053'51.5\"N 77\u00B002'11.5\"W. And if there are, they're not weak to guns, don't even try.",
       "Thomas Jefferson was a guy. |#40|(male)",
       "Target a mortar monkey at a bank to reduce the likelihood that it will be robbed.",
       "Why did the chicken cross the road? Because you didn't build enough defense, skill issue.",
-      "BIG DAMAGE is effective against bloons, whereas against MOABs you'll want |#200|HUGE DAMAGE.",
       "Breaking news: ẨẨẨẨẨẨẨẨẨ. Alright it's fine, I fixed the news.",
-      "We kindly remind everyone that balloons aren't human, which means the Geneva convention doesn't apply.",
-      "Dartling gunner has a message. He says \"I GOT A |#140|HUGE|#<| GUN!\". He is not currently threatening me with said GUN. Also, he should get a raise."
+      "We kindly remind everyone that bloons aren't human, which means the Geneva convention doesn't apply.",
+      "Dartling gunner has a message. He says \"I GOT A |#140|HUGE|#<| GUN!\". He is not currently threatening me with said GUN. Also, he should get a raise.",
+      "BIG DAMAGE is effective against bloons, whereas against MOABs you'll want |#200|"+TextModifiers.red+"HUGE DAMAGE.",
+      "|#16|Path of Exile.",
+      "Meth is very healthy for babies, says scientific study |#28|sponsored by Big Beautiful 'Murican Meth inc.",
+      "Buying monkeys to fight a war for you is not slavery. It's actually...       Fucking |#25|Dude wtf you want me to say???         You can't be serious.          Bro- No you're fired!       What do you mean i'm not the boss - you know what, fuck this, i quit!     Never wanted to be a fucking reporter anyway.          Yes it IS good for me! As for you, you can suck on my - Hey! What are you calling security for?      Hey! No! Wait!",
+      "If Einstein was so smart, then where is all his |#400.#350.#0|GOLD?|#<|              |#65|Also how much of it is there, what are the security measures on it, what's the guard schedule, and where are the camera blind spots?",
+      "Please stand by while we launch a nuclear warhead into our backyard (i think i saw a green bloon)"
   );
 
   public IntroScreen() {
@@ -47,9 +52,10 @@ public class IntroScreen implements World {
 
     StringBuilder lst = new StringBuilder(" ".repeat(80));
     for(String s : Util.shuffle(loadingScreenTips, Data.unstableRng)){
-      lst.append(s).append(TextModifiers.gigaReset).append(" ".repeat(15));
+      lst.append(s).append(TextModifiers.gigaReset).append(" ".repeat(35));
     }
     text = new ScrollingText(lst.toString(), 1500, 3, 100, bs, "path");
+    text.setSpeed(4.5);
     text.move(200,200);
 
     maps = new ButtonArray(2,
