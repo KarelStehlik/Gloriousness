@@ -3,9 +3,11 @@ package Game.Turrets;
 import Game.BasicCollides;
 import Game.Buffs.Explosive;
 import Game.Buffs.Modifier;
+import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
 import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
+import Game.BulletLauncher.Cannon;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;
@@ -109,7 +111,7 @@ public class Wizard extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Fireball-0", new Description("fireball"),
+    return new Upgrade("Fireball-0", new Description("Fireball","shoots fireball"),
         () -> {
           Explosive<Projectile> explosive = new Explosive<>(2, 100);
           BulletLauncher fireballs = new BulletLauncher(world, "Fireball-0") {
@@ -137,19 +139,94 @@ public class Wizard extends Turret {
           fireballs.updateStats(stats);
           fireballs.addProjectileModifier(p -> p.addBeforeDeath(explosive));
           spells.add(fireballs);
-        }, 1000);
+        }, 250);
+  }
+
+  @Override
+  protected Upgrade up020() {
+    return new Upgrade("fireball", new Description("Fire Breath","shoots fire breath"),
+        () -> {
+          BulletLauncher dbreath = new BulletLauncher(world, "fireball") {
+            @Override
+            public void updateStats(float[] stats) {
+              setDuration(stats[Turret.Stats.projectileDuration] * 0.25f);
+              setPierce((int) stats[Stats.pierce]);
+              setPower(stats[Stats.power]);
+              setSize(stats[Turret.Stats.bulletSize] * 0.8f);
+              setSpeed(stats[Turret.Stats.speed]);
+              setCooldown(1000f / stats[Turret.Stats.aspd] * 0.05f);
+            }
+          };
+          dbreath.setSpread(50);
+          //dbreath.addAttackEffect(new CastAnimation("fireRune", 600, 1,3));
+          dbreath.addMobCollide(BasicCollides.damage);
+          dbreath.updateStats(stats);
+          spells.add(dbreath);
+        }, 1800);
   }
 
 
   @Override
   protected Upgrade up001() {
-    return new Upgrade("DoubleDart", new Description("shoots 1.5x faster."),
+    return new Upgrade("DoubleDart", new Description("Faster Casting","shoots 1.5x faster."),
         () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 1.5f)), 100);
   }
 
   @Override
+  protected Upgrade up100() {
+    return new Upgrade("inheritor3", new Description("More Bolts","shoots 2 additional magic bolts"),
+        () -> {
+          bulletLauncher.cannons.add(new Cannon(0,0, 25));
+          bulletLauncher.cannons.add(new Cannon(0,0, -25));
+        }
+        , 100);
+  }
+
+  @Override
+  protected Upgrade up200() {
+    return new Upgrade("boost", new Description("Overcharge","each magic bolt fired charges all other spells"),
+        () -> {
+          bulletLauncher.addProjectileModifier(p->{
+            for(BulletLauncher spell : spells){
+              if(spell != bulletLauncher){
+                spell.setRemainingCooldown(spell.getRemainingCooldown()-300);
+              }
+            }
+          });
+        }
+        , 777);
+  }
+
+  @Override
+  protected Upgrade up300() {
+    return new Upgrade("blustop", new Description("Superior magicking","significantly reduces magic bolt cooldown"),
+        () -> {
+          bulletLauncher.addAttackEffect(mBolt -> mBolt.setRemainingCooldown(mBolt.getRemainingCooldown()-mBolt.getCooldown()*0.65f));
+        }
+        , 2000);
+  }
+
+  private final Projectile.Guided guided = new Projectile.Guided(1000, 3);
+  @Override
+  protected Upgrade up400() {
+    return new Upgrade("zaprot", new Description("Archmage","Magic bolts now seek and reduce all other spell cooldowns when they hit a target."),
+        () -> {
+          bulletLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(guided::tick)));
+          bulletLauncher.addMobCollide((mob,proj) -> {
+            for(BulletLauncher spell : spells){
+              if(spell != bulletLauncher){
+                spell.setRemainingCooldown(spell.getRemainingCooldown()-400);
+              }
+            }
+            return true;
+          });
+        }
+        , 5000);
+  }
+
+  @Override
   protected Upgrade up002() {
-    return new Upgrade("bluray", new Description("lightning"),
+    return new Upgrade("bluray", new Description("Lightning","lightning"),
         () -> {
           BulletLauncher lightning = new BulletLauncher(world, "bluray") {
             @Override

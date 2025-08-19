@@ -90,7 +90,12 @@ public class BulletLauncher {
   }
 
   private float x, y;
-  public float cooldown;
+
+  public float getCooldown() {
+    return cooldown;
+  }
+
+  private float cooldown;
   private float spread = 0;
 
   public float getRemainingCooldown() {
@@ -154,7 +159,7 @@ public class BulletLauncher {
     projectileCollides.addAll(og.projectileCollides);
     projectileModifiers.addAll(og.projectileModifiers);
     launcher = og.launcher;
-    cannons = (ArrayList<Cannon>) og.cannons.clone();
+    cannons = new ArrayList<>(og.cannons);
   }
 
   public void addProjectileModifier(Modifier<Projectile> projectileModifier) {

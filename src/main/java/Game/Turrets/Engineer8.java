@@ -180,11 +180,11 @@ public class Engineer8 extends Turret {
                         "The random penalty is then lowered by 1/19 for every turret dartspeed where 19 (max dartspeed) cancels it completely"),
                 () -> {
                     addBuff(new StatBuff<Turret>(MORE, ExtraStats.spawnSpd, 2));
-                    bulletLauncher.setRemainingCooldown(turretLauncher.cooldown);
+                    bulletLauncher.setRemainingCooldown(turretLauncher.getCooldown());
                     bulletLauncher.addAttackEffect(new ProcTrigger<BulletLauncher>(
                             launcher->{
                                 launcher.setRemainingCooldown(
-                                        launcher.cooldown
+                                        launcher.getCooldown()
                                                 *6.9f*(1-1/19f*getStats()[originalTurretSpeed])
                                 );//is 6.9 because the cooldown is also added normally
 
