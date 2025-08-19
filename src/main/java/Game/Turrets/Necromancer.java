@@ -403,7 +403,6 @@ public class Necromancer extends Turret {
 
   private void updateRange() {
     spawnPoints.clear();
-    Log.write(stats[Stats.range] * stats[Stats.range]);
     for (TrackPoint p : world.spacPoints) {
       if (Util.distanceSquared(p.getX() - x, p.getY() - y)
           < stats[Stats.range] * stats[Stats.range]) {

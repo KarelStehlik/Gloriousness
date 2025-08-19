@@ -197,7 +197,7 @@ public final class Audio {
     try{
       groups.get(sound.type).play(sound);
     }catch (NullPointerException e) {
-      Log.write("noo such sound type: "+sound.type);
+      Log.write("no such sound type: "+sound.type);
     }
   }
 

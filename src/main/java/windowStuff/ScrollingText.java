@@ -1,7 +1,6 @@
 package windowStuff;
 
 import general.Constants;
-import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -217,15 +216,17 @@ public class ScrollingText implements Text {
 
       float fontSize = currentStyle.size;
 
-      while(i>=symbols.size()){
-        symbols.add(new Symbol());
+      if(i>=symbols.size()){
+        Symbol s = new Symbol();
+        symbols.add(s);
+        s.setCharacter(text.charAt(requestedChar));
       }
       Symbol symbol = symbols.get(i);
 
-      symbol.cutoffLeft=xOffset < 0? -xOffset : 0;
-      symbol.cutoffRight=maxWidth-xOffset;
+      float cutoffLeft=xOffset < 0? -xOffset : 0;
+      float cutoffRight=maxWidth-xOffset;
+      symbol.setCutoff(cutoffLeft, cutoffRight);
 
-      symbol.setCharacter(text.charAt(requestedChar));
       symbol.move(x + xOffset + symbol.width * .5f, y + symbol.sprite.getHeight()*0.25f- background.getHeight()*0.4f);
 
       if(symbol.cutoffLeft > symbol.width){
@@ -234,6 +235,11 @@ public class ScrollingText implements Text {
       }
 
       xOffset += symbol.width;
+    }
+
+    while(startChar > sc){
+      symbols.remove(0).delete();
+      sc++;
     }
 
     while (symbols.size()>i) {
@@ -406,10 +412,11 @@ public class ScrollingText implements Text {
     float width;
     char character=' ';
     float cutoffLeft=0, cutoffRight=4000;
+    private ImageData baseImage;
 
     Symbol() {
-      ImageData img = Graphics.getImage(fontName + "-SPACE");
-      sprite = new Sprite(img, layer, currentStyle.shader).addToBs(bs);
+      baseImage = Graphics.getImage(fontName + "-SPACE");
+      sprite = new Sprite(baseImage, layer, currentStyle.shader).addToBs(bs);
     }
 
     void updateScale() {
@@ -429,33 +436,46 @@ public class ScrollingText implements Text {
     }
 
     void setCharacter(char c) {
-      ImageData ogImg = Graphics.getImage(fontName + '-' + Character.getName(c));
+      baseImage = Graphics.getImage(fontName + '-' + Character.getName(c));
+
+      sprite.setImage(baseImage);
+
+      float widthInTexture = textureHeight / currentStyle.size;
+      float[] ogUV = baseImage.textureCoordinates;
+      float w = ogUV[0] - ogUV[2];
+      width = w / widthInTexture;
+
+      sprite.setShader(currentStyle.shader);
+      sprite.setSize(width, currentStyle.size);
+      character = c;
+      sprite.setColors(currentStyle.colors);
+    }
+
+    void setCutoff(float left, float right){
+      if(left <= 0 && right >= width && cutoffLeft <= 0 && cutoffRight >= width){
+        return;
+      }
+
+      cutoffLeft=left;
+      cutoffRight=right;
+
       List<Float> tc = new ArrayList<>();
-      for (float f : ogImg.textureCoordinates){
+      for (float f : baseImage.textureCoordinates){
         tc.add(f);
       }
-      tc.set(2, tc.get(2) + cutoffLeft / currentStyle.size *textureHeight);
-      tc.set(6, tc.get(6) + cutoffLeft / currentStyle.size *textureHeight);
+      float widthInTexture = textureHeight / currentStyle.size;
+      tc.set(2, tc.get(2) + cutoffLeft *widthInTexture);
+      tc.set(6, tc.get(6) + cutoffLeft *widthInTexture);
 
-      tc.set(0, tc.get(2) + Math.min(tc.get(0)-tc.get(2), cutoffRight / currentStyle.size * textureHeight));
-      tc.set(4, tc.get(6) + Math.min(tc.get(4)-tc.get(6), cutoffRight / currentStyle.size * textureHeight));
-      var img = new ImageData(ogImg.textureName, tc);
-
-      float[] ogUV = ogImg.textureCoordinates;
-      float w = ogUV[0] - ogUV[2];
-      width = w * (currentStyle.size / textureHeight);
+      tc.set(0, tc.get(2) + Math.min(tc.get(0)-tc.get(2), cutoffRight *widthInTexture));
+      tc.set(4, tc.get(6) + Math.min(tc.get(4)-tc.get(6), cutoffRight *widthInTexture));
+      var img = new ImageData(baseImage.textureName, tc);
+      sprite.setImage(img);
 
       float[] uv = img.textureCoordinates;
       float cw = uv[0] - uv[2];
-      float cutWidth = cw * (currentStyle.size / textureHeight);
-
-      sprite.setHidden(cutWidth<0);
-
-      sprite.setImage(img);
-      sprite.setShader(currentStyle.shader);
+      float cutWidth = cw / widthInTexture;
       sprite.setSize(cutWidth, currentStyle.size);
-      character = c;
-      sprite.setColors(currentStyle.colors);
     }
   }
 }

@@ -21,11 +21,6 @@ public class Moab extends TdMob {
     sprite.setLayer(20);
   }
 
-  @Override
-  public void onDeath() {
-    Log.write(stats[Stats.health]);
-  }
-
   // generated stats
   @Override
   public void clearStats() {
