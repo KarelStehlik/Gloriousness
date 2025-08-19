@@ -27,14 +27,13 @@ public class ScrollingText implements Text {
   private int startChar = 0;
 
   public float getSpeed() {
-    return speed;
+    return currentStyle.speed;
   }
 
   public void setSpeed(float speed) {
-    this.speed = speed;
+    baseStyle = new Style(baseStyle.size, baseStyle.colors, baseStyle.shader, speed, null, 0);
+    updateStyles(textupdater.get());
   }
-
-  private float speed = 6;
 
   public ScrollingText(String value, int width, int layer, float size, SpriteBatching bs, String bg) {
     this(value, "Calibri", width, 0, 0, layer, size, bs, "basic", bg);
@@ -65,7 +64,7 @@ public class ScrollingText implements Text {
       SpriteBatching bs, String shader, String backgroundImage) {
 
     this.textupdater = value;
-    baseStyle = new Style(size,Util.getColors(1,1,1), shader,null, 0);
+    baseStyle = new Style(size,Util.getColors(1,1,1), shader, 6, null, 0);
     currentStyle=baseStyle;
     this.x = x;
     this.bs = bs;
@@ -89,7 +88,7 @@ public class ScrollingText implements Text {
     }else{
       updateSymbols();
     }
-    scroll -= speed;
+    scroll -= currentStyle.speed;
   }
 
   public boolean isHidden() {
@@ -155,8 +154,8 @@ public class ScrollingText implements Text {
   }
 
   public void setFontSize(float size) {
-    baseStyle = new Style(size, baseStyle.colors, baseStyle.shader, null, 0);
-    updateSymbols();
+    baseStyle = new Style(size, baseStyle.colors, baseStyle.shader, baseStyle.speed, null, 0);
+    updateStyles(textupdater.get());
   }
 
   public void setText(String value) {
@@ -307,25 +306,31 @@ public class ScrollingText implements Text {
     private final Style previous;
     final int startChar;
     final String shader;
+    final float speed;
 
     private Style(float size, Style previous, int startChar){
-      this(size, null, null, previous, startChar);
+      this(size, null, null, -1, previous, startChar);
+    }
+
+    private Style(float size, float speed, Style previous, int startChar){
+      this(size, null, null, speed, previous, startChar);
     }
 
     private Style(float size, float[] colors, Style previous, int startChar){
-      this(size, colors, null, previous, startChar);
+      this(size, colors, null, -1, previous, startChar);
     }
 
     private Style(float size, String shader, Style previous, int startChar){
-      this(size, null, shader, previous, startChar);
+      this(size, null, shader, -1, previous, startChar);
     }
 
-    private Style(float size, float[] colors, String shader, Style previous, int startChar) {
+    private Style(float size, float[] colors, String shader, float speed, Style previous, int startChar) {
       this.size = size==-1? previous.size : size;
       this.shader = shader==null? previous.shader : shader;
       this.colors = colors==null? previous.colors : colors;
       this.previous = previous;
       this.startChar = startChar;
+      this.speed = speed==-1? previous.speed : speed;
     }
 
     static Style parse(String s, Style prev, int startChar) {
@@ -361,14 +366,14 @@ public class ScrollingText implements Text {
         if(reverted==null){
           return null;
         }
-        return new Style(reverted.size, reverted.colors, reverted.shader, reverted.previous, startChar);
+        return new Style(reverted.size, reverted.colors, reverted.shader, reverted.speed, reverted.previous, startChar);
       }
       if(Objects.equals(s, "#<<")){
         Style reverted = prev;
         while(reverted.previous!=null){
           reverted = reverted.previous;
         }
-        return new Style(reverted.size, reverted.colors, reverted.shader, null, startChar);
+        return new Style(reverted.size, reverted.colors, reverted.shader, reverted.speed, null, startChar);
       }
       String[] split = s.split(":");
       if(split.length!=2){
@@ -387,6 +392,9 @@ public class ScrollingText implements Text {
           }
           case "shader" -> {
             return new Style(-1, data[0], prev, startChar);
+          }
+          case "speed" -> {
+            return new Style(-1, Float.parseFloat(data[0]), prev, startChar);
           }
           default -> {return null;}
         }
@@ -458,12 +466,12 @@ public class ScrollingText implements Text {
 
       cutoffLeft=left;
       cutoffRight=right;
+      float widthInTexture = textureHeight / currentStyle.size;
 
-      List<Float> tc = new ArrayList<>();
+      List<Float> tc = new ArrayList<>(baseImage.textureCoordinates.length);
       for (float f : baseImage.textureCoordinates){
         tc.add(f);
       }
-      float widthInTexture = textureHeight / currentStyle.size;
       tc.set(2, tc.get(2) + cutoffLeft *widthInTexture);
       tc.set(6, tc.get(6) + cutoffLeft *widthInTexture);
 
