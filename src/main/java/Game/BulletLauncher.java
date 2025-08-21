@@ -150,6 +150,8 @@ public class BulletLauncher {
     power = og.power;
     duration = og.duration;
     spread = og.spread;
+    remainingCooldown=og.getRemainingCooldown();
+    aspectRatio=og.aspectRatio;
     x = og.x;
     attackEffects.addAll(og.attackEffects);
     y = og.y;

@@ -1,5 +1,8 @@
 package Game.Turrets;
 
+import static Game.Buffs.StatBuff.Type.INCREASED;
+import static Game.Buffs.StatBuff.Type.MORE;
+
 import Game.BasicCollides;
 import Game.Buffs.Explosive;
 import Game.Buffs.Modifier;
@@ -11,6 +14,7 @@ import Game.BulletLauncher.Cannon;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;
+import Game.Projectile.Stats;
 import Game.TdWorld;
 import Game.TransformAnimation;
 import Game.TurretGenerator;
@@ -109,12 +113,13 @@ public class Wizard extends Turret {
     return new TurretGenerator(world, "wizard", "Wizard", () -> new Wizard(world, -1000, -1000));
   }
 
+  private BulletLauncher fireballs;
   @Override
   protected Upgrade up010() {
     return new Upgrade("Fireball-0", new Description("Fireball","shoots fireball"),
         () -> {
           Explosive<Projectile> explosive = new Explosive<>(2, 100);
-          BulletLauncher fireballs = new BulletLauncher(world, "Fireball-0") {
+          fireballs = new BulletLauncher(world, "Fireball-0") {
             @Override
             public void updateStats(float[] stats) {
               setDuration(stats[Turret.Stats.projectileDuration] * 0.5f);
@@ -142,11 +147,12 @@ public class Wizard extends Turret {
         }, 250);
   }
 
+  private BulletLauncher dbreath;
   @Override
   protected Upgrade up020() {
     return new Upgrade("fireball", new Description("Fire Breath","shoots fire breath"),
         () -> {
-          BulletLauncher dbreath = new BulletLauncher(world, "fireball") {
+          dbreath = new BulletLauncher(world, "fireball") {
             @Override
             public void updateStats(float[] stats) {
               setDuration(stats[Turret.Stats.projectileDuration] * 0.25f);
@@ -165,11 +171,73 @@ public class Wizard extends Turret {
         }, 1800);
   }
 
+  @Override
+  protected Upgrade up030() {
+    return new Upgrade("firebolt", new Description("Firestorm","shoots firestorms"),
+        () -> {
+          BulletLauncher fstorm = new BulletLauncher(world, "firebolt") {
+            @Override
+            public void updateStats(float[] stats) {
+              setDuration(stats[Turret.Stats.projectileDuration] * 4f);
+              setPierce((int) stats[Stats.pierce]);
+              setPower(stats[Stats.power]);
+              setSize(stats[Turret.Stats.bulletSize] * 5f);
+              setSpeed(stats[Turret.Stats.speed]*0.15f);
+              setCooldown(1000f / stats[Turret.Stats.aspd] * 5f);
+            }
+          };
+          fstorm.setSpread(360);
+          //dbreath.addAttackEffect(new CastAnimation("fireRune", 600, 1,3));
+
+          fstorm.addProjectileModifier(p->{
+            BulletLauncher fireRain = new BulletLauncher(dbreath);
+            fireRain.setCooldown(fireRain.getCooldown()*0.25f);
+            p.getSprite().setLayer(2);
+            p.getSprite().playAnimation(new TransformAnimation(999).setSpinning(1.8f));
+            p.addBuff(new OnTickBuff<Projectile>(storm->{
+            fireRain.move(storm.getX(),storm.getY());
+            fireRain.tickCooldown();
+            while(fireRain.canAttack()){
+              fireRain.attack(Data.gameMechanicsRng.nextFloat(360), true);
+            }
+          }));});
+          fstorm.updateStats(stats);
+          spells.add(fstorm);
+        }, 7000);
+  }
+
+
+  private boolean ShouldReplaceProj(){
+    if(path2Tier==5){
+      return true;
+    }
+    return Data.gameMechanicsRng.nextFloat()<0.1f;
+  }
+  @Override
+  protected Upgrade up040() {
+    return new Upgrade("firebolt2", new Description("Fire Enhancement","small firebolts are sometimes replaced by big ones"),
+        () -> {
+          dbreath.addProjectileModifier(p->{
+            if(ShouldReplaceProj()){
+              fireballs.attack(p.getRotation(),false).move(p.getX(),p.getY());
+              p.delete();
+            }
+          });
+        }, 5000);
+  }
+
+  @Override
+  protected Upgrade up050() {
+    return new Upgrade("firebolt2", new Description("Fire Mastery","small firebolts are ALWAYS replaced by big ones"),
+        () -> {
+        }, 50000);
+  }
+
 
   @Override
   protected Upgrade up001() {
     return new Upgrade("DoubleDart", new Description("Faster Casting","shoots 1.5x faster."),
-        () -> addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 1.5f)), 100);
+        () -> addBuff(new StatBuff<Turret>(MORE, Stats.aspd, 1.5f)), 100);
   }
 
   @Override
@@ -225,10 +293,20 @@ public class Wizard extends Turret {
   }
 
   @Override
+  protected Upgrade up500() {
+    return new Upgrade("zaprot", new Description("Grand Sorcery","reduce cooldowns."),
+        () -> {
+          addBuff(new StatBuff<Turret>(MORE, Stats.aspd, 2));
+        }
+        , 2500);
+  }
+
+  private BulletLauncher lightning;
+  @Override
   protected Upgrade up002() {
     return new Upgrade("bluray", new Description("Lightning","lightning"),
         () -> {
-          BulletLauncher lightning = new BulletLauncher(world, "bluray") {
+            lightning = new BulletLauncher(world, "bluray") {
             @Override
             public void updateStats(float[] stats) {
               setPierce((int) (stats[Stats.range] / 20));
@@ -247,6 +325,52 @@ public class Wizard extends Turret {
           spells.add(lightning);
         }, 1000);
   }
+
+  private float lightningCritChance=0f;
+  private boolean lightningCanMulticrit = false;
+  private boolean rollLightningCrit(){
+    return Data.gameMechanicsRng.nextFloat()<lightningCritChance;
+  }
+  private void modLightningForCrit(Projectile p){
+    while(rollLightningCrit()){
+      Modifier<Projectile> ex = new Explosive<>(p.getPower(), 50);
+      p.getSprite().setColors(Util.getColors(3,0,0));
+      p.addBuff(new StatBuff<Projectile>(INCREASED, Projectile.Stats.pierce, 2));
+      p.addBuff(new StatBuff<Projectile>(MORE, Projectile.Stats.power, 3));
+      p.addMobCollide((proj, target) -> {ex.mod(proj);return true;});
+
+      if(!lightningCanMulticrit){
+        return;
+      }
+    }
+  }
+  @Override
+  protected Upgrade up003() {
+    return new Upgrade("bluray", new Description("Critical Voltage","lightning sometimes crits for more zaps and more damage"),
+        () -> {
+          lightningCritChance=0.15f;
+          lightning.addProjectileModifier(this::modLightningForCrit);
+        }, 1500);
+  }
+
+  @Override
+  protected Upgrade up004() {
+    return new Upgrade("bluray", new Description("Criticaler Voltage","lightning crits can crit again. increased lightning crit chance."),
+        () -> {
+          lightningCanMulticrit = true;
+          lightningCritChance = 0.2f;
+        }, 3000);
+  }
+
+  @Override
+  protected Upgrade up005() {
+    return new Upgrade("bluray", new Description("Criticalest Voltage","more lightning crit chance"),
+        () -> {
+          lightningCritChance=0.55f;
+        }, 15000);
+  }
+
+
 
 
   // generated stats
