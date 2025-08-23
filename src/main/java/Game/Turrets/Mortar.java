@@ -7,7 +7,6 @@ import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.BulletLauncher.Cannon;
 import Game.Game;
-import Game.Projectile;
 import Game.TdWorld;
 import Game.TurretGenerator;
 import general.Data;
@@ -38,7 +37,7 @@ public class Mortar extends Turret {
         return Graphics.getImage(mortarimg);
     }
 
-  private final Explosive<Projectile> explosive = new Explosive<>(0, 0);
+  private final Explosive explosive = new Explosive(0, 0);
 
 
   @Override

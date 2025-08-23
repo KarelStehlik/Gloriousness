@@ -20,7 +20,6 @@ import Game.TdWorld.TrackPoint;
 import Game.TurretGenerator;
 import general.Data;
 import general.Description;
-import general.Log;
 import general.RefFloat;
 import general.Util;
 import java.awt.Point;

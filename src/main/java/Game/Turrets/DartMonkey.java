@@ -137,7 +137,7 @@ public class DartMonkey extends Turret {
                     addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.range, 0.25f));
                     bulletLauncher.addMobCollide((proj,mob)->{
                         float duration= proj.getStats()[Stats.power]* 120 / mob.getStats()[TdMob.Stats.health];
-                        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE,duration, TdMob.Stats.speed, 0));
+                        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE, duration, TdMob.Stats.speed, 0.001f));
                         return true;
                     },0);
                 }, 25);
@@ -166,7 +166,7 @@ public class DartMonkey extends Turret {
   }
 
   private boolean upgraded = false;
-  private final Explosive<Projectile> explosive = new Explosive<Projectile>(1, 120);
+  private final Explosive explosive = new Explosive(1, 120);
 
   @Override
   protected Upgrade up300() {

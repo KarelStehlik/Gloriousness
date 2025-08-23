@@ -6,20 +6,20 @@ import Game.Mobs.TdMob;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Explosive<T extends GameObject> implements Modifier<T> {
+public class Explosive implements Modifier<GameObject> {
 
   public float damage;
-  private int radius;
-  private int visualRadius;
+  private float radius;
+  private float visualRadius;
   private final List<Modifier<TdMob>> preEffects = new ArrayList<>();
   private final List<Modifier<TdMob>> postEffects = new ArrayList<>();
   DamageType damageType = DamageType.PHYSICAL;
 
-  public Explosive(float damage, int radius) {
+  public Explosive(float damage, float radius) {
     this(damage, radius, radius);
   }
 
-  public Explosive(float damage, int radius, int visualRadius) {
+  public Explosive(float damage, float radius, float visualRadius) {
     this.damage = damage;
     this.radius = radius;
     this.visualRadius = visualRadius;

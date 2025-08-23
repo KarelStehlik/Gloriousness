@@ -236,7 +236,7 @@ public class Engineer8 extends Turret {
                     turretMods.add(t -> {
                         t.addBuff(new StatBuff<Turret>(MORE,Stats.aspd,1.8f));
                         t.addBuff(new StatBuff<Turret>(MORE,Stats.speed,1.8f));
-                        t.bulletLauncher.addProjectileModifier( p->p.addBeforeDeath( new Explosive(1f,35)));
+                        t.bulletLauncher.addProjectileModifier( p->p.addBeforeDeath(new Explosive(1f,35)));
                     });
                 }, 175);
     }
@@ -281,7 +281,7 @@ public class Engineer8 extends Turret {
                         "Permanently increases the damage of this upgrade by 1. ",
                 "Affects turrets and spanner."),
                 () -> {
-                    Explosive<Engineer8> explod=new Explosive<>(demonDamage,275);
+                    Explosive explod=new Explosive(demonDamage,275);
                     RefFloat atcSpeedBuff=  new RefFloat(1);
                     explod.addPostEffect(mob->{
                         if(mob.WasDeleted()) {

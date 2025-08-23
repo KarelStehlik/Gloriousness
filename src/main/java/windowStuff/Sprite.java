@@ -249,6 +249,7 @@ public class Sprite implements AbstractSprite {
 
   public Sprite setOpacity(float opacity) {
     this.opacity = opacity;
+    this.setHidden(opacity<=0);
     return this;
   }
 

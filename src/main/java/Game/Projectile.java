@@ -40,7 +40,7 @@ public class Projectile extends GameObject implements TickDetect {
   protected final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
   protected final HashSet<Projectile> alreadyHitProjectiles;
   protected final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
-  protected final List<Modifier<Projectile>> beforeDeath = new ArrayList<>(0);
+  protected final List<Modifier<? super Projectile>> beforeDeath = new ArrayList<>(0);
   protected final BuffHandler<Projectile> bh = new BuffHandler<>(this);
   protected float vx;
   private float aspectRatio;
@@ -290,7 +290,7 @@ public class Projectile extends GameObject implements TickDetect {
     playerCollides.add(component);
   }
 
-  public void addBeforeDeath(Modifier<Projectile> component) {
+  public void addBeforeDeath(Modifier<? super Projectile> component) {
     beforeDeath.add(component);
   }
 

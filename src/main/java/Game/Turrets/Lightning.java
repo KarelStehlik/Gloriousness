@@ -1,16 +1,12 @@
 package Game.Turrets;
 
-import Game.CallAfterDuration;
-import Game.TransformAnimation;
 import Game.Enums.TargetingOption;
-import Game.Game;
 import Game.Projectile;
 import Game.TdWorld;
+import Game.TransformAnimation;
 import general.Data;
 import general.Util;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
 import windowStuff.ImageData;
 import windowStuff.Sprite;
 
@@ -33,7 +29,7 @@ public class Lightning extends Projectile {
 
   private void snapToEnemy() {
     targetedMob = world.getMobsGrid().search(new Point((int) x, (int) y), (int) stats[Stats.speed],
-        TargetingOption.FIRST, mob -> !(alreadyHitMobs.contains(mob) || mob.WasDeleted()));
+        TargetingOption.STRONG, mob -> !(alreadyHitMobs.contains(mob) || mob.WasDeleted()));
     if (targetedMob == null) {
       return;
     }

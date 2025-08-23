@@ -1,7 +1,6 @@
 package Game.Mobs;
 
 import Game.TdWorld;
-import general.Log;
 import java.util.List;
 
 public class Moab extends TdMob {

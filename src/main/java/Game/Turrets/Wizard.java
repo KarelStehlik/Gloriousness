@@ -8,13 +8,11 @@ import Game.Buffs.Explosive;
 import Game.Buffs.Modifier;
 import Game.Buffs.OnTickBuff;
 import Game.Buffs.StatBuff;
-import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.BulletLauncher.Cannon;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.Projectile;
-import Game.Projectile.Stats;
 import Game.TdWorld;
 import Game.TransformAnimation;
 import Game.TurretGenerator;
@@ -120,7 +118,7 @@ public class Wizard extends Turret {
         "shoots fireball",
         "Deals damage determined by pierce in an area determined by projectile size"),
         () -> {
-          Explosive<Projectile> explosive = new Explosive<>(2, 100);
+          Explosive explosive = new Explosive(2, 100);
           fireballs = new BulletLauncher(world, "Fireball-0") {
             @Override
             public void updateStats(float[] stats) {
@@ -280,7 +278,7 @@ public class Wizard extends Turret {
         "significantly reduces magic bolt cooldown",
         "to 40%"),
         () -> {
-          bulletLauncher.addAttackEffect(mBolt -> mBolt.setRemainingCooldown(mBolt.getRemainingCooldown()*0.4f));
+          bulletLauncher.addAttackEffect(mBolt -> mBolt.setRemainingCooldown(mBolt.getRemainingCooldown()- mBolt.getCooldown()*0.6f));
         }
         , 2000);
   }
@@ -290,13 +288,13 @@ public class Wizard extends Turret {
   protected Upgrade up400() {
     return new Upgrade("zaprot", new Description("Archmage",
         "Magic bolts now seek and reduce all other spell cooldowns when they hit a target.",
-        "other spells are charged by 0.4 seconds per magic bolt hit"),
+        "other spells are charged by 0.2 seconds per magic bolt hit"),
         () -> {
           bulletLauncher.addProjectileModifier(p->p.addBuff(new OnTickBuff<Projectile>(guided::tick)));
           bulletLauncher.addMobCollide((mob,proj) -> {
             for(BulletLauncher spell : spells){
               if(spell != bulletLauncher){
-                spell.setRemainingCooldown(spell.getRemainingCooldown()-400);
+                spell.setRemainingCooldown(spell.getRemainingCooldown()-200);
               }
             }
             return true;
@@ -351,7 +349,7 @@ public class Wizard extends Turret {
       return;
     }
 
-    Modifier<Projectile> ex = new Explosive<>(p.getPower(), 50);
+    Explosive ex = new Explosive(p.getPower(), 50);
     p.getSprite().setColors(Util.getColors(3,0,0));
     p.addBuff(new StatBuff<Projectile>(INCREASED, Projectile.Stats.pierce, 2));
     p.addBuff(new StatBuff<Projectile>(INCREASED, Projectile.Stats.power, 3));

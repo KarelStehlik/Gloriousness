@@ -7,7 +7,7 @@ import windowStuff.ImageData;
 
 public class TankRockets implements Modifier<Projectile> {
 
-  private final Explosive<Projectile> explosive = new Explosive<>(10, 150);
+  private final Explosive explosive = new Explosive(10, 150);
   private static final ImageData image = Graphics.getImage("bomb");
   private int lastFiringTick;
   private boolean rocketsThisTick;

@@ -41,9 +41,11 @@ import imgui.ImGui;
 import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 import java.awt.Point;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import org.joml.Vector2f;
 import windowStuff.Audio;
 import windowStuff.Audio.AudioGroup;
@@ -207,11 +209,21 @@ public class TdWorld implements World {
     }
   }
 
+  private final Queue<Integer> recentExplosions = new ArrayDeque<>(50);
   public Sprite lesserExplosionVisual(float x, float y, float size) {
     float duration = .2f;
+
+    while(!recentExplosions.isEmpty() && recentExplosions.peek()<tick-(duration*1000/Game.tickIntervalMillis)){
+      recentExplosions.remove();
+    }
+    float opacity = Math.min(1, 20/ Math.max(1f,recentExplosions.size()));
+    if(opacity>0){
+      recentExplosions.add(tick);
+    }
+
     float scaling = size * 2 / 1000 * Game.tickIntervalMillis / duration;
     Sprite sp = new Sprite("Shockwave", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
-        .setColors(Util.getColors(2.4f, .6f, 0));
+        .setColors(Util.getColors(2.4f, .6f, 0)).setOpacity(opacity);
     sp.playAnimation(new TransformAnimation(duration).setLinearScaling(new Vector2f(scaling, scaling)));
     return sp;
   }
