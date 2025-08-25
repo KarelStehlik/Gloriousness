@@ -1,14 +1,22 @@
 package windowStuff;
 
+import Game.Game;
 import general.Constants;
 import general.Data;
 import general.Util;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Sprite implements AbstractSprite {
 
+  public static final Animation noAnim = new Animation() {
+    @Override
+    public void update(Sprite sprite) {
+
+    }
+  };
   private final float[] positions = new float[8];
   protected boolean hasUnsavedChanges = true;
   protected String textureName;
@@ -27,6 +35,8 @@ public class Sprite implements AbstractSprite {
   private float width, height;
   private ImageData image;
   private Animation animation;
+  private int lastGt;
+  private boolean deleteOnAnimationEnd = true;
 
   public Sprite(Sprite og) {
     textureName = og.textureName;
@@ -42,16 +52,16 @@ public class Sprite implements AbstractSprite {
     width = og.width;
     height = og.height;
     image = og.image;
-    animation = () -> {
-    };
+    animation = noAnim;
+    lastGt = og.lastGt;
   }
 
   public Sprite(ImageData image, int layer, String shader) {
     this.shader = Data.getShader(shader);
     this.layer = layer;
     setImage(image);
-    this.animation = () -> {
-    };
+    this.animation = noAnim;
+    lastGt = Game.get().getTicks();
   }
 
   public Sprite(ImageData image, int layer) {
@@ -62,32 +72,13 @@ public class Sprite implements AbstractSprite {
     this(Graphics.getImage(image), layer, "basic");
   }
 
+
   public Sprite(String image, int layer, String shader) {
     this(Graphics.getImage(image), layer, shader);
   }
 
-
-  public Shader getShader() {
-    return shader;
-  }
-
-  @Override
-  public Sprite setShader(String shader) {
-    this.shader = Data.getShader(shader);
-    this.mustBeRebatched = true;
-    return this;
-  }
-
-  @Override
-  public float getRotation() {
-    return rotation;
-  }
-
-  @Override
-  public Sprite setRotation(float r) {
-    rotation = r;
-    hasUnsavedChanges = true;
-    return this;
+  public ImageData getImage() {
+    return image;
   }
 
   @Override
@@ -106,6 +97,16 @@ public class Sprite implements AbstractSprite {
   @Override
   public Sprite setImage(String name) {
     return setImage(Graphics.getImage(name));
+  }
+
+  @Override
+  public void setNaturalHeight() {
+    setSize(2 * width, 2 * width / (texCoords[4] - texCoords[2]) * (texCoords[3] - texCoords[1]));
+  }
+
+  @Override
+  public void setNaturalWidth() {
+    setSize(2 * height * (texCoords[4] - texCoords[2]) / (texCoords[3] - texCoords[1]), 2 * height);
   }
 
   @Override
@@ -135,6 +136,29 @@ public class Sprite implements AbstractSprite {
   public Sprite setSize(float w, float h) {
     width = w / 2;
     height = h / 2;
+    hasUnsavedChanges = true;
+    return this;
+  }
+
+  public Shader getShader() {
+    return shader;
+  }
+
+  @Override
+  public Sprite setShader(String shader) {
+    this.shader = Data.getShader(shader);
+    this.mustBeRebatched = true;
+    return this;
+  }
+
+  @Override
+  public float getRotation() {
+    return rotation;
+  }
+
+  @Override
+  public Sprite setRotation(float r) {
+    rotation = r;
     hasUnsavedChanges = true;
     return this;
   }
@@ -210,7 +234,13 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public void setHidden(boolean hidden) {
+    if (hidden == this.hidden) {
+      return;
+    }
     this.hidden = hidden;
+    if (!hidden) {
+      lastGt = Game.get().getTicks();
+    }
   }
 
   public float getOpacity() {
@@ -219,6 +249,7 @@ public class Sprite implements AbstractSprite {
 
   public Sprite setOpacity(float opacity) {
     this.opacity = opacity;
+    this.setHidden(opacity<=0);
     return this;
   }
 
@@ -247,8 +278,6 @@ public class Sprite implements AbstractSprite {
     return this;
   }
 
-  private boolean deleteOnAnimationEnd = false;
-
   protected void onAnimationEnd() {
     if (deleteOnAnimationEnd) {
       delete();
@@ -259,18 +288,18 @@ public class Sprite implements AbstractSprite {
     texCoords = image.textureCoordinates;
   }
 
-  @Override
-  public void setNaturalHeight() {
-    setSize(2 * width, 2 * width / (texCoords[4] - texCoords[2]) * (texCoords[3] - texCoords[1]));
-  }
-  @Override
-  public void setNaturalWidth() {
-    setSize(2 * height* (texCoords[4] - texCoords[2]) / (texCoords[3] - texCoords[1]), 2 * height);
-  }
-
   public synchronized void updateVertices() {
-    animation.update();
-    if (!hasUnsavedChanges || hidden) {
+    if (hidden) {
+      return;
+    }
+    {
+      int ticks = Game.get().getTicks() - lastGt;
+      lastGt += ticks;
+      for (int i = 0; i < ticks; i++) {
+        animation.update(this);
+      }
+    }
+    if (!hasUnsavedChanges) {
       return;
     }
     float rotationSin = Util.sin(rotation);
@@ -328,57 +357,104 @@ public class Sprite implements AbstractSprite {
         + '}';
   }
 
-  @FunctionalInterface
-  interface Animation {
+  public abstract static class Animation {
 
-    void update();
+    private boolean ended = false;
+
+    public abstract void update(Sprite sprite);
+
+    public void end(Sprite sprite) {
+      if (Objects.equals(sprite.animation, this)) {
+        sprite.animation = noAnim;
+        sprite.onAnimationEnd();
+      }
+      ended = true;
+    }
+
+    public boolean hasEnded() {
+      return ended;
+    }
+
+    protected List<Animation> baseAnimations() {
+      return List.of(this);
+    }
+
+    public final Animation and(Animation other) {
+      var l = new ArrayList<Animation>(2);
+      l.addAll(baseAnimations());
+      l.addAll(other.baseAnimations());
+      return new CompoundAnimation(l);
+    }
   }
 
-  public class BasicAnimation implements Animation {
+  public static class CompoundAnimation extends Animation {
+
+    private final List<Animation> animations;
+
+    public CompoundAnimation(List<Animation> anims) {
+      animations = anims;
+    }
+
+    @Override
+    public void update(Sprite sprite) {
+      animations.removeIf(Animation::hasEnded);
+      for (Animation a : animations) {
+        a.update(sprite);
+      }
+      if (animations.isEmpty()) {
+        end(sprite);
+      }
+    }
+
+    @Override
+    protected List<Animation> baseAnimations() {
+      return animations;
+    }
+  }
+
+  public static class FrameAnimation extends Animation {
 
     private final int length;
-    private final float frameLengthNano;
-    private final double startTime;
+    private final float frameLengthGt;
     private final List<ImageData> images;
+    private int lifetime = 0;
     private boolean loop = false;
 
-    public BasicAnimation(String name, float duration) {
+    public FrameAnimation(String name, float duration) {
       this(Graphics.getAnimation(name), duration);
     }
 
-    public BasicAnimation(ImageData img, float duration) {
+    public FrameAnimation(ImageData img, float duration) {
       this(List.of(img), duration);
     }
 
-    public BasicAnimation(List<ImageData> images, float duration) {
+    public FrameAnimation(List<ImageData> images, float duration) {
       length = images.size();
-      frameLengthNano = duration / length * 1000000000;
-      startTime = System.nanoTime();
+      frameLengthGt = 1000 * duration / (length * Game.tickIntervalMillis);
       this.images = images;
     }
 
-    public BasicAnimation loop() {
+    public FrameAnimation loop() {
       loop = true;
       return this;
     }
 
     @Override
-    public void update() {
-      int frame = (int) ((System.nanoTime() - startTime) / frameLengthNano);
+    public void update(Sprite sprite) {
+      lifetime++;
+      int frame = (int) (lifetime / frameLengthGt);
       if (loop) {
         frame %= length;
       }
       //Log.write(length);
-      hasUnsavedChanges = true;
+      sprite.hasUnsavedChanges = true;
       if (frame >= length) {
-        image = images.get(length - 1);
-        animation = () -> {
-        };
-        onAnimationEnd();
+        sprite.image = images.get(length - 1);
+        end(sprite);
       } else {
-        image = images.get(frame);
+        sprite.image = images.get(frame);
       }
-      setUV();
+      sprite.setUV();
     }
   }
 }

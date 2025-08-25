@@ -75,7 +75,7 @@ public final class Game implements UserInputHandler {
   }
 
   public int getTicks() {
-    return world.getTick();
+    return world==null? 0 : world.getTick();
   }
 
   public UserInputListener getUserInputListener() {

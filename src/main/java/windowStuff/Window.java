@@ -116,6 +116,10 @@ public final class Window {
 
     running = false;
 
+    for(String s: Audio.getGroups()){
+      Audio.getGroup(s).setActive(true);
+    }
+
     glfwFreeCallbacks(window);
     glfwDestroyWindow(window);
     glfwTerminate();

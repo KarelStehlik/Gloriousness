@@ -16,7 +16,7 @@ public final class BasicCollides {
   };
   public static final Projectile.OnCollideComponent<TdMob> fire = (proj, mob) ->
   {
-    mob.addBuff(new Ignite<TdMob>(proj.getPower() * 0.02f, 2000));
+    mob.addBuff(new Ignite<>(proj.getPower() * 0.02f, 2000));
     return true;
   };
   public static final Projectile.OnCollideComponent<TdMob> slow = (proj, target) ->

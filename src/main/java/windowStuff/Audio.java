@@ -29,9 +29,10 @@ public final class Audio {
   private static final Map<String, AudioGroup> groups;
   static{
     List<String> soundTypes = List.of("sfx", "music");
+    List<Integer> soundChannels = List.of(25, 2);
     groups = new HashMap<>(soundTypes.size());
-    for(String s : soundTypes){
-      groups.put(s, new AudioGroup());
+    for (int i = 0; i < soundTypes.size(); i++) {
+      groups.put(soundTypes.get(i), new AudioGroup(soundChannels.get(i)));
     }
   }
 
@@ -53,6 +54,11 @@ public final class Audio {
     private final List<SoundPlayer> players = new ArrayList<>();
     private final List<SoundToPlay> queued = new ArrayList<>();
     private boolean updateVolume=false;
+    private int channels;
+
+    private AudioGroup(int channels){
+      this.channels=channels;
+    }
 
     public float getVolumeMultiplier() {
       return volumeMultiplier;
@@ -70,6 +76,9 @@ public final class Audio {
     }
 
     public void setActive(boolean active) {
+      if(this.active==active){
+        return;
+      }
       this.active = active;
       if (active) {
         inactiveLock.unlock();
@@ -77,6 +86,10 @@ public final class Audio {
         deleteAllSounds = true;
         inactiveLock.lock();
       }
+    }
+
+    public void clear(){
+      deleteAllSounds = true;
     }
 
     public void play(SoundToPlay sound) {
@@ -103,7 +116,7 @@ public final class Audio {
     }
 
     private void loop() {
-      for (int i = 0; i < 20; i++) {
+      for (int i = 0; i < channels; i++) {
         var p = new SoundPlayer();
         players.add(p);
       }
@@ -184,7 +197,7 @@ public final class Audio {
     try{
       groups.get(sound.type).play(sound);
     }catch (NullPointerException e) {
-      Log.write("noo such sound type: "+sound.type);
+      Log.write("no such sound type: "+sound.type);
     }
   }
 

@@ -13,7 +13,6 @@ import Game.TdWorld;
 import Game.TurretGenerator;
 import general.Data;
 import general.Description;
-import general.Log;
 import general.RefFloat;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
@@ -29,8 +28,8 @@ public class Druid8 extends Turret {
   public Druid8(TdWorld world, int X, int Y) {
     super(world, X, Y, new BulletLauncher(world, ""));
     bulletLauncher.setLauncher(
-        (world1, image1, x1, y1, speed, rotation1, w, h, pierce, size, duration, power) -> new DruidBall(
-            world1, image1, x1, y1, speed, rotation1, w, pierce, size, duration, power,
+        (world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power) -> new DruidBall(
+            world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power,
             getStats()[ExtraStats.regrowTime]));
     originalStats[ExtraStats.regrowTime] = 0.5f * originalStats[Stats.speed];
     stats[ExtraStats.regrowTime] = originalStats[ExtraStats.regrowTime];

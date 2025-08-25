@@ -3,18 +3,12 @@ package Game;
 import org.joml.Vector2f;
 import windowStuff.Sprite;
 
-public class Animation implements TickDetect {
-
-  public Sprite getSprite() {
-    return sprite;
-  }
-
-  private final Sprite sprite;
+public class TransformAnimation extends Sprite.Animation {
 
   private float scaling = 1;
   private float opacityScaling = 0;
 
-  public Animation setSpinning(float spinning) {
+  public TransformAnimation setSpinning(float spinning) {
     this.spinning = spinning;
     return this;
   }
@@ -24,28 +18,27 @@ public class Animation implements TickDetect {
   private Vector2f linearScaling = new Vector2f(0, 0);
   private float duration;
 
-  public Animation(Sprite anim, float duration) {
-    sprite = anim;
+  public TransformAnimation(float duration) {
     this.duration = duration;
   }
 
-  public Animation setOpacityScaling(float opacityScaling) {
+  public TransformAnimation setOpacityScaling(float opacityScaling) {
     this.opacityScaling = opacityScaling;
     return this;
   }
 
-  public Animation setScaling(float value) {
+  public TransformAnimation setScaling(float value) {
     scaling = value;
     return this;
   }
 
-  public Animation setLinearScaling(Vector2f value) {
+  public TransformAnimation setLinearScaling(Vector2f value) {
     linearScaling = value;
     return this;
   }
 
   @Override
-  public void onGameTick(int tick) {
+  public void update(Sprite sprite) {
     sprite.scale(scaling);
     sprite.setSize(2 * sprite.getWidth() + linearScaling.x,
         2 * sprite.getHeight() + linearScaling.y);
@@ -54,24 +47,7 @@ public class Animation implements TickDetect {
     sprite.setRotation(sprite.getRotation() + spinning);
     duration -= Game.tickIntervalMillis / 1000f;
     if (duration < 0) {
-      delete();
+      end(sprite);
     }
-  }
-
-  @Override
-  public void delete() {
-    sprite.delete();
-  }
-
-  @Override
-  public boolean WasDeleted() {
-    return sprite.isDeleted();
-  }
-
-  @Override
-  public String toString() {
-    return "Animation{"
-        + "sprite=" + sprite
-        + '}';
   }
 }

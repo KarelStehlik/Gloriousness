@@ -1,9 +1,10 @@
 package Game.Turrets;
 
-import Game.Animation;
+import Game.Game;
 import Game.Projectile;
 import Game.TdWorld;
 import Game.TickDetect;
+import Game.TransformAnimation;
 import general.Util;
 import org.joml.Vector2f;
 import windowStuff.ImageData;
@@ -14,8 +15,8 @@ public class DruidBall extends Projectile {
   private final float regrowTime;
 
   protected DruidBall(TdWorld world, ImageData image, float X, float Y, float speed, float rotation,
-      int W, int pierce, float size, float duration, float power, float regrowTime) {
-    super(world, image, X, Y, speed, rotation, W, 1, pierce, size, duration, power);
+      int width, float aspectRatio, int pierce, float size, float duration, float power, float regrowTime) {
+    super(world, image, X, Y, speed, rotation, width, 1, pierce, size, duration, power);
     this.regrowTime = regrowTime;
   }
 
@@ -46,27 +47,30 @@ public class DruidBall extends Projectile {
 
   class RespawningProjectile implements TickDetect {
 
-    private final Animation sprite;
+    private final Sprite sprite;
+    private float remainingTime;
 
     RespawningProjectile() {
       float size = getStats()[Projectile.Stats.size];
 
+      remainingTime = regrowTime;
+
       float scaling = .015f / regrowTime;
-      this.sprite = new Animation(
+      this.sprite =
           new Sprite(DruidBall.this.sprite).setSize(0, 0).setShader("colorCycle2").
               setOpacity(0.5f).addToBs(world.getBs()).
               setColors(Util.getCycle2colors(1f)
-              )
-          , regrowTime
-      ).setLinearScaling(new Vector2f(size * scaling, size * scaling)).setOpacityScaling(scaling)
-          .setSpinning(-20f);
+              ).playAnimation(new TransformAnimation(regrowTime)
+              .setLinearScaling(new Vector2f(size * scaling, size * scaling))
+              .setOpacityScaling(scaling)
+              .setSpinning(-20f));
     }
 
     @Override
     public void onGameTick(int tick) {
-      sprite.onGameTick(tick);
-      sprite.getSprite().setHidden(false);
-      if (sprite.WasDeleted()) {
+      sprite.setHidden(false);
+      remainingTime -= Game.tickIntervalMillis / 1000f;
+      if (remainingTime<=0) {
         delete();
       }
     }
@@ -78,7 +82,7 @@ public class DruidBall extends Projectile {
 
     @Override
     public boolean WasDeleted() {
-      return sprite.WasDeleted();
+      return sprite.isDeleted();
     }
   }
 }

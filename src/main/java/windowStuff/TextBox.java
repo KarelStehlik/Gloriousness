@@ -1,8 +1,8 @@
 package windowStuff;
 
-import java.util.ArrayList;
-
 import static general.Constants.screenSize;
+
+import java.util.ArrayList;
 
 public class TextBox implements Text { //not sure if imgonna use this,
 

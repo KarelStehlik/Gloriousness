@@ -32,6 +32,11 @@ public class SimpleText implements Text {
   private boolean hidden = false;
   private int lineCount = 1;
 
+  public SimpleText(String value, int width, int layer, float size,
+      SpriteBatching bs) {
+    this(value, "Calibri", width, 0,0, layer, size, bs, "basic", null);
+  }
+
   public SimpleText(String value, String font, int width, int x, int y, int layer, float size,
       SpriteBatching bs) {
     this(value, font, width, x, y, layer, size, bs, "basic", null);

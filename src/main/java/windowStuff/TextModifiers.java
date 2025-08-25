@@ -14,4 +14,17 @@ public class TextModifiers {//mb this should be an enum but I can't really think
   public static final String titleSize = "|#70|";
   public static final String normalSize = "|#35|";
   public static final String smallSize = "|#25|";
+  public static final String reset = "|#<|";
+  public static final String gigaReset = "|#<<|";
+  public static String colors(float[] colors){
+    StringBuilder str = new StringBuilder("|color:");
+    for(int i=0;i<colors.length;i++){
+      if(i!=0){
+        str.append(',');
+      }
+      str.append(colors[i]);
+    }
+    str.append("|");
+    return str.toString();
+  }
 }

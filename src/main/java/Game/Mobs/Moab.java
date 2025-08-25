@@ -1,7 +1,6 @@
 package Game.Mobs;
 
 import Game.TdWorld;
-import general.Log;
 import java.util.List;
 
 public class Moab extends TdMob {
@@ -19,11 +18,6 @@ public class Moab extends TdMob {
     super(parent.world, "BloonMoab", parent, parent.getChildrenSpread());
     sprite.setSize(getStats()[Stats.size] * 1.5f, getStats()[Stats.size] * 0.7f);
     sprite.setLayer(20);
-  }
-
-  @Override
-  public void onDeath() {
-    Log.write(stats[Stats.health]);
   }
 
   // generated stats

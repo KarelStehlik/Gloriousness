@@ -1,16 +1,17 @@
 package Game.Turrets;
 
-import Game.*;
-import Game.Buffs.DelayedTrigger;
+import static Game.Buffs.StatBuff.Type.ADDED;
+
+import Game.BasicCollides;
 import Game.Buffs.StatBuff;
+import Game.BulletLauncher;
+import Game.Game;
 import Game.Mobs.TdMob;
-import general.Log;
+import Game.TdWorld;
 import general.Util;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.Sprite;
-
-import static Game.Buffs.StatBuff.Type.ADDED;
 
 public class EngiTurret8 extends Turret {
 

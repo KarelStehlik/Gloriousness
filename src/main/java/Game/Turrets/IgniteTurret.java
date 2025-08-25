@@ -137,7 +137,7 @@ public class IgniteTurret extends Turret {
 
     int size = (int) mob.getStats()[TdMob.Stats.size];
     var puddle = new Projectile(world, ImFire, mob.getX(), mob.getY(), 0,
-        Data.gameMechanicsRng.nextFloat() * 360, size, size, Integer.MAX_VALUE, size,
+        Data.gameMechanicsRng.nextFloat() * 360, size, 1, Integer.MAX_VALUE, size,
         stats[ExtraStats.puddleDuration], ignite.getDpTick() * stats[ExtraStats.puddleDamage]);
     puddle.setMultihit(true);
     puddle.addMobCollide(BasicCollides.damage);

@@ -1,26 +1,34 @@
 package Game.Turrets;
 
+import static Game.Buffs.StatBuff.Type.ADDED;
+import static Game.Buffs.StatBuff.Type.MORE;
+import static Game.Turrets.Engineer8.ExtraStats.originalTurretAspd;
+import static Game.Turrets.Engineer8.ExtraStats.originalTurretSpeed;
+
 import Game.BasicCollides;
-import Game.Buffs.*;
+import Game.Buffs.DelayedTrigger;
+import Game.Buffs.Explosive;
+import Game.Buffs.Modifier;
+import Game.Buffs.OnTickBuff;
+import Game.Buffs.ProcTrigger;
+import Game.Buffs.StatBuff;
 import Game.BulletLauncher;
 import Game.Game;
 import Game.Mobs.TdMob;
 import Game.TdWorld;
 import Game.TurretGenerator;
-import general.*;
-import windowStuff.Sprite;
-import windowStuff.TextModifiers;
-
-import java.awt.*;
+import general.Data;
+import general.Description;
+import general.RefFloat;
+import general.RefInt;
+import general.Util;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
-
-import static Game.Buffs.StatBuff.Type.ADDED;
-import static Game.Buffs.StatBuff.Type.MORE;
-import static Game.Turrets.Engineer8.ExtraStats.originalTurretAspd;
-import static Game.Turrets.Engineer8.ExtraStats.originalTurretSpeed;
+import windowStuff.Sprite;
+import windowStuff.TextModifiers;
 
 public class Engineer8 extends Turret {
 
@@ -172,11 +180,11 @@ public class Engineer8 extends Turret {
                         "The random penalty is then lowered by 1/19 for every turret dartspeed where 19 (max dartspeed) cancels it completely"),
                 () -> {
                     addBuff(new StatBuff<Turret>(MORE, ExtraStats.spawnSpd, 2));
-                    bulletLauncher.setRemainingCooldown(turretLauncher.cooldown);
+                    bulletLauncher.setRemainingCooldown(turretLauncher.getCooldown());
                     bulletLauncher.addAttackEffect(new ProcTrigger<BulletLauncher>(
                             launcher->{
                                 launcher.setRemainingCooldown(
-                                        launcher.cooldown
+                                        launcher.getCooldown()
                                                 *6.9f*(1-1/19f*getStats()[originalTurretSpeed])
                                 );//is 6.9 because the cooldown is also added normally
 
@@ -228,7 +236,7 @@ public class Engineer8 extends Turret {
                     turretMods.add(t -> {
                         t.addBuff(new StatBuff<Turret>(MORE,Stats.aspd,1.8f));
                         t.addBuff(new StatBuff<Turret>(MORE,Stats.speed,1.8f));
-                        t.bulletLauncher.addProjectileModifier( p->p.addBeforeDeath( new Explosive(1f,35)));
+                        t.bulletLauncher.addProjectileModifier( p->p.addBeforeDeath(new Explosive(1f,35)));
                     });
                 }, 175);
     }
@@ -273,7 +281,7 @@ public class Engineer8 extends Turret {
                         "Permanently increases the damage of this upgrade by 1. ",
                 "Affects turrets and spanner."),
                 () -> {
-                    Explosive<Engineer8> explod=new Explosive<>(demonDamage,275);
+                    Explosive explod=new Explosive(demonDamage,275);
                     RefFloat atcSpeedBuff=  new RefFloat(1);
                     explod.addPostEffect(mob->{
                         if(mob.WasDeleted()) {

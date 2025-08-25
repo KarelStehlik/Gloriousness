@@ -7,7 +7,6 @@ import Game.Buffs.StatBuff.Type;
 import Game.BulletLauncher;
 import Game.BulletLauncher.Cannon;
 import Game.Game;
-import Game.Projectile;
 import Game.TdWorld;
 import Game.TurretGenerator;
 import general.Data;
@@ -17,6 +16,7 @@ import org.joml.Vector2d;
 import windowStuff.Graphics;
 import windowStuff.ImageData;
 import windowStuff.Sprite;
+import windowStuff.Sprite.FrameAnimation;
 
 public class Mortar extends Turret {
 
@@ -37,7 +37,7 @@ public class Mortar extends Turret {
         return Graphics.getImage(mortarimg);
     }
 
-  private final Explosive<Projectile> explosive = new Explosive<>(0, 0);
+  private final Explosive explosive = new Explosive(0, 0);
 
 
   @Override
@@ -58,7 +58,7 @@ public class Mortar extends Turret {
         p -> p.moveRelative((Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread],
             (Data.gameMechanicsRng.nextFloat() - 0.5f) * stats[ExtraStats.spread]));
     bulletLauncher.addProjectileModifier(p -> p.getSprite().playAnimation(
-        p.getSprite().new BasicAnimation("Explosion1", this.getStats()[Stats.projectileDuration])));
+        new FrameAnimation("Explosion1", this.getStats()[Stats.projectileDuration])));
 
     badgeSprite = new Sprite("turretBase", 22).setSize(sprite.getWidth()*2*0.75f,
             sprite.getWidth()*2*0.75f);
@@ -218,7 +218,7 @@ public class Mortar extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 0f;
     stats[Stats.pierce] = 0f;
-    stats[Stats.aspd] = 0f;
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.4f, 0.8f);
     stats[Stats.projectileDuration] = 0.9f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(120f, 180f);
     stats[Stats.speed] = 0f;

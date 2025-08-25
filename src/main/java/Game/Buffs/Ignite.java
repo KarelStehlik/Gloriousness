@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import windowStuff.AbstractSprite;
 import windowStuff.Sprite;
+import windowStuff.Sprite.FrameAnimation;
 
 public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
@@ -64,7 +65,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
       var bs = Game.get().getSpriteBatching("main");
       Sprite fs = new Sprite("Fireball-0", 3).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
       fs.setRotation(180);
-      fs.playAnimation(fs.new BasicAnimation("Fireball", 1.1f).loop());
+      fs.playAnimation(new FrameAnimation("Fireball", 1.1f).loop());
       fs.setHidden(true);
       fireSprite = fs;
     }
