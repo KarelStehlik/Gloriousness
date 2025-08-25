@@ -70,14 +70,11 @@ public class SuperBatch implements SpriteBatching {
 
   private void growEbo() {
     eboSize = (int) (eboSize * 1.5);
-    int[] elements = new int[6 * eboSize];
+    int[] elements = new int[3 * eboSize];
     for (int i = 0; i < eboSize; i++) {
-      elements[6 * i] =     2 + 4 * i;
-      elements[6 * i + 1] = 1 + 4 * i;
-      elements[6 * i + 2] =     4 * i;
-      elements[6 * i + 3] = 3 + 4 * i;
-      elements[6 * i + 4] = 1 + 4 * i;
-      elements[6 * i + 5] = 0 + 4 * i;
+      elements[3 * i] =     2 + 4 * i;
+      elements[3 * i + 1] = 1 + 4 * i;
+      elements[3 * i + 2] =     4 * i;
     }
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
@@ -183,7 +180,7 @@ public class SuperBatch implements SpriteBatching {
       shader.uploadTexture("sampler", 0);
       glActiveTexture(GL_TEXTURE0);
 
-      glDrawElements(GL_TRIANGLES, 6 * spriteCount, GL_UNSIGNED_INT, 0);
+      glDrawElements(GL_TRIANGLES, 3 * spriteCount, GL_UNSIGNED_INT, 0);
 
       /*shader.detach();
       glBindVertexArray(0);

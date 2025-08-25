@@ -2,7 +2,7 @@
 
 #type vertex
 #version 450 core
-layout (location=0) in vec4 pos;
+layout (location=0) in vec2 pos;
 layout (location=1) in vec4 color;
 layout (location=2) in vec2 inTexCoords;
 
@@ -15,11 +15,10 @@ out VS_OUT {
 } vs_out;
 
 void main(){
-    mat4 newMat=mat4(1);
 
     vs_out.fColor = color;
     vs_out.fTexCoords = inTexCoords;
-    gl_Position = projection * view * vec4(pos.x, pos.y, 1, 1)*newMat;
+    gl_Position = projection * view * vec4(pos.x, pos.y, 1, 1);
 }
 
 
