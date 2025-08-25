@@ -74,7 +74,6 @@ public class Shader {
       int vertexID = glCreateShader(GL_VERTEX_SHADER);
       glShaderSource(vertexID, vertexSource);
       glCompileShader(vertexID);
-
       if (glGetShaderi(vertexID, GL_COMPILE_STATUS) == GL_FALSE) {
         int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
         Log.write("V shader compile failed. " + name);
@@ -107,10 +106,10 @@ public class Shader {
 
       shaderID = glCreateProgram();
       glAttachShader(shaderID, vertexID);
-      glAttachShader(shaderID, fragmentID);
       if (geometrySource!=null){
         glAttachShader(shaderID, geoID);
       }
+      glAttachShader(shaderID, fragmentID);
       glLinkProgram(shaderID);
 
       if (glGetProgrami(shaderID, GL_LINK_STATUS) == GL_FALSE) {

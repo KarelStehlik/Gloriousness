@@ -1,43 +1,42 @@
 #type vertex
-#version 330 core
-layout (location=0) in vec3 pos;
+#version 450 core
+layout (location=0) in vec2 pos;
 layout (location=1) in vec4 color;
 layout (location=2) in vec2 inTexCoords;
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform int time;
 
-out float glowOpacity;
-
-out vec4 fColor;
-out vec2 texCoords;
+out VS_OUT {
+    vec4 fColor;
+    vec2 texCoords;
+} vs_out;
 
 void main(){
-    float t = float(time) / 1048576;
-    float tf = (t - int(t));
-    int ti = int(t);
-    fColor = vec4(0,0,0,color[3]);
-    for(int i=0;i<3;i++){
-        fColor[i] = color[(i+ti+1)%3] * tf + color[(i+ti)%3] * (1-tf);
-    }
-    glowOpacity = (color[0] + color[1] +color[2])*.3333;
-    texCoords = inTexCoords;
-    gl_Position = projection * view * vec4(pos.x, pos.y, pos.z, 1);
+    vs_out.fColor = color;
+    vs_out.texCoords = inTexCoords;
+    gl_Position = projection * view * vec4(pos.x, pos.y, 1, 1);
 }
 
-
-    #type fragment
-    #version 330 core
+#type fragment
+#version 450 core
 
 uniform sampler2D sampler;
 
-in vec4 fColor;
-in vec2 texCoords;
-in float glowOpacity;
+in VS_OUT {
+    vec4 fColor;
+    vec2 texCoords;
+} gs_in;
+
 out vec4 color;
 
 void main(){
-    vec4 tex = texture(sampler, texCoords);
-    color = (fColor * glowOpacity * tex[3] + tex * (1-glowOpacity)) * fColor[3];
+    float avg = (gs_in.fColor[0] + gs_in.fColor[1] + gs_in.fColor[2])*.333;
+    float opacity = texture(sampler, gs_in.texCoords)[3];
+    if(avg>1){
+        opacity*=avg;
+        avg=1;
+    }
+    color = gs_in.fColor * avg * opacity + texture(sampler, gs_in.texCoords) * (1-avg);
+    color[3]*=gs_in.fColor[3];
 }
