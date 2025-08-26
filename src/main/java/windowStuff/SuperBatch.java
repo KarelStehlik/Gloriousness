@@ -3,7 +3,7 @@ package windowStuff;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glBindVertexArray;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_POINTS;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glDrawElements;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
@@ -180,7 +180,7 @@ public class SuperBatch implements SpriteBatching {
       shader.uploadTexture("sampler", 0);
       glActiveTexture(GL_TEXTURE0);
 
-      glDrawElements(GL_TRIANGLES, 3 * spriteCount, GL_UNSIGNED_INT, 0);
+      glDrawElements(GL_POINTS, spriteCount, GL_UNSIGNED_INT, 0);
 
       /*shader.detach();
       glBindVertexArray(0);
