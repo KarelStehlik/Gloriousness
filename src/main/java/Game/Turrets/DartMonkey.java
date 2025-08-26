@@ -136,8 +136,8 @@ public class DartMonkey extends Turret {
                 () -> {
                     addBuff(new StatBuff<Turret>(StatBuff.Type.INCREASED, Stats.range, 0.25f));
                     bulletLauncher.addMobCollide((proj,mob)->{
-                        float duration= proj.getStats()[Stats.power]* 120 / mob.getStats()[TdMob.Stats.health];
-                        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE, duration, TdMob.Stats.speed, 0.001f));
+                        float duration= proj.getStats()[Stats.power]* 500 / mob.getStats()[TdMob.Stats.health];
+                        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE, duration, TdMob.Stats.speed, 0));
                         return true;
                     },0);
                 }, 25);

@@ -5,8 +5,6 @@ import static java.lang.Character.isDigit;
 import general.Constants;
 import general.Log;
 import general.Util;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

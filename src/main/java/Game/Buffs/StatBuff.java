@@ -2,6 +2,7 @@ package Game.Buffs;
 
 import Game.Game;
 import Game.GameObject;
+import general.Log;
 import general.Util;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -62,7 +63,8 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     public final int target;
     float added = 0, increased = 1, finallyAdded = 0;
     double more = 1;
-    //Map<Float, Integer> moreModifiers = new HashMap<>(1);
+    Map<Float, Integer> moreModifiers = new HashMap<>(1);
+    private int multipliersWithoutRecalc = 0;
 
     TotalModifier(float[] stats, int target) {
       this.target = target;
@@ -83,6 +85,7 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
       var co = new TotalModifier(newTarget.getStats()[target], target, added, increased, more,
           finallyAdded);
       co.apply(newTarget);
+      co.moreModifiers.putAll(moreModifiers);
       return co;
     }
 
@@ -104,19 +107,32 @@ public class StatBuff<T extends GameObject> implements Buff<T> {
     }
 
     void addMore(float value) {
-      //int count = moreModifiers.computeIfAbsent(value,v->0);
-      //moreModifiers.put(value, count+1);
+      int count = moreModifiers.computeIfAbsent(value,v->0);
+      moreModifiers.put(value, count+1);
       more *= value;
     }
 
     void removeMore(float value) {
-      //int count = moreModifiers.get(value);
-      //if(count==1){
-      //  moreModifiers.remove(value);
-      //}else{
-      //  moreModifiers.put(value, count-1);
-      //}
-      more /= value;
+      int count = moreModifiers.get(value);
+      if(count==1){
+        moreModifiers.remove(value);
+      }else{
+        moreModifiers.put(value, count-1);
+      }
+
+      multipliersWithoutRecalc++;
+      if(multipliersWithoutRecalc>25 || value==0){
+        recalcMore();
+      }else {
+        more /= value;
+      }
+    }
+
+    private void recalcMore(){
+      more=1;
+      for(var item : moreModifiers.entrySet()){
+        more *= Math.pow(item.getKey(), item.getValue());
+      }
     }
 
     void add(StatBuff<?> b, GameObject tar) {
