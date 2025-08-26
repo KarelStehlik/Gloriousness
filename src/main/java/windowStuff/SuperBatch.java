@@ -59,31 +59,31 @@ public class SuperBatch implements SpriteBatching {
           0);
 
       glEnableVertexAttribArray(1);
-      glVertexAttribPointer(1, colorCount, GL_FLOAT, false, colorCount,
+      glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes,
           positionCount * floatBytes);
       glEnableVertexAttribArray(2);
-      glVertexAttribPointer(2, colorCount, GL_FLOAT, false, colorCount,
+      glVertexAttribPointer(2, colorCount, GL_FLOAT, false, vertexBytes,
               (positionCount + colorCount) * floatBytes);
       glEnableVertexAttribArray(3);
-      glVertexAttribPointer(3, colorCount, GL_FLOAT, false, colorCount,
+      glVertexAttribPointer(3, colorCount, GL_FLOAT, false, vertexBytes,
               (positionCount + colorCount*2) * floatBytes);
       glEnableVertexAttribArray(4);
-      glVertexAttribPointer(4, colorCount, GL_FLOAT, false, colorCount,
+      glVertexAttribPointer(4, colorCount, GL_FLOAT, false, vertexBytes,
               (positionCount + colorCount*3) * floatBytes);
 
       glEnableVertexAttribArray(5);
-      glVertexAttribPointer(5, texCoords, GL_FLOAT, false, texCoords,
+      glVertexAttribPointer(5, texCoords, GL_FLOAT, false, vertexBytes,
           (positionCount + colorCount*4) * floatBytes);
       glEnableVertexAttribArray(6);
-      glVertexAttribPointer(6, texCoords, GL_FLOAT, false, texCoords,
+      glVertexAttribPointer(6, texCoords, GL_FLOAT, false, vertexBytes,
               (positionCount + colorCount*4+texCoords) * floatBytes);
 
       glEnableVertexAttribArray(7);
-      glVertexAttribPointer(7, texCoords, GL_FLOAT, false, sizeCount,
+      glVertexAttribPointer(7, texCoords, GL_FLOAT, false, vertexBytes,
               (positionCount + colorCount*4+texCoords*2) * floatBytes);
 
       glEnableVertexAttribArray(8);
-      glVertexAttribPointer(8, texCoords, GL_FLOAT, false, rotationCount,
+      glVertexAttribPointer(8, texCoords, GL_FLOAT, false, vertexBytes,
               (positionCount + colorCount*4+texCoords*2+sizeCount) * floatBytes);
 
     }
