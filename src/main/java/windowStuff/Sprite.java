@@ -329,19 +329,30 @@ public class Sprite implements AbstractSprite {
       return 1;
     }
     float[] vertices = new float[Constants.SpriteSizeFloats];
-    for (int i = 0; i < 4; i++) {
-      int off = 8 * i;
-      vertices[off] = positions[2 * i];
-      vertices[off + 1] = positions[2 * i + 1];
 
-      vertices[off + 2] = colors[4 * i];
-      vertices[off + 3] = colors[4 * i + 1];
-      vertices[off + 4] = colors[4 * i + 2];
-      vertices[off + 5] = colors[4 * i + 3] * opacity;
+    //position
+    vertices[0] = x;
+    vertices[1] = y;
+    vertices[2] = 1;  //this is like z coords, I made it exist but like it's whatever and unused
 
-      vertices[off + 6] = texCoords[2 * i];
-      vertices[off + 7] = texCoords[2 * i + 1];
+    //dunno if color shows up at correct corner
+    for (int i = 0; i < 16; i++) {
+      vertices[i + 3] = colors[i];
     }
+
+    vertices[19] = texCoords[0];
+    vertices[20] = texCoords[1];
+    vertices[21] = texCoords[6];
+    vertices[22] = texCoords[7];
+
+    vertices[23] = width;
+    vertices[24] = height;
+    vertices[25] = 0;   //z size
+    vertices[26] = 0;   //w size
+
+    vertices[27] = rotation;
+
+
     buffer.subDataAdvance(vertices);
     return 0;
   }

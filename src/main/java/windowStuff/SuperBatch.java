@@ -44,11 +44,13 @@ public class SuperBatch implements SpriteBatching {
     growEbo();
 
     {
-      int positionCount = 2;
-      int floatBytes = Float.BYTES;
-      int vertexBytes = Constants.VertexSizeFloats * floatBytes;
+      int positionCount = 3;
       int colorCount = 4;
       int texCoords = 2;
+      int sizeCount=4;
+      int rotationCount=1;
+      int floatBytes = Float.BYTES;
+      int vertexBytes = (positionCount+colorCount*4+texCoords*2+sizeCount+rotationCount) * floatBytes;
 
       Graphics.vbo.bind();
 
@@ -57,12 +59,33 @@ public class SuperBatch implements SpriteBatching {
           0);
 
       glEnableVertexAttribArray(1);
-      glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes,
+      glVertexAttribPointer(1, colorCount, GL_FLOAT, false, colorCount,
           positionCount * floatBytes);
-
       glEnableVertexAttribArray(2);
-      glVertexAttribPointer(2, texCoords, GL_FLOAT, false, vertexBytes,
-          (positionCount + colorCount) * floatBytes);
+      glVertexAttribPointer(2, colorCount, GL_FLOAT, false, colorCount,
+              (positionCount + colorCount) * floatBytes);
+      glEnableVertexAttribArray(3);
+      glVertexAttribPointer(3, colorCount, GL_FLOAT, false, colorCount,
+              (positionCount + colorCount*2) * floatBytes);
+      glEnableVertexAttribArray(4);
+      glVertexAttribPointer(4, colorCount, GL_FLOAT, false, colorCount,
+              (positionCount + colorCount*3) * floatBytes);
+
+      glEnableVertexAttribArray(5);
+      glVertexAttribPointer(5, texCoords, GL_FLOAT, false, texCoords,
+          (positionCount + colorCount*4) * floatBytes);
+      glEnableVertexAttribArray(6);
+      glVertexAttribPointer(6, texCoords, GL_FLOAT, false, texCoords,
+              (positionCount + colorCount*4+texCoords) * floatBytes);
+
+      glEnableVertexAttribArray(7);
+      glVertexAttribPointer(7, texCoords, GL_FLOAT, false, sizeCount,
+              (positionCount + colorCount*4+texCoords*2) * floatBytes);
+
+      glEnableVertexAttribArray(8);
+      glVertexAttribPointer(8, texCoords, GL_FLOAT, false, rotationCount,
+              (positionCount + colorCount*4+texCoords*2+sizeCount) * floatBytes);
+
     }
 
     glBindVertexArray(0);
@@ -70,11 +93,9 @@ public class SuperBatch implements SpriteBatching {
 
   private void growEbo() {
     eboSize = (int) (eboSize * 1.5);
-    int[] elements = new int[3 * eboSize];
+    int[] elements = new int[eboSize];
     for (int i = 0; i < eboSize; i++) {
-      elements[3 * i] =     2 + 4 * i;
-      elements[3 * i + 1] = 1 + 4 * i;
-      elements[3 * i + 2] =     4 * i;
+      elements[i] =    i;
     }
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);

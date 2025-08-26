@@ -3,9 +3,9 @@
 #version 450 core
 layout (location=0) in vec3 pos;
 layout (location=1) in vec4 color[4];
-layout (location=2) in vec2 inTexCoords[2];
-layout (location=3) in vec4 size;
-layout (location=4) in float rotation;
+layout (location=5) in vec2 inTexCoords[2];
+layout (location=7) in vec4 size;
+layout (location=8) in float rotation;
 
 
 uniform mat4 projection;
@@ -23,7 +23,7 @@ void main(){
     vs_out.fColor = color;
     vs_out.fSize = size;
     vs_out.fTexCoords = inTexCoords;
-    gl_Position = projection * view * vec4(pos.x, pos.y, 1, 1);
+    gl_Position = projection * view * vec4(pos.x, pos.y, pos.z, 1);
 }
 
 #type geometry
