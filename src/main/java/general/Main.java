@@ -11,7 +11,7 @@ public final class Main {
   }
 
   public static void main(String[] args) {
-    System.loadLibrary("renderdoc");
+    //System.loadLibrary("renderdoc");
     Log.write(Version.getVersion());
     Audio.init();
     var win = Window.get();
