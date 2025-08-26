@@ -86,7 +86,7 @@ void main()
     float z=gs_in[0].fSize[2];
     float w=gs_in[0].fSize[3];
 
-    BuildSquare(vec4(cosr*x-sinr*y,cosr*y-sinr*x,z,w),gs_in[0].fSize);
+    BuildSquare(gl_in[0].gl_Position,vec4(cosr*x-sinr*y,cosr*y-sinr*x,z,w));
 
     EndPrimitive();
 }
