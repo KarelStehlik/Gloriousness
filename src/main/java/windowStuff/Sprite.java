@@ -3,6 +3,7 @@ package windowStuff;
 import Game.Game;
 import general.Constants;
 import general.Data;
+import general.Log;
 import general.Util;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,14 +18,11 @@ public class Sprite implements AbstractSprite {
 
     }
   };
-  private final float[] positions = new float[8];
-  protected boolean hasUnsavedChanges = true;
   protected String textureName;
   protected int layer;
   protected Shader shader;
   protected boolean deleted = false;
   protected boolean mustBeRebatched = false;
-  protected boolean rebufferStatic = true;
   protected float opacity = 1;
   private boolean hidden = false;
   private float x;
@@ -120,7 +118,6 @@ public class Sprite implements AbstractSprite {
   public Sprite scale(float multiplier) {
     width *= multiplier;
     height *= multiplier;
-    hasUnsavedChanges = true;
     return this;
   }
 
@@ -128,7 +125,6 @@ public class Sprite implements AbstractSprite {
   public Sprite scale(float multiplierX, float multiplierY) {
     width *= multiplierX;
     height *= multiplierY;
-    hasUnsavedChanges = true;
     return this;
   }
 
@@ -136,7 +132,6 @@ public class Sprite implements AbstractSprite {
   public Sprite setSize(float w, float h) {
     width = w / 2;
     height = h / 2;
-    hasUnsavedChanges = true;
     return this;
   }
 
@@ -159,7 +154,6 @@ public class Sprite implements AbstractSprite {
   @Override
   public Sprite setRotation(float r) {
     rotation = r;
-    hasUnsavedChanges = true;
     return this;
   }
 
@@ -171,7 +165,6 @@ public class Sprite implements AbstractSprite {
   public Sprite setColors(float[] colors) {
     assert colors.length == 16 : "expected 16 colors for sprite.";
     this.colors = colors;
-    rebufferStatic = true;
     return this;
   }
 
@@ -188,7 +181,6 @@ public class Sprite implements AbstractSprite {
   @Override
   public Sprite setX(float x) {
     this.x = x;
-    hasUnsavedChanges = true;
     return this;
   }
 
@@ -200,7 +192,6 @@ public class Sprite implements AbstractSprite {
   @Override
   public Sprite setY(float y) {
     this.y = y;
-    hasUnsavedChanges = true;
     return this;
   }
 
@@ -292,35 +283,12 @@ public class Sprite implements AbstractSprite {
     if (hidden) {
       return;
     }
-    {
-      int ticks = Game.get().getTicks() - lastGt;
-      lastGt += ticks;
-      for (int i = 0; i < ticks; i++) {
-        animation.update(this);
-      }
-    }
-    if (!hasUnsavedChanges) {
-      return;
-    }
-    float rotationSin = Util.sin(rotation);
-    float rotationCos = Util.cos(rotation);
-    float XC = width * rotationCos, YC = height * rotationCos,
-        XS = width * rotationSin, YS = height * rotationSin;
 
-    //+-
-    positions[0] = getX() + XC - YS;
-    positions[1] = getY() + XS + YC;
-    //-+
-    positions[2] = getX() - XC + YS;
-    positions[3] = getY() - XS - YC;
-    //++
-    positions[4] = getX() + XC + YS;
-    positions[5] = getY() + XS - YC;
-    //--
-    positions[6] = getX() - XC - YS;
-    positions[7] = getY() - XS + YC;
-
-    hasUnsavedChanges = false;
+    int ticks = Game.get().getTicks() - lastGt;
+    lastGt += ticks;
+    for (int i = 0; i < ticks; i++) {
+      animation.update(this);
+    }
   }
 
   // returns 1 if not buffered
@@ -333,25 +301,24 @@ public class Sprite implements AbstractSprite {
     //position
     vertices[0] = x;
     vertices[1] = y;
-    vertices[2] = 1;  //this is like z coords, I made it exist but like it's whatever and unused
 
     //dunno if color shows up at correct corner
     for (int i = 0; i < 16; i++) {
-      vertices[i + 3] = colors[i];
+      vertices[i + 2] = colors[i];
+      if(i%4==3){
+        vertices[i + 2]*=opacity;
+      }
     }
 
-    vertices[19] = texCoords[0];
-    vertices[20] = texCoords[1];
-    vertices[21] = texCoords[6];
-    vertices[22] = texCoords[7];
+    vertices[18] = texCoords[0];
+    vertices[19] = texCoords[1];
+    vertices[20] = texCoords[2];
+    vertices[21] = texCoords[3];
 
-    vertices[23] = width;
-    vertices[24] = height;
-    vertices[25] = 0;   //z size
-    vertices[26] = 0;   //w size
+    vertices[22] = width;
+    vertices[23] = height;
 
-    vertices[27] = rotation;
-
+    vertices[24] = rotation * (float)Math.PI/180;
 
     buffer.subDataAdvance(vertices);
     return 0;
@@ -360,7 +327,6 @@ public class Sprite implements AbstractSprite {
   @Override
   public String toString() {
     return "Sprite{"
-        + "positions=" + Arrays.toString(positions)
         + ", textureName='" + textureName + '\''
         + ", layer=" + layer
         + ", shader=" + shader
@@ -458,7 +424,6 @@ public class Sprite implements AbstractSprite {
         frame %= length;
       }
       //Log.write(length);
-      sprite.hasUnsavedChanges = true;
       if (frame >= length) {
         sprite.image = images.get(length - 1);
         end(sprite);

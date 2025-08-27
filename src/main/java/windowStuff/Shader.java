@@ -20,6 +20,7 @@ import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL20.glUniform2f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
@@ -29,17 +30,22 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 public class Shader {
 
-  private static final Pattern COMPILE = Pattern.compile(
-      "#type ");
+  private static final Pattern COMPILE = Pattern.compile("#type ");
   final int shaderID;
   private final String name;
+  private static String basicVertexSource;
+  private static String basicGeometrySource;
 
   public Shader(String path) {
 
@@ -50,7 +56,7 @@ public class Shader {
 
       String vertexSource = null;
       String fragmentSource = null;
-      String geometrySource=null;
+      String geometrySource = null;
       try {
         String[] sources = COMPILE.split(Files.readString(Paths.get(path)));
         for (String source : sources) {
@@ -67,24 +73,35 @@ public class Shader {
         e.printStackTrace();
       }
 
-      assert vertexSource != null : "No vertex source found in " + path;
       assert fragmentSource != null : "No fragment source found in " + path;
 
-      int vertexID = glCreateShader(GL_VERTEX_SHADER);
-      glShaderSource(vertexID, vertexSource);
-      glCompileShader(vertexID);
-      if (glGetShaderi(vertexID, GL_COMPILE_STATUS) == GL_FALSE) {
-        int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
-        Log.write("V shader compile failed. " + name);
-        Log.write(glGetShaderInfoLog(vertexID, len));
-        assert false : "";
+      if(Objects.equals(name, "basic")){
+        basicVertexSource=vertexSource;
+        basicGeometrySource=geometrySource;
       }
-      int geoID=0;
-      if(geometrySource!=null){
-        geoID=glCreateShader(GL_GEOMETRY_SHADER);
+      if(vertexSource==null){
+        vertexSource=basicVertexSource;
+      }
+      if(geometrySource==null){
+        geometrySource=basicGeometrySource;
+      }
+
+        int vertexID = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexID, vertexSource);
+        glCompileShader(vertexID);
+        if (glGetShaderi(vertexID, GL_COMPILE_STATUS) == GL_FALSE) {
+          int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
+          Log.write("V shader compile failed. " + name);
+          Log.write(glGetShaderInfoLog(vertexID, len));
+          assert false : "";
+        }
+
+
+
+        int geoID  = glCreateShader(GL_GEOMETRY_SHADER);
         glShaderSource(geoID, geometrySource);
         glCompileShader(geoID);
-      }
+
 
       int fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
       glShaderSource(fragmentID, fragmentSource);
@@ -96,7 +113,7 @@ public class Shader {
         Log.write(glGetShaderInfoLog(fragmentID, len));
         assert false : "";
       }
-      if (geometrySource!=null && (glGetShaderi(fragmentID, GL_COMPILE_STATUS) == GL_FALSE)) {
+      if (glGetShaderi(fragmentID, GL_COMPILE_STATUS) == GL_FALSE) {
         int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
         Log.write("F shader compile failed. " + name);
         Log.write(glGetShaderInfoLog(fragmentID, len));
@@ -126,8 +143,9 @@ public class Shader {
     }
   }
 
-  public void use() {
+  public Shader use() {
     glUseProgram(shaderID);
+    return this;
   }
 
   public void detach() {
@@ -135,8 +153,8 @@ public class Shader {
   }
 
   private void uploadUniform(String uniformName, Matrix4fc inMatrix) {
-    int varLocation = glGetUniformLocation(shaderID, uniformName);
     use();
+    int varLocation = glGetUniformLocation(shaderID, uniformName);
     FloatBuffer inMatrixBuffer = BufferUtils.createFloatBuffer(16);
     inMatrix.get(inMatrixBuffer);
     glUniformMatrix4fv(varLocation, false, inMatrixBuffer);
@@ -149,9 +167,14 @@ public class Shader {
   }
 
   public void uploadUniform(String uniformName, float value) {
-    int varLocation = glGetUniformLocation(shaderID, uniformName);
     use();
+    int varLocation = glGetUniformLocation(shaderID, uniformName);
     glUniform1f(varLocation, value);
+  }
+  public void uploadUniform(String uniformName, Vector2f value) {
+    use();
+    int varLocation = glGetUniformLocation(shaderID, uniformName);
+    glUniform2f(varLocation, value.x, value.y);
   }
   public void uploadMatrix(String uniformName, Matrix4f value) {
     uploadUniform(uniformName, value);
@@ -165,6 +188,10 @@ public class Shader {
   public void useCamera(Camera cam) {
     uploadUniform("projection", cam.getProjectionMatrix());
     uploadUniform("view", cam.getViewMatrix());
+    var size = new Vector4f(1,1,0,0);
+    Matrix4f mat=new Matrix4f();
+    size = cam.getProjectionMatrix().get(mat).mul(cam.getViewMatrix()).transform(size);
+    uploadUniform("sizeScale", new Vector2f(size.x, size.y));
   }
 
   @Override

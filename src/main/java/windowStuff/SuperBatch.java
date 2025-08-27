@@ -34,6 +34,17 @@ public class SuperBatch implements SpriteBatching {
   private boolean visible = true;
   private boolean nukeNextTick = false;
 
+
+  private static int attribArray = 0;
+  private static int position=0;
+  static void attribPointer(int count){
+    int vertexBytes = Constants.SpriteSizeFloats * Float.BYTES;
+    glEnableVertexAttribArray(attribArray);
+    glVertexAttribPointer(attribArray, count, GL_FLOAT, false, vertexBytes, position);
+    attribArray++;
+    position+=count*Float.BYTES;
+  }
+
   public SuperBatch() {
     this.images = Graphics.getLoadedImages();
 
@@ -44,48 +55,25 @@ public class SuperBatch implements SpriteBatching {
     growEbo();
 
     {
-      int positionCount = 3;
-      int colorCount = 4;
-      int texCoords = 2;
-      int sizeCount=4;
+      int positionCount = 2;
+      int colorCountPerVertex = 4;
+      int texCoords = 4;
+      int sizeCount = 2;
       int rotationCount=1;
-      int floatBytes = Float.BYTES;
-      int vertexBytes = (positionCount+colorCount*4+texCoords*2+sizeCount+rotationCount) * floatBytes;
 
       Graphics.vbo.bind();
 
-      glEnableVertexAttribArray(0);
-      glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes,
-          0);
+      position=0;
+      attribArray=0;
 
-      glEnableVertexAttribArray(1);
-      glVertexAttribPointer(1, colorCount, GL_FLOAT, false, colorCount,
-          positionCount * floatBytes);
-      glEnableVertexAttribArray(2);
-      glVertexAttribPointer(2, colorCount, GL_FLOAT, false, colorCount,
-              (positionCount + colorCount) * floatBytes);
-      glEnableVertexAttribArray(3);
-      glVertexAttribPointer(3, colorCount, GL_FLOAT, false, colorCount,
-              (positionCount + colorCount*2) * floatBytes);
-      glEnableVertexAttribArray(4);
-      glVertexAttribPointer(4, colorCount, GL_FLOAT, false, colorCount,
-              (positionCount + colorCount*3) * floatBytes);
-
-      glEnableVertexAttribArray(5);
-      glVertexAttribPointer(5, texCoords, GL_FLOAT, false, texCoords,
-          (positionCount + colorCount*4) * floatBytes);
-      glEnableVertexAttribArray(6);
-      glVertexAttribPointer(6, texCoords, GL_FLOAT, false, texCoords,
-              (positionCount + colorCount*4+texCoords) * floatBytes);
-
-      glEnableVertexAttribArray(7);
-      glVertexAttribPointer(7, texCoords, GL_FLOAT, false, sizeCount,
-              (positionCount + colorCount*4+texCoords*2) * floatBytes);
-
-      glEnableVertexAttribArray(8);
-      glVertexAttribPointer(8, texCoords, GL_FLOAT, false, rotationCount,
-              (positionCount + colorCount*4+texCoords*2+sizeCount) * floatBytes);
-
+      attribPointer(positionCount);
+      attribPointer(colorCountPerVertex);
+      attribPointer(colorCountPerVertex);
+      attribPointer(colorCountPerVertex);
+      attribPointer(colorCountPerVertex);
+      attribPointer(texCoords);
+      attribPointer(sizeCount);
+      attribPointer(rotationCount);
     }
 
     glBindVertexArray(0);

@@ -24,7 +24,7 @@ public class IntroScreen implements World {
 
   private static final List<String> loadingScreenTips = List.of(
       TextModifiers.colors(Util.getCycle2colors(1))+"shader:colorCycle2|#200|OBSERVE",
-      TextModifiers.colors(Util.getCycle2colors(1))+"shader:colorCycle2|#150|PINK FLUFFY UNICORNS|#<|#<|#<|#16|#100.#100.#100|not included",
+      /*TextModifiers.colors(Util.getCycle2colors(1))+"shader:colorCycle2|#150|PINK FLUFFY UNICORNS|#<|#<|#<|#16|#100.#100.#100|not included",
       "Scientists prove that they can't prove shit.",
       "Fun fact: There are no aliens on Earth. Especially not at 38\u00B053'51.5\"N 77\u00B002'11.5\"W. And if there are, they're not weak to guns, don't even try.",
       "Thomas Jefferson was a guy. |#40|(male)",
@@ -45,7 +45,7 @@ public class IntroScreen implements World {
       "Druids harness the power of nature. Indeed, glowing green balls that destroy bloons and regrow from nothing when depleted are very natural.",
       "The dart monkey can also throw babies. It's not very effective, but hey, if you provide him with babies he can do that i guess.",
       "Necromancers drain the souls of their victims and sell them on the dark web. |#35|Anyone want some? Buy 40, get 10 free!",
-      "Engineers did not help in the creation of this game. Lazy fucks.",
+      "Engineers did not help in the creation of this game. Lazy fucks.",*/
       " ".repeat(30)+"|speed:75|Vzoom"+" ".repeat(65)
   );
 

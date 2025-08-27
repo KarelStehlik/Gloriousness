@@ -9,7 +9,7 @@ import org.lwjgl.BufferUtils;
 
 public final class Constants {
 
-  public static final int SpriteSizeFloats = 32;
+  public static final int SpriteSizeFloats = 25;
   public static final Vector2i screenSize;
 
   //gameplay
