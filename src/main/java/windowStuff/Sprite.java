@@ -3,10 +3,8 @@ package windowStuff;
 import Game.Game;
 import general.Constants;
 import general.Data;
-import general.Log;
 import general.Util;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 

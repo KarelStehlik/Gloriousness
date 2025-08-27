@@ -1,10 +1,7 @@
 package windowStuff;
 
-import static java.lang.Character.isDigit;
-
 import general.Constants;
 import general.Util;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

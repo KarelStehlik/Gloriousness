@@ -2,14 +2,12 @@ package Game;
 
 import general.Constants;
 import general.Data;
-import general.Log;
 import general.Util;
 import java.util.List;
 import windowStuff.Audio;
 import windowStuff.Audio.SoundToPlay;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
-import windowStuff.OtherText;
 import windowStuff.ScrollingText;
 import windowStuff.Sprite;
 import windowStuff.SpriteBatching;
