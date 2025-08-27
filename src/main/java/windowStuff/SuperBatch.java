@@ -63,6 +63,7 @@ public class SuperBatch implements SpriteBatching {
 
       Graphics.vbo.bind();
 
+
       position=0;
       attribArray=0;
 
