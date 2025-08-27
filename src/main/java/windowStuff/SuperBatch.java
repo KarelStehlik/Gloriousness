@@ -3,6 +3,7 @@ package windowStuff;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glBindVertexArray;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11C.GL_POINTS;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glDrawElements;
@@ -25,11 +26,10 @@ import java.util.List;
 public class SuperBatch implements SpriteBatching {
 
   private final List<Sprite> spritesToAdd = new ArrayList<>(1);
-  private final int ebo, vao;
+  private final int vao;
   private final List<Batch> batches = new ArrayList<>(1);
   private final ImageSet images;
   private final ArrayList<Sprite> spritesToRebatch = new ArrayList<>(1);
-  private int eboSize = 1042;
   private Camera camera;
   private boolean visible = true;
   private boolean nukeNextTick = false;
@@ -48,11 +48,8 @@ public class SuperBatch implements SpriteBatching {
   public SuperBatch() {
     this.images = Graphics.getLoadedImages();
 
-    ebo = glGenBuffers();
     vao = glGenVertexArrays();
     glBindVertexArray(vao);
-
-    growEbo();
 
     {
       int positionCount = 2;
@@ -80,15 +77,6 @@ public class SuperBatch implements SpriteBatching {
     glBindVertexArray(0);
   }
 
-  private void growEbo() {
-    eboSize = (int) (eboSize * 1.5);
-    int[] elements = new int[eboSize];
-    for (int i = 0; i < eboSize; i++) {
-      elements[i] =    i;
-    }
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
-  }
 
   public void show() {
     visible = true;
@@ -167,10 +155,6 @@ public class SuperBatch implements SpriteBatching {
         drawEnd++;
       }
 
-      while (eboSize < spriteCount) {
-        growEbo();
-      }
-
       glBindVertexArray(this.vao);
 
       Graphics.vbo.alloc(spriteCount * Constants.SpriteSizeFloats * Float.BYTES, GL_STREAM_DRAW);
@@ -190,7 +174,7 @@ public class SuperBatch implements SpriteBatching {
       shader.uploadTexture("sampler", 0);
       glActiveTexture(GL_TEXTURE0);
 
-      glDrawElements(GL_POINTS, spriteCount, GL_UNSIGNED_INT, 0);
+      glDrawArrays(GL_POINTS, 0, spriteCount);
 
       /*shader.detach();
       glBindVertexArray(0);
