@@ -26,7 +26,7 @@ public class Druid8 extends Turret {
   }
 
   public Druid8(TdWorld world, int X, int Y) {
-    super(world, X, Y, new BulletLauncher(world, ""));
+    super(world, X, Y, new BulletLauncher(world, "DruidBall"));
     bulletLauncher.setLauncher(
         (world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power) -> new DruidBall(
             world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power,
