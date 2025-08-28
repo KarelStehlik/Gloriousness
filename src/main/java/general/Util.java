@@ -20,12 +20,6 @@ public final class Util {
       3, 0, 0, 1,
       3, 0, 0, 1,
   };
-  private static final float[] cycle2colors = new float[]{
-      0, 1, .5f, 1,
-      1, 0, .5f, 1,
-      0, 0, .5f, 1,
-      1, 1, .5f, 1,
-  };
   private static final float[] noColors = new float[]{
       0, 0, 0, 1,
       0, 0, 0, 1,
@@ -57,7 +51,7 @@ public final class Util {
   }
 
   public static float clamp(float value, float min, float max) {
-    return value < min ? min : value > max ? max : value;
+    return value < min ? min : Math.min(value, max);
   }
 
   public static long getUid() {
@@ -152,17 +146,63 @@ public final class Util {
     return result;
   }
 
-  public static float[] getCycle2colors() {
-    return cycle2colors;
-  }
+  public static class Cycle2Colors{
 
-  public static float[] getCycle2colors(float strength) {
-    return new float[]{
-        0, 10, strength, 1,
-        10, 0, strength, 1,
-        0, 0, strength, 1,
-        10, 10, strength, 1,
-    };
+    private float density=0.2f,strength=1,xOffset=0,yOffset=0,speed=1;
+
+    public float getDensity() {
+      return density;
+    }
+
+    public Cycle2Colors setDensity(float density) {
+      this.density = density;
+      return this;
+    }
+
+    public float getStrength() {
+      return strength;
+    }
+
+    public Cycle2Colors setStrength(float strength) {
+      this.strength = strength;
+      return this;
+    }
+
+    public float getxOffset() {
+      return xOffset;
+    }
+
+    public Cycle2Colors setxOffset(float xOffset) {
+      this.xOffset = xOffset;
+      return this;
+    }
+
+    public float getyOffset() {
+      return yOffset;
+    }
+
+    public Cycle2Colors setyOffset(float yOffset) {
+      this.yOffset = yOffset;
+      return this;
+    }
+
+    public float getSpeed() {
+      return speed;
+    }
+
+    public Cycle2Colors setSpeed(float speed) {
+      this.speed = speed;
+      return this;
+    }
+
+    public float[] get(){
+      return new float[]{
+          density,strength, speed, 1,
+          xOffset,yOffset,0,1,
+          0,0,0,1,
+          0,0,0,1,
+      };
+    }
   }
 
   public static float square(float x) {
