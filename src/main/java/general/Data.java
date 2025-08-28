@@ -36,6 +36,7 @@ public final class Data {
     // loads shaders
     var shaderNames = new File(shaderDirectory).list();
     assert shaderNames != null : shaderDirectory + " is not a valid directory.";
+    loadShader("basic");
     for (String shaderName : shaderNames) {
       loadShader(shaderName);
     }

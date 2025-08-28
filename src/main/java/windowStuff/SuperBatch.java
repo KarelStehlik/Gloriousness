@@ -3,16 +3,10 @@ package windowStuff;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glBindVertexArray;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glDrawElements;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11C.GL_POINTS;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13C.glActiveTexture;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengles.GLES20.GL_STREAM_DRAW;
@@ -25,63 +19,57 @@ import java.util.List;
 public class SuperBatch implements SpriteBatching {
 
   private final List<Sprite> spritesToAdd = new ArrayList<>(1);
-  private final int ebo, vao;
+  private final int vao;
   private final List<Batch> batches = new ArrayList<>(1);
   private final ImageSet images;
   private final ArrayList<Sprite> spritesToRebatch = new ArrayList<>(1);
-  private int eboSize = 1042;
   private Camera camera;
   private boolean visible = true;
   private boolean nukeNextTick = false;
 
+
+  private static int attribArray = 0;
+  private static int position=0;
+  static void attribPointer(int count){
+    int vertexBytes = Constants.SpriteSizeFloats * Float.BYTES;
+    glEnableVertexAttribArray(attribArray);
+    glVertexAttribPointer(attribArray, count, GL_FLOAT, false, vertexBytes, position);
+    attribArray++;
+    position+=count*Float.BYTES;
+  }
+
   public SuperBatch() {
     this.images = Graphics.getLoadedImages();
 
-    ebo = glGenBuffers();
     vao = glGenVertexArrays();
     glBindVertexArray(vao);
 
-    growEbo();
-
     {
       int positionCount = 2;
-      int floatBytes = Float.BYTES;
-      int vertexBytes = Constants.VertexSizeFloats * floatBytes;
-      int colorCount = 4;
-      int texCoords = 2;
+      int colorCountPerVertex = 4;
+      int texCoords = 4;
+      int sizeCount = 2;
+      int rotationCount=1;
 
       Graphics.vbo.bind();
 
-      glEnableVertexAttribArray(0);
-      glVertexAttribPointer(0, positionCount, GL_FLOAT, false, vertexBytes,
-          0);
 
-      glEnableVertexAttribArray(1);
-      glVertexAttribPointer(1, colorCount, GL_FLOAT, false, vertexBytes,
-          positionCount * floatBytes);
+      position=0;
+      attribArray=0;
 
-      glEnableVertexAttribArray(2);
-      glVertexAttribPointer(2, texCoords, GL_FLOAT, false, vertexBytes,
-          (positionCount + colorCount) * floatBytes);
+      attribPointer(positionCount);
+      attribPointer(colorCountPerVertex);
+      attribPointer(colorCountPerVertex);
+      attribPointer(colorCountPerVertex);
+      attribPointer(colorCountPerVertex);
+      attribPointer(texCoords);
+      attribPointer(sizeCount);
+      attribPointer(rotationCount);
     }
 
     glBindVertexArray(0);
   }
 
-  private void growEbo() {
-    eboSize = (int) (eboSize * 1.5);
-    int[] elements = new int[6 * eboSize];
-    for (int i = 0; i < eboSize; i++) {
-      elements[6 * i] = 2 + 4 * i;
-      elements[6 * i + 1] = 1 + 4 * i;
-      elements[6 * i + 2] = 4 * i;
-      elements[6 * i + 3] = 4 * i;
-      elements[6 * i + 4] = 1 + 4 * i;
-      elements[6 * i + 5] = 3 + 4 * i;
-    }
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
-  }
 
   public void show() {
     visible = true;
@@ -160,10 +148,6 @@ public class SuperBatch implements SpriteBatching {
         drawEnd++;
       }
 
-      while (eboSize < spriteCount) {
-        growEbo();
-      }
-
       glBindVertexArray(this.vao);
 
       Graphics.vbo.alloc(spriteCount * Constants.SpriteSizeFloats * Float.BYTES, GL_STREAM_DRAW);
@@ -183,7 +167,7 @@ public class SuperBatch implements SpriteBatching {
       shader.uploadTexture("sampler", 0);
       glActiveTexture(GL_TEXTURE0);
 
-      glDrawElements(GL_TRIANGLES, 6 * spriteCount, GL_UNSIGNED_INT, 0);
+      glDrawArrays(GL_POINTS, 0, spriteCount);
 
       /*shader.detach();
       glBindVertexArray(0);

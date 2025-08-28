@@ -3,6 +3,7 @@ package Game;
 import general.Constants;
 import general.Data;
 import general.Util;
+import general.Util.Cycle2Colors;
 import java.util.List;
 import windowStuff.Audio;
 import windowStuff.Audio.SoundToPlay;
@@ -21,8 +22,8 @@ public class IntroScreen implements World {
   private final ScrollingText text;
 
   private static final List<String> loadingScreenTips = List.of(
-      TextModifiers.colors(Util.getCycle2colors(1))+"shader:colorCycle2|#200|OBSERVE",
-      TextModifiers.colors(Util.getCycle2colors(1))+"shader:colorCycle2|#150|PINK FLUFFY UNICORNS|#<|#<|#<|#16|#100.#100.#100|not included",
+      TextModifiers.colors(new Cycle2Colors().setyOffset(0.14f).get())+"shader:colorCycle2|#200|OBSERVE",
+      TextModifiers.colors(new Cycle2Colors().setyOffset(0.14f).setDensity(0.6f).get())+"shader:colorCycle2|#150|PINK FLUFFY UNICORNS|#<|#<|#<|#16|#100.#100.#100|not included",
       "Scientists prove that they can't prove shit.",
       "Fun fact: There are no aliens on Earth. Especially not at 38\u00B053'51.5\"N 77\u00B002'11.5\"W. And if there are, they're not weak to guns, don't even try.",
       "Thomas Jefferson was a guy. |#40|(male)",

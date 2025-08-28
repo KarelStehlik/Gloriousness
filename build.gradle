@@ -1,7 +1,13 @@
 plugins {
     id 'java'
-}
+    id 'application'
 
+}
+apply plugin: 'application'
+mainClassName = "C:\\Users\\frant\\Documents\\Gloriousness\\src\\main\\java\\general\\Main.java"
+applicationDefaultJvmArgs = [
+        "-Djava.util.logging.config.file=src/main/resources/logging.properties"
+]
 java {
     sourceCompatibility = JavaVersion.VERSION_18
     targetCompatibility = JavaVersion.VERSION_18

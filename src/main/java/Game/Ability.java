@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
 
 import Game.Buffs.VoidFunc;
 import general.Util;
+import general.Util.Cycle2Colors;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
@@ -32,7 +33,7 @@ public class Ability {
                 + "\nUses: " + abilities.stream().filter(a -> a.cooldownRemaining <= 0).count();
           }
       );
-      button.getSprite().setShader("colorCycle2").setColors(Util.getCycle2colors(0.5f));
+      button.getSprite().setShader("colorCycle2").setColors(new Cycle2Colors().setStrength(0.5f).get());
       Game.get().addMouseDetect(button);
       Game.get().addTickable(button);
       Game.get().addKeyDetect(this);
@@ -55,7 +56,7 @@ public class Ability {
       if (ready != r) {
         ready = r;
         if (r) {
-          button.getSprite().setShader("colorCycle2").setColors(Util.getCycle2colors(0.5f));
+          button.getSprite().setShader("colorCycle2").setColors(new Cycle2Colors().setStrength(0.5f).get());
         } else {
           button.getSprite().setShader("basic").setColors(Util.getColors(.2f, .2f, .2f));
         }

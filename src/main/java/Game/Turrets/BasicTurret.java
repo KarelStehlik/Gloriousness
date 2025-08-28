@@ -92,7 +92,6 @@ public class BasicTurret extends Turret {
               }, bigDart);
           addBuff(new DelayedTrigger<Turret>(t -> {
             a.delete();
-            Log.write("dd");
           }, true));
         }, 200000);
   }
