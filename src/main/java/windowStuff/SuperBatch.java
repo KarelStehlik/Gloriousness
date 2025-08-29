@@ -189,7 +189,7 @@ public class SuperBatch implements SpriteBatching {
   private void _addSprite(Sprite sprite) {
     sprite.mustBeRebatched = false;
     int layer = sprite.layer;
-    String tex = sprite.textureName;
+    String tex = sprite.getImage().textureName;
     Shader shader = sprite.shader;
 
     //find the right batch. todo: maybe a bin search?

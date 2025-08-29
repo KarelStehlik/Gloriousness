@@ -1,10 +1,10 @@
 #type geometry
 #version 450 core
 
-const int subdivisionPerSide = 10;
+const int subdivisionPerSide = 5;
 
 layout (points) in;
-layout (triangle_strip, max_vertices = subdivisionPerSide*8+1) out;
+layout (triangle_strip, max_vertices = subdivisionPerSide*16+1) out;
 
 uniform vec2 sizeScale;
 
@@ -68,19 +68,27 @@ void main()
 
     for(float i=0; i<subdivisionPerSide;i++){
         emitPoint(vec2(i/subdivisionPerSide, 0), props);
+        emitPoint(vec2((i+1f/3)/subdivisionPerSide, 0), props);
         emitPoint(vec2(xCentre, yCentre), props);
+        emitPoint(vec2((i+2f/3)/subdivisionPerSide, 0), props);
     }
     for(float i=0; i<subdivisionPerSide;i++){
         emitPoint(vec2(1, i/subdivisionPerSide), props);
+        emitPoint(vec2(1, (i+1f/3)/subdivisionPerSide), props);
         emitPoint(vec2(xCentre, yCentre), props);
+        emitPoint(vec2(1, (i+2f/3)/subdivisionPerSide), props);
     }
     for(float i=0; i<subdivisionPerSide;i++){
         emitPoint(vec2(1-i/subdivisionPerSide, 1), props);
+        emitPoint(vec2(1-(i+1f/3)/subdivisionPerSide, 1), props);
         emitPoint(vec2(xCentre, yCentre), props);
+        emitPoint(vec2(1-(i+2f/3)/subdivisionPerSide, 1), props);
     }
     for(float i=0; i<subdivisionPerSide;i++){
         emitPoint(vec2(0, 1-i/subdivisionPerSide), props);
+        emitPoint(vec2(0, 1-(i+1f/3)/subdivisionPerSide), props);
         emitPoint(vec2(xCentre, yCentre), props);
+        emitPoint(vec2(0, 1-(i+2f/3)/subdivisionPerSide), props);
     }
     emitPoint(vec2(0,0), props);
 

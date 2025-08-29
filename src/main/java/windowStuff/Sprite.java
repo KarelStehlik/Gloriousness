@@ -16,7 +16,7 @@ public class Sprite implements AbstractSprite {
 
     }
   };
-  protected String textureName;
+
   protected int layer;
   protected Shader shader;
   protected boolean deleted = false;
@@ -35,7 +35,6 @@ public class Sprite implements AbstractSprite {
   private boolean deleteOnAnimationEnd = true;
 
   public Sprite(Sprite og) {
-    textureName = og.textureName;
     layer = og.layer;
     shader = og.shader;
     opacity = og.opacity;
@@ -79,13 +78,10 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public Sprite setImage(ImageData image) {
-    this.image = image;
-    String newTexture = image.textureName;
-
-    if (!Objects.equals(this.textureName, newTexture)) {
-      this.textureName = newTexture;
+    if (this.image==null || !Objects.equals(this.image.textureName, image.textureName)) {
       mustBeRebatched = true;
     }
+    this.image = image;
     setUV();
     return this;
   }
@@ -223,9 +219,6 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public void setHidden(boolean hidden) {
-    if (hidden == this.hidden) {
-      return;
-    }
     this.hidden = hidden;
     if (!hidden) {
       lastGt = Game.get().getTicks();
@@ -325,7 +318,7 @@ public class Sprite implements AbstractSprite {
   @Override
   public String toString() {
     return "Sprite{"
-        + ", textureName='" + textureName + '\''
+        + ", texture='" + image.textureName + '\''
         + ", layer=" + layer
         + ", shader=" + shader
         + ", texture=" + image.textureName

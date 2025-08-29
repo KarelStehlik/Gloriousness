@@ -59,7 +59,8 @@ public class IntroScreen implements World {
 
     new Sprite("introScreen", 2).addToBs(bs).
         setPosition(Constants.screenSize.x/2f, Constants.screenSize.y*0.65f ).
-        setSize(1024, 1536).scale(0.6f);
+        setSize(1024, 1536).scale(0.6f).setShader("colorCycle2").
+        setColors(new Cycle2Colors().setyOffset(-0.5f).setDensity(0.03f).setSpeed(0.2f).setStrength(0.05f).get());
 
     StringBuilder lst = new StringBuilder(" ".repeat(80));
     for(String s : Util.shuffle(loadingScreenTips, Data.unstableRng)){
