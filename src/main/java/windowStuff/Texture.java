@@ -56,4 +56,8 @@ public class Texture {
   public void bind() {
     glBindTexture(GL_TEXTURE_2D, id);
   }
+
+  public int compareTo(Texture other) {
+    return Integer.compare(id, other.id);
+  }
 }

@@ -136,7 +136,7 @@ public class SuperBatch implements SpriteBatching {
 
     int drawStart = 0;
     while (drawStart < batches.size()) {
-      String texture = batches.get(drawStart).texture;
+      Texture texture = batches.get(drawStart).texture;
       Shader shader = batches.get(drawStart).shader;
       int spriteCount = batches.get(drawStart).squishSize();
 
@@ -163,7 +163,7 @@ public class SuperBatch implements SpriteBatching {
 
       Graphics.vbo.doneBuffering();
       shader.use();
-      images.getTexture(texture).bind();
+      texture.bind();
       shader.uploadTexture("sampler", 0);
       glActiveTexture(GL_TEXTURE0);
 
@@ -189,7 +189,7 @@ public class SuperBatch implements SpriteBatching {
   private void _addSprite(Sprite sprite) {
     sprite.mustBeRebatched = false;
     int layer = sprite.layer;
-    String tex = sprite.getImage().textureName;
+    Texture tex = sprite.getImage().texture;
     Shader shader = sprite.shader;
 
     //find the right batch. todo: maybe a bin search?
@@ -213,11 +213,11 @@ public class SuperBatch implements SpriteBatching {
   private static class Batch implements Comparable<Batch> {
 
     public final int layer;
-    public final String texture;
+    public final Texture texture;
     public final Shader shader;
     private final ArrayList<Sprite> sprites = new ArrayList<>(10);
 
-    Batch(int layer, String texture, Shader shader) {
+    Batch(int layer, Texture texture, Shader shader) {
       this.layer = layer;
       this.texture = texture;
       this.shader = shader;
@@ -252,7 +252,7 @@ public class SuperBatch implements SpriteBatching {
       return shader.shaderID - o.shader.shaderID;
     }
 
-    public int compareTo(int lay, String tex, Shader shade) {
+    public int compareTo(int lay, Texture tex, Shader shade) {
       if (layer - lay != 0) {
         return layer - lay;
       }

@@ -477,7 +477,7 @@ public class ScrollingText implements Text {
 
       tc.set(0, tc.get(2) + Math.min(tc.get(0)-tc.get(2), cutoffRight *widthInTexture));
       tc.set(4, tc.get(6) + Math.min(tc.get(4)-tc.get(6), cutoffRight *widthInTexture));
-      var img = new ImageData(baseImage.textureName, tc);
+      var img = new ImageData(baseImage.texture, tc);
       sprite.setImage(img);
 
       float[] uv = img.textureCoordinates;

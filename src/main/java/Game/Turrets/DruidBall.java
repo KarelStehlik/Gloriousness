@@ -5,7 +5,6 @@ import Game.Projectile;
 import Game.TdWorld;
 import Game.TickDetect;
 import Game.TransformAnimation;
-import general.Util;
 import general.Util.Cycle2Colors;
 import org.joml.Vector2f;
 import windowStuff.ImageData;

@@ -15,7 +15,6 @@ import Game.TurretGenerator;
 import general.Constants;
 import general.Data;
 import general.Description;
-import general.Log;
 import general.Util;
 import windowStuff.Graphics;
 import windowStuff.ImageData;

@@ -45,12 +45,12 @@ public class ImageSet {
     assert textureNames != null : imageDataDirectory + " is not a valid directory.";
     for (String textureName : textureNames) {
       String shortenedTexName = textureName.substring(0, textureName.length() - 4);
-      loadTexture(shortenedTexName);
+      Texture t = loadTexture(shortenedTexName);
       try {
         String[] data = Files.readString(Paths.get(imageDataDirectory + '/' + textureName))
             .split("\n");  // array of "Farm21 1.0 0.0 0.0 1.0 1.0 1.0 0.0 0.0"
         for (String dat : data) {
-          loadImage(shortenedTexName, dat.split("\\|"));
+          loadImage(t, dat.split("\\|"));
         }
       } catch (IOException e) {
         Log.write("could not read file " + imageDataDirectory + '/' + textureName);
@@ -61,19 +61,20 @@ public class ImageSet {
     animations.replaceAll((a, v) -> Collections.unmodifiableList(animations.get(a)));
   }
 
-  public void loadTexture(String name) {
+  public Texture loadTexture(String name) {
     if (textures.containsKey(name)) {
       Log.write("warning: attempting to load duplicate texture " + name);
-      return;
+      return textures.get(name);
     }
-    textures.put(name,
-        new Texture(imageDirectory + '/' + name + (name.endsWith(".png") ? "" : ".png")));
+    Texture t = new Texture(imageDirectory + '/' + name + (name.endsWith(".png") ? "" : ".png"));
+    textures.put(name, t);
+    return t;
   }
 
   /**
    * @param data expects [Farm21 1.0 0.0 0.0 1.0 1.0 1.0 0.0 0.0]
    */
-  public void loadImage(String tex, String[] data) {
+  public void loadImage(Texture tex, String[] data) {
     assert data.length == 9 : "invalid image location data : " + Arrays.toString(data);
     ImageData img = new ImageData(tex, List.of(data).subList(1, 9).stream().map(
         Float::parseFloat).collect(Collectors.toList()));

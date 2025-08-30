@@ -78,7 +78,7 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public Sprite setImage(ImageData image) {
-    if (this.image==null || !Objects.equals(this.image.textureName, image.textureName)) {
+    if (this.image==null || !Objects.equals(this.image.texture, image.texture)) {
       mustBeRebatched = true;
     }
     this.image = image;
@@ -318,10 +318,9 @@ public class Sprite implements AbstractSprite {
   @Override
   public String toString() {
     return "Sprite{"
-        + ", texture='" + image.textureName + '\''
         + ", layer=" + layer
         + ", shader=" + shader
-        + ", texture=" + image.textureName
+        + ", image=" + image
         + '}';
   }
 
