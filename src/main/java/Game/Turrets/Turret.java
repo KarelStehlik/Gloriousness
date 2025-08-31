@@ -285,8 +285,8 @@ public abstract class Turret extends GameObject implements TickDetect {
       this.cost = cost;
     }
 
-    public Sprite makeSprite() {
-      return new Sprite(image, 29).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
+    public Sprite makeSprite(int layer) {
+      return new Sprite(image, layer).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
     }
   }
 
@@ -395,14 +395,14 @@ public abstract class Turret extends GameObject implements TickDetect {
       Upgrade u3 = path3Tier < maxTier3 ? p3.get(path3Tier) : maxUpgrades;
 
       buttons.add(
-          new Button(bs, u1.makeSprite().setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
-              u1.description.getAsTextBox(sprite.getLayer() + 10, bs, u1.cost)));
+          new Button(bs, u1.makeSprite(sprite.getLayer()+10).setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
+              u1.description.getAsTextBox(sprite.getLayer() + 11, bs, u1.cost)));
       buttons.add(
-          new Button(bs, u2.makeSprite().setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
-              u2.description.getAsTextBox(sprite.getLayer() + 10, bs, u2.cost)));
+          new Button(bs, u2.makeSprite(sprite.getLayer()+10).setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
+              u2.description.getAsTextBox(sprite.getLayer() + 11, bs, u2.cost)));
       buttons.add(
-          new Button(bs, u3.makeSprite().setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
-              u3.description.getAsTextBox(sprite.getLayer() + 10, bs, u3.cost)));
+          new Button(bs, u3.makeSprite(sprite.getLayer()+10).setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
+              u3.description.getAsTextBox(sprite.getLayer() + 11, bs, u3.cost)));
 
       buttons.forEach(Game.get()::addMouseDetect);
       buttons.forEach(Game.get()::addTickable);

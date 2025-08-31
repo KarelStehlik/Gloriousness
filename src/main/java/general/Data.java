@@ -83,7 +83,10 @@ public final class Data {
 
   public static Shader getShader(String name) {
     var result = shaders.get(name + (name.endsWith(".glsl") ? "" : ".glsl"));
-    assert result != null : "Shader " + name + " was not loaded at load time";
+    if(result==null){
+      Log.write("Not a valid shader: "+name);
+      return getShader("basic");
+    }
     return result;
   }
 

@@ -45,7 +45,8 @@ public class IntroScreen implements World {
       "The dart monkey can also throw babies. It's not very effective, but hey, if you provide him with babies he can do that i guess.",
       "Necromancers drain the souls of their victims and sell them on the dark web. |#35|Anyone want some? Buy 40, get 10 free!",
       "Engineers did not help in the creation of this game. Lazy fucks.",
-      " ".repeat(30)+"|speed:75|Vzoom"+" ".repeat(65)
+      " ".repeat(30)+"|speed:75|Vzoom"+" ".repeat(65),
+      "|shader:rotator|SPINNING doesn't really work great"
   );
 
   public IntroScreen() {

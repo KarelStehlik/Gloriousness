@@ -151,7 +151,7 @@ public class Plane extends Turret {
 
   @Override
   protected Upgrade up010() {
-    return new Upgrade("Duck", new Description("drops pineapples"),
+    return new Upgrade("Duck", new Description("Pineapple","drops pineapples"),
         () -> {
           dropsPineapples = true;
         }, 200);
