@@ -25,9 +25,9 @@ struct SpriteProperties{
     float w, h;
     float cosr, sinr;
     float tx1, tx2, ty1, ty2;
-};
+} props;
 
-void emitPoint(vec2 relPosition, SpriteProperties props)
+void emitPoint(vec2 relPosition)
 {
     gl_Position.xy = vec2(props.cosr*props.w*(2*relPosition.x-1) - props.sinr*props.h*(2*relPosition.y-1),
     props.cosr*props.h*(2*relPosition.y-1) + props.sinr*props.w*(2*relPosition.x-1))
@@ -51,8 +51,6 @@ void emitPoint(vec2 relPosition, SpriteProperties props)
 
 void main()
 {
-    SpriteProperties props;
-
     props.cosr = cos(gs_in[0].fRotation);
     props.sinr = sin(gs_in[0].fRotation);
     props.w = gs_in[0].fSize[0];
@@ -67,30 +65,30 @@ void main()
     float yCentre = 0.5 + gs_in[0].fColor[1][1];
 
     for(float i=0; i<subdivisionPerSide;i++){
-        emitPoint(vec2(i/subdivisionPerSide, 0), props);
-        emitPoint(vec2((i+1f/3)/subdivisionPerSide, 0), props);
-        emitPoint(vec2(xCentre, yCentre), props);
-        emitPoint(vec2((i+2f/3)/subdivisionPerSide, 0), props);
+        emitPoint(vec2(i/subdivisionPerSide, 0));
+        emitPoint(vec2((i+1f/3)/subdivisionPerSide, 0));
+        emitPoint(vec2(xCentre, yCentre));
+        emitPoint(vec2((i+2f/3)/subdivisionPerSide, 0));
     }
     for(float i=0; i<subdivisionPerSide;i++){
-        emitPoint(vec2(1, i/subdivisionPerSide), props);
-        emitPoint(vec2(1, (i+1f/3)/subdivisionPerSide), props);
-        emitPoint(vec2(xCentre, yCentre), props);
-        emitPoint(vec2(1, (i+2f/3)/subdivisionPerSide), props);
+        emitPoint(vec2(1, i/subdivisionPerSide));
+        emitPoint(vec2(1, (i+1f/3)/subdivisionPerSide));
+        emitPoint(vec2(xCentre, yCentre));
+        emitPoint(vec2(1, (i+2f/3)/subdivisionPerSide));
     }
     for(float i=0; i<subdivisionPerSide;i++){
-        emitPoint(vec2(1-i/subdivisionPerSide, 1), props);
-        emitPoint(vec2(1-(i+1f/3)/subdivisionPerSide, 1), props);
-        emitPoint(vec2(xCentre, yCentre), props);
-        emitPoint(vec2(1-(i+2f/3)/subdivisionPerSide, 1), props);
+        emitPoint(vec2(1-i/subdivisionPerSide, 1));
+        emitPoint(vec2(1-(i+1f/3)/subdivisionPerSide, 1));
+        emitPoint(vec2(xCentre, yCentre));
+        emitPoint(vec2(1-(i+2f/3)/subdivisionPerSide, 1));
     }
     for(float i=0; i<subdivisionPerSide;i++){
-        emitPoint(vec2(0, 1-i/subdivisionPerSide), props);
-        emitPoint(vec2(0, 1-(i+1f/3)/subdivisionPerSide), props);
-        emitPoint(vec2(xCentre, yCentre), props);
-        emitPoint(vec2(0, 1-(i+2f/3)/subdivisionPerSide), props);
+        emitPoint(vec2(0, 1-i/subdivisionPerSide));
+        emitPoint(vec2(0, 1-(i+1f/3)/subdivisionPerSide));
+        emitPoint(vec2(xCentre, yCentre));
+        emitPoint(vec2(0, 1-(i+2f/3)/subdivisionPerSide));
     }
-    emitPoint(vec2(0,0), props);
+    emitPoint(vec2(0,0));
 
     EndPrimitive();
 }
