@@ -50,7 +50,7 @@ void emitPoint(vec2 relPosition, vec4 color, float cosr, float sinr, float w, fl
     gl_Position.xy = vec2(cosr*w*(2*relPosition.x-1) - sinr*h*(2*relPosition.y-1),
                           cosr*h*(2*relPosition.y-1) + sinr*w*(2*relPosition.x-1))
                             *sizeScale + gl_in[0].gl_Position.xy;
-
+    gl_Position.zw=vec2(1,1);
     geo_out.gTexCoords=vec2(tx1 + (tx2-tx1)*relPosition.x,
                             ty1+(ty2-ty1)*relPosition.y);
     geo_out.gColor=color;
