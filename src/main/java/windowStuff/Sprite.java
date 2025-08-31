@@ -219,10 +219,10 @@ public class Sprite implements AbstractSprite {
 
   @Override
   public void setHidden(boolean hidden) {
-    this.hidden = hidden;
-    if (!hidden) {
+    if (!hidden && this.hidden) {
       lastGt = Game.get().getTicks();
     }
+    this.hidden = hidden;
   }
 
   public float getOpacity() {

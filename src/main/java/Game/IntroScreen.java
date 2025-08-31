@@ -21,6 +21,15 @@ public class IntroScreen implements World {
 
   private final ScrollingText text;
 
+  private static final String aaah;
+  static{
+    StringBuilder ah = new StringBuilder("|shader:colorCycle2|#130|");
+    for(int i=0;i<15;i++){
+      ah.append(TextModifiers.colors(new Cycle2Colors().setyOffset(0.14f).setSpeed(i).setDensity(
+          (float) (Math.sqrt(i+1)*0.2f)).get())).append('A');
+    }
+    aaah=ah.toString();
+  }
   private static final List<String> loadingScreenTips = List.of(
       TextModifiers.colors(new Cycle2Colors().setyOffset(0.14f).get())+"shader:colorCycle2|#200|OBSERVE",
       TextModifiers.colors(new Cycle2Colors().setyOffset(0.14f).setDensity(0.6f).get())+"shader:colorCycle2|#150|PINK FLUFFY UNICORNS|#<|#<|#<|#16|#100.#100.#100|not included",
@@ -46,7 +55,8 @@ public class IntroScreen implements World {
       "Necromancers drain the souls of their victims and sell them on the dark web. |#35|Anyone want some? Buy 40, get 10 free!",
       "Engineers did not help in the creation of this game. Lazy fucks.",
       " ".repeat(30)+"|speed:75|Vzoom"+" ".repeat(65),
-      "|shader:rotator|SPINNING doesn't really work great"
+      "|shader:rotator|SPINNING doesn't really work great",
+      aaah
   );
 
   public IntroScreen() {
