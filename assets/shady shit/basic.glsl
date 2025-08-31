@@ -45,34 +45,44 @@ out GS_OUT {
     vec2 gTexCoords;
 } geo_out;
 
-void emitPoint(vec2 relPosition, vec4 color, float cosr, float sinr, float w, float h, float tx1, float tx2, float ty1, float ty2)
+struct SpriteProperties{
+    float w, h;
+    float cosr, sinr;
+    float tx1, tx2, ty1, ty2;
+};
+
+void emitPoint(vec2 relPosition, SpriteProperties props, vec4 color)
 {
-    gl_Position.xy = vec2(cosr*w*(2*relPosition.x-1) - sinr*h*(2*relPosition.y-1),
-                          cosr*h*(2*relPosition.y-1) + sinr*w*(2*relPosition.x-1))
+    gl_Position.xy = vec2(props.cosr*props.w*(2*relPosition.x-1) - props.sinr*props.h*(2*relPosition.y-1),
+                          props.cosr*props.h*(2*relPosition.y-1) + props.sinr*props.w*(2*relPosition.x-1))
                             *sizeScale + gl_in[0].gl_Position.xy;
+
     gl_Position.zw=vec2(1,1);
-    geo_out.gTexCoords=vec2(tx1 + (tx2-tx1)*relPosition.x,
-                            ty1+(ty2-ty1)*relPosition.y);
+
+    geo_out.gTexCoords=vec2(props.tx1 + (props.tx2-props.tx1)*relPosition.x,
+                            props.ty1+(props.ty2-props.ty1)*relPosition.y);
     geo_out.gColor=color;
     EmitVertex();
 }
 
 void main()
 {
-    float cosr = cos(gs_in[0].fRotation);
-    float sinr = sin(gs_in[0].fRotation);
-    float w = gs_in[0].fSize[0];
-    float h = gs_in[0].fSize[1];
+    SpriteProperties props;
 
-    float tx1 = gs_in[0].fTexCoords[2];
-    float ty1 = gs_in[0].fTexCoords[3];
-    float tx2 = gs_in[0].fTexCoords[0];
-    float ty2 = gs_in[0].fTexCoords[1];
+    props.cosr = cos(gs_in[0].fRotation);
+    props.sinr = sin(gs_in[0].fRotation);
+    props.w = gs_in[0].fSize[0];
+    props.h = gs_in[0].fSize[1];
 
-    emitPoint(vec2(1, 0), gs_in[0].fColor[0], cosr, sinr, w, h, tx1, tx2, ty1, ty2);
-    emitPoint(vec2(0, 0), gs_in[0].fColor[1], cosr, sinr, w, h, tx1, tx2, ty1, ty2);
-    emitPoint(vec2(1, 1), gs_in[0].fColor[2], cosr, sinr, w, h, tx1, tx2, ty1, ty2);
-    emitPoint(vec2(0, 1), gs_in[0].fColor[3], cosr, sinr, w, h, tx1, tx2, ty1, ty2);
+    props.tx1 = gs_in[0].fTexCoords[2];
+    props.ty1 = gs_in[0].fTexCoords[3];
+    props.tx2 = gs_in[0].fTexCoords[0];
+    props.ty2 = gs_in[0].fTexCoords[1];
+
+    emitPoint(vec2(1, 0), props, gs_in[0].fColor[0]);
+    emitPoint(vec2(0, 0), props, gs_in[0].fColor[1]);
+    emitPoint(vec2(1, 1), props, gs_in[0].fColor[2]);
+    emitPoint(vec2(0, 1), props, gs_in[0].fColor[3]);
     EndPrimitive();
 }
 
