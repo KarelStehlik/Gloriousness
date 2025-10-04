@@ -1,10 +1,10 @@
 package Game.Mobs;
 
 
-import Game.Buffs.DelayedTrigger;
-import Game.Buffs.StatBuff;
-import Game.Buffs.StatBuff.Type;
-import Game.TdWorld;
+import Game.Common.Buffs.Buff.DelayedTrigger;
+import Game.Common.Buffs.Buff.StatBuff;
+import Game.Common.Buffs.Buff.StatBuff.Type;
+import Game.Misc.TdWorld;
 import java.util.List;
 
 public class MultiMoabCore extends TdMob {

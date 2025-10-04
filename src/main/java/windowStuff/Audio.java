@@ -1,6 +1,6 @@
 package windowStuff;
 
-import general.Log;
+import GlobalUse.Log;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;

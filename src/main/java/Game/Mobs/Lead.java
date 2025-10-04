@@ -1,7 +1,7 @@
 package Game.Mobs;
 
 import Game.Enums.DamageType;
-import Game.TdWorld;
+import Game.Misc.TdWorld;
 import java.util.List;
 
 public class Lead extends TdMob {

@@ -1,21 +1,21 @@
 package Game.Mobs;
 
-import Game.Buffs.Buff;
-import Game.Buffs.BuffHandler;
-import Game.Buffs.Modifier;
+import Game.Common.Buffs.Buff.Buff;
+import Game.Common.Buffs.Buff.BuffHandler;
+import Game.Common.Buffs.Modifier.Modifier;
 import Game.Enums.DamageType;
-import Game.GameObject;
-import Game.SquareGrid;
-import Game.TdWorld;
-import Game.TickDetect;
-import Game.Wave;
-import general.Constants;
-import general.Data;
-import general.Util;
+import Game.Misc.GameObject;
+import Game.Misc.SquareGrid;
+import Game.Misc.TdWorld;
+import Game.Misc.TickDetect;
+import Game.Misc.Wave;
+import GlobalUse.Constants;
+import GlobalUse.Data;
+import GlobalUse.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
-import windowStuff.Sprite;
+import windowStuff.GraphicsOnly.Sprite.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 

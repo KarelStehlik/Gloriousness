@@ -1,9 +1,9 @@
 package Game.Mobs;
 
-import Game.Buffs.StatBuff;
-import Game.Buffs.StatBuff.Type;
-import Game.Game;
-import Game.TdWorld;
+import Game.Common.Buffs.Buff.StatBuff;
+import Game.Common.Buffs.Buff.StatBuff.Type;
+import Game.Misc.Game;
+import Game.Misc.TdWorld;
 import java.util.List;
 
 public class ShieldBloon extends TdMob {
