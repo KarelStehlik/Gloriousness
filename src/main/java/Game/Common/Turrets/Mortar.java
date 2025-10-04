@@ -46,15 +46,13 @@ public class Mortar extends Turret {
 
     private Explosive explosive = new Explosive(0, 0);
     private Modifier<Projectile> explosion=p-> {
-        p.getSprite().playAnimation(
-                new FrameAnimation("Explosion1", this.getStats()[projectileDuration]));
         explosive.mod(target());
     };
 
     @Override
     protected void extraStatsUpdate() {
         if (explosive != null) {
-            explosive.damage = stats[Stats.power];
+            explosive.damage = stats[ExtraStats.explodPower];
             explosive.setRadius((int) stats[ExtraStats.radius]);
         }
     }
@@ -74,9 +72,9 @@ public class Mortar extends Turret {
                 0);
         monkeySprite.setNaturalHeight();
 
-//        bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
+        bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
         bulletLauncher.addProjectileModifier(p -> {
-            p.addBuff(new SkyShot(2000f, getStats()[projectileDuration]/2f, 40));
+            p.addBuff(new SkyShot(2000f, getStats()[projectileDuration]/2f, 100));
         });
         world.getBs().addSprite(monkeySprite);
         move(X, Y);
@@ -198,19 +196,19 @@ public class Mortar extends Turret {
         }
         bulletLauncher.tickCooldown();
 
-        Vector2d mousePos = new Vector2d( Game.get().getUserInputListener().getPos());
-        mousePos.x+= Math.sqrt(Data.gameMechanicsRng.nextFloat(0,(float)Math.pow(getStats()[ExtraStats.spread],2)));
-        mousePos.y+= Math.sqrt(Data.gameMechanicsRng.nextFloat(0,(float)Math.pow(getStats()[ExtraStats.spread],2)));
+        Vector2d mousePos =  Game.get().getUserInputListener().getPos();
+        double spreadx= Math.sqrt(Data.gameMechanicsRng.nextFloat(0,(float)Math.pow(getStats()[ExtraStats.spread],2)));
+        double spready= Math.sqrt(Data.gameMechanicsRng.nextFloat(0,(float)Math.pow(getStats()[ExtraStats.spread],2)));
 
         if(Data.gameMechanicsRng.nextBoolean()){
-            mousePos.x*=-1;
+            spreadx*=-1;
         }
         if(Data.gameMechanicsRng.nextBoolean()){
-            mousePos.y*=-1;
+            spready*=-1;
         }
         while (bulletLauncher.canAttack()) {
-            addBuff(new StatBuff<Turret>(Type.FINALLY_ADDED, speed, -getStats()[speed]+ Util.distanceNotSquared((float)(getX()-mousePos.x),
-                    (float)(getY()-mousePos.y))/getStats()[projectileDuration]*Game.secondsPerFrame));
+            addBuff(new StatBuff<Turret>(Type.FINALLY_ADDED, speed, -getStats()[speed]+ Util.distanceNotSquared((float)(getX()-mousePos.x+spreadx),
+                    (float)(getY()-mousePos.y+spready))/getStats()[projectileDuration]*Game.secondsPerFrame));
             bulletLauncher.attack((float) mousePos.x, (float) mousePos.y, true);
         }
 
@@ -229,7 +227,7 @@ public class Mortar extends Turret {
     // generated stats
   @Override
   public int getStatsCount() {
-    return 12;
+    return 13;
   }
 
   @Override
@@ -245,13 +243,15 @@ public class Mortar extends Turret {
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;
     stats[ExtraStats.spread] = Data.gameMechanicsRng.nextFloat(10f, 300f);
-    stats[ExtraStats.radius] = Data.gameMechanicsRng.nextFloat(100f, 150f);
+    stats[ExtraStats.radius] = Data.gameMechanicsRng.nextFloat(50f, 75f);
+    stats[ExtraStats.explodPower] = 1f;
   }
 
   public static final class ExtraStats {
 
     public static final int spread = 10;
     public static final int radius = 11;
+    public static final int explodPower = 12;
 
     private ExtraStats() {
     }
