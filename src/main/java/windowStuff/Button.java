@@ -1,12 +1,16 @@
 package windowStuff;
 
-import Game.MouseDetect;
-import Game.TickDetect;
+import windowStuff.Controls.MouseDetect;
+import Game.Misc.TickDetect;
+import windowStuff.GraphicsOnly.Sprite.AbstractSprite;
+import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
+import windowStuff.GraphicsOnly.Text.SimpleText;
+import windowStuff.GraphicsOnly.Text.Text;
 
 public class Button implements MouseDetect, TickDetect {
 
   private final AbstractSprite sprite;
-  private final ClickFunction onClick;
+  private ClickFunction onClick;
   protected boolean pressed = false;
 
   public Text getMouseoverText() {
@@ -17,7 +21,7 @@ public class Button implements MouseDetect, TickDetect {
   private boolean shown = true;
 
   public Button(SpriteBatching bs, AbstractSprite sprite, ClickFunction foo,
-      Text caption) {
+                Text caption) {
     this.sprite = sprite;
     this.onClick = foo;
     sprite.addToBs(bs);
@@ -40,6 +44,10 @@ public class Button implements MouseDetect, TickDetect {
       mouseoverText.hide();
     }
   }
+  public Button init(InitFunction foo){
+    onClick=foo.onClick(this);
+    return this;
+  }
 
   public Button(SpriteBatching bs, AbstractSprite sprite,
       ClickFunction foo) { //I dunno if this should ever be used,
@@ -53,9 +61,19 @@ public class Button implements MouseDetect, TickDetect {
     this.onClick = foo;
     mouseoverText = null;
   }
+  public Button(AbstractSprite sprite) { //assumes you use init()
+    this.sprite = sprite;
+    mouseoverText = null;
+  }
 
   public AbstractSprite getSprite() {
     return sprite;
+  }
+  public float getX() {
+    return sprite.getX();
+  }
+  public float getY() {
+    return sprite.getY();
   }
 
   public void hide() {
@@ -150,6 +168,11 @@ public class Button implements MouseDetect, TickDetect {
   public interface ClickFunction {
 
     void onClick(int button, int action);
+  }
+  @FunctionalInterface
+  public interface InitFunction {
+
+    ClickFunction onClick(Button self);
   }
 
 }

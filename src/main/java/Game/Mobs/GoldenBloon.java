@@ -1,15 +1,15 @@
 package Game.Mobs;
 
-import Game.Buffs.StatBuff;
-import Game.Buffs.StatBuff.Type;
-import Game.CallAfterDuration;
+import Game.Common.Buffs.Buff.StatBuff;
+import Game.Common.Buffs.Buff.StatBuff.Type;
+import Game.Misc.CallAfterDuration;
 import Game.Enums.DamageType;
-import Game.Game;
-import Game.TdWorld;
-import general.Constants;
-import general.Util;
+import Game.Misc.Game;
+import Game.Misc.TdWorld;
+import GlobalUse.Constants;
+import GlobalUse.Util;
 import java.util.List;
-import windowStuff.SimpleText;
+import windowStuff.GraphicsOnly.Text.SimpleText;
 
 public class GoldenBloon extends TdMob {
 

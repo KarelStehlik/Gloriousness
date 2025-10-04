@@ -1,8 +1,9 @@
 package windowStuff;
 
-import Game.Game;
-import Game.MouseDetect;
-import Game.TickDetect;
+import Game.Misc.Game;
+import windowStuff.Controls.MouseDetect;
+import Game.Misc.TickDetect;
+import windowStuff.GraphicsOnly.Sprite.AbstractSprite;
 
 public class ButtonArray implements MouseDetect, TickDetect {
 

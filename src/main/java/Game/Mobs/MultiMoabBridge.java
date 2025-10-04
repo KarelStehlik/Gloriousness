@@ -1,7 +1,7 @@
 package Game.Mobs;
 
 
-import Game.TdWorld;
+import Game.Misc.TdWorld;
 import java.util.List;
 
 public class MultiMoabBridge extends TdMob {
