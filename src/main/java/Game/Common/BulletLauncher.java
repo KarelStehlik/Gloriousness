@@ -298,10 +298,11 @@ public class BulletLauncher {
 
   public Projectile attack(float angle, boolean triggerCooldown) {
 
+    for(Modifier<BulletLauncher> mod: attackEffects){
+      mod.mod(this);
+    }
+
     if (triggerCooldown) {
-      for(Modifier<BulletLauncher> mod: attackEffects){
-        mod.mod(this);
-      }
       remainingCooldown += cooldown;
     }
 
