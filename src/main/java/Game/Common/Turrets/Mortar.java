@@ -1,6 +1,7 @@
 package Game.Common.Turrets;
 
 import Game.Common.Buffs.Buff.SkyShot;
+import Game.Common.Buffs.Modifier.Accuracy;
 import Game.Common.Buffs.Modifier.Explosive;
 import Game.Common.Buffs.Buff.Ignite;
 import Game.Common.Buffs.Buff.StatBuff;
@@ -76,6 +77,7 @@ public class Mortar extends Turret {
         bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new SkyShot(2000f, getStats()[projectileDuration]/2f, 100));
         });
+        bulletLauncher.addProjectileModifier(new Accuracy(getStats()[ExtraStats.spread]));
         world.getBs().addSprite(monkeySprite);
         move(X, Y);
         getImageUpdate();
@@ -197,20 +199,13 @@ public class Mortar extends Turret {
         bulletLauncher.tickCooldown();
 
         Vector2d mousePos =  Game.get().getUserInputListener().getPos();
-        double spreadx= Math.sqrt(Data.gameMechanicsRng.nextFloat(0,(float)Math.pow(getStats()[ExtraStats.spread],2)));
-        double spready= Math.sqrt(Data.gameMechanicsRng.nextFloat(0,(float)Math.pow(getStats()[ExtraStats.spread],2)));
-
-        if(Data.gameMechanicsRng.nextBoolean()){
-            spreadx*=-1;
+        if(bulletLauncher.canAttack()) {
+            float distance = (float) Util.distanceNotSquared(mousePos.x - getX(), mousePos.y - getY());
+            addBuff(new StatBuff<>(StatBuff.Type.FINALLY_ADDED, speed,
+                    -getStats()[speed] + distance / getStats()[projectileDuration]*Game.secondsPerFrame));
         }
-        if(Data.gameMechanicsRng.nextBoolean()){
-            spready*=-1;
-        }
-        Vector2d finalpos=new Vector2d(spreadx+mousePos.x,spready+mousePos.y);
         while (bulletLauncher.canAttack()) {
-            addBuff(new StatBuff<Turret>(Type.FINALLY_ADDED, speed, -getStats()[speed]+ Util.distanceNotSquared((float)(getX()-finalpos.x),
-                    (float)(getY()-finalpos.y))/getStats()[projectileDuration]*Game.secondsPerFrame));
-            bulletLauncher.attack((float) finalpos.x, (float) finalpos.y, true);
+            bulletLauncher.attack((float) mousePos.x, (float) mousePos.y, true);
         }
 
         buffHandler.tick();
@@ -236,14 +231,14 @@ public class Mortar extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 0f;
     stats[Stats.pierce] = 12f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.4f, 0.8f);
+    stats[Stats.aspd] = 50f;
     stats[Stats.projectileDuration] = 1.5f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(50f, 80f);
     stats[Stats.speed] = 0f;
-    stats[Stats.cost] = 250f;
+    stats[Stats.cost] = 150f;
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;
-    stats[ExtraStats.spread] = Data.gameMechanicsRng.nextFloat(10f, 300f);
+    stats[ExtraStats.spread] = 2500f;
     stats[ExtraStats.radius] = Data.gameMechanicsRng.nextFloat(50f, 75f);
     stats[ExtraStats.explodPower] = 1f;
   }

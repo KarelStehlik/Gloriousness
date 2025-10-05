@@ -53,6 +53,9 @@ public final class Util {
   public static float clamp(float value, float min, float max) {
     return value < min ? min : Math.min(value, max);
   }
+  public static double clamp(double value, double min, double max) {
+    return value < min ? min : Math.min(value, max);
+  }
 
   public static long getUid() {
     id++;
@@ -214,6 +217,9 @@ public final class Util {
   }
   public static float distanceNotSquared(float dx, float dy) {
     return ( float) Math.sqrt( dx * dx + dy * dy);
+  }
+  public static double distanceNotSquared(double dx, double dy) {
+    return Math.sqrt( dx * dx + dy * dy);
   }
 
   public static float[] getBaseColors(float opacity) {
