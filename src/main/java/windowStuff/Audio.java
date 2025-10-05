@@ -1,6 +1,7 @@
 package windowStuff;
 
 import GlobalUse.Log;
+import GlobalUse.Util;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -260,7 +261,8 @@ public final class Audio {
       if(currentSound==null){
         return;
       }
-      noiseCtrl.setValue(Math.max(noiseCtrl.getMinimum(), noiseCtrl.getMaximum() - (1-currentSound.volume*volumeMultiplier) * VOLUME_RANGE));
+      float volume = Util.clamp(currentSound.volume,0,1);
+      noiseCtrl.setValue(Math.max(noiseCtrl.getMinimum(), noiseCtrl.getMaximum() - (1-volume*volumeMultiplier) * VOLUME_RANGE));
     }
 
     void play(SoundToPlay sound) {
