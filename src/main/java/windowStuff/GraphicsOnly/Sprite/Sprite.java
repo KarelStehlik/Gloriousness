@@ -45,6 +45,17 @@ public class Sprite implements AbstractSprite {
   private int lastGt;
   private boolean deleteOnAnimationEnd = true;
 
+  public boolean isPaused() {
+    return paused;
+  }
+
+  public Sprite setPaused(boolean paused) {
+    this.paused = paused;
+    return this;
+  }
+
+  private boolean paused=false;
+
   public Sprite(Sprite og) {
     layer = og.layer;
     shader = og.shader;
@@ -61,6 +72,7 @@ public class Sprite implements AbstractSprite {
     animation = og.animation.copy();
     lastGt = og.lastGt;
     deleteOnAnimationEnd=og.deleteOnAnimationEnd;
+    paused=og.paused;
   }
 
   public Sprite(ImageData image, int layer, String shader) {
@@ -282,14 +294,14 @@ public class Sprite implements AbstractSprite {
     texCoords = image.textureCoordinates;
   }
 
-  public synchronized void updateVertices() {
-    if (hidden) {
+  public synchronized void updateAnimation() {
+    if (paused) {
       return;
     }
 
     int ticks = Game.get().getTicks() - lastGt;
     lastGt += ticks;
-    for (int i = 0; i < ticks; i++) {
+    for (int i = 0; i < ticks && !deleted; i++) {
       animation.update(this);
     }
   }

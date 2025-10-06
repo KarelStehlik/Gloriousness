@@ -55,9 +55,6 @@ public class Mortar extends Turret {
     }
 
     private final Explosive explosive = new Explosive(0, 0);
-    private final Modifier<Projectile> explosion=p-> {
-        explosive.mod(target());
-    };
 
     @Override
     protected void extraStatsUpdate() {
@@ -103,7 +100,7 @@ public class Mortar extends Turret {
         onStatsUpdate();
 
         bulletLauncher.addProjectileModifier(p->{
-          Trail t = new Trail(trail,p.getX(), p.getY());
+          Trail t = new Trail(trail, p.getX(), p.getY());
           p.addBuff(new OnTickBuff<>(t::tick));
           Audio.play(sound);
         });
@@ -162,7 +159,7 @@ public class Mortar extends Turret {
                 () -> {
                     bombsCount +=3;
                     addBuff(new StatBuff<Turret>(Type.MORE, Stats.bulletSize, 0.6f));
-                    addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, 0.4f));
+                    addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, 0.65f));
                     sound=new SoundToPlay(sound.name, sound.volume-0.2f);
                 }, 300);
     }
@@ -175,7 +172,7 @@ public class Mortar extends Turret {
                         "Increases attack speed based on spread",
                         ""),
                 () -> {
-                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 100);
+                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 1000);
                     addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, attackArea));
                 }, 300);
     }
@@ -188,7 +185,7 @@ public class Mortar extends Turret {
                         "Extra AoE, +1 damage, increases spread",
                         ""),
                 () -> {
-                    addBuff(new StatBuff<>(StatBuff.Type.ADDED, Stats.power, 1));
+                    addBuff(new StatBuff<>(StatBuff.Type.ADDED, ExtraStats.explodPower, 1));
                     addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
                     addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, 1.5f));
                     addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, 2));
@@ -207,7 +204,7 @@ public class Mortar extends Turret {
                         "No need to he accurate if a miss is lethal enough",
                         "further increases explosion size based on spread"),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.explodPower, 1));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
                     float radiusBuff = 1 + originalStats[ExtraStats.spread] / 200f;
                     addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, radiusBuff));
@@ -228,7 +225,7 @@ public class Mortar extends Turret {
             "Overkill",
             "Massively reduces fire rate and increases damage"),
         () -> {
-          addBuff(new StatBuff<Turret>(Type.MORE, Stats.power, 10));
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.explodPower, 10));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.4f));
           addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.3f));
           addBuff(new StatBuff<Turret>(Type.MORE, projectileDuration, 5f));
@@ -254,7 +251,7 @@ public class Mortar extends Turret {
                     physicalEffects.add((Projectile target)-> {
                         target.addMobCollide((Projectile proj, TdMob mob)-> mob.addBuff(new Ignite<>(proj.getPower(), 2000)),0);
                     });
-                    explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(this.stats[Stats.power], 2000)));
+                    explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(this.stats[ExtraStats.explodPower], 2000)));
                 }, 175);
     }
 
