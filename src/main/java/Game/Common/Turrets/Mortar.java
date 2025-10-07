@@ -255,6 +255,25 @@ public class Mortar extends Turret {
                 }, 175);
     }
 
+  @Override
+  protected Upgrade up002() {
+    return new Upgrade("laser",
+        new Description("laser precision"
+            ,
+            "fire",
+            ""),
+        () -> {
+          sound = new SoundToPlay("laser",sound.volume);
+          addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, 0));
+          addBuff(new StatBuff<>(Type.MORE, Stats.aspd, 1.8f));
+          bulletLauncher.setImage("transparent");
+          trailIm=Graphics.getImage("laser");
+          skyShotStrength*=1.6f;
+          trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(30,150).setRotation(r-90).
+              playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),25f, 0);
+        }, 175);
+  }
+
 
     @Override
     public void onGameTick(int tick) {

@@ -162,6 +162,7 @@ public class TdWorld implements World {
         Audio.play(new SoundToPlay("ting",1, "sfx"));
       }
     }));
+    Audio.getGroup("music").setVolumeMultiplier(0.5f);
 
     ArrayList<SimpleText> texts = new ArrayList<>();
     SimpleText text = new SimpleText(() -> "Lives: " + health, "Calibri", 500,
