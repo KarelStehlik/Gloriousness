@@ -17,6 +17,7 @@ import Game.Misc.TurretGenerator;
 import Game.Mobs.TdMob;
 import GlobalUse.Data;
 import GlobalUse.Description;
+import GlobalUse.RefFloat;
 import GlobalUse.Util;
 import org.joml.Vector2d;
 import windowStuff.GraphicsOnly.Graphics;
@@ -25,8 +26,7 @@ import windowStuff.GraphicsOnly.Sprite.Sprite;
 
 import java.util.ArrayList;
 
-import static Game.Common.Turrets.Turret.Stats.projectileDuration;
-import static Game.Common.Turrets.Turret.Stats.speed;
+import static Game.Common.Turrets.Turret.Stats.*;
 
 public class Mortar extends Turret {
 
@@ -58,6 +58,7 @@ public class Mortar extends Turret {
             explosive.damage = stats[ExtraStats.explodPower];
             explosive.setRadius((int) stats[ExtraStats.radius]);
         }
+
     }
 
     public Sprite badgeSprite;
@@ -77,14 +78,16 @@ public class Mortar extends Turret {
         monkeySprite.setNaturalHeight();
 
         bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
+        addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, getStats()[ bulletSize]/40f));
         bulletLauncher.addProjectileModifier(p -> {
-            p.addBuff(new SkyShot(2000f, getStats()[projectileDuration]/2f, 100,physicalEffects));
+            p.addBuff(new SkyShot(500f*(float)Math.sqrt(getStats()[pierce]), originalStats[projectileDuration]/2f, 100,physicalEffects));
         });
         physicalEffects.add((Projectile target)-> {target.addMobCollide(BasicCollides.damage);});
         bulletLauncher.addProjectileModifier(new Accuracy(getStats()[ExtraStats.spread]));
         world.getBs().addSprite(monkeySprite);
         move(X, Y);
         getImageUpdate();
+        extraStatsUpdate();
         onStatsUpdate();
     }
 
@@ -191,9 +194,9 @@ public class Mortar extends Turret {
                         ""),
                 () -> {
                     physicalEffects.add((Projectile target)-> {
-                        target.addMobCollide((Projectile proj, TdMob mob)-> mob.addBuff(new Ignite<>(proj.getPower(), 2000)),0);
+                        target.addMobCollide((Projectile proj, TdMob mob)-> mob.addBuff(new Ignite<>(ExtraStats.explodPower, 2000)),0);
                     });
-                    explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(this.stats[Stats.power], 2000)));
+                    explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(this.stats[ExtraStats.explodPower], 2000)));
                 }, 175);
     }
 
@@ -237,16 +240,16 @@ public class Mortar extends Turret {
   public void clearStats() {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 0f;
-    stats[Stats.pierce] = 12f;
+    stats[Stats.pierce] = Data.gameMechanicsRng.nextFloat(6f, 16f);
     stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.4f, 0.8f);
     stats[Stats.projectileDuration] = 1.5f;
-    stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(50f, 80f);
+    stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(35f, 70f);
     stats[Stats.speed] = 0f;
     stats[Stats.cost] = 150f;
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;
     stats[ExtraStats.spread] = Data.gameMechanicsRng.nextFloat(0f, 2500f);
-    stats[ExtraStats.radius] = Data.gameMechanicsRng.nextFloat(50f, 75f);
+    stats[ExtraStats.radius] = 40f;
     stats[ExtraStats.explodPower] = 1f;
   }
 

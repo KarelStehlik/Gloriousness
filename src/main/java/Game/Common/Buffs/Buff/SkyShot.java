@@ -6,6 +6,7 @@ import Game.Common.Turrets.Turret;
 import Game.Misc.BasicCollides;
 import Game.Misc.Game;
 import GlobalUse.Log;
+import GlobalUse.RefFloat;
 import GlobalUse.Util;
 import com.sun.source.tree.ArrayAccessTree;
 
@@ -50,6 +51,13 @@ public class SkyShot extends DefaultBuff<Projectile> {
             super.tick(target);
             target.moveRelative(0, currentSpeed *Game.secondsPerFrame);
             currentSpeed -=strength* Game.secondsPerFrame;
+            if(currentSpeed>=0){
+                target.addBuff(new StatBuff<Projectile>(StatBuff.Type.INCREASED, Projectile.Stats.size, 0.7f/(duration/Game.secondsPerFrame)));
+//                target.getSprite().setOpacity(0.75f+currentSpeed/(strength*duration)*0.25f);
+            }else{
+                target.addBuff(new StatBuff<Projectile>(StatBuff.Type.INCREASED, Projectile.Stats.size, -0.7f/(duration/Game.secondsPerFrame)));
+//                target.getSprite().setOpacity(0.75f-currentSpeed/(strength*duration)*0.25f);
+            }
             target.getSprite().setRotation(Util.get_rotation(target.vx,target.vy+currentSpeed*Game.secondsPerFrame)-90);
             if(currentSpeed <physicalAtSpeed){
                 physicalAtSpeed=-Float.MAX_VALUE;
