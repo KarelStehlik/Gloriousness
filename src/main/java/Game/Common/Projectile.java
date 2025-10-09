@@ -70,7 +70,7 @@ public class Projectile extends GameObject implements TickDetect {
                     int width, float aspectRatio, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
     this.aspectRatio = aspectRatio;
-    sprite = new Sprite(image, 1, "basic").setPosition(X, Y).setSize(width, width * aspectRatio);
+    sprite = new Sprite(image, 5, "basic").setPosition(X, Y).setSize(width, width * aspectRatio);
     sprite.setRotation(rotation - 90);
     world.getBs().addSprite(sprite);
     stats[Stats.pierce] = pierce;
@@ -176,6 +176,7 @@ public class Projectile extends GameObject implements TickDetect {
     vy = Util.sin(rotation) * speed;
   }
 
+  @Override
   public float getRotation() {
     return rotation;
   }

@@ -1,6 +1,9 @@
 package Game.Common.Turrets;
 
+import Game.Common.Buffs.Buff.DelayedTrigger;
+import Game.Common.Buffs.Buff.OnTickBuff;
 import Game.Common.Buffs.Buff.SkyShot;
+import Game.Common.Buffs.Buff.Trail;
 import Game.Common.Buffs.Modifier.Accuracy;
 import Game.Common.Buffs.Modifier.Explosive;
 import Game.Common.Buffs.Buff.Ignite;
@@ -18,13 +21,17 @@ import Game.Mobs.TdMob;
 import GlobalUse.Data;
 import GlobalUse.Description;
 import GlobalUse.RefFloat;
+import GlobalUse.Log;
 import GlobalUse.Util;
 import org.joml.Vector2d;
+import windowStuff.Audio;
+import windowStuff.Audio.SoundToPlay;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageData;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
-
 import java.util.ArrayList;
+import windowStuff.GraphicsOnly.Sprite.Sprite.FrameAnimation;
+import windowStuff.GraphicsOnly.TransformAnimation;
 
 import static Game.Common.Turrets.Turret.Stats.*;
 
@@ -47,10 +54,7 @@ public class Mortar extends Turret {
         return Graphics.getImage(mortarimg);
     }
 
-    private Explosive explosive = new Explosive(0, 0);
-    private Modifier<Projectile> explosion=p-> {
-        explosive.mod(target());
-    };
+    private final Explosive explosive = new Explosive(0, 0);
 
     @Override
     protected void extraStatsUpdate() {
@@ -63,7 +67,13 @@ public class Mortar extends Turret {
 
     public Sprite badgeSprite;
     public Sprite monkeySprite;
-    private ArrayList<Modifier<Projectile>> physicalEffects=new ArrayList<>();
+    private final ArrayList<Modifier<Projectile>> physicalEffects=new ArrayList<>();
+    private float skyShotStrength;
+    private SoundToPlay sound = new SoundToPlay("pop",0.7f);
+
+    private ImageData trailIm = Graphics.getImage("fire");
+    private Trail trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(30,30).setRotation(r).
+        playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),2f, 50);
 
     public Mortar(TdWorld world, int X, int Y) {
         super(world, X, Y, new BulletLauncher(world, "coconut"));
@@ -79,16 +89,25 @@ public class Mortar extends Turret {
 
         bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
         addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, getStats()[ bulletSize]/40f));
+        skyShotStrength=500f*(float)Math.sqrt(getStats()[pierce]);
         bulletLauncher.addProjectileModifier(p -> {
-            p.addBuff(new SkyShot(500f*(float)Math.sqrt(getStats()[pierce]), originalStats[projectileDuration]/2f, 100,physicalEffects));
+            p.addBuff(new SkyShot(skyShotStrength, getStats()[projectileDuration]/2f, 100,physicalEffects));
         });
         physicalEffects.add((Projectile target)-> {target.addMobCollide(BasicCollides.damage);});
-        bulletLauncher.addProjectileModifier(new Accuracy(getStats()[ExtraStats.spread]));
+
+        bulletLauncher.addProjectileModifier(p->Accuracy.mod(p, getStats()[ExtraStats.spread], getStats()[ExtraStats.spread]));
+
         world.getBs().addSprite(monkeySprite);
         move(X, Y);
         getImageUpdate();
         extraStatsUpdate();
         onStatsUpdate();
+
+        bulletLauncher.addProjectileModifier(p->{
+          Trail t = new Trail(trail, p.getX(), p.getY());
+          p.addBuff(new OnTickBuff<>(t::tick));
+          Audio.play(sound);
+        });
     }
 
     public static TurretGenerator generator(TdWorld world) {
@@ -112,6 +131,8 @@ public class Mortar extends Turret {
         bulletLauncher.move(_x, _y);
     }
 
+    private int firingCycle = 0;
+    private int bombsCount = 1;
     @Override
     protected Upgrade up100() {
         return new Upgrade("Bomb-0",
@@ -120,7 +141,15 @@ public class Mortar extends Turret {
                         "Doubles... the bombs.",
                         "Genius."),
                 () -> {
-                    bulletLauncher.cannons.add(new Cannon(0, 0));
+                    bombsCount=2;
+                    bulletLauncher.addAttackEffect(bl->{
+                      firingCycle++;
+                      if (firingCycle>=bombsCount){
+                        firingCycle=0;
+                      }else{
+                        bl.setRemainingCooldown(bl.getRemainingCooldown()-bl.getCooldown()*(1-0.15f/bombsCount));
+                      }
+                    });
                 }, 300);
     }
 
@@ -132,11 +161,10 @@ public class Mortar extends Turret {
                         "Adds 3 more bombs, but bombs are smaller.",
                         "Doesn't actually focus shit"),
                 () -> {
-                    for (int i = 0; i < 3; i++) {
-                        bulletLauncher.cannons.add(new Cannon(0, 0));
-                    }
+                    bombsCount +=3;
                     addBuff(new StatBuff<Turret>(Type.MORE, Stats.bulletSize, 0.6f));
-                    addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, 0.4f));
+                    addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, 0.65f));
+                    sound=new SoundToPlay(sound.name, sound.volume-0.2f);
                 }, 300);
     }
 
@@ -148,7 +176,7 @@ public class Mortar extends Turret {
                         "Increases attack speed based on spread",
                         ""),
                 () -> {
-                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 100);
+                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 1000);
                     addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, attackArea));
                 }, 300);
     }
@@ -161,10 +189,14 @@ public class Mortar extends Turret {
                         "Extra AoE, +1 damage, increases spread",
                         ""),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
-                    addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, 1.5f));
-                    addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spread, 2));
+                    addBuff(new StatBuff<>(StatBuff.Type.ADDED, ExtraStats.explodPower, 1));
+                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
+                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, 1.5f));
+                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, 2));
+                    trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(50,50).setRotation(r).
+                      playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),1f, 50);
+                    skyShotStrength = 3000;
+                  sound=new SoundToPlay(sound.name, sound.volume+0.1f);
                 }, 300);
     }
 
@@ -176,13 +208,40 @@ public class Mortar extends Turret {
                         "No need to he accurate if a miss is lethal enough",
                         "further increases explosion size based on spread"),
                 () -> {
-                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
+                    addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.explodPower, 1));
                     addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
                     float radiusBuff = 1 + originalStats[ExtraStats.spread] / 200f;
                     addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, radiusBuff));
                     addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.spread, 1.5f));
+                    trailIm=Graphics.getImage("bluRay");
+                    trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(50,10).setRotation(r).
+                      playAnimation(new TransformAnimation(1).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),3f, 50);
+                    skyShotStrength = 5500;
+                  sound=new SoundToPlay(sound.name, sound.volume+0.1f);
                 }, 300);
     }
+
+  @Override
+  protected Upgrade up030() {
+    return new Upgrade("Bomb-0",
+        new Description("Meteor"
+            ,
+            "Overkill",
+            "Massively reduces fire rate and increases damage"),
+        () -> {
+          addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.explodPower, 10));
+          addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.4f));
+          addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, 0.3f));
+          addBuff(new StatBuff<Turret>(Type.MORE, projectileDuration, 5f));
+
+          trailIm=Graphics.getImage("Explosion1-0");
+          trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(250,250).setRotation(r-90).
+              playAnimation(new FrameAnimation("Explosion1",1).and(new TransformAnimation(1).setOpacityScaling(-0.03f))).setDeleteOnAnimationEnd(true),
+              20f, 100);
+          skyShotStrength = 1000;
+          sound=new SoundToPlay(sound.name, sound.volume+0.2f);
+        }, 300);
+  }
 
 
     @Override
@@ -199,6 +258,25 @@ public class Mortar extends Turret {
                     explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(this.stats[ExtraStats.explodPower], 2000)));
                 }, 175);
     }
+
+  @Override
+  protected Upgrade up002() {
+    return new Upgrade("laser",
+        new Description("laser precision"
+            ,
+            "fire",
+            ""),
+        () -> {
+          sound = new SoundToPlay("laser",sound.volume);
+          addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, 0));
+          addBuff(new StatBuff<>(Type.MORE, Stats.aspd, 1.8f));
+          bulletLauncher.setImage("transparent");
+          trailIm=Graphics.getImage("laser");
+          skyShotStrength*=1.6f;
+          trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(30,150).setRotation(r-90).
+              playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),25f, 0);
+        }, 175);
+  }
 
 
     @Override

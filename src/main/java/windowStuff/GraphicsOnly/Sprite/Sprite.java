@@ -4,6 +4,7 @@ import Game.Misc.Game;
 import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Util;
+import java.util.stream.Collectors;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageData;
 import windowStuff.GraphicsOnly.Shader;
@@ -16,6 +17,11 @@ import java.util.Objects;
 public class Sprite implements AbstractSprite {
 
   public static final Animation noAnim = new Animation() {
+    @Override
+    protected Animation copy() {
+      return this;
+    }
+
     @Override
     public void update(Sprite sprite) {
 
@@ -39,6 +45,17 @@ public class Sprite implements AbstractSprite {
   private int lastGt;
   private boolean deleteOnAnimationEnd = true;
 
+  public boolean isPaused() {
+    return paused;
+  }
+
+  public Sprite setPaused(boolean paused) {
+    this.paused = paused;
+    return this;
+  }
+
+  private boolean paused=false;
+
   public Sprite(Sprite og) {
     layer = og.layer;
     shader = og.shader;
@@ -52,8 +69,10 @@ public class Sprite implements AbstractSprite {
     width = og.width;
     height = og.height;
     image = og.image;
-    animation = noAnim;
+    animation = og.animation.copy();
     lastGt = og.lastGt;
+    deleteOnAnimationEnd=og.deleteOnAnimationEnd;
+    paused=og.paused;
   }
 
   public Sprite(ImageData image, int layer, String shader) {
@@ -275,14 +294,14 @@ public class Sprite implements AbstractSprite {
     texCoords = image.textureCoordinates;
   }
 
-  public synchronized void updateVertices() {
-    if (hidden) {
+  public synchronized void updateAnimation() {
+    if (paused) {
       return;
     }
 
     int ticks = Game.get().getTicks() - lastGt;
     lastGt += ticks;
-    for (int i = 0; i < ticks; i++) {
+    for (int i = 0; i < ticks && !deleted; i++) {
       animation.update(this);
     }
   }
@@ -331,6 +350,8 @@ public class Sprite implements AbstractSprite {
 
   public abstract static class Animation {
 
+    protected abstract Animation copy();
+
     private boolean ended = false;
 
     public abstract void update(Sprite sprite);
@@ -365,6 +386,11 @@ public class Sprite implements AbstractSprite {
 
     public CompoundAnimation(List<Animation> anims) {
       animations = anims;
+    }
+
+    @Override
+    protected Animation copy() {
+      return new CompoundAnimation(animations.stream().map(Animation::copy).collect(Collectors.toList()));
     }
 
     @Override
@@ -409,6 +435,19 @@ public class Sprite implements AbstractSprite {
     public FrameAnimation loop() {
       loop = true;
       return this;
+    }
+
+    public FrameAnimation(FrameAnimation og) {
+      length = og.length;
+      frameLengthGt = og.frameLengthGt;
+      this.images = og.images;
+      this.lifetime=og.lifetime;
+      this.loop=true;
+    }
+
+    @Override
+    protected Animation copy() {
+      return new FrameAnimation(this);
     }
 
     @Override

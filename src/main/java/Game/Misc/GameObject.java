@@ -80,4 +80,8 @@ public class GameObject {
 
   public void onStatsUpdate() {
   }
+
+  public float getRotation() {
+    return rotation;
+  }
 }

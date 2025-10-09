@@ -298,10 +298,11 @@ public class BulletLauncher {
 
   public Projectile attack(float angle, boolean triggerCooldown) {
 
+    for(Modifier<BulletLauncher> mod: attackEffects){
+      mod.mod(this);
+    }
+
     if (triggerCooldown) {
-      for(Modifier<BulletLauncher> mod: attackEffects){
-        mod.mod(this);
-      }
       remainingCooldown += cooldown;
     }
 
@@ -322,12 +323,7 @@ public class BulletLauncher {
   }
 
   public Projectile attack(float targetX, float targetY, boolean triggerCooldown) {
-    if (triggerCooldown) {
-      for(Modifier<BulletLauncher> mod: attackEffects){
-        mod.mod(this);
-      }
-      remainingCooldown += cooldown;
-    }
-    return attack(Util.get_rotation(targetX - x, targetY - y));
+
+    return attack(Util.get_rotation(targetX - x, targetY - y),triggerCooldown);
   }
 }

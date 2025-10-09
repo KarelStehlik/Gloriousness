@@ -13,6 +13,7 @@ import static org.lwjgl.opengles.GLES20.GL_STREAM_DRAW;
 
 import GlobalUse.Constants;
 import GlobalUse.Data;
+import GlobalUse.Log;
 import windowStuff.GraphicsOnly.Camera;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageSet;
@@ -117,9 +118,11 @@ public class SuperBatch implements SpriteBatching {
       shader.useCamera(camera);
     }
 
+    //int sprites = 0;
     for (Batch b : batches) {
       var spriterator = b.sprites.iterator();
       while (spriterator.hasNext()) {
+        //sprites++;
         final Sprite s = spriterator.next();
         if (s.mustBeRebatched) {
           spriterator.remove();
@@ -127,6 +130,7 @@ public class SuperBatch implements SpriteBatching {
         }
       }
     }
+    //Log.write(sprites);
 
     synchronized (spritesToAdd) {
       for (Sprite sprite : spritesToAdd) {
@@ -161,7 +165,7 @@ public class SuperBatch implements SpriteBatching {
       for (int i = drawStart; i < drawEnd; i++) {
         synchronized (batches.get(i).sprites) {
           for (Sprite s : batches.get(i).sprites) {
-            s.updateVertices();
+            s.updateAnimation();
             spriteCount -= s.buffer(Graphics.vbo);
           }
         }

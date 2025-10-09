@@ -1,13 +1,23 @@
 package windowStuff.GraphicsOnly;
 
 import Game.Misc.Game;
+import GlobalUse.Log;
 import org.joml.Vector2f;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
+import windowStuff.GraphicsOnly.Sprite.Sprite.Animation;
 
 public class TransformAnimation extends Sprite.Animation {
 
   private float scaling = 1;
   private float opacityScaling = 0;
+
+  public TransformAnimation(TransformAnimation og) {
+    scaling=og.scaling;
+    opacityScaling=og.opacityScaling;
+    spinning=og.spinning;
+    linearScaling=og.linearScaling;
+    duration=og.duration;
+  }
 
   public TransformAnimation setSpinning(float spinning) {
     this.spinning = spinning;
@@ -36,6 +46,11 @@ public class TransformAnimation extends Sprite.Animation {
   public TransformAnimation setLinearScaling(Vector2f value) {
     linearScaling = value;
     return this;
+  }
+
+  @Override
+  protected Animation copy() {
+    return new TransformAnimation(this);
   }
 
   @Override
