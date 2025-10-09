@@ -31,6 +31,7 @@ import windowStuff.GraphicsOnly.ImageData;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import java.util.ArrayList;
 import windowStuff.GraphicsOnly.Sprite.Sprite.FrameAnimation;
+import windowStuff.GraphicsOnly.Text.TextModifiers;
 import windowStuff.GraphicsOnly.TransformAnimation;
 
 import static Game.Common.Turrets.Turret.Stats.*;
@@ -173,10 +174,10 @@ public class Mortar extends Turret {
         return new Upgrade("Bomb-0",
                 new Description("Glorious Coverage"
                         ,
-                        "Increases attack speed based on spread",
+                        "Increases attack speed based on spread, better with high spread."+ TextModifiers.red+" WARNING: if spread is low reduces attack speed",
                         ""),
                 () -> {
-                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 1000);
+                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 700);
                     addBuff(new StatBuff<Turret>(Type.MORE, Stats.aspd, attackArea));
                 }, 300);
     }
