@@ -115,7 +115,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   public void die() {
-    world.setMoney(world.getMoney() + stats[Stats.value]);
     onDeath();
 
     if (stats[Stats.spawns] > 0.5f) {
@@ -170,8 +169,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   private void passed() {
-    spawnChildren(0);
-    delete();
+    die();
     world.changeHealth(-1);
   }
 

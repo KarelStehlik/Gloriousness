@@ -59,6 +59,7 @@ import windowStuff.GraphicsOnly.Sprite.SingleAnimationSprite;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 import windowStuff.GraphicsOnly.Text.TextBox;
+import windowStuff.GraphicsOnly.Text.TextModifiers;
 import windowStuff.GraphicsOnly.TransformAnimation;
 import windowStuff.IntroScreen;
 
@@ -103,6 +104,7 @@ public class TdWorld implements World {
   private int tick = 0;
   private int health = Constants.StartingHealth;
   private double money = 100;
+  private double income = 25;
   public TurretGenerator lastTurret;
 
   public TdWorld(int map) {
@@ -165,19 +167,20 @@ public class TdWorld implements World {
     Audio.getGroup("music").setVolumeMultiplier(0.5f);
 
     ArrayList<SimpleText> texts = new ArrayList<>();
-    SimpleText text = new SimpleText(() -> "Lives: " + health, "Calibri", 500,
+    SimpleText text = new SimpleText(() -> TextModifiers.livesRed +"Lives: " + health, "Calibri", 500,
         0, 1050, 100, 40, bs);
-    text.setColors(Util.getColors(1, 1, 1));
     texts.add(text);
-    SimpleText text2 = new SimpleText(() -> "Cash: " + (long) getMoney(), "Calibri", 500,
+    SimpleText text2 = new SimpleText(() ->  TextModifiers.moneyYellow+"Cash: " + (long) getMoney(), "Calibri", 500,
         0, 1550, 100, 40, bs);
-    text2.setColors(Util.getColors(1, 1, 1));
     texts.add(text2);
-    SimpleText text3 = new SimpleText(() -> "Wave " + mobSpawner.waveNum, "Calibri", 500,
-        0, 900, 100, 40, bs);
-    text3.setColors(Util.getColors(1, 1, 1));
+    SimpleText text3 = new SimpleText(() -> TextModifiers.green+"Income: " + ((long) income*100)/100f, "Calibri", 500,
+            0, 1550, 100, 40, bs);
     texts.add(text3);
-    resourceTracker = new TextBox(250, 975, 500, true, texts);
+    SimpleText text4 = new SimpleText(() -> "Wave " + mobSpawner.waveNum, "Calibri", 500,
+        0, 900, 100, 40, bs);
+    text4.setColors(Util.getColors(1, 1, 1));
+    texts.add(text4);
+    resourceTracker = new TextBox(250, 940, 500, true, texts);
 
     currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
     currentTool.delete();
@@ -592,6 +595,14 @@ public class TdWorld implements World {
     this.money = money;
     resourceTracker.update();
   }
+  public void setIncome(double newIncome) {
+    this.income = newIncome;
+    resourceTracker.update();
+  }
+  public void addIncome(double addIncome) {
+    this.income += addIncome;
+    resourceTracker.update();
+  }
 
   public Tool getCurrentTool() {
     return currentTool;
@@ -693,6 +704,7 @@ public class TdWorld implements World {
     List<Wave> waves = new ArrayList<>(1);
 
     private void beginWave() {
+      money+=income;
       waves.add(Wave.get(TdWorld.this, waveNum));
       waveNum++;
       TdWorld.this.onBeginWave();

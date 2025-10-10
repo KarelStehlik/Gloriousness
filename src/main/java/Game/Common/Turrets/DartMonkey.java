@@ -259,9 +259,9 @@ public class DartMonkey extends Turret {
     stats[Stats.range] = 250f;
     stats[Stats.pierce] = 1f;
     stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.45f, 1.2f);
-    stats[Stats.projectileDuration] = 10f;
+    stats[Stats.projectileDuration] = 2f;
     stats[Stats.bulletSize] = 30f;
-    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(0.1f, 0.2f);
+    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(1f, 19f);
     stats[Stats.cost] = 25f;
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;

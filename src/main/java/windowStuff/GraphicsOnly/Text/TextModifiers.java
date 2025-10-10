@@ -8,6 +8,8 @@ public class TextModifiers {//mb this should be an enum but I can't really think
   public static final String red = "|#765.#25.#25|";
   public static final String resetColor = "|#999.#999.#999|";//999 is a special value that resets the color to the original
   public static final String green = "|#25.#765.#25|";
+  public static final String moneyYellow = "|#330.#335.#100|";
+  public static final String livesRed = "|#615.#75.#75|";
   public static final String blue = "|#25.#25.#765|";
   public static final String white = "|#255.#255.#255|";
   public static final String Grey = "|#125.#125.#125|";

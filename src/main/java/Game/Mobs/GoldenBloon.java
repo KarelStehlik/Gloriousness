@@ -10,19 +10,16 @@ import GlobalUse.Constants;
 import GlobalUse.Util;
 import java.util.List;
 import windowStuff.GraphicsOnly.Text.SimpleText;
+import windowStuff.GraphicsOnly.Text.TextModifiers;
 
 public class GoldenBloon extends TdMob {
 
   private void gainMoney(long amount, float duration) {
-    if (WasDeleted()) {
-      return;
-    }
-    world.setMoney(world.getMoney() + amount);
-    var t = new SimpleText("+" + amount, "Calibri", 500, (int) x,
+    world.addIncome(amount);
+    var t = new SimpleText(TextModifiers.green + "+" + amount, "Calibri", 500, (int) x,
         (int) y, 60, 50, world.getBs());
     t.move((int) Util.clamp(t.getX(), 50, Constants.screenSize.x - 50),
         (int) Util.clamp(t.getY(), 30, Constants.screenSize.y - 30));
-    t.setColors(Util.getColors(1.5f, 1.5f, 0));
     Game.get().addTickable(new CallAfterDuration(t::delete, duration));
   }
 
