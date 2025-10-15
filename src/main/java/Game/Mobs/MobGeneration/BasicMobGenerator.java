@@ -64,10 +64,11 @@ public class BasicMobGenerator implements WaveGenerator {
     public SpawnSequence[] generate(float wave) {
         int bloonkindcount = Math.min((int) wave / 5 + 1, 3);
         int strongest;
-        if ((int) wave / 3 >= 5) {
+        int temp=(int)Math.ceil( wave);
+        if (temp >= 5) {
             strongest = 5;
         } else {
-            strongest = Data.gameMechanicsRng.nextInt((int) Math.ceil( wave / 3.0), 5);
+            strongest = Data.gameMechanicsRng.nextInt(temp, 5);
         }
         SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
         for (int i = bloonkindcount; i > 0; i--) {
