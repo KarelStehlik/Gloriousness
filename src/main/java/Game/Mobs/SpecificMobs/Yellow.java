@@ -1,25 +1,27 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
-public class Pink extends TdMob {
+public class Yellow extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of(Yellow::new);
+  private static final List<ChildSpawner> spawns = List.of(Green::new);
 
-  public Pink(TdWorld world, int wave) {
-    super(world, "BloonPink", wave);
+  public Yellow(TdWorld world, int wave) {
+    super(world, "BloonYellow", wave);
   }
 
-  public Pink(TdMob parent) {
-    super(parent.world, "BloonPink", parent, 50);
+  public Yellow(TdMob parent) {
+    super(parent.world, "BloonYellow", parent, 50);
   }
 
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 76.0f;
-    stats[Stats.speed] = 8f;
+    stats[Stats.size] = 68.0f;
+    stats[Stats.speed] = 7f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
@@ -32,14 +34,13 @@ public class Pink extends TdMob {
     return false;
   }
 
-
   @Override
   protected List<ChildSpawner> children() {
     return spawns;
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 1;
   }
 }

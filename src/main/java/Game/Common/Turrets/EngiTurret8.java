@@ -6,7 +6,7 @@ import Game.Misc.BasicCollides;
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.BulletLauncher;
 import Game.Misc.Game;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import Game.Misc.TdWorld;
 import GlobalUse.Util;
 import windowStuff.GraphicsOnly.Graphics;

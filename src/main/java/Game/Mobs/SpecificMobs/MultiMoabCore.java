@@ -1,10 +1,12 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 
 import Game.Common.Buffs.Buff.DelayedTrigger;
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
 public class MultiMoabCore extends TdMob {
@@ -82,7 +84,7 @@ public class MultiMoabCore extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 150;
   }
 }

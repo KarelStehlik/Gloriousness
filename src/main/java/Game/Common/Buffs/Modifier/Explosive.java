@@ -2,7 +2,7 @@ package Game.Common.Buffs.Modifier;
 
 import Game.Enums.DamageType;
 import Game.Misc.GameObject;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import java.util.ArrayList;
 import java.util.List;
 

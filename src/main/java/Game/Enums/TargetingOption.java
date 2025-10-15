@@ -1,6 +1,6 @@
 package Game.Enums;
 
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import java.util.Comparator;
 
 public enum TargetingOption {

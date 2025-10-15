@@ -1,7 +1,7 @@
 package Game.Misc;
 
 import Game.Enums.TargetingOption;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import GlobalUse.Log;
 import GlobalUse.Util;
 import java.awt.Point;

@@ -2,8 +2,8 @@ package Game.Common.Buffs.Buff;
 
 import Game.Enums.DamageType;
 import Game.Misc.Game;
-import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
+import Game.Mobs.MobClasses.TdMob;
+import Game.Mobs.MobClasses.TdMob.Stats;
 import GlobalUse.Util;
 import java.util.Iterator;
 import java.util.TreeSet;

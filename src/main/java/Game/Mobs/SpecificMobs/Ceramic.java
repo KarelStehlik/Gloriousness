@@ -1,6 +1,8 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
 public class Ceramic extends TdMob {
@@ -39,7 +41,7 @@ public class Ceramic extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 60;
   }
 }

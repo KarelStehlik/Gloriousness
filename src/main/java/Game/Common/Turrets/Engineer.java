@@ -9,7 +9,7 @@ import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.BulletLauncher;
 import Game.Enums.DamageType;
 import Game.Misc.Game;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import Game.Common.Projectile;
 import Game.Common.Projectile.Guided;
 import Game.Misc.TdWorld;

@@ -1,4 +1,4 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
@@ -6,6 +6,7 @@ import Game.Misc.CallAfterDuration;
 import Game.Enums.DamageType;
 import Game.Misc.Game;
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
 import GlobalUse.Constants;
 import GlobalUse.Util;
 import java.util.List;
@@ -87,7 +88,7 @@ public class GoldenBloon extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 1;
   }
 }

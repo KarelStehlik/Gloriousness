@@ -1,7 +1,9 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 import Game.Enums.DamageType;
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
 public class Lead extends TdMob {
@@ -54,7 +56,7 @@ public class Lead extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 50;
   }
 }

@@ -1,20 +1,22 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
-public class MultiMoabLowerFin extends TdMob {
+public class MultiMoabUpperFin extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
       Lead::new, Lead::new);
 
-  public MultiMoabLowerFin(TdWorld world, int wave) {
-    super(world, "SmDownFin", wave);
+  public MultiMoabUpperFin(TdWorld world, int wave) {
+    super(world, "SmUpFin", wave);
   }
 
-  public MultiMoabLowerFin(TdMob parent) {
-    super(parent.world, "SmDownFin", parent, parent.getChildrenSpread());
+  public MultiMoabUpperFin(TdMob parent) {
+    super(parent.world, "SmUpFin", parent, parent.getChildrenSpread());
   }
 
   // generated stats
@@ -41,7 +43,7 @@ public class MultiMoabLowerFin extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 150;
   }
 }

@@ -11,7 +11,7 @@ import Game.Common.BulletLauncher;
 import Game.Enums.TargetingOption;
 import Game.Misc.Game;
 import Game.Misc.GameObject;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import Game.Misc.TdWorld;
 import Game.Misc.TickDetect;
 import GlobalUse.Data;

@@ -9,15 +9,16 @@ import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengles.GLES20.GL_ONE;
 import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
-
 import Game.Common.Projectile;
 import Game.Misc.Ability.AbilityGroup;
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.Buffs.VoidFunc;
 import Game.Enums.DamageType;
-import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.MoveAlongTrack;
+import Game.Mobs.MobGeneration.BasicMobGenerator;
+import Game.Mobs.MobGeneration.MobSpawner;
+import Game.Mobs.MobClasses.TdMob;
+import Game.Mobs.MobClasses.TdMob.MoveAlongTrack;
 import Game.Common.Turrets.BasicTurret;
 import Game.Common.Turrets.DartMonkey;
 import Game.Common.Turrets.DartlingGunner;
@@ -88,7 +89,7 @@ public class TdWorld implements World {
   private final Sprite mapSprite;
   private final List<Point> mapData;
   private final TextBox resourceTracker;
-  private final MobSpawner mobSpawner = new MobSpawner();
+  private final MobSpawner mobSpawner = new MobSpawner(this);
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
   private final List<Turret> turrets = new ArrayList<>(1);
   private final List<VoidFunc> queuedEvents = new ArrayList<>(1);
@@ -108,6 +109,7 @@ public class TdWorld implements World {
   public TurretGenerator lastTurret;
 
   public TdWorld(int map) {
+    mobSpawner.generators.add(new BasicMobGenerator());
     Game game = Game.get();
     game.addMouseDetect(this);
     game.addKeyDetect(this);
@@ -698,36 +700,13 @@ public class TdWorld implements World {
     private static final int ProjectileGridSquareSize = 7;
   }
 
-  private class MobSpawner {
+  public void beginWave() {
+    money+=income;
+    TdWorld.this.onBeginWave();
+  }
 
-    int waveNum = 0;
-    List<Wave> waves = new ArrayList<>(1);
-
-    private void beginWave() {
-      money+=income;
-      waves.add(Wave.get(TdWorld.this, waveNum));
-      waveNum++;
-      TdWorld.this.onBeginWave();
-    }
-
-    private void run() {
-      for (Iterator<Wave> iterator = waves.iterator(); iterator.hasNext(); ) {
-        Wave x = iterator.next();
-        x.onGameTick(tick);
-        if (x.WasDeleted()) {
-          endWave(x.waveNum);
-          iterator.remove();
-        }
-      }
-
-      if (waves.isEmpty()) {
-        beginWave();
-      }
-    }
-
-    public void endWave(int num) {
-      turrets.forEach(Turret::endOfRound);
-      upgrades.gib(num + 1);
-    }
+  public void endWave(int num) {
+    turrets.forEach(Turret::endOfRound);
+    upgrades.gib(num + 1);
   }
 }

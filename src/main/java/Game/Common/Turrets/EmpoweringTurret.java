@@ -10,7 +10,7 @@ import Game.Common.BulletLauncher;
 import Game.Misc.CallAfterDuration;
 import Game.Enums.DamageType;
 import Game.Misc.Game;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import Game.Misc.Player;
 import Game.Common.Projectile;
 import Game.Misc.TdWorld;

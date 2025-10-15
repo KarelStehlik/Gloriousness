@@ -11,7 +11,7 @@ import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.BulletLauncher;
 import Game.Common.BulletLauncher.Cannon;
 import Game.Misc.Game;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import Game.Common.Projectile;
 import Game.Misc.TdWorld;
 import windowStuff.GraphicsOnly.TransformAnimation;

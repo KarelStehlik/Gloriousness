@@ -1,7 +1,9 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public class MultiMoabHead extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 150;
   }
 }

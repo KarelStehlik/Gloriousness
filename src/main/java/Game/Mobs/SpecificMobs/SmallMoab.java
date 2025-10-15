@@ -1,6 +1,8 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
 public class SmallMoab extends TdMob {
@@ -45,7 +47,7 @@ public class SmallMoab extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 150;
   }
 }

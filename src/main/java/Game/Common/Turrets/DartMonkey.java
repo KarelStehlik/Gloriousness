@@ -1,6 +1,5 @@
 package Game.Common.Turrets;
 
-import Game.Common.Buffs.Buff.SkyShot;
 import Game.Common.BulletLauncher;
 import Game.Common.Buffs.Buff.Ignite;
 import Game.Common.Buffs.Buff.StatBuff;
@@ -8,7 +7,7 @@ import Game.Common.Buffs.Buff.StealthAttack;
 import Game.Common.Buffs.Modifier.Explosive;
 import Game.Common.Projectile;
 import Game.Misc.*;
-import Game.Mobs.TdMob;
+import Game.Mobs.MobClasses.TdMob;
 import GlobalUse.Data;
 import GlobalUse.Description;
 import GlobalUse.Util;

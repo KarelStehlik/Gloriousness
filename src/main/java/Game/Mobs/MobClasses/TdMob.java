@@ -1,4 +1,4 @@
-package Game.Mobs;
+package Game.Mobs.MobClasses;
 
 import Game.Common.Buffs.Buff.Buff;
 import Game.Common.Buffs.Buff.BuffHandler;
@@ -8,7 +8,7 @@ import Game.Misc.GameObject;
 import Game.Misc.SquareGrid;
 import Game.Misc.TdWorld;
 import Game.Misc.TickDetect;
-import Game.Misc.Wave;
+import Game.Mobs.MobGeneration.Wave;
 import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Util;
@@ -19,10 +19,10 @@ import windowStuff.GraphicsOnly.Sprite.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  protected final Sprite sprite;
+  public final Sprite sprite;
   protected final SquareGrid<TdMob> grid;
   private final BuffHandler<TdMob> buffHandler;
-  protected MovementAi<TdMob> movement;
+  public MovementAi<TdMob> movement;
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
@@ -173,7 +173,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     world.changeHealth(-1);
   }
 
-  protected abstract int getChildrenSpread();
+  public abstract int getChildrenSpread();
 
   @FunctionalInterface
   public interface ChildSpawner {

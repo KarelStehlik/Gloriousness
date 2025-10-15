@@ -1,7 +1,9 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
 public class MultiMoabBridge extends TdMob {
@@ -50,7 +52,7 @@ public class MultiMoabBridge extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 150;
   }
 }

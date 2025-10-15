@@ -1,22 +1,24 @@
-package Game.Misc;
+package Game.Mobs.MobGeneration;
 
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
-import Game.Mobs.Black;
-import Game.Mobs.Blue;
-import Game.Mobs.Ceramic;
-import Game.Mobs.GoldenBloon;
-import Game.Mobs.Green;
-import Game.Mobs.Lead;
-import Game.Mobs.Moab;
-import Game.Mobs.MultiMoabCore;
-import Game.Mobs.Pink;
-import Game.Mobs.Red;
-import Game.Mobs.ShieldBloon;
-import Game.Mobs.SmallMoab;
-import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
-import Game.Mobs.Yellow;
+import Game.Misc.TdWorld;
+import Game.Misc.TickDetect;
+import Game.Mobs.SpecificMobs.Black;
+import Game.Mobs.SpecificMobs.Blue;
+import Game.Mobs.SpecificMobs.Ceramic;
+import Game.Mobs.SpecificMobs.GoldenBloon;
+import Game.Mobs.SpecificMobs.Green;
+import Game.Mobs.SpecificMobs.Lead;
+import Game.Mobs.SpecificMobs.Moab;
+import Game.Mobs.MobClasses.TdMob;
+import Game.Mobs.SpecificMobs.MultiMoabCore;
+import Game.Mobs.SpecificMobs.Pink;
+import Game.Mobs.SpecificMobs.Red;
+import Game.Mobs.SpecificMobs.ShieldBloon;
+import Game.Mobs.SpecificMobs.SmallMoab;
+import Game.Mobs.MobClasses.TdMob.Stats;
+import Game.Mobs.SpecificMobs.Yellow;
 import GlobalUse.Data;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,7 +38,7 @@ public class Wave implements TickDetect {
   }
 
   public final int waveNum;
-  private final TdWorld world;
+  public final TdWorld world;
   private final float scaling;
   private int elapsed = 0;
   private final SpawnSequence[] spawns;
@@ -47,7 +49,7 @@ public class Wave implements TickDetect {
 
   private final float elapsedMillis = 0;
 
-  private Wave(TdWorld world, int n, SpawnSequence[] s) {
+  public Wave(TdWorld world, int n, SpawnSequence[] s) {
     MobsAliveFromEachWave.put(n, 0);
     this.world = world;
     this.waveNum = n;
@@ -93,47 +95,16 @@ public class Wave implements TickDetect {
             spdScaling));
   }
 
-  private void add(TdMob e) {
+  public void add(TdMob e) {
     world.addEnemy(e);
   }
 
   public static Wave get(TdWorld w, int num) {
+
     if (num >= waves.length) {
       return new Wave(w, num, waves[Data.gameMechanicsRng.nextInt(waves.length - 5, waves.length)]);
     }
     return new Wave(w, num, waves[num]);
-  }
-
-  @FunctionalInterface
-  private interface BloonNew {
-
-    TdMob create(TdWorld w, int wave);
-  }
-
-  private static final class SpawnSequence {
-
-    BloonNew bloonType;
-    int count;
-    int beginTick;
-    int interval;
-
-    private SpawnSequence(BloonNew bloonType, int count, int beginTick, int interval) {
-      this.bloonType = bloonType;
-      this.count = count;
-      this.beginTick = beginTick;
-      this.interval = interval;
-    }
-
-    public void onTick(int tick, Wave w) {
-      if (tick >= beginTick && tick < beginTick + count * interval
-          && (tick - beginTick) % interval == 0) {
-        w.add(bloonType.create(w.world, w.waveNum));
-      }
-    }
-
-    public boolean done(int tick) {
-      return tick >= beginTick + count * interval;
-    }
   }
 
   private static float getScaling(int wave) {

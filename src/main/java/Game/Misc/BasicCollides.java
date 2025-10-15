@@ -5,8 +5,8 @@ import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.Projectile;
 import Game.Enums.DamageType;
-import Game.Mobs.TdMob;
-import Game.Mobs.TdMob.Stats;
+import Game.Mobs.MobClasses.TdMob;
+import Game.Mobs.MobClasses.TdMob.Stats;
 
 public final class BasicCollides {
 

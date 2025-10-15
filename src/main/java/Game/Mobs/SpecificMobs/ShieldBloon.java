@@ -1,9 +1,11 @@
-package Game.Mobs;
+package Game.Mobs.SpecificMobs;
 
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Misc.Game;
 import Game.Misc.TdWorld;
+import Game.Mobs.MobClasses.TdMob;
+
 import java.util.List;
 
 public class ShieldBloon extends TdMob {
@@ -56,7 +58,7 @@ public class ShieldBloon extends TdMob {
   }
 
   @Override
-  protected int getChildrenSpread() {
+  public int getChildrenSpread() {
     return 1;
   }
 }
