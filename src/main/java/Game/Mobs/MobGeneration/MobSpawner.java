@@ -1,8 +1,11 @@
 package Game.Mobs.MobGeneration;
 
 import Game.Misc.TdWorld;
+import Game.Mobs.MobGeneration.WaveGenerator.WaveGenerator;
+import GlobalUse.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,6 +13,7 @@ public class MobSpawner {
 
     public int waveNum = 0;
     public ArrayList<WaveGenerator> generators = new ArrayList();
+    public ArrayList<WaveGenerator> goldGenerators = new ArrayList();
     List<Wave> waves = new ArrayList<>(1);
     private TdWorld world;
 
@@ -34,14 +38,27 @@ public class MobSpawner {
     }
 
     public void beginWave() {
-        for (WaveGenerator gen : generators) {
-            if (gen.validFromWave() <= waveNum && gen.validToWave() >= gen.validToWave()) {
-                waves.add(new Wave(world, waveNum, gen.generate(waveNum)));
-                waveNum++;
-                return;
+        if((waveNum+1)%5==0){
+            Collections.shuffle(goldGenerators);
+            for (WaveGenerator gen : goldGenerators) {
+                if (gen.validFromWave() <= waveNum && gen.validToWave() >= waveNum) {
+                    waves.add(new Wave(world, waveNum, gen.generate(waveNum)));
+                    break;
+                }
             }
         }
-        waves.add(Wave.get(world, waveNum));
+        Collections.shuffle(generators);
+        for (WaveGenerator gen : generators) {
+            if (gen.validFromWave() <= waveNum && gen.validToWave() >= waveNum) {
+                waves.add(new Wave(world, waveNum, gen.generate(waveNum)));
+                waveNum++;
+                break;
+            }
+        }
+        if(waves.isEmpty()){
+            waves.add(Wave.get(world, waveNum));
+            Log.write("generating wave using old system waves");
+        }
         waveNum++;
     }
 }

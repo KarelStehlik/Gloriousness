@@ -1,4 +1,6 @@
-package Game.Mobs.MobGeneration;
+package Game.Mobs.MobGeneration.WaveGenerator;
+
+import Game.Mobs.MobGeneration.SpawnSequence;
 
 public interface WaveGenerator {
 

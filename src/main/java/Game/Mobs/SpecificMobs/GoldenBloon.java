@@ -29,6 +29,11 @@ public class GoldenBloon extends TdMob {
   public GoldenBloon(TdWorld world, int wave) {
     super(world, "Buff", wave);
   }
+  public GoldenBloon(TdWorld world, int wave,float incomePerDamage) {
+    super(world, "Buff", wave);
+    addBuff(new StatBuff<TdMob>(Type.FINALLY_ADDED, ExtraStats.moneyPerDamage,
+             incomePerDamage- stats[ExtraStats.moneyPerDamage]));
+  }
 
   public GoldenBloon(TdMob parent) {
     super(parent.world, "Buff", parent, 50);
@@ -38,7 +43,7 @@ public class GoldenBloon extends TdMob {
   public void takeDamage(float amount, DamageType type) {
     super.takeDamage(amount, type);
     addBuff(new StatBuff<TdMob>(Type.ADDED, Stats.value,
-        (long) stats[ExtraStats.moneyPerDamage] * amount));
+         stats[ExtraStats.moneyPerDamage] * amount));
   }
   @Override
   public void addProgress(int addProgress){

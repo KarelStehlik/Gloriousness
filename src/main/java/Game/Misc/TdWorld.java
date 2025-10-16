@@ -15,7 +15,8 @@ import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.Buffs.VoidFunc;
 import Game.Enums.DamageType;
-import Game.Mobs.MobGeneration.BasicMobGenerator;
+import Game.Mobs.MobGeneration.WaveGenerator.BasicGoldBloonGenerator;
+import Game.Mobs.MobGeneration.WaveGenerator.BasicMobGenerator;
 import Game.Mobs.MobGeneration.MobSpawner;
 import Game.Mobs.MobClasses.TdMob;
 import Game.Mobs.MobClasses.TdMob.MoveAlongTrack;
@@ -104,12 +105,13 @@ public class TdWorld implements World {
 
   private int tick = 0;
   private int health = Constants.StartingHealth;
-  private double money = 100;
+  private double money = 125;
   private double income = 25;
   public TurretGenerator lastTurret;
 
   public TdWorld(int map) {
     mobSpawner.generators.add(new BasicMobGenerator());
+    mobSpawner.goldGenerators.add(new BasicGoldBloonGenerator());
     Game game = Game.get();
     game.addMouseDetect(this);
     game.addKeyDetect(this);

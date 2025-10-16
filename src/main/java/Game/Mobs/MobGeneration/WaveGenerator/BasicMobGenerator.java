@@ -1,5 +1,6 @@
-package Game.Mobs.MobGeneration;
+package Game.Mobs.MobGeneration.WaveGenerator;
 
+import Game.Mobs.MobGeneration.SpawnSequence;
 import Game.Mobs.SpecificMobs.Blue;
 import Game.Mobs.SpecificMobs.Green;
 import Game.Mobs.SpecificMobs.Pink;
@@ -26,7 +27,7 @@ public class BasicMobGenerator implements WaveGenerator {
         return validToWave;
     }
 
-    private SpawnSequence genPart(int strength,float wave,int beginTime){
+    private SpawnSequence genPart(int strength, float wave, int beginTime){
         int interval;
         //technically this shouldn't really happen because it's not valid at that wave but validity is more of a suggestion than a hard rule
         if(wave==0){
@@ -37,7 +38,7 @@ public class BasicMobGenerator implements WaveGenerator {
             interval=1;
         }
         //I somehow fully bolieve this will yield best results
-        int blooncount=(int)Math.round((wave*wave+10)/ Math.pow(strength,1.5f));
+        int blooncount=(int)Math.round((wave*wave+25)/ Math.pow(strength,1.75f));
         switch(strength){
             case 1 -> {
                 return new SpawnSequence(Red::new, blooncount, beginTime, interval);
@@ -64,15 +65,15 @@ public class BasicMobGenerator implements WaveGenerator {
     public SpawnSequence[] generate(float wave) {
         int bloonkindcount = Math.min((int) wave / 5 + 1, 3);
         int strongest;
-        int temp=(int)Math.ceil( wave);
+        int temp=(int)Math.ceil( (wave+1)/3);
         if (temp >= 5) {
             strongest = 5;
         } else {
-            strongest = Data.gameMechanicsRng.nextInt(temp, 5);
+            strongest = Data.gameMechanicsRng.nextInt(temp, 6);
         }
         SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
         for (int i = bloonkindcount; i > 0; i--) {
-            sequence[i-1]=genPart(strongest-i+1,wave,(bloonkindcount-i)*1200);
+            sequence[i-1]=genPart(strongest-i+1,wave,(bloonkindcount-i)*150);
         }
 
         return sequence;
