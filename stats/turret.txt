@@ -54,7 +54,7 @@ Common\Turrets\dartlinggunner
 
 ---
 Common\Turrets\mortar
-    power=2|range=0|pierce=6??16|aspd=0.4??0.8|projectileDuration=1.5|bulletSize=35??70|speed=20??40|cost=150|size=25|spritesize=100
+    power=2|range=0|pierce=6|aspd=0.4??0.8|projectileDuration=1.5|bulletSize=35??70|speed=15??40|cost=100|size=25|spritesize=100
     spread=0??2500|radius=40|explodPower=1
 ---
 Common\Turrets\wizard

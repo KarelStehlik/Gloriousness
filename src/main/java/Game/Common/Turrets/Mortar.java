@@ -21,6 +21,7 @@ import GlobalUse.Data;
 import GlobalUse.Description;
 import GlobalUse.Util;
 import org.joml.Vector2d;
+import org.lwjgl.system.linux.Stat;
 import windowStuff.Audio;
 import windowStuff.Audio.SoundToPlay;
 import windowStuff.GraphicsOnly.Graphics;
@@ -75,7 +76,6 @@ public class Mortar extends Turret {
 
     public Mortar(TdWorld world, int X, int Y) {
         super(world, X, Y, new BulletLauncher(world, "coconut"));
-
         badgeSprite = new Sprite("turretBase", 22).setSize(sprite.getWidth() * 2 * 0.75f,
                 sprite.getWidth() * 2 * 0.75f);
         world.getBs().addSprite(badgeSprite);
@@ -87,6 +87,7 @@ public class Mortar extends Turret {
 
         bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
         addBuff(new StatBuff<Turret>(Type.MORE, ExtraStats.radius, getStats()[ bulletSize]/40f));
+        addBuff(new StatBuff<Turret>(Type.MORE, pierce, getStats()[speed]/20f));
         bulletLauncher.addProjectileModifier(p -> {
             p.addBuff(new SkyShot(100, physicalEffects));
         });
@@ -321,7 +322,7 @@ public class Mortar extends Turret {
     stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.4f, 0.8f);
     stats[Stats.projectileDuration] = 1.5f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(35f, 70f);
-    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(25f, 40f);
+    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(20f, 40f);
     stats[Stats.cost] = 150f;
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;
