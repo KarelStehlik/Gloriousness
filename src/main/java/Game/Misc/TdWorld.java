@@ -105,7 +105,7 @@ public class TdWorld implements World {
 
   private int tick = 0;
   private int health = Constants.StartingHealth;
-  private double money = 125;
+  private double money = 100;
   private double income = 25;
   public TurretGenerator lastTurret;
 

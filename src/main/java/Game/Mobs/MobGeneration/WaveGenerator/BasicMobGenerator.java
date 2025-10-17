@@ -38,7 +38,7 @@ public class BasicMobGenerator implements WaveGenerator {
             interval=1;
         }
         //I somehow fully bolieve this will yield best results
-        int blooncount=(int)Math.round((wave*wave+25)/ Math.pow(strength,1.75f));
+        int blooncount=(int)Math.round((wave*wave*1.25f+30)/ Math.pow(strength,2));
         switch(strength){
             case 1 -> {
                 return new SpawnSequence(Red::new, blooncount, beginTime, interval);

@@ -163,7 +163,7 @@ public class DartMonkey extends Turret {
     @Override
     protected Upgrade up002() {
         return new Upgrade("ranger", new Description("Ranger","Settable range, When not attacking the dart monkey enters stealth",
-                "when not having a target range is reduced by 50%, after 1.75 sec of not having a target gets 4 times damage for 3 seconds"),                () -> {
+                "when not having a target range is reduced by 50%, after 0.75 sec of not having a target gets 4 times damage for 2 seconds"),                () -> {
 
                     var b = new DragableButton(new Sprite("Button", 100).setPosition(x, y).setSize(25, 25)
                             .addToBs(world.getBs())).init(btn-> {
@@ -180,8 +180,8 @@ public class DartMonkey extends Turret {
                     upgradeButtons.add(b);
                     addBuff(new StealthAttack((Turret t)->{
                         t.bulletLauncher.setRemainingCooldown(0);
-                        t.addBuff(new StatBuff<Turret>(StatBuff.Type.MORE,3000,Stats.power, 4f));
-                    },1.75f,0.5f));
+                        t.addBuff(new StatBuff<Turret>(StatBuff.Type.MORE,2000,Stats.power, 4f));
+                    },0.75f,0.5f));
                 }, 50 );
     }
   @Override

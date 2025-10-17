@@ -51,7 +51,6 @@ public class MobSpawner {
         for (WaveGenerator gen : generators) {
             if (gen.validFromWave() <= waveNum && gen.validToWave() >= waveNum) {
                 waves.add(new Wave(world, waveNum, gen.generate(waveNum)));
-                waveNum++;
                 break;
             }
         }
