@@ -213,6 +213,7 @@ public class TdWorld implements World {
     TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<>(false, mapData,
         new Point(0, 0), speed, 0, o -> {
     });
+
     while (!mover.isDone()) {
       spacPoints.add(new TrackPoint((int) fakeBloon.x, (int) fakeBloon.y,
           mover.getProgress().getCheckpoint()));

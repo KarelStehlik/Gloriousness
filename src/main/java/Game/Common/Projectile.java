@@ -188,6 +188,16 @@ public class Projectile extends GameObject implements TickDetect {
     vy = Util.sin(rotation) * stats[Stats.speed];
   }
 
+  public void accelerate(float dvx, float dvy){
+    vx += dvx;
+    vy += dvy;
+    float newRotation = Util.get_rotation(vx, vy);
+    super.setRotation(newRotation);
+    sprite.setRotation(newRotation);
+    float newSpeed = Util.distanceNotSquared(vx, vy);
+    addBuff(new StatBuff<>(Type.MORE, Stats.speed, newSpeed/stats[Stats.speed]));
+  }
+
   @Override
   public void move(float _x, float _y) {
     super.move(_x, _y);

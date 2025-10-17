@@ -11,6 +11,7 @@ import Game.Misc.TickDetect;
 import Game.Mobs.MobGeneration.Wave;
 import GlobalUse.Constants;
 import GlobalUse.Data;
+import GlobalUse.Log;
 import GlobalUse.Util;
 import java.awt.Point;
 import java.awt.Rectangle;

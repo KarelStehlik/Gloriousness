@@ -9,7 +9,7 @@ public final class Util {
   // number of table entries per degree
   private static final int sinScale = 32;
   // float array that will store the sine values
-  private static final float[] sin = new float[(90 * sinScale) + 1];
+  private static final float[] sin = new float[(90 * sinScale) + 2];
   // number of table entries
   private static final int arcSinScale = 2048;
   // float array that will store the sine values
@@ -29,7 +29,7 @@ public final class Util {
   private static long id = 0;
 
   // static initializer block
-  // fill the sine look-up table
+  // fill the sin look-up table
   static {
     double toRadian = Math.PI / (180.0 * sinScale);
     for (int i = 0; i < sin.length; i++) {
@@ -38,7 +38,7 @@ public final class Util {
   }
 
   // static initializer block
-  // fill the sine look-up table
+  // fill the asin look-up table
   static {
     double toDeg = 180 / Math.PI;
     double step = 1.0 / arcSinScale;
@@ -80,18 +80,17 @@ public final class Util {
     } else if (a < 0) {
       a += 360 * ((int) (Math.abs(a) / 360) + 1);
     }
+    if(a>180){
+      return -sin(a-180);
+    }
+    if(a>90){
+      return sin(180-a);
+    }
     // compute the index
-    int angleIndex = (int) (a * sinScale);
-    if (angleIndex < (180 * sinScale) + 1) {
-      if (angleIndex < (90 * sinScale) + 1) {
-        return sin[angleIndex];
-      }
-      return sin[(180 * sinScale) - angleIndex];
-    }
-    if (angleIndex < (270 * sinScale) + 1) {
-      return -sin[angleIndex - (180 * sinScale)];
-    }
-    return -sin[(360 * sinScale) - angleIndex];
+    float index = a * sinScale;
+    int iIndex = (int)index;
+    float fIndex = index-iIndex;
+    return sin[iIndex] * (1-fIndex) + sin[iIndex+1]*fIndex;
   }
 
   public static float cos(float a) {
@@ -99,24 +98,46 @@ public final class Util {
   }
 
   public static float arcSin(float a) {
-    if (a >= 0) {
-      int index = (int) (a * arcSinScale);
-      return arcSin[index];
+    if(a<0){
+      return -arcSin(-a);
     }
-    int index = (int) (-a * arcSinScale);
-    return -arcSin[index];
+    int index = (int) (a * arcSinScale);
+    return arcSin[index];
   }
 
-  public static float get_rotation(float x, float y) {
-    float inv_hypot = 1 / (float) Math.sqrt(x * x + y * y);
-    float asin = arcSin(clamp(y * inv_hypot, -1, 1));
-    if (x >= 0) {
-      return asin;
+  private static final int getRotationScale = 1000;
+  private static final float[] getRotationTable = new float[getRotationScale+2]; // lookup based on x/(x+y)
+  static{
+    for(int i=0; i<=getRotationScale; i++){
+      double ratio = i*0.5d/getRotationScale;
+      double y = 1;
+      double x = ratio*y/(1-ratio);
+      double inv_hypot = 1 / Math.sqrt(x * x + y * y);
+      double asin = Math.asin(y * inv_hypot);
+      float angle = (float)(asin * 180 / Math.PI);
+      getRotationTable[i]=angle;
     }
-    if (asin > 0) {
-      return 180 - asin;
+    getRotationTable[getRotationScale+1]=45;
+  }
+
+  public static float get_rotation(float x, float y){
+    if(y<0){
+      return -get_rotation(x, -y);
     }
-    return -180 - asin;
+    if(x<0){
+      return 180 - get_rotation(-x, y);
+    }
+    if(x>y){
+      return 90 - get_rotation(y, x);
+    }
+    if(x+y==0){
+      return 0;
+    }
+    float ratio = x/(x+y);
+    float index = ratio * getRotationScale * 2;
+    int iIndex = (int)index;
+    float fIndex = index-iIndex;
+    return getRotationTable[iIndex]*(1-fIndex) + getRotationTable[iIndex+1]*fIndex;
   }
 
   public static float[] getRandomColors() {
