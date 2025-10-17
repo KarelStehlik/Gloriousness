@@ -51,13 +51,12 @@ public class MobSpawner {
         for (WaveGenerator gen : generators) {
             if (gen.validFromWave() <= waveNum && gen.validToWave() >= waveNum) {
                 waves.add(new Wave(world, waveNum, gen.generate(waveNum)));
-                break;
+                waveNum++;
+                return;
             }
         }
-        if(waves.isEmpty()){
-            waves.add(Wave.get(world, waveNum));
-            Log.write("generating wave using old system waves");
-        }
+        waves.add(Wave.get(world, waveNum));
+        Log.write("generating wave using old system waves");
         waveNum++;
     }
 }
