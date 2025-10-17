@@ -46,7 +46,7 @@ public class SkyShot extends DefaultBuff<Projectile> {
 
             traveled += currentSpeed;
             if(traveled>physicalLength){
-              physicalAtSpeed = -currentSpeed;
+              physicalAtSpeed = -currentSpeed-0.0001f;
               traveled = Float.NEGATIVE_INFINITY;
             }
 
