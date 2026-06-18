@@ -1,57 +1,63 @@
 plugins {
     id 'java'
     id 'application'
-
 }
-apply plugin: 'application'
-mainClassName = "C:\\Users\\frant\\Documents\\Gloriousness\\src\\main\\java\\general\\Main.java"
-applicationDefaultJvmArgs = [
-        "-Djava.util.logging.config.file=src/main/resources/logging.properties"
-]
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
 java {
     sourceCompatibility = JavaVersion.VERSION_18
     targetCompatibility = JavaVersion.VERSION_18
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+application {
+    // Gradle 9.0 uses mainClass property instead of mainClassName
+    mainClass = 'general.Main'
+    applicationDefaultJvmArgs = [
+            "-Djava.util.logging.config.file=src/main/resources/logging.properties"
+    ]
+}
 
 repositories {
     mavenCentral()
 }
 
+// Defining versions as local variables for clean access
+def lwjglVersion = "3.3.1"
+def jomlVersion = "1.10.5" // Matched to your implementation version below
+def imguiVersion = "1.86.5"
+def imguiNativeVersion = "1.86.4"
+def lwjglNatives = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows') ? "natives-windows" : "natives-linux"
+
 dependencies {
+    // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
-}
 
-test {
-    useJUnitPlatform()
-}
-
-project.ext.lwjglVersion = "3.3.1"
-project.ext.jomlVersion = "1.10.4"
-project.ext.lwjglNatives = (System.properties['os.name'].toLowerCase(Locale.ROOT).contains('windows'))? "natives-windows" : "natives-linux"
-project.ext.imguiVersion = "${version}"
-
-dependencies {
+    // LWJGL & JOML
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
-    implementation 'org.joml:joml:1.10.5'
+    implementation "org.joml:joml:$jomlVersion"
 
     implementation "org.lwjgl:lwjgl"
     implementation "org.lwjgl:lwjgl-glfw"
     implementation "org.lwjgl:lwjgl-opengl"
     implementation "org.lwjgl:lwjgl-opengles"
     implementation "org.lwjgl:lwjgl-stb"
+
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengles::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 
-    implementation "io.github.spair:imgui-java-binding:1.86.5"
-    implementation "io.github.spair:imgui-java-lwjgl3:1.86.5"
+    // ImGui
+    implementation "io.github.spair:imgui-java-binding:$imguiVersion"
+    implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
+    implementation "io.github.spair:imgui-java-natives-windows:$imguiNativeVersion"
+    implementation "io.github.spair:imgui-java-natives-linux:$imguiNativeVersion"
+}
 
-    implementation "io.github.spair:imgui-java-natives-windows:1.86.4"
-    implementation 'io.github.spair:imgui-java-natives-linux:1.86.5'
+test {
+    useJUnitPlatform()
 }
