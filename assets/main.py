@@ -206,5 +206,9 @@ def main():
 if __name__ == "__main__":
     # if os.path.exists("final images") and os.path.getmtime("convert/fonts") <= os.path.getmtime("final images") >= os.path.getmtime("rawImages"):
     #     print("skipped: no new images")
-    # else:
-        main()
+    #     os._exit(0)
+    if not os.path.exists("final images"):
+        os.mkdir("final images")
+    if not os.path.exists("image coordinates"):
+        os.mkdir("image coordinates")
+    main()
