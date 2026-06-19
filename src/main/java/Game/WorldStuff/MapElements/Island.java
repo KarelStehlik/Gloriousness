@@ -3,20 +3,20 @@ package Game.WorldStuff.MapElements;
 import Game.WorldStuff.Game;
 import Game.WorldStuff.TdWorld;
 import Game.WorldStuff.WorldParameters;
-import GlobalUse.Constants;
 import GlobalUse.Data;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 
+import java.util.logging.Level;
+
 public class Island {
     private ButtonArray levels;
     private int[] position;
 
     public Island(int[] pos, int count) {
-        this.position=pos;
-        pos[0]+=600;
+        this.position= new int[]{pos[0], pos[1]};
         levels=makeLevels();
     }
 
@@ -28,9 +28,14 @@ public class Island {
 
     private ButtonArray makeLevels() {
         int mapCount = Data.listMaps().length;
-        Button[] buttons = new Button[mapCount];
-        for (int i = 0; i < mapCount; i++) {
-            buttons[i] = makeMapButton(i);
+        int levelcount=(int)(Math.random()*3d)+1;
+        Button[] buttons = new Button[levelcount];
+        int[] maps=new int[levelcount];
+        for(int i=0;i<levelcount;i++){
+            maps[i]=(int)(Math.random()*(mapCount-1));
+        }
+        for (int i = 0; i < levelcount; i++) {
+            buttons[i] = makeMapButton(maps[i],i);
         }
         return new ButtonArray(2,
                 buttons,
@@ -38,7 +43,7 @@ public class Island {
                 1, 1);
     }
 
-    private Button makeMapButton(int id) {
+    private Button makeMapButton(int id,int index) {
 
         String mapName = Data.listMaps()[id];
         Sprite sp = new Sprite(mapName, 6).setSize(10, 10);
@@ -46,8 +51,13 @@ public class Island {
             Game.get().getWorld().delete();
             TdWorld level = new TdWorld(generateWorldParams(id));
             Game.get().setWorld(level);
+            finishLevel(index);
         });
         return b;
+    }
+
+    private void finishLevel(int index){
+        levels.deleteNth(index);
     }
 
     //the pre random default for the next map - updated every map.

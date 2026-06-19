@@ -16,19 +16,20 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class MapSelect {
-    ArrayList<Island> islands;
+    ArrayList<Island> islands=new ArrayList<>();
 
     public MapSelect(){
         islands.add(makeIsland());
         islands.add(makeIsland());
         islands.add(makeIsland());
         islands.add(makeIsland());
-
     }
 
-    int[] lastIslandPos={200,(int)(Constants.screenSize.y*0.65)};
+    private int[] lastIslandPos={(int)(Constants.screenSize.x*0.1),(int)(Constants.screenSize.y*0.65)};
     private Island makeIsland(){
-        return new Island(lastIslandPos,islands.size());
+        Island isl= new Island(lastIslandPos,islands.size());
+        lastIslandPos[0]+=(int)(Constants.screenSize.x*0.2);
+        return isl;
     }
 
     //deactivation is done through the world dying, activate once per world instance
