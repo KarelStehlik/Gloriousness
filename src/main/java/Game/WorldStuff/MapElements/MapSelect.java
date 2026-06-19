@@ -47,9 +47,9 @@ public class MapSelect {
     }
 
     public void triggerLevel(WorldParameters baseLevelParams){
+        Game.get().getWorld().delete();
         //TODO apply random modifiers and stuff, add stuff to world parameters for stuff like max monkeys, list of bonuses that carry over from map to map etc
         TdWorld baseLevel=new TdWorld(baseLevelParams);
-        Game.get().getWorld().delete();
         Game.get().setWorld(baseLevel);
 
     }
