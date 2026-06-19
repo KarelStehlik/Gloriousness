@@ -1,4 +1,4 @@
-package Game.Misc;
+package Game.WorldStuff;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_0;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_9;
@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengles.GLES20.GL_ONE;
 import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
 import Game.Common.Projectile;
+import Game.Misc.*;
 import Game.Misc.Ability.AbilityGroup;
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
@@ -63,7 +64,6 @@ import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 import windowStuff.GraphicsOnly.Text.TextBox;
 import windowStuff.GraphicsOnly.Text.TextModifiers;
 import windowStuff.GraphicsOnly.TransformAnimation;
-import windowStuff.IntroScreen;
 
 public class TdWorld implements World {
 
@@ -108,6 +108,13 @@ public class TdWorld implements World {
   private double money = 100;
   private double income = 25;
   public TurretGenerator lastTurret;
+
+  public TdWorld(WorldParameters p){
+    this(p.map);
+    mobSpawner.difficultyAdd=p.startDifficulty;
+    mobSpawner.difficultyMult=p.roundScaling;
+    mobSpawner.maxWave=p.maxRound;
+  }
 
   public TdWorld(int map) {
     mobSpawner.generators.add(new BasicMobGenerator());
@@ -277,7 +284,7 @@ public class TdWorld implements World {
     return projectilesList;
   }
 
-  protected void endGame() {
+  public void endGame() {
     Log.write("gjghjghjg");
   }
 
@@ -373,8 +380,7 @@ public class TdWorld implements World {
       }
 
       if (ImGui.button("surrender")) {
-        delete();
-        Game.get().setWorld(new IntroScreen());
+        Game.get().startIntroScreen();
         Game.get().unpause();
       }
     }
@@ -705,7 +711,7 @@ public class TdWorld implements World {
 
   public void beginWave() {
     money+=income;
-    TdWorld.this.onBeginWave();
+    onBeginWave();
   }
 
   public void endWave(int num) {

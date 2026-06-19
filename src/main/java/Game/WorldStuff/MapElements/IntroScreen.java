@@ -1,25 +1,18 @@
-package windowStuff;
+package Game.WorldStuff.MapElements;
 
-import Game.Misc.Game;
-import Game.Misc.TdWorld;
-import Game.Misc.World;
-import GlobalUse.Constants;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.World;
 import GlobalUse.Data;
 import GlobalUse.Util;
 import GlobalUse.Util.Cycle2Colors;
 import java.util.List;
 import windowStuff.Audio;
 import windowStuff.Audio.SoundToPlay;
-import windowStuff.Button;
-import windowStuff.ButtonArray;
 import windowStuff.GraphicsOnly.Text.ScrollingText;
-import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 import windowStuff.GraphicsOnly.Text.TextModifiers;
 
 public class IntroScreen implements World {
-
-  private final ButtonArray maps;
   private final SpriteBatching bs;
 
   private final ScrollingText text;
@@ -65,16 +58,12 @@ public class IntroScreen implements World {
   public IntroScreen() {
     Audio.play(new SoundToPlay("legion",0.85f, "music", true));
     bs = Game.get().getSpriteBatching("main");
-    int mapCount = Data.listMaps().length;
-    Button[] buttons = new Button[mapCount];
-    for (int i = 0; i < mapCount; i++) {
-      buttons[i] = makeMapButton(i);
-    }
+//    new Sprite("introScreen", 2).addToBs(bs).
+//        setPosition(Constants.screenSize.x/2f, Constants.screenSize.y*0.65f ).
+//        setSize(1024, 1536).scale(0.6f).setShader("colorCycle2").
+//        setColors(new Cycle2Colors().setyOffset(-0.5f).setDensity(0.03f).setSpeed(0.2f).setStrength(0.05f).get());
 
-    new Sprite("introScreen", 2).addToBs(bs).
-        setPosition(Constants.screenSize.x/2f, Constants.screenSize.y*0.65f ).
-        setSize(1024, 1536).scale(0.6f).setShader("colorCycle2").
-        setColors(new Cycle2Colors().setyOffset(-0.5f).setDensity(0.03f).setSpeed(0.2f).setStrength(0.05f).get());
+
 
     StringBuilder lst = new StringBuilder(" ".repeat(80));
     for(String s : Util.shuffle(loadingScreenTips, Data.unstableRng)){
@@ -83,24 +72,6 @@ public class IntroScreen implements World {
     text = new ScrollingText(lst.toString(), 1500, 3, 100, bs, "path");
     text.setSpeed(4.5f);
     text.move(200,200);
-
-    maps = new ButtonArray(2,
-        buttons,
-        new Sprite("Button", 4).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
-        1, 1);
-    Game.get().addMouseDetect(maps);
-  }
-
-
-
-  private Button makeMapButton(int id) {
-    String mapName = Data.listMaps()[id];
-    Sprite sp = new Sprite(mapName, 6).setSize(10, 10);
-    Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x, y) -> {
-      delete();
-      Game.get().setWorld(new TdWorld(id));
-    });
-    return b;
   }
 
   @Override
@@ -135,7 +106,6 @@ public class IntroScreen implements World {
 
   @Override
   public void delete() {
-    maps.delete();
     Game.get().nuke();
     Audio.getGroup("music").clear();
   }

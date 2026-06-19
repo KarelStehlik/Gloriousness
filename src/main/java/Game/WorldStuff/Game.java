@@ -1,4 +1,4 @@
-package Game.Misc;
+package Game.WorldStuff;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -8,6 +8,8 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
+import Game.WorldStuff.MapElements.MapSelect;
+import Game.Misc.TickDetect;
 import GlobalUse.Log;
 import GlobalUse.Log.Timer;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 import windowStuff.GraphicsOnly.Sprite.SuperBatch;
 import windowStuff.Controls.UserInputHandler;
 import windowStuff.Controls.UserInputListener;
-import windowStuff.IntroScreen;
+import Game.WorldStuff.MapElements.IntroScreen;
 
 public final class Game implements UserInputHandler {
 
@@ -43,6 +45,7 @@ public final class Game implements UserInputHandler {
   private final Log.Timer timer = new Timer();
   private int ticks = 0;
   private World world;
+  private MapSelect mapSelect;
 
   public void nuke() {
     for (SpriteBatching batch : bs.values()) {
@@ -79,6 +82,10 @@ public final class Game implements UserInputHandler {
     return SingletonHolder.singleton;
   }
 
+  public World getWorld() {
+    return world;
+  }
+
   public int getTicks() {
     return world==null? 0 : world.getTick();
   }
@@ -89,9 +96,16 @@ public final class Game implements UserInputHandler {
 
   public void init() {
     graphics.init();
-    world = new IntroScreen();
+    mapSelect=new MapSelect();
+    startIntroScreen();
   }
-
+  public void startIntroScreen(){
+    if(world!=null){
+      world.delete();
+    }
+    setWorld(new IntroScreen());
+    mapSelect.activate();
+  }
   public void setWorld(World w) {
     world = w;
   }

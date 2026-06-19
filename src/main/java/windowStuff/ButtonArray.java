@@ -1,9 +1,10 @@
 package windowStuff;
 
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import windowStuff.Controls.MouseDetect;
 import Game.Misc.TickDetect;
 import windowStuff.GraphicsOnly.Sprite.AbstractSprite;
+import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 
 public class ButtonArray implements MouseDetect, TickDetect {
 
@@ -45,6 +46,12 @@ public class ButtonArray implements MouseDetect, TickDetect {
           centreY + background.getHeight() - (row * (buttonSpacing + buttonSize) + buttonSize / 2f
               + buttonSpacing));
     }
+  }
+  public void hide(){
+    shown=false;
+  }
+  public void show(){
+    shown=true;
   }
 
   @Override
@@ -118,5 +125,11 @@ public class ButtonArray implements MouseDetect, TickDetect {
     for (Button b : buttons) {
       b.onGameTick(tick);
     }
+  }
+  public void addAllToBs(SpriteBatching bs){
+    for(Button b : buttons){
+      b.getSprite().addToBs(bs);
+    }
+
   }
 }
