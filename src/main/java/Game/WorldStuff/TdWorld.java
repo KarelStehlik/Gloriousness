@@ -108,6 +108,7 @@ public class TdWorld implements World {
   private double money = 100;
   private double income = 25;
   public TurretGenerator lastTurret;
+  private boolean isDeleted=false;
 
   public TdWorld(WorldParameters p){
     this(p.map);
@@ -433,7 +434,7 @@ public class TdWorld implements World {
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-    if (!currentTool.WasDeleted()) {
+    if (!currentTool.wasDeleted()) {
       currentTool.onKeyPress(key, action, mods);
     }
     if (key == GLFW_KEY_SPACE && action == 0) {
@@ -456,7 +457,7 @@ public class TdWorld implements World {
 
   @Override
   public boolean onMouseButton(int button, double x, double y, int action, int mods) {
-    if (!currentTool.WasDeleted()) {
+    if (!currentTool.wasDeleted()) {
       return currentTool.onMouseButton(button, x, y, action, mods);
     }
     return false;
@@ -464,7 +465,7 @@ public class TdWorld implements World {
 
   @Override
   public boolean onScroll(double scroll) {
-    if (!currentTool.WasDeleted()) {
+    if (!currentTool.wasDeleted()) {
       return currentTool.onScroll(scroll);
     }
     return false;
@@ -472,7 +473,7 @@ public class TdWorld implements World {
 
   @Override
   public boolean onMouseMove(float newX, float newY) {
-    if (!currentTool.WasDeleted()) {
+    if (!currentTool.wasDeleted()) {
       return currentTool.onMouseMove(newX, newY);
     }
     return false;
@@ -496,7 +497,7 @@ public class TdWorld implements World {
       if (current != undeletedM) {
         mobsList.set(undeletedM, mobsList.get(current));
       }
-      if (!mobsList.get(current).WasDeleted()) {
+      if (!mobsList.get(current).wasDeleted()) {
         mobsList.get(current).onGameTickP2(tick);
         undeletedM++;
       }
@@ -513,7 +514,7 @@ public class TdWorld implements World {
     }
 
     //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
-    AbilityGroup.instances.removeIf(AbilityGroup::WasDeleted);
+    AbilityGroup.instances.removeIf(AbilityGroup::wasDeleted);
 
     this.tick++;
     player.onGameTick(tick);
@@ -523,7 +524,7 @@ public class TdWorld implements World {
       if (current != undeleted) {
         turrets.set(undeleted, turrets.get(current));
       }
-      if (!turrets.get(current).WasDeleted()) {
+      if (!turrets.get(current).wasDeleted()) {
         turrets.get(current).onGameTick(tick);
         undeleted++;
       }
@@ -539,7 +540,7 @@ public class TdWorld implements World {
       if (current != undeletedP) {
         projectilesList.set(undeletedP, projectilesList.get(current));
       }
-      if (!projectilesList.get(current).WasDeleted()) {
+      if (!projectilesList.get(current).wasDeleted()) {
         projectilesList.get(current).onGameTickP2();
         undeletedP++;
       }
@@ -556,15 +557,15 @@ public class TdWorld implements World {
 
   @Override
   public void delete() {
+    isDeleted=true;
     mapSprite.delete();
     turretBar.delete();
     Audio.getGroup("music").clear();
-    Game.get().nuke();
   }
 
   @Override
-  public boolean WasDeleted() {
-    return false;
+  public boolean wasDeleted() {
+    return isDeleted;
   }
 
   private <T extends GameObject & TickDetect> void tickEntities(SpacePartitioning<T> grid,
@@ -576,7 +577,7 @@ public class TdWorld implements World {
       if (current != undeleted) {
         list.set(undeleted, list.get(current));
       }
-      if (!list.get(current).WasDeleted()) {
+      if (!list.get(current).wasDeleted()) {
         list.get(current).onGameTick(tick);
         undeleted++;
       }
@@ -633,7 +634,7 @@ public class TdWorld implements World {
   public boolean canFitTurret(int x, int y, float size) {
     for (Iterator<Turret> iterator = turrets.iterator(); iterator.hasNext(); ) {
       Turret t = iterator.next();
-      if (t.WasDeleted()) {
+      if (t.wasDeleted()) {
         iterator.remove();
       } else if (!t.isNotYetPlaced() && t.blocksPlacement()
           && Util.distanceSquared(x - t.x, y - t.y)

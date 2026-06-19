@@ -26,7 +26,7 @@ public class CallAfterDuration implements TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     return duration <= 0;
   }
 

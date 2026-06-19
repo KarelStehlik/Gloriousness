@@ -21,6 +21,7 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
   private static final int HEIGHT = 200, WIDTH = 100;
   private final UserInputListener input;
   private final Sprite sprite;
+  private boolean isDeleted=false;
 
   public BulletLauncher getBulletLauncher() {
     return bulletLauncher;
@@ -78,12 +79,12 @@ public class Player extends GameObject implements KeyboardDetect, TickDetect {
 
   @Override
   public void delete() {
-
+    isDeleted=true;
   }
 
   @Override
-  public boolean WasDeleted() {
-    return false;
+  public boolean wasDeleted() {
+    return isDeleted;
   }
 
   @Override

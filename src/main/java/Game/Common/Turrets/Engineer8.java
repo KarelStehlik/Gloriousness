@@ -283,7 +283,7 @@ public class Engineer8 extends Turret {
                     Explosive explod=new Explosive(demonDamage,275);
                     RefFloat atcSpeedBuff=  new RefFloat(1);
                     explod.addPostEffect(mob->{
-                        if(mob.WasDeleted()) {
+                        if(mob.wasDeleted()) {
                             bloonsAbsorbed++;
                             if (atcSpeedBuff.get() < 2) {
                                 atcSpeedBuff.add(0.05f);

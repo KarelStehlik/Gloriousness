@@ -71,7 +71,7 @@ public class Wave implements TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     if (!MobsAliveFromEachWave.containsKey(waveNum)) {
       return true;
     }

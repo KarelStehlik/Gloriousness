@@ -62,7 +62,7 @@ public class Island {
     private Button makeMapButton(int id,int index) {
 
         String mapName = Data.listMaps()[id];
-        Sprite sp = new Sprite(mapName, 6).setSize(10, 10);
+        Sprite sp = new Sprite(mapName, 1).setSize(10, 10);
         Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x, y) -> {
             if(!mapAvailable(index))
                 return;
@@ -110,6 +110,10 @@ public class Island {
     //not the opposite of activate, I'm assuming deactivation is done through the world dying
     public void hide() {
         levels.hide();
+    }
+    public void hideInBunkerFromNuke(){
+        //prevents it from getting deleted by call to game.nuke()
+        Game.get().removeMouseDetect(levels);
     }
 
 }

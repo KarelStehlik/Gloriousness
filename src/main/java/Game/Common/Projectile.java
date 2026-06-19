@@ -260,7 +260,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   @Override
-  public final boolean WasDeleted() {
+  public final boolean wasDeleted() {
     return wasDeleted;
   }
 
@@ -285,7 +285,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(Player e) {
-    if (!active || wasDeleted || e.WasDeleted() || alreadyHitPlayer
+    if (!active || wasDeleted || e.wasDeleted() || alreadyHitPlayer
         || Util.distanceSquared(x - e.getX(), y - e.getY()) > Util.square(e.height + stats[Stats.size]) / 4) {
       return;
     }
@@ -308,7 +308,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(TdMob e) {
-    if (!active || wasDeleted || e.WasDeleted() || alreadyHitMobs.contains(e)) {
+    if (!active || wasDeleted || e.wasDeleted() || alreadyHitMobs.contains(e)) {
       return;
     }
     if (!multihit) {
@@ -388,13 +388,13 @@ public class Projectile extends GameObject implements TickDetect {
 
     public void tick(Projectile target) {
       if (target.targetedMob == null || target.alreadyHitMobs.contains(target.targetedMob)
-          || target.targetedMob.WasDeleted()) {
+          || target.targetedMob.wasDeleted()) {
         target.targetedMob = null;
       }
       if (target.targetedMob == null) {
         target.targetedMob = target.world.getMobsGrid()
             .search(new Point((int) target.x, (int) target.y), range, TargetingOption.FIRST,
-                mob -> !(target.alreadyHitMobs.contains(mob) || mob.WasDeleted()));
+                mob -> !(target.alreadyHitMobs.contains(mob) || mob.wasDeleted()));
       }
       if (target.targetedMob == null) {
         return;

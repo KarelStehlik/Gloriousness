@@ -136,7 +136,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     return !exists;
   }
 
@@ -222,7 +222,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
       float sin = Util.sin(master.rotation), cos = Util.cos(master.rotation);
       target.move(master.getX() + offX * cos - offY * sin,
           master.getY() + offX * sin + offY * cos);
-      if (master.WasDeleted()) {
+      if (master.wasDeleted()) {
         target.die();
       }
     }

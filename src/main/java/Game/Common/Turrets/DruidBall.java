@@ -30,7 +30,7 @@ public class DruidBall extends Projectile {
 
   @Override
   public void onGameTick(int tick) {
-    if (res != null && !res.WasDeleted()) {
+    if (res != null && !res.wasDeleted()) {
       res.onGameTick(tick);
       return;
     }
@@ -81,7 +81,7 @@ public class DruidBall extends Projectile {
     }
 
     @Override
-    public boolean WasDeleted() {
+    public boolean wasDeleted() {
       return sprite.isDeleted();
     }
   }

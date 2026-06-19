@@ -59,7 +59,7 @@ public class Plane extends Turret {
     }
     for (int i = 0; i < carried.size(); i++) {
       Turret c = carried.get(i);
-      if (c.WasDeleted()) {
+      if (c.wasDeleted()) {
         carried.remove(i);
         i--;
       } else {

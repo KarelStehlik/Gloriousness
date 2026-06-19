@@ -29,7 +29,7 @@ public class MobSpawner {
         for (Iterator<Wave> iterator = waves.iterator(); iterator.hasNext(); ) {
             Wave x = iterator.next();
             x.onGameTick(world.getTick());
-            if (x.WasDeleted()) {
+            if (x.wasDeleted()) {
                 world.endWave(x.waveNum);
                 iterator.remove();
             }

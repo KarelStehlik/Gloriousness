@@ -118,7 +118,7 @@ public class ButtonArray implements MouseDetect, TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     return background.isDeleted();
   }
 

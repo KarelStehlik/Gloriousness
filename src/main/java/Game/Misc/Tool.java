@@ -21,7 +21,7 @@ public abstract class Tool implements MouseDetect, KeyboardDetect, TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     return deleted;
   }
 }

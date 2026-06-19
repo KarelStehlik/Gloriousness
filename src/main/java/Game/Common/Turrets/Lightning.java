@@ -29,7 +29,7 @@ public class Lightning extends Projectile {
 
   private void snapToEnemy() {
     targetedMob = world.getMobsGrid().search(new Point((int) x, (int) y), (int) stats[Stats.speed],
-        TargetingOption.STRONG, mob -> !(alreadyHitMobs.contains(mob) || mob.WasDeleted()));
+        TargetingOption.STRONG, mob -> !(alreadyHitMobs.contains(mob) || mob.wasDeleted()));
     if (targetedMob == null) {
       return;
     }

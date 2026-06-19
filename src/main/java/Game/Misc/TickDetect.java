@@ -6,5 +6,5 @@ public interface TickDetect {
 
   void delete();
 
-  boolean WasDeleted();
+  boolean wasDeleted();
 }

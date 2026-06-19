@@ -228,7 +228,7 @@ public abstract class Turret extends GameObject implements TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     return sprite.isDeleted();
   }
 

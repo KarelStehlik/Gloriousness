@@ -18,6 +18,7 @@ public class IntroScreen implements World {
   private final ScrollingText text;
 
   private static final String aaah;
+  private boolean isDeleted=false;
   static{
     StringBuilder ah = new StringBuilder("|shader:colorCycle2|#130|");
     for(int i=0;i<15;i++){
@@ -106,13 +107,14 @@ public class IntroScreen implements World {
 
   @Override
   public void delete() {
+    isDeleted=true;
     Game.get().nuke();
     Audio.getGroup("music").clear();
   }
 
   @Override
-  public boolean WasDeleted() {
-    return false;
+  public boolean wasDeleted() {
+    return isDeleted;
   }
 
   @Override

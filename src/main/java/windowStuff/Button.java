@@ -152,7 +152,7 @@ public class Button implements MouseDetect, TickDetect {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     return sprite.isDeleted();
   }
 

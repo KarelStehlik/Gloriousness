@@ -80,7 +80,7 @@ public class EngiTurret8 extends Turret {
   }
 
   @Override
-  public boolean WasDeleted() {
+  public boolean wasDeleted() {
     return sprite.isDeleted()&&baseSprite.isDeleted();
   }
 

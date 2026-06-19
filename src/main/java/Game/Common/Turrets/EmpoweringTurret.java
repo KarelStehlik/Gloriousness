@@ -229,7 +229,7 @@ public class EmpoweringTurret extends Turret {
   }
 
   private void gainMoney(long amount, float duration) {
-    if (WasDeleted()) {
+    if (wasDeleted()) {
       return;
     }
     world.setMoney(world.getMoney() + amount);

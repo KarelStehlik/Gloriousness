@@ -122,8 +122,8 @@ public class Ability {
     }
 
     @Override
-    public boolean WasDeleted() {
-      return button.WasDeleted();
+    public boolean wasDeleted() {
+      return button.wasDeleted();
     }
 
     public void add(Ability a) {

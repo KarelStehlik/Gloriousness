@@ -6,5 +6,5 @@ public interface KeyboardDetect {
 
   void delete();
 
-  boolean WasDeleted();
+  boolean wasDeleted();
 }
