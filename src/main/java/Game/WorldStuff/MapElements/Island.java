@@ -9,20 +9,28 @@ import windowStuff.ButtonArray;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 
-import java.util.logging.Level;
-
 public class Island {
     private ButtonArray levels;
     private int[] position;
     private boolean[] mapDone;
+    MapSelect mapSelect;
+    int index;
+    Sprite lockSprite;
+    private boolean locked=true;
 
-    public Island(int[] pos, int count) {
+    public Island(int[] pos,int index,MapSelect mapSelect) {
         this.position= new int[]{pos[0], pos[1]};
+        this.index=index;
         levels=makeLevels();
+        lockSprite=new Sprite("lock", 2).
+            setPosition(pos[0], pos[1] ).
+            setSize(40, 40);
+        this.mapSelect = mapSelect;
     }
 
     public void activate(SpriteBatching bs) {
         levels.addAllToBs(bs);
+        lockSprite.addToBs(bs);
         Game.get().addMouseDetect(levels);
         levels.show();
     }
@@ -47,26 +55,35 @@ public class Island {
                 new Sprite("Button", 4), 75, position[0], position[1], 10,
                 1, 1);
     }
+    private boolean mapAvailable(int index){
+        return (!locked)&&(!mapDone[index]);
+    }
 
     private Button makeMapButton(int id,int index) {
 
         String mapName = Data.listMaps()[id];
         Sprite sp = new Sprite(mapName, 6).setSize(10, 10);
         Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x, y) -> {
-            if(mapDone[index])
+            if(!mapAvailable(index))
                 return;
+            Button button=levels.getButton(index);
+            button.getSprite().setImage("bananacheckmark");
             mapDone[index]=true;
-            Game.get().getWorld().delete();
-            TdWorld level = new TdWorld(generateWorldParams(id));
-            Game.get().setWorld(level);
-            finishLevel(index);
+            triggerLevel(id);
         });
         return b;
     }
 
-    private void finishLevel(int index){
-        Button button=levels.getButton(index);
-        button.getSprite().setImage("bananacheckmark");
+    private void triggerLevel(int id){
+        if(islandDone())
+            mapSelect.islandDone(this.index);
+        mapSelect.triggerLevel(generateWorldParams(id));
+    }
+    private boolean islandDone(){
+        for(int i=0;i<mapDone.length;i++)
+            if(!mapDone[i])
+                return false;
+        return true;
     }
 
     //the pre random default for the next map - updated every map.
@@ -75,13 +92,16 @@ public class Island {
 
     private WorldParameters generateWorldParams(int id) {
         WorldParameters worldParameters = new WorldParameters(id, defaultParams.maxRound, defaultParams.startDifficulty, defaultParams.roundScaling);
-        //TODO apply random modifiers and stuff, add stuff to world parameters for stuff like cash starve, max monkeys, list of favored monkeys, list of bonuses that carry over from map to map etc
+        //TODO apply random modifiers and stuff, add stuff to world parameters for stuff like cash starve, list of favored monkeys, and other map specifics
         if (defaultParams.maxRound < 10)
             defaultParams.maxRound++;
         defaultParams.roundScaling += 0.1f;
         return worldParameters;
     }
-
+    public void unlock(){
+        locked=false;
+        lockSprite.delete();
+    }
 
     public void show() {
         levels.show();
