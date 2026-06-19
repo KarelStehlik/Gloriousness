@@ -7,6 +7,7 @@ import Game.Common.Projectile;
 import Game.Enums.DamageType;
 import Game.Mobs.MobClasses.TdMob;
 import Game.Mobs.MobClasses.TdMob.Stats;
+import Game.WorldStuff.TdWorld;
 
 public final class BasicCollides {
 
@@ -45,7 +46,7 @@ public final class BasicCollides {
     return true;
   }
 
-  static void init(TdWorld world) {
+  public static void init(TdWorld world) {
     _world = world;
   }
 }

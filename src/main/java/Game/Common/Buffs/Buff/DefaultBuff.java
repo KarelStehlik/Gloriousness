@@ -1,6 +1,6 @@
 package Game.Common.Buffs.Buff;
 
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import Game.Misc.GameObject;
 import GlobalUse.Util;
 

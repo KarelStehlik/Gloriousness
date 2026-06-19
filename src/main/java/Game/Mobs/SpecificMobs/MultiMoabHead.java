@@ -1,7 +1,7 @@
 package Game.Mobs.SpecificMobs;
 
 
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 import java.util.ArrayList;

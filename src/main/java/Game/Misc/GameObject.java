@@ -1,5 +1,6 @@
 package Game.Misc;
 
+import Game.WorldStuff.TdWorld;
 import GlobalUse.Util;
 import java.awt.Rectangle;
 
@@ -7,10 +8,10 @@ public class GameObject {
 
   public final long id;
   public final TdWorld world;
-  protected final float[] stats = new float[getStatsCount()];
+  public final float[] stats = new float[getStatsCount()];
   private final Rectangle hitbox;
   public long lastChecked = -9223372036854775807L;
-  protected float x, y;
+  public float x, y;
   protected int width;
     public int height;
   protected float rotation;
@@ -28,7 +29,7 @@ public class GameObject {
     }
   }
 
-  protected GameObject(float X, float Y, int W, int H, TdWorld w) {
+  public GameObject(float X, float Y, int W, int H, TdWorld w) {
     x = X;
     y = Y;
     width = W;

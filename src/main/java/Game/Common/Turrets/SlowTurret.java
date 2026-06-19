@@ -2,7 +2,7 @@ package Game.Common.Turrets;
 
 import Game.Misc.BasicCollides;
 import Game.Common.BulletLauncher;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageData;

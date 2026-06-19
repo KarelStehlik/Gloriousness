@@ -9,7 +9,7 @@ import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.Buffs.Buff.Tag;
 import Game.Common.BulletLauncher;
 import Game.Common.Projectile;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
 import GlobalUse.Data;
 import GlobalUse.Description;

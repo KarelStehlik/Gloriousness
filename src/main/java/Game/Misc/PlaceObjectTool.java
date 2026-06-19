@@ -5,6 +5,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import windowStuff.GraphicsOnly.Sprite.AbstractSprite;
 
 public class PlaceObjectTool extends Tool {

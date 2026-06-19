@@ -1,7 +1,7 @@
 package Game.Common.Buffs.Buff;
 
 import Game.Common.Buffs.Modifier.Modifier;
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import Game.Misc.GameObject;
 import GlobalUse.Util;
 import java.util.ArrayList;

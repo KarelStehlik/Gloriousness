@@ -1,6 +1,6 @@
 package windowStuff.GraphicsOnly.Sprite;
 
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Util;

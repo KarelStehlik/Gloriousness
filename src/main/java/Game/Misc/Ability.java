@@ -3,6 +3,7 @@ package Game.Misc;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
 
 import Game.Common.Buffs.VoidFunc;
+import Game.WorldStuff.Game;
 import GlobalUse.Util;
 import GlobalUse.Util.Cycle2Colors;
 import java.util.ArrayList;

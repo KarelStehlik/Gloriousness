@@ -1,9 +1,9 @@
 package Game.Common;
 
 import Game.Common.Buffs.Modifier.Modifier;
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import Game.Misc.Player;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 import Game.Common.Projectile.OnCollideComponent;
 import Game.Common.Turrets.Turret;

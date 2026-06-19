@@ -3,10 +3,8 @@ package Game.Common.Buffs.Buff;
 import Game.Misc.GameObject;
 import GlobalUse.Data;
 import GlobalUse.Util;
-import windowStuff.GraphicsOnly.ImageData;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
-import windowStuff.GraphicsOnly.TransformAnimation;
 
 public class Trail {
 

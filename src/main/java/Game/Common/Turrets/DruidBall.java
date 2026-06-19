@@ -1,8 +1,8 @@
 package Game.Common.Turrets;
 
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import Game.Common.Projectile;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.TickDetect;
 import windowStuff.GraphicsOnly.TransformAnimation;
 import GlobalUse.Util.Cycle2Colors;

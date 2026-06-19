@@ -4,7 +4,7 @@ package Game.Mobs.SpecificMobs;
 import Game.Common.Buffs.Buff.DelayedTrigger;
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 import java.util.List;

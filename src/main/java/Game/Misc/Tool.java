@@ -1,5 +1,7 @@
 package Game.Misc;
 
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import windowStuff.Controls.KeyboardDetect;
 import windowStuff.Controls.MouseDetect;
 import windowStuff.Controls.UserInputListener;

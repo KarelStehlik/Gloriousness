@@ -2,7 +2,7 @@ package Game.Mobs.MobGeneration;
 
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.TickDetect;
 import Game.Mobs.SpecificMobs.Black;
 import Game.Mobs.SpecificMobs.Blue;

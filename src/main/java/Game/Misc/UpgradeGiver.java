@@ -4,6 +4,8 @@ import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.Buffs.Buff.Tag;
 import Game.Enums.DamageType;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.Player.Stats;
 import GlobalUse.Data;
 import GlobalUse.Util;

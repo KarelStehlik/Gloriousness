@@ -9,6 +9,8 @@ import Game.Common.BulletLauncher;
 import Game.Common.Buffs.Buff.Buff;
 import Game.Common.Buffs.Buff.BuffHandler;
 import Game.Enums.DamageType;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import GlobalUse.Util;
 import windowStuff.Controls.KeyboardDetect;
 import windowStuff.GraphicsOnly.Sprite.Sprite;

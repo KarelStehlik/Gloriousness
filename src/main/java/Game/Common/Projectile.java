@@ -6,6 +6,8 @@ import Game.Common.Buffs.Modifier.Modifier;
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Enums.TargetingOption;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.*;
 import Game.Mobs.MobClasses.TdMob;
 import GlobalUse.Util;

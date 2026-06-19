@@ -2,8 +2,8 @@ package Game.Mobs.SpecificMobs;
 
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
-import Game.Misc.Game;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 import java.util.List;

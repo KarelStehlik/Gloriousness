@@ -1,5 +1,7 @@
 package Game.Misc;
 
+import Game.WorldStuff.Game;
+
 public class CallAfterDuration implements TickDetect {
 
   private final Callable event;

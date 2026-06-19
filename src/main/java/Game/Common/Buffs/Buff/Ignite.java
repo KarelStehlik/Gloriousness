@@ -1,7 +1,7 @@
 package Game.Common.Buffs.Buff;
 
 import Game.Enums.DamageType;
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import Game.Mobs.MobClasses.TdMob;
 import Game.Mobs.MobClasses.TdMob.Stats;
 import GlobalUse.Util;

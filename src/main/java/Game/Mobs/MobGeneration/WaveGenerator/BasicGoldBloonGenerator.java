@@ -1,6 +1,6 @@
 package Game.Mobs.MobGeneration.WaveGenerator;
 
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobGeneration.SpawnSequence;
 import Game.Mobs.SpecificMobs.GoldenBloon;
 import GlobalUse.Data;

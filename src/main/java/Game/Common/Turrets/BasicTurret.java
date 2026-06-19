@@ -10,7 +10,7 @@ import Game.Common.Buffs.Buff.Tag;
 import Game.Common.BulletLauncher;
 import Game.Common.Projectile;
 import Game.Common.Projectile.Guided;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
 import GlobalUse.Constants;
 import GlobalUse.Data;

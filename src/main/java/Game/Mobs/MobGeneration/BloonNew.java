@@ -1,6 +1,6 @@
 package Game.Mobs.MobGeneration;
 
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 @FunctionalInterface

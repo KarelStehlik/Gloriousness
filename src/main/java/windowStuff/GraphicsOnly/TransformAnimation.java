@@ -1,7 +1,6 @@
 package windowStuff.GraphicsOnly;
 
-import Game.Misc.Game;
-import GlobalUse.Log;
+import Game.WorldStuff.Game;
 import org.joml.Vector2f;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.Sprite.Animation;

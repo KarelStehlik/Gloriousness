@@ -2,7 +2,7 @@ package GlobalUse;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_ALT;
 
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import java.util.ArrayList;
 import windowStuff.GraphicsOnly.Text.SimpleText;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;

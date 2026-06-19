@@ -2,7 +2,7 @@ package Game.Common.Turrets;
 
 import Game.Enums.TargetingOption;
 import Game.Common.Projectile;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import windowStuff.GraphicsOnly.TransformAnimation;
 import GlobalUse.Data;
 import GlobalUse.Util;

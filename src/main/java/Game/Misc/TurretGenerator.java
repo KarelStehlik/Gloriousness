@@ -2,6 +2,8 @@ package Game.Misc;
 
 import Game.Common.Turrets.Turret;
 import Game.Common.Turrets.Turret.Stats;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import windowStuff.Button;
 import windowStuff.GraphicsOnly.Sprite.NoSprite;
 import windowStuff.GraphicsOnly.Sprite.Sprite;

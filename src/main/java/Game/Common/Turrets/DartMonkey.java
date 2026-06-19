@@ -6,6 +6,8 @@ import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StealthAttack;
 import Game.Common.Buffs.Modifier.Explosive;
 import Game.Common.Projectile;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.*;
 import Game.Mobs.MobClasses.TdMob;
 import GlobalUse.Data;

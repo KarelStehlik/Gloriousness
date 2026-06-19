@@ -1,18 +1,8 @@
 package Game.Common.Buffs.Modifier;
 
-import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Projectile;
-import Game.Common.Turrets.Mortar;
-import Game.Common.Turrets.Turret;
-import Game.Misc.Game;
-import Game.Misc.GameObject;
 import GlobalUse.Data;
-import GlobalUse.Log;
 import GlobalUse.Util;
-import org.joml.Vector2d;
-import org.joml.Vector2f;
-
-import static Game.Common.Projectile.Stats.speed;
 
 
 public class Accuracy {

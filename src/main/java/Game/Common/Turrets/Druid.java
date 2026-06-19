@@ -11,7 +11,7 @@ import Game.Common.BulletLauncher;
 import Game.Enums.DamageType;
 import Game.Mobs.MobClasses.TdMob;
 import Game.Common.Projectile;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
 import GlobalUse.Description;
 import GlobalUse.RefFloat;

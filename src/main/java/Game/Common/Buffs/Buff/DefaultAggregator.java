@@ -1,5 +1,5 @@
 package Game.Common.Buffs.Buff;
-import Game.Misc.Game;
+import Game.WorldStuff.Game;
 import GlobalUse.Log;
 import Game.Misc.GameObject;
 

@@ -13,8 +13,8 @@ import Game.Common.Buffs.Modifier.Modifier;
 import Game.Common.BulletLauncher;
 import Game.Common.Projectile;
 import Game.Misc.BasicCollides;
-import Game.Misc.Game;
-import Game.Misc.TdWorld;
+import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
 import GlobalUse.Data;
 import GlobalUse.Description;
@@ -313,12 +313,12 @@ public class Mortar extends Turret {
   public void clearStats() {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 0f;
-    stats[Stats.pierce] = Data.gameMechanicsRng.nextFloat(6f, 16f);
+    stats[Stats.pierce] = 6f;
     stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.4f, 0.8f);
     stats[Stats.projectileDuration] = 1.5f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(35f, 70f);
-    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(20f, 40f);
-    stats[Stats.cost] = 150f;
+    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(15f, 40f);
+    stats[Stats.cost] = 100f;
     stats[Stats.size] = 25f;
     stats[Stats.spritesize] = 100f;
     stats[ExtraStats.spread] = Data.gameMechanicsRng.nextFloat(0f, 2500f);
