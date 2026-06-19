@@ -103,7 +103,9 @@ public class ButtonArray implements MouseDetect, TickDetect {
         newY > background.getY() - background.getHeight()
         && newY < background.getY() + background.getHeight();
   }
-
+  public Button getButton(int index) {
+    return buttons[index];
+  }
   public void deleteNth(int index) {
     buttons[index].delete();
   }

@@ -44,6 +44,7 @@ public class MobSpawner {
     public void beginWave() {
         if(waveNum>= maxWave){
             Game.get().startIntroScreen();
+            return;
         }
         float waveDiff=waveNum*difficultyMult+difficultyAdd;
         if((waveNum+1)%5==0){

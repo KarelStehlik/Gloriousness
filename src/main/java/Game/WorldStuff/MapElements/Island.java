@@ -14,6 +14,7 @@ import java.util.logging.Level;
 public class Island {
     private ButtonArray levels;
     private int[] position;
+    private boolean[] mapDone;
 
     public Island(int[] pos, int count) {
         this.position= new int[]{pos[0], pos[1]};
@@ -30,6 +31,10 @@ public class Island {
         int mapCount = Data.listMaps().length;
         int levelcount=(int)(Math.random()*3d)+1;
         Button[] buttons = new Button[levelcount];
+        mapDone=new boolean[levelcount];
+        for(int i=0;i<levelcount;i++){
+            mapDone[i]=false;
+        }
         int[] maps=new int[levelcount];
         for(int i=0;i<levelcount;i++){
             maps[i]=(int)(Math.random()*(mapCount-1));
@@ -48,6 +53,9 @@ public class Island {
         String mapName = Data.listMaps()[id];
         Sprite sp = new Sprite(mapName, 6).setSize(10, 10);
         Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x, y) -> {
+            if(mapDone[index])
+                return;
+            mapDone[index]=true;
             Game.get().getWorld().delete();
             TdWorld level = new TdWorld(generateWorldParams(id));
             Game.get().setWorld(level);
@@ -57,7 +65,8 @@ public class Island {
     }
 
     private void finishLevel(int index){
-        levels.deleteNth(index);
+        Button button=levels.getButton(index);
+        button.getSprite().setImage("bananacheckmark");
     }
 
     //the pre random default for the next map - updated every map.
