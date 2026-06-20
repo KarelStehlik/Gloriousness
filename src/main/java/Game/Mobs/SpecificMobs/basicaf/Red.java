@@ -1,27 +1,27 @@
-package Game.Mobs.SpecificMobs;
+package Game.Mobs.SpecificMobs.basicaf;
 
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 import java.util.List;
 
-public class Blue extends TdMob {
+public class Red extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of(Red::new);
+  private static final List<ChildSpawner> spawns = List.of();
 
-  public Blue(TdWorld world, int wave) {
-    super(world, "BloonBlue", wave);
+  public Red(TdWorld world, int wave) {
+    super(world, "BloonRed", wave);
   }
 
-  public Blue(TdMob parent) {
-    super(parent.world, "BloonBlue", parent, parent.getChildrenSpread());
+  public Red(TdMob parent) {
+    super(parent.world, "BloonRed", parent, parent.getChildrenSpread());
   }
 
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 60.0f;
-    stats[Stats.speed] = 3.2f;
+    stats[Stats.size] = 50.0f;
+    stats[Stats.speed] = 3f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
@@ -33,7 +33,6 @@ public class Blue extends TdMob {
   public boolean isMoab() {
     return false;
   }
-
 
   @Override
   protected List<ChildSpawner> children() {

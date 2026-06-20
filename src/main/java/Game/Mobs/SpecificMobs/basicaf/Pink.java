@@ -1,4 +1,4 @@
-package Game.Mobs.SpecificMobs;
+package Game.Mobs.SpecificMobs.basicaf;
 
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;

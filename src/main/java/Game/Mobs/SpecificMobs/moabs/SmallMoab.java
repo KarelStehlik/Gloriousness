@@ -1,5 +1,6 @@
-package Game.Mobs.SpecificMobs;
+package Game.Mobs.SpecificMobs.moabs;
 
+import Game.Mobs.SpecificMobs.Ceramic;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 

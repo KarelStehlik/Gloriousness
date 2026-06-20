@@ -1,28 +1,29 @@
-package Game.Mobs.SpecificMobs;
+package Game.Mobs.SpecificMobs.moabs;
 
 
+import Game.Mobs.SpecificMobs.Lead;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 import java.util.List;
 
-public class MultiMoabTail extends TdMob {
+public class MultiMoabLowerFin extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
       Lead::new, Lead::new);
 
-  public MultiMoabTail(TdWorld world, int wave) {
-    super(world, "SmTail", wave);
+  public MultiMoabLowerFin(TdWorld world, int wave) {
+    super(world, "SmDownFin", wave);
   }
 
-  public MultiMoabTail(TdMob parent) {
-    super(parent.world, "SmTail", parent, parent.getChildrenSpread());
+  public MultiMoabLowerFin(TdMob parent) {
+    super(parent.world, "SmDownFin", parent, parent.getChildrenSpread());
   }
 
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 175f;
+    stats[Stats.size] = 300f;
     stats[Stats.speed] = 1.3f;
     stats[Stats.health] = 10000f;
     stats[Stats.value] = 200f;

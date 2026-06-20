@@ -1,11 +1,11 @@
 package Game.Mobs.MobGeneration.WaveGenerator;
 
 import Game.Mobs.MobGeneration.SpawnSequence;
-import Game.Mobs.SpecificMobs.Blue;
-import Game.Mobs.SpecificMobs.Green;
-import Game.Mobs.SpecificMobs.Pink;
-import Game.Mobs.SpecificMobs.Red;
-import Game.Mobs.SpecificMobs.Yellow;
+import Game.Mobs.SpecificMobs.basicaf.Blue;
+import Game.Mobs.SpecificMobs.basicaf.Green;
+import Game.Mobs.SpecificMobs.basicaf.Pink;
+import Game.Mobs.SpecificMobs.basicaf.Red;
+import Game.Mobs.SpecificMobs.basicaf.Yellow;
 import GlobalUse.Data;
 
 //sends purely basic bloons - red to pink

@@ -1,37 +1,29 @@
-package Game.Mobs.SpecificMobs;
+package Game.Mobs.SpecificMobs.moabs;
 
 
+import Game.Mobs.SpecificMobs.Lead;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 import java.util.List;
 
-public class MultiMoabBridge extends TdMob {
+public class MultiMoabUpperFin extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
       Lead::new, Lead::new);
 
-
-  public MultiMoabBridge(TdWorld world, int wave) {
-    super(world, "SmBridge", wave);
-    initComponents();
+  public MultiMoabUpperFin(TdWorld world, int wave) {
+    super(world, "SmUpFin", wave);
   }
 
-  public MultiMoabBridge(TdMob parent) {
-    super(parent.world, "SmBridge", parent, parent.getChildrenSpread());
-    initComponents();
-  }
-
-  private void initComponents() {
-    TdMob b = new MultiMoabHead(world, waveNum);
-    b.movement = new HardFollow<>(this, sprite.getWidth() + b.sprite.getWidth(), 0);
-    world.addEnemy(b);
+  public MultiMoabUpperFin(TdMob parent) {
+    super(parent.world, "SmUpFin", parent, parent.getChildrenSpread());
   }
 
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 200f;
+    stats[Stats.size] = 300f;
     stats[Stats.speed] = 1.3f;
     stats[Stats.health] = 10000f;
     stats[Stats.value] = 200f;

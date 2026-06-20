@@ -1,27 +1,27 @@
-package Game.Mobs.SpecificMobs;
+package Game.Mobs.SpecificMobs.basicaf;
 
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
 import java.util.List;
 
-public class Red extends TdMob {
+public class Yellow extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of();
+  private static final List<ChildSpawner> spawns = List.of(Green::new);
 
-  public Red(TdWorld world, int wave) {
-    super(world, "BloonRed", wave);
+  public Yellow(TdWorld world, int wave) {
+    super(world, "BloonYellow", wave);
   }
 
-  public Red(TdMob parent) {
-    super(parent.world, "BloonRed", parent, parent.getChildrenSpread());
+  public Yellow(TdMob parent) {
+    super(parent.world, "BloonYellow", parent, 50);
   }
 
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 50.0f;
-    stats[Stats.speed] = 3f;
+    stats[Stats.size] = 68.0f;
+    stats[Stats.speed] = 7f;
     stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;

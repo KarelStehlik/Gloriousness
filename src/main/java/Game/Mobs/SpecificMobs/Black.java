@@ -1,5 +1,6 @@
 package Game.Mobs.SpecificMobs;
 
+import Game.Mobs.SpecificMobs.basicaf.Pink;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 

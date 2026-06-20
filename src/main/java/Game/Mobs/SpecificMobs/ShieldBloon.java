@@ -2,6 +2,7 @@ package Game.Mobs.SpecificMobs;
 
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
+import Game.Mobs.SpecificMobs.basicaf.Blue;
 import Game.WorldStuff.Game;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;

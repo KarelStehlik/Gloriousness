@@ -1,9 +1,10 @@
-package Game.Mobs.SpecificMobs;
+package Game.Mobs.SpecificMobs.moabs;
 
 
 import Game.Common.Buffs.Buff.DelayedTrigger;
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
+import Game.Mobs.SpecificMobs.Lead;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
