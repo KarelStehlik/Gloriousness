@@ -13,8 +13,17 @@ Mobs/Yellow
 Mobs/Pink
     size=76.0 | speed=8 | health=1 | value=1
 ---
+Mobs/Purple
+    size=76.0 | speed=6.5 | health=2 | value=1
+---
 Mobs/Black
     size=44.0 | speed=4.5 | health=2 | value=1
+---
+Mobs/TigerG
+    size=80.0 | speed=6 | health=4 | value=1
+---
+Mobs/TigerP
+    size=80.0 | speed=7 | health=2 | value=1
 ---
 Mobs/Lead
     size=80.0 | speed=2 | health=10 | value=1

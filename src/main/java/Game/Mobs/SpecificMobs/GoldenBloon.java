@@ -16,7 +16,7 @@ import windowStuff.GraphicsOnly.Text.TextModifiers;
 public class GoldenBloon extends TdMob {
 
   private void gainMoney(long amount, float duration) {
-    world.addIncome(amount);
+    world.addIncome(Math.pow(amount,0.3)*5);
     var t = new SimpleText(TextModifiers.green + "+" + amount, "Calibri", 500, (int) x,
         (int) y, 60, 50, world.getBs());
     t.move((int) Util.clamp(t.getX(), 50, Constants.screenSize.x - 50),

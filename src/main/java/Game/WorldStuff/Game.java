@@ -18,6 +18,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import windowStuff.Controls.KeyboardDetect;
 import windowStuff.Controls.MouseDetect;
@@ -37,11 +39,11 @@ public final class Game implements UserInputHandler {
   private final Graphics graphics;
   private final Map<String, SpriteBatching> bs = new HashMap<>(1);
   private final Collection<TickDetect> tickables = new ArrayList<>(1);
-  private final Collection<TickDetect> newTickables = new ArrayList<>(1);
+  private final BlockingQueue<TickDetect> newTickables = new LinkedBlockingQueue<>(200);
   private final Collection<KeyboardDetect> keyDetects = new ArrayList<>(1);
-  private final Collection<KeyboardDetect> newKeyDetects = new ArrayList<>(1);
+  private final BlockingQueue<KeyboardDetect> newKeyDetects = new LinkedBlockingQueue<>(200);
   private final List<MouseDetect> mouseDetects = new ArrayList<>(1);
-  private final Collection<MouseDetect> newMouseDetects = new ArrayList<>(1);
+  private final BlockingQueue<MouseDetect> newMouseDetects = new LinkedBlockingQueue<>(10);
   private final Log.Timer timer = new Timer();
   private int ticks = 0;
   private World world;
@@ -110,8 +112,7 @@ public final class Game implements UserInputHandler {
       nuke();
       world.delete();
     }
-    setWorld(new IntroScreen());
-    mapSelect.activate();
+    setWorld(new IntroScreen(mapSelect));
   }
   public void setWorld(World w) {
     world = w;
@@ -129,23 +130,33 @@ public final class Game implements UserInputHandler {
     newMouseDetects.add(t);
   }
   public void removeMouseDetect(MouseDetect t) {
-    if(newMouseDetects.contains(t))
       newMouseDetects.remove(t);
-    if(mouseDetects.contains(t))
       mouseDetects.remove(t);
   }
 
   public void tick() {
     userInputListener.handleEvents();
-    tickables.addAll(newTickables);
-    newTickables.clear();
-    keyDetects.addAll(newKeyDetects);
-    newKeyDetects.clear();
-
-    if (!newMouseDetects.isEmpty()) {
-      mouseDetects.addAll(newMouseDetects);
-      newMouseDetects.clear();
-      mouseDetects.sort(Comparator.comparingInt(MouseDetect::getLayer).reversed());
+    try {
+      while (!newTickables.isEmpty()) {
+        TickDetect tick = newTickables.take();
+        tickables.add(tick);
+      }
+      while (!newKeyDetects.isEmpty()) {
+        KeyboardDetect detect = newKeyDetects.take();
+        keyDetects.add(detect);
+      }
+      keyDetects.addAll(newKeyDetects);
+      newKeyDetects.clear();
+      if (!newMouseDetects.isEmpty()) {
+        while (!newMouseDetects.isEmpty()) {
+          MouseDetect detect = newMouseDetects.take();
+          mouseDetects.add(detect);
+        }
+        mouseDetects.sort(Comparator.comparingInt(MouseDetect::getLayer).reversed());
+      }
+    }catch (InterruptedException e){
+      System.out.println("input queue got interrupted, dunno how that happens");
+      e.printStackTrace();
     }
 
     if (paused) {

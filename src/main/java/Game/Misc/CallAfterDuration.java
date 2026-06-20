@@ -8,6 +8,9 @@ public class CallAfterDuration implements TickDetect {
   private float duration;
 
   public CallAfterDuration(Callable c, float durationMillis) {
+    if(durationMillis<=0){
+      durationMillis=1;
+    }
     duration = durationMillis;
     event = c;
   }
@@ -22,7 +25,6 @@ public class CallAfterDuration implements TickDetect {
 
   @Override
   public void delete() {
-
   }
 
   @Override

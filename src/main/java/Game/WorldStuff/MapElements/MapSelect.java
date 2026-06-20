@@ -52,11 +52,14 @@ public class MapSelect {
                 setSize(Constants.screenSize.x/2f, Constants.screenSize.x/2f).setShader("colorCycle2").
                 setColors(new Util.Cycle2Colors().setyOffset(-0.5f).setDensity(0.03f).setSpeed(0.2f).setStrength(0.5f).get());
     }
-
-    public void triggerLevel(WorldParameters baseLevelParams){
+    public void hideInBunkerFromNuke(){
         for(Island i:islands) {
             i.hideInBunkerFromNuke();
         }
+    }
+
+    public void triggerLevel(WorldParameters baseLevelParams){
+        hideInBunkerFromNuke();
 
         Game.get().getWorld().delete();
         //TODO apply random modifiers and stuff, add stuff to world parameters for stuff like max monkeys, list of bonuses that carry over from map to map etc

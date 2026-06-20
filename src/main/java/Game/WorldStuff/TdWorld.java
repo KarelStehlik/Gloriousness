@@ -37,6 +37,7 @@ import Game.Common.Turrets.Plane;
 import Game.Common.Turrets.SlowTurret;
 import Game.Common.Turrets.Turret;
 import Game.Common.Turrets.Wizard;
+import Game.Mobs.MobGeneration.WaveGenerator.IntermediateMobGenerator;
 import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Log;
@@ -119,6 +120,7 @@ public class TdWorld implements World {
 
   public TdWorld(int map) {
     mobSpawner.generators.add(new BasicMobGenerator());
+    mobSpawner.generators.add(new IntermediateMobGenerator());
     mobSpawner.goldGenerators.add(new BasicGoldBloonGenerator());
     Game game = Game.get();
     game.addMouseDetect(this);
@@ -381,7 +383,7 @@ public class TdWorld implements World {
       }
 
       if (ImGui.button("surrender")) {
-        Game.get().startIntroScreen();
+        Game.get().addTickable(new CallAfterDuration(()->{Game.get().startIntroScreen();}, 1));
         Game.get().unpause();
       }
     }

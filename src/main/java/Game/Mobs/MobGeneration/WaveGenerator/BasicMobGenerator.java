@@ -1,6 +1,7 @@
 package Game.Mobs.MobGeneration.WaveGenerator;
 
 import Game.Mobs.MobGeneration.SpawnSequence;
+import Game.Mobs.SpecificMobs.Purple;
 import Game.Mobs.SpecificMobs.basicaf.Blue;
 import Game.Mobs.SpecificMobs.basicaf.Green;
 import Game.Mobs.SpecificMobs.basicaf.Pink;
@@ -55,6 +56,9 @@ public class BasicMobGenerator implements WaveGenerator {
             case 5 ->{
                 return new SpawnSequence(Pink::new, blooncount, beginTime, interval);
             }
+            case 7 ->{
+                return new SpawnSequence(Purple::new, blooncount, beginTime, interval);
+            }
             default -> {
                 return null;
             }
@@ -66,10 +70,16 @@ public class BasicMobGenerator implements WaveGenerator {
         int bloonkindcount = Math.min((int) wave / 5 + 1, 3);
         int strongest;
         int temp=(int)Math.ceil( (wave+1)/3);
-        if (temp >= 5) {
-            strongest = 5;
+        if (temp >= 7) {
+            strongest = 7;
         } else {
-            strongest = Data.gameMechanicsRng.nextInt(temp, 6);
+            strongest = Data.gameMechanicsRng.nextInt(temp, 7);
+            if(strongest==6&&(wave<3)){
+                //purple bloon is strongest, but that is too much for round 1-3
+                strongest=5;
+            }else{
+                strongest=7;
+            }
         }
         SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
         for (int i = bloonkindcount; i > 0; i--) {

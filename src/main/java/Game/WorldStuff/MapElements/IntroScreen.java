@@ -1,13 +1,18 @@
 package Game.WorldStuff.MapElements;
 
 import Game.WorldStuff.Game;
+import Game.WorldStuff.TdWorld;
 import Game.WorldStuff.World;
+import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Util;
 import GlobalUse.Util.Cycle2Colors;
 import java.util.List;
 import windowStuff.Audio;
 import windowStuff.Audio.SoundToPlay;
+import windowStuff.Button;
+import windowStuff.ButtonArray;
+import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Text.ScrollingText;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 import windowStuff.GraphicsOnly.Text.TextModifiers;
@@ -16,6 +21,7 @@ public class IntroScreen implements World {
   private final SpriteBatching bs;
 
   private final ScrollingText text;
+  private final ButtonArray maps;
 
   private static final String aaah;
   private boolean isDeleted=false;
@@ -55,8 +61,11 @@ public class IntroScreen implements World {
       "|shader:rotator|SPINNING doesn't really work great",
       aaah
   );
-
-  public IntroScreen() {
+  private final MapSelect mapSelect;
+  private boolean mapSelectInitialized;
+  public IntroScreen(MapSelect mapSelect) {
+    this.mapSelect=mapSelect;
+    this.mapSelectInitialized=false;
     Audio.play(new SoundToPlay("legion",0.85f, "music", true));
     bs = Game.get().getSpriteBatching("main");
 //    new Sprite("introScreen", 2).addToBs(bs).
@@ -73,6 +82,29 @@ public class IntroScreen implements World {
     text = new ScrollingText(lst.toString(), 1500, 3, 100, bs, "path");
     text.setSpeed(4.5f);
     text.move(200,200);
+
+    SpriteBatching bs = Game.get().getSpriteBatching("main");
+    int mapCount = Data.listMaps().length;
+    Button[] buttons = new Button[mapCount];
+    for (int i = 0; i < mapCount; i++) {
+      buttons[i] = makeMapButtons(i);
+    }
+    maps = new ButtonArray(2,
+            buttons,
+            new Sprite("Button", 4).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
+            1, 1);
+    Game.get().addMouseDetect(maps);
+  }
+
+  private Button makeMapButtons(int id) {
+    String mapName = Data.listMaps()[id];
+    Sprite sp = new Sprite(mapName, 6).setSize(10, 10);
+    Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x, y) -> {
+      mapSelect.hideInBunkerFromNuke();
+      delete();
+      Game.get().setWorld(new TdWorld(id));
+    });
+    return b;
   }
 
   @Override
@@ -102,6 +134,10 @@ public class IntroScreen implements World {
 
   @Override
   public void onGameTick(int tick) {
+    if(!this.mapSelectInitialized){
+      mapSelect.activate();
+      mapSelectInitialized=true;
+    }
     text.update();
   }
 
