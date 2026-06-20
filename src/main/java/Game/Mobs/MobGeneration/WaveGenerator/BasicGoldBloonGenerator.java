@@ -1,5 +1,7 @@
 package Game.Mobs.MobGeneration.WaveGenerator;
 
+import Game.Common.Buffs.Buff.StatBuff;
+import Game.Mobs.MobClasses.TdMob;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobGeneration.SpawnSequence;
 import Game.Mobs.SpecificMobs.GoldenBloon;
@@ -20,7 +22,7 @@ public class BasicGoldBloonGenerator implements WaveGenerator {
     private float incomePerDamage =1;
 
     private void calcValue(float wave){
-        incomePerDamage=(float) (1.5/(Math.pow(wave,wave/50)));
+        incomePerDamage=(float) (1/(Math.pow(wave,wave/30)));
 //        System.out.println(incomePerDamage+"   "+wave);
     }
     @Override
@@ -28,7 +30,8 @@ public class BasicGoldBloonGenerator implements WaveGenerator {
         SpawnSequence[] sequence=new SpawnSequence[1];
         calcValue(wave);
         sequence[0]=new SpawnSequence((TdWorld w, int round)->{
-            return new GoldenBloon(w,round, incomePerDamage);
+                    GoldenBloon gold=new GoldenBloon(w,round, incomePerDamage, (float) (Math.sqrt(wave)*2));
+                    return gold;
         }, 1, Data.gameMechanicsRng.nextInt(1,250), 50);
         return sequence;
     }

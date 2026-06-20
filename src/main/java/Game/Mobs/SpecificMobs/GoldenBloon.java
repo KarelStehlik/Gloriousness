@@ -14,9 +14,9 @@ import windowStuff.GraphicsOnly.Text.SimpleText;
 import windowStuff.GraphicsOnly.Text.TextModifiers;
 
 public class GoldenBloon extends TdMob {
-
+  private float originalValue=0;
   private void gainMoney(long amount, float duration) {
-    world.addIncome(Math.pow(amount,0.3)*5);
+    world.addIncome(amount);
     var t = new SimpleText(TextModifiers.green + "+" + amount, "Calibri", 500, (int) x,
         (int) y, 60, 50, world.getBs());
     t.move((int) Util.clamp(t.getX(), 50, Constants.screenSize.x - 50),
@@ -29,12 +29,14 @@ public class GoldenBloon extends TdMob {
   public GoldenBloon(TdWorld world, int wave) {
     super(world, "Buff", wave);
   }
-  public GoldenBloon(TdWorld world, int wave,float incomePerDamage) {
+  public GoldenBloon(TdWorld world, int wave,float incomePerDamage,float baseValue) {
     super(world, "Buff", wave);
+    this.originalValue=baseValue;
+    addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, TdMob.Stats.value,
+            baseValue));
     addBuff(new StatBuff<TdMob>(Type.FINALLY_ADDED, ExtraStats.moneyPerDamage,
              incomePerDamage- stats[ExtraStats.moneyPerDamage]));
   }
-
   public GoldenBloon(TdMob parent) {
     super(parent.world, "Buff", parent, 50);
   }
@@ -52,7 +54,15 @@ public class GoldenBloon extends TdMob {
 
   @Override
   public void onDeath() {
-    gainMoney((long) stats[Stats.value], 5000);
+    float approxValue=(long) stats[Stats.value];
+    long finalValue;
+    if(originalValue!=0){
+      float valueGained=approxValue/originalValue;
+      finalValue=(long)(originalValue*Math.pow(valueGained,0.4));
+    }else{
+      finalValue=(long)approxValue;
+    }
+    gainMoney(finalValue, 5000);
   }
 
   // generated stats

@@ -41,7 +41,7 @@ Player
     speed=10 | health=100 | aspd=1 | projSize=18 | projSpeed=20 | projPierce=2 | projDuration=2 | projPower=1
 ---
 Mobs/GoldenBloon
-    size=68.0 | speed=7 | health=200000 | value=1
+    size=68.0 | speed=7 | health=200000 | value=0
     moneyPerDamage=1
 ---
 Mobs/ShieldBloon

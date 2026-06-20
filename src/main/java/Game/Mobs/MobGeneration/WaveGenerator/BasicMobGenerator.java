@@ -74,16 +74,20 @@ public class BasicMobGenerator implements WaveGenerator {
             strongest = 7;
         } else {
             strongest = Data.gameMechanicsRng.nextInt(temp, 7);
-            if(strongest==6&&(wave<3)){
-                //purple bloon is strongest, but that is too much for round 1-3
-                strongest=5;
-            }else{
-                strongest=7;
+            if(strongest==6){
+                if(wave<3){
+                    //purple bloon is strongest, but that is too much for round 1-3
+                    strongest = 5;
+                }else{
+                    strongest=7;
+                }
             }
         }
         SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
-        for (int i = bloonkindcount; i > 0; i--) {
-            sequence[i-1]=genPart(strongest-i+1,wave,(bloonkindcount-i)*150);
+        for (int i = 0; i < bloonkindcount; i++) {
+            sequence[i]=genPart(strongest-i,wave,(bloonkindcount-1-i)*150);
+            if(strongest==7)
+                strongest--;
         }
 
         return sequence;
