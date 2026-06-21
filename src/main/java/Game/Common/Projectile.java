@@ -55,6 +55,11 @@ public class Projectile extends GameObject implements TickDetect {
   public boolean isMultihit() {
     return multihit;
   }
+  private boolean isFlipped=false;
+  public void flipY(){
+    isFlipped=true;
+    onStatsUpdate();
+  }
 
   public void setMultihit(boolean multihit) {
     this.multihit = multihit;
@@ -221,7 +226,7 @@ public class Projectile extends GameObject implements TickDetect {
 
   @Override
   public void onStatsUpdate() {
-    sprite.setSize(stats[Stats.size], stats[Stats.size] * aspectRatio);
+    sprite.setSize(isFlipped?stats[Stats.size]*(-1): stats[Stats.size], stats[Stats.size] * aspectRatio);
     vx = Util.cos(rotation) * stats[Stats.speed];
     vy = Util.sin(rotation) * stats[Stats.speed];
   }

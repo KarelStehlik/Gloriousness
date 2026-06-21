@@ -26,6 +26,7 @@ public class BulletLauncher {
   private float speed;
   private float aspectRatio = 1; //
   public ArrayList<Cannon> cannons = new ArrayList<>(1);
+  public boolean flipToTopSide=true;
 
   public static class Cannon {
 
@@ -293,6 +294,9 @@ public class BulletLauncher {
     p.getPlayerCollides().addAll(playerCollides);
     p.getMobCollides().addAll(mobCollides);
     p.getProjectileCollides().addAll(projectileCollides);
+    if(flipToTopSide&&Math.abs(angle)>90) {
+      p.flipY();
+    }
     return p;
   }
 
