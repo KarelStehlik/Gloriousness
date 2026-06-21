@@ -54,6 +54,12 @@ public class Mortar extends Turret {
     boolean improvedEcplosives=false;
     @Override
     protected void extraStatsUpdate() {
+        if(convertFire){
+            if(stats[Stats.pierce]>2){
+                addBuff(new StatBuff<>(Type.FINALLY_ADDED, Stats.pierce, -(stats[Stats.pierce]-2)));
+                addedFire+=(stats[Stats.pierce]-2)/2;
+            }
+        }
         if (explosive != null) {
             explosive.damage = stats[ExtraStats.explodPower];
             explosive.setRadius((int) stats[ExtraStats.radius]);
@@ -61,6 +67,10 @@ public class Mortar extends Turret {
                 explosive.damage+=stats[Stats.power]-1;
             }
         }
+        if (clusterLauncher != null) {
+            updateCluster();
+        }
+
     }
 
     private final Sprite badgeSprite;
@@ -227,7 +237,7 @@ public class Mortar extends Turret {
                 () -> {
                     addBuff(new StatBuff<>(StatBuff.Type.ADDED, ExtraStats.explodPower, 1));
                     addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
-                    float radiusBuff = 1 + originalStats[ExtraStats.spread] / 200f;
+                    float radiusBuff = 1 + originalStats[ExtraStats.spread] / 1000f;
                     addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, radiusBuff));
                     addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, 1.5f));
                     trailIm=Graphics.getImage("bluRay");
@@ -261,42 +271,95 @@ public class Mortar extends Turret {
           sound=new SoundToPlay(sound.name, sound.volume+0.2f);
         }, 300);
   }
-
-
+    private float getFireDmg(){
+        float fireDamage= this.stats[ExtraStats.explodPower];
+        fireDamage+=addedFire;
+        if(improvedFire){
+            fireDamage*=2;
+        }
+        return fireDamage;
+    }
+    private boolean improvedFire=false;
     @Override
     protected Upgrade up001() {
         return new Upgrade("Fireball-0",
                 new Description("Glorious Flames"
                         ,
                         "Increases damage of the explosion based on projectile damage and adds fire",
-                        "projectile damage -1"),
+                        "increases explosion damage by (projectile damage -1)."),
                 () -> {
                     improvedEcplosives=true;
                     extraStatsUpdate();
                     physicalEffects.add((Projectile target)-> target.addMobCollide((proj, mob)->
-                        mob.addBuff(new Ignite<>(ExtraStats.explodPower*originalStats[Stats.pierce], 2000)),0));
-                    explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(this.stats[ExtraStats.explodPower]*originalStats[Stats.pierce], 2000)));
+                        mob.addBuff(new Ignite<>(getFireDmg(), 2000)),0));
+                    explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(getFireDmg(), 2000)));
                 }, 125);
     }
+    private BulletLauncher clusterLauncher;
+    private Explosive fireballExplod;
+    private void ClusterAttack(float x, float y) {
+        clusterLauncher.move(x, y);
+        clusterLauncher.attack(0, false);
+    }
 
+    private void updateCluster() {
+        clusterLauncher.setPower(stats[Turret.Stats.power]*0.5f);
+        clusterLauncher.setSize(stats[Turret.Stats.bulletSize] * 0.2f+20);
+        fireballExplod.damage=stats[ExtraStats.explodPower]/2;
+        fireballExplod.setRadius((int)stats[ExtraStats.radius]/4);
+    }
+    @Override
+    protected Upgrade up002() {
+        return new Upgrade("Fireball-0",
+                new Description("Flame cascade"
+                        ,
+                        "Explosions spread tiny fireballs, creates more with high spread. doubles fire damage",
+                        ""),
+                () -> {
+                    improvedFire=true;
+                    clusterLauncher = new BulletLauncher(world, "fire");
+                    clusterLauncher.setDuration(0.09f);
+                    clusterLauncher.cannons = BulletLauncher.radial(
+                            (int) (Math.ceil(originalStats[ExtraStats.spread]/180+3)));
+                    clusterLauncher.addProjectileModifier((Projectile p)->p.setRotation((float)(Math.random()*360)));
+                    clusterLauncher.addProjectileModifier((Projectile p)->p.setSpeed((float)(p.getSpeed()+Math.random()*p.getSpeed())));
+                    clusterLauncher.addMobCollide(BasicCollides.damage);
+                    clusterLauncher.setSpeed(25);
+                    clusterLauncher.setPierce(1);
+                    fireballExplod=new Explosive(1,1);
+                    clusterLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.fireballExplod));
+
+                    clusterLauncher.addProjectileModifier((Projectile target)-> target.addMobCollide((proj, mob)->
+                            mob.addBuff(new Ignite<>(getFireDmg()/5, 2000)),0));
+                    fireballExplod.addPreEffect(mob -> mob.addBuff(new Ignite<>(getFireDmg()/5, 2000)));
+
+                    bulletLauncher.addProjectileModifier(
+                            p -> p.addBeforeDeath(proj -> this.ClusterAttack(proj.getX(), proj.getY())));
+                    extraStatsUpdate();
+                }, 350);
+    }
+
+    private boolean convertFire=false;
+    private float addedFire=0;
   @Override
-  protected Upgrade up002() {
+  protected Upgrade up003() {
     return new Upgrade("laser",
-        new Description("laser precision"
+        new Description("Searing laser"
             ,
-            "fire",
-            ""),
+            "laser precision, more fire, more fire rate less pierce",
+            "kind of complicated, quite possibly op, converts pierce to fire damage and increases fire damage"),
         () -> {
           sound = new SoundToPlay("laser",sound.volume);
           addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, 0));
-          addBuff(new StatBuff<>(Type.MORE, Stats.aspd, 1.8f));
+          addBuff(new StatBuff<>(Type.MORE, Stats.aspd, 2f));
           bulletLauncher.setImage("transparent");
           trailIm=Graphics.getImage("laser");
+          convertFire=true;
           addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.6f));
           addBuff(new StatBuff<>(Type.MORE, Stats.projectileDuration, 0.3f));
           trail=new Trail(world.getBs(), r -> new Sprite(trailIm,3).setSize(30,30).setRotation(r-90).
               playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),30f, 0);
-        }, 175);
+        }, 777);
   }
 
 
