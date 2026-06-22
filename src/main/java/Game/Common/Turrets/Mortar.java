@@ -275,10 +275,11 @@ public class Mortar extends Turret {
                         }
                         addBuff(new StatBuff<>(Type.ADDED, Stats.power, addedDamage));
                     }
-
-                    trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(50,50).setRotation(r).
-                      playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),1f, 50);
                     addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.3f));
+                    if(path3Tier<3) {
+                        trail = new Trail(world.getBs(), r -> new Sprite(trailIm, 3).setSize(50, 50).setRotation(r).
+                                playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true), 1f, 50);
+                    }
                     sound=new SoundToPlay(sound.name, sound.volume+0.1f);
                 }, 100);
     }
@@ -295,7 +296,7 @@ public class Mortar extends Turret {
         if(reducedEffect>1){
             reducedEffect=1;
         }
-        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE, 1000 * 3, TdMob.Stats.speed, (float)(1+(0.7f)*reducedEffect)));
+        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE, 1000 * 3, TdMob.Stats.speed, (float)(1/(1+(0.7f)*reducedEffect))));
         return true;
     }
     @Override
@@ -317,13 +318,15 @@ public class Mortar extends Turret {
                     physicalEffects.add(0,(Projectile p)->p.addMobCollide( this::slowPoison));
                     physicalEffects.add(0,(Projectile p)->p.addMobCollide( this::shatter));
 
-                    bulletLauncher.setImage("spikeball");
+                    if(path3Tier<3) {
+                        bulletLauncher.setImage("spikeball");
+                        trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(50,10).setRotation(r).
+                                playAnimation(new TransformAnimation(1).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),3f, 50);
+                        trailIm=Graphics.getImage("bluRay");
+                    }
                     bulletLauncher.addProjectileModifier(
                             p -> p.addBuff(new OnTickBuff<Projectile>(proj -> proj.getSprite().setRotation(
                                     proj.getSprite().getRotation() + 15f))));
-                    trailIm=Graphics.getImage("bluRay");
-                    trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(50,10).setRotation(r).
-                      playAnimation(new TransformAnimation(1).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),3f, 50);
                   sound=new SoundToPlay(sound.name, sound.volume+0.1f);
                 }, 600);
     }
@@ -453,7 +456,7 @@ public class Mortar extends Turret {
           convertFire=true;
           addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.9f));
           addBuff(new StatBuff<>(Type.MORE, Stats.projectileDuration, 0.3f));
-          trail=new Trail(world.getBs(), r -> new Sprite(trailIm,3).setSize(30,30).setRotation(r-90).
+          trail=new Trail(world.getBs(), r -> new Sprite(trailIm,3).setSize(60,30).setRotation(r-90).
               playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),30f, 0);
         }, 777);
   }

@@ -23,8 +23,8 @@ public class Red extends TdMob {
     stats[Stats.size] = 50.0f;
     stats[Stats.speed] = 3f;
     stats[Stats.health] = 2f;
-    stats[Stats.damageTaken] = 0f;
     stats[Stats.value] = 1f;
+    stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
   }
   // end of generated stats
