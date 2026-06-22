@@ -26,7 +26,7 @@ Mobs/TigerP
     size=80.0 | speed=7 | health=2 | value=1
 ---
 Mobs/Lead
-    size=80.0 | speed=2 | health=10 | value=1
+    size=80.0 | speed=2 | health=10 |damageTaken=0.8| value=1
 ---
 Mobs/Ceramic
     size=78.0 | speed=5.8 | health=30 | value=0
@@ -35,7 +35,7 @@ Mobs/SmallMoab
     size=300.0 | speed=1.3 | health=400 | value=200
 ---
 Mobs/Moab
-    size=300.0 | speed=5 | health=1200 | value=100
+    size=300.0 | speed=5 | health=1200 |damageTaken=0.8| value=100
 ---
 Player  
     speed=10 | health=100 | aspd=1 | projSize=18 | projSpeed=20 | projPierce=2 | projDuration=2 | projPower=1
@@ -48,19 +48,19 @@ Mobs/ShieldBloon
     size=400.0 | speed=1 | health=60 | value=100
 ---
 mobs/MultiMoabCore
-    size=100 | speed=1.3 | health=13500 | value=200
+    size=100 | speed=1.3 | health=13500 |damageTaken=0.8| value=200
 ---
 mobs/MultiMoabHead
-    size=150 | speed=1.3 | health=10000 | value=200
+    size=150 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
 mobs/MultiMoabTail
-    size=175 | speed=1.3 | health=10000 | value=200
+    size=175 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
 mobs/MultiMoabBridge
-    size=200 | speed=1.3 | health=10000 | value=200
+    size=200 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
 mobs/MultiMoabLowerFin
-    size=300 | speed=1.3 | health=10000 | value=200
+    size=300 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
 mobs/MultiMoabUpperFin
-    size=300 | speed=1.3 | health=10000 | value=200
+    size=300 | speed=1.3 | health=10000 |damageTaken=0.8| value=200

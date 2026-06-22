@@ -33,7 +33,7 @@ public class IntermediateMobGenerator implements WaveGenerator {
         return validToWave;
     }
     enum bloonStrength{;
-        public static final int Purple=6,Black=8,TigerG=16,TigerP=19,Lead=24,Ceramic=28;
+        public static final int Purple=6,Black=7,TigerG=10,TigerP=12,Lead=15,Ceramic=20;
     }
     private SpawnSequence genPart(int strength, float wave, int beginTime){
         int interval;

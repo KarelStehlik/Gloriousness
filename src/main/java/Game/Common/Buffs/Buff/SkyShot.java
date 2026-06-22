@@ -72,6 +72,7 @@ public class SkyShot extends DefaultBuff<Projectile> {
             buff.duration = target.getStats()[Stats.duration];
             buff.strength = target.getStats()[Stats.speed]/duration*Game.tickIntervalMillis*2;
             buff.currentSpeed = target.getSpeed();
+            tick(target);
             return super.add(e, target);
         }
     }

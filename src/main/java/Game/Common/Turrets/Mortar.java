@@ -13,6 +13,7 @@ import Game.Common.Buffs.Modifier.Modifier;
 import Game.Common.BulletLauncher;
 import Game.Common.Projectile;
 import Game.Misc.BasicCollides;
+import Game.Mobs.MobClasses.TdMob;
 import Game.WorldStuff.Game;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
@@ -83,6 +84,7 @@ public class Mortar extends Turret {
     private Trail trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(30,30).setRotation(r).
         playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),60f, 50);
 
+    private int physicalLen=100;
     public Mortar(TdWorld world, int X, int Y) {
         super(world, X, Y, new BulletLauncher(world, "coconut"));
         badgeSprite = new Sprite("turretBase", 22).setSize(sprite.getWidth() * 2 * 0.75f,
@@ -104,7 +106,8 @@ public class Mortar extends Turret {
         addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, getStats()[ExtraStats.spread]));
         originalStats[ExtraStats.spread]=stats[ExtraStats.spread];
 
-        bulletLauncher.addProjectileModifier(p -> p.addBuff(new SkyShot(100, physicalEffects)));
+
+        bulletLauncher.addProjectileModifier(p -> p.addBuff(new SkyShot(physicalLen, physicalEffects)));
         physicalEffects.add((Projectile target)-> target.addMobCollide(BasicCollides.damage));
 
         bulletLauncher.addProjectileModifier(p->Accuracy.mod(p, getStats()[ExtraStats.spread], getStats()[ExtraStats.spread]));
@@ -152,38 +155,70 @@ public class Mortar extends Turret {
         return new Upgrade("Bomb-0",
                 new Description("Double Bombs"
                         ,
-                        "Cost dependent on projectile size, if the projectiles are really cheap monkey HQ buys 2 additional projectiles instead.",
-                        "Cost directly proportional to projectile size. When buying two bombs the upgrade is twice as expensive."),
+                        "Cost dependent on projectile size, if the projectiles are really cheap monkey HQ buys 2 additional projectiles instead." +
+                                TextModifiers.red+" Slightly lowers attack speed",
+                        "Cost directly proportional to projectile size. When buying two bombs the upgrade is twice as expensive. 25% lower attack speed"),
                 () -> {
+                    addBuff(new StatBuff<>(Type.MORE, Stats.aspd, 0.75f));
                     if(originalStats[Stats.bulletSize]<=45)
                         bombsCount=3;
                     else
                         bombsCount=2;
                     bulletLauncher.addAttackEffect(bl->{
                       firingCycle++;
-                      if (firingCycle>=bombsCount){
-                        firingCycle=0;
+                      if (firingCycle>=bombsCount+extraBombsCount){
+                          extraBombsCount=0;
+                          firingCycle=0;
                           bl.setRemainingCooldown(bl.getRemainingCooldown()-bl.getCooldown()*(volleyFireDuration));
                       }else{
-                        bl.setRemainingCooldown(bl.getRemainingCooldown()-bl.getCooldown()*(1-volleyFireDuration/bombsCount));
+                        bl.setRemainingCooldown(bl.getRemainingCooldown()-bl.getCooldown()*(1-volleyFireDuration/(bombsCount+extraBombsCount)));
                       }
                     });
                 },originalStats[Stats.bulletSize]<=45 ? ((int)(originalStats[Stats.bulletSize]*3f)):((int)(originalStats[Stats.bulletSize]*1.5f)));
     }
-
+    int extraBombsCount=0;
+    int nextExtraBombIn=12;
+    int hitsRequired;
+    int maxExtraBombs=0;
     @Override
     protected Upgrade up200() {
         return new Upgrade("Bomb-0",
                 new Description("Focused Bombardment"
                         ,
-                        "Adds 3 more bombs, but bombs are smaller.",
-                        "Doesn't actually focus shit"),
+                        "Adds 1-2 bombs. Every 12 enemies hit by explosions add an additional bomb next salvo. (up to 6)",
+                        "Doesn't actually focus shit \n " +
+                                "Lower requirement for bomb count. shrapnel hits also count"),
                 () -> {
-                    bombsCount +=3;
-                    addBuff(new StatBuff<>(Type.MORE, Stats.bulletSize, 0.6f));
-                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, 0.65f));
+                    bombsCount++;
+                    if(originalStats[Stats.bulletSize]<=50){
+                        bombsCount++;
+                    }
+                    maxExtraBombs=6;
+                    hitsRequired=12;
+                    explosive.addPreEffect(mob ->{
+                        if(extraBombsCount==maxExtraBombs){
+                            return;
+                        }
+                        nextExtraBombIn--;
+                        if(nextExtraBombIn==0){
+                            extraBombsCount++;
+                            nextExtraBombIn=hitsRequired;
+                        }
+                    });
+                    if(fireballExplod!=null){
+                        fireballExplod.addPreEffect(mob ->{
+                            if(extraBombsCount==maxExtraBombs){
+                                return;
+                            }
+                            nextExtraBombIn--;
+                            if(nextExtraBombIn==0){
+                                extraBombsCount++;
+                                nextExtraBombIn=hitsRequired;
+                            }
+                        });
+                    }
                     sound=new SoundToPlay(sound.name, sound.volume-0.2f);
-                }, 300);
+                }, 450);
     }
 
     @Override
@@ -191,12 +226,32 @@ public class Mortar extends Turret {
         return new Upgrade("Bomb-0",
                 new Description("Glorious Coverage"
                         ,
-                        "Increases attack speed based on spread, better with high spread."+ TextModifiers.red+" WARNING: if spread is low reduces attack speed",
+                        "Doubles base bomb count, increases extra bomb cap to 16" +
+                                "Increases attack speed based on spread, better with high spread."+ TextModifiers.red+" WARNING: if spread is low reduces attack speed",
                         ""),
                 () -> {
-                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 700);
-                    addBuff(new StatBuff<>(Type.MORE, Stats.aspd, attackArea));
-                }, 300);
+                    bombsCount*=2;
+                    maxExtraBombs=16;
+                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 550);
+                    addBuff(new StatBuff<>(Type.MORE, Stats.aspd, (float)Math.sqrt(attackArea)));
+
+                }, 750);
+    }
+    @Override
+    protected Upgrade up400() {
+        return new Upgrade("Bomb-0",
+                new Description("Hell's descent"
+                        ,
+                        "Doubles base bomb count, increases extra bomb cap to 650" +
+                                "Increases attack speed based on spread, better with high spread."+ TextModifiers.red+" WARNING: if spread is low reduces attack speed",
+                        ""),
+                () -> {
+                    bombsCount*=2;
+                    maxExtraBombs=650;
+                    float attackArea = Util.square(originalStats[ExtraStats.spread] / 550);
+                    addBuff(new StatBuff<>(Type.MORE, Stats.aspd, (float)Math.sqrt(attackArea)));
+
+                }, 16500);
     }
 
     private final float sizeIncrease010=1.4f;
@@ -206,12 +261,13 @@ public class Mortar extends Turret {
                 new Description("Larger Shells"
                         ,
                         "Increases projectile size and explosion radius; adds pierce based on projectile size and damage with high projectile speed.",
-                        "size and radius increased by "+(int)((sizeIncrease010-1)*100)+" percent. pierce is up to 2.5x and damage up +2"),
+                        "more size, radius and spread by "+(int)((sizeIncrease010-1)*100)+" percent. pierce is up to 2.75x and damage up +2"),
                 () -> {
-                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, 1.4f));
-                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, 1.4f));
+                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, sizeIncrease010));
+                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, sizeIncrease010));
+                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, sizeIncrease010));
 
-                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.pierce, originalStats[Stats.bulletSize]/28));
+                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.pierce, 1+originalStats[Stats.bulletSize]/40));
                     if(originalStats[Stats.speed]>25){
                         int addedDamage=1;
                         if(originalStats[Stats.speed]>34){
@@ -224,28 +280,52 @@ public class Mortar extends Turret {
                       playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),1f, 50);
                     addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.3f));
                     sound=new SoundToPlay(sound.name, sound.volume+0.1f);
-                }, 75);
+                }, 100);
     }
-
+    private final float sizeIncrease020=1.8f;
+    public boolean shatter(Projectile proj, TdMob mob){
+        //"Armor" will just be reduced damage taken for now I decided
+        if(mob.getStats()[TdMob.Stats.damageTaken]<1) {
+            mob.addBuff(new StatBuff<TdMob>(Type.INCREASED,  1000 * 4, TdMob.Stats.damageTaken, 1-mob.getStats()[TdMob.Stats.damageTaken]));
+        }
+        return true;
+    }
+    public boolean slowPoison(Projectile proj, TdMob mob){
+        double reducedEffect=proj.getStats()[Stats.power]* 9 / Math.sqrt(mob.getStats()[TdMob.Stats.health]);
+        if(reducedEffect>1){
+            reducedEffect=1;
+        }
+        mob.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE, 1000 * 3, TdMob.Stats.speed, (float)(1+(0.7f)*reducedEffect)));
+        return true;
+    }
     @Override
     protected Upgrade up020() {
         return new Upgrade("Bomb-0",
-                new Description("Chaotic Bombing"
+                new Description("Heavy Shells"
                         ,
-                        "No need to he accurate if a miss is lethal enough",
-                        "further increases explosion size based on spread"),
+                        "Shoots juggernauts, shatters enemy armor and speed with direct hits",
+                        "more size, radius by "+(int)((sizeIncrease020-1)*100)+"% and spread by "+(int)((sizeIncrease020-1)*100/2)+"%, increase. pierce is up to 2x and damage up +4 \n" +
+                                "Up to 30% speed redution, less for very healthy boyz"),
                 () -> {
-                    addBuff(new StatBuff<>(StatBuff.Type.ADDED, ExtraStats.explodPower, 1));
-                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
-                    float radiusBuff = 1 + originalStats[ExtraStats.spread] / 1000f;
-                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, radiusBuff));
-                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, 1.5f));
+                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, sizeIncrease020));
+                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, sizeIncrease020));
+                    addBuff(new StatBuff<>(Type.MORE, ExtraStats.spread, (1-sizeIncrease020)/2+1));
+
+                    addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.pierce, 1+originalStats[Stats.bulletSize]/70));
+                    int addedDamage=(int)Math.ceil( originalStats[Stats.speed]/14);
+                    addBuff(new StatBuff<>(Type.ADDED, Stats.power, addedDamage));
+                    physicalEffects.add(0,(Projectile p)->p.addMobCollide( this::slowPoison));
+                    physicalEffects.add(0,(Projectile p)->p.addMobCollide( this::shatter));
+
+                    bulletLauncher.setImage("spikeball");
+                    bulletLauncher.addProjectileModifier(
+                            p -> p.addBuff(new OnTickBuff<Projectile>(proj -> proj.getSprite().setRotation(
+                                    proj.getSprite().getRotation() + 15f))));
                     trailIm=Graphics.getImage("bluRay");
                     trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(50,10).setRotation(r).
                       playAnimation(new TransformAnimation(1).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),3f, 50);
-                  addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.8f));
                   sound=new SoundToPlay(sound.name, sound.volume+0.1f);
-                }, 300);
+                }, 600);
     }
 
   @Override
@@ -253,13 +333,18 @@ public class Mortar extends Turret {
     return new Upgrade("Bomb-0",
         new Description("Meteor"
             ,
-            "Overkill",
+            "Go big or go home",
             "Massively reduces fire rate and increases damage"),
         () -> {
-          addBuff(new StatBuff<>(Type.MORE, ExtraStats.explodPower, 10));
+
+            physicalLen+=500;
+          addBuff(new StatBuff<>(Type.MORE, ExtraStats.explodPower, 5));
           addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, 1.4f));
           addBuff(new StatBuff<>(Type.MORE, Stats.aspd, 0.3f));
           addBuff(new StatBuff<>(Type.MORE, Stats.projectileDuration, 5f));
+            addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.pierce, 5));
+            addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.power, 4));
+            addBuff(new StatBuff<>(StatBuff.Type.MORE, ExtraStats.radius, 2));
 
           trailIm=Graphics.getImage("Explosion1-0");
           trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(250,250).setRotation(r-90).
@@ -269,13 +354,13 @@ public class Mortar extends Turret {
               20f, 100);
           addBuff(new StatBuff<>(Type.MORE, Stats.speed, 3f));
           sound=new SoundToPlay(sound.name, sound.volume+0.2f);
-        }, 300);
+        }, 1150);
   }
     private float getFireDmg(){
         float fireDamage= this.stats[ExtraStats.explodPower];
         fireDamage+=addedFire;
         if(improvedFire){
-            fireDamage*=2;
+            fireDamage*=1.5f;
         }
         return fireDamage;
     }
@@ -313,8 +398,8 @@ public class Mortar extends Turret {
         return new Upgrade("Fireball-0",
                 new Description("Flame cascade"
                         ,
-                        "Explosions spread tiny fireballs, creates more with high spread. doubles fire damage",
-                        ""),
+                        "Explosions spread tiny fireballs, creates more with high spread. Increases fire damage",
+                        "+50% fire damage"),
                 () -> {
                     improvedFire=true;
                     clusterLauncher = new BulletLauncher(world, "fire");
@@ -328,10 +413,21 @@ public class Mortar extends Turret {
                     clusterLauncher.setPierce(1);
                     fireballExplod=new Explosive(1,1);
                     clusterLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.fireballExplod));
-
                     clusterLauncher.addProjectileModifier((Projectile target)-> target.addMobCollide((proj, mob)->
                             mob.addBuff(new Ignite<>(getFireDmg()/5, 2000)),0));
                     fireballExplod.addPreEffect(mob -> mob.addBuff(new Ignite<>(getFireDmg()/5, 2000)));
+                    if(maxExtraBombs>0){
+                        fireballExplod.addPreEffect(mob ->{
+                            if(extraBombsCount==maxExtraBombs){
+                                return;
+                            }
+                            nextExtraBombIn--;
+                            if(nextExtraBombIn==0){
+                                extraBombsCount++;
+                                nextExtraBombIn=hitsRequired;
+                            }
+                        });
+                    }
 
                     bulletLauncher.addProjectileModifier(
                             p -> p.addBeforeDeath(proj -> this.ClusterAttack(proj.getX(), proj.getY())));
@@ -355,7 +451,7 @@ public class Mortar extends Turret {
           bulletLauncher.setImage("transparent");
           trailIm=Graphics.getImage("laser");
           convertFire=true;
-          addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.6f));
+          addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.9f));
           addBuff(new StatBuff<>(Type.MORE, Stats.projectileDuration, 0.3f));
           trail=new Trail(world.getBs(), r -> new Sprite(trailIm,3).setSize(30,30).setRotation(r-90).
               playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),30f, 0);
@@ -403,7 +499,7 @@ public class Mortar extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 0f;
     stats[Stats.pierce] = 6f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.4f, 0.8f);
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.7f, 1.4f);
     stats[Stats.projectileDuration] = 1.25f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(35f, 70f);
     stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(15f, 40f);
