@@ -26,7 +26,7 @@ public class MultiMoabUpperFin extends TdMob {
     stats[Stats.size] = 300f;
     stats[Stats.speed] = 1.3f;
     stats[Stats.health] = 10000f;
-    stats[Stats.damageTaken] = 0.8f;
+    stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 200f;
     stats[Stats.spawns] = 1f;
   }

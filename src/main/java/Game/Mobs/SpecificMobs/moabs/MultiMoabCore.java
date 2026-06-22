@@ -67,7 +67,7 @@ public class MultiMoabCore extends TdMob {
     stats[Stats.size] = 100f;
     stats[Stats.speed] = 1.3f;
     stats[Stats.health] = 13500f;
-    stats[Stats.damageTaken] = 0.8f;
+    stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 200f;
     stats[Stats.spawns] = 1f;
   }
