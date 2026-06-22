@@ -499,8 +499,8 @@ public class Mortar extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 0f;
     stats[Stats.pierce] = 6f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.7f, 1.4f);
-    stats[Stats.projectileDuration] = 1.25f;
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.55f, 1.1f);
+    stats[Stats.projectileDuration] = 1.5f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(35f, 70f);
     stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(15f, 40f);
     stats[Stats.cost] = 100f;

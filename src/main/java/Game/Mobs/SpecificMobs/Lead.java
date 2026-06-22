@@ -38,8 +38,8 @@ public class Lead extends TdMob {
     stats[Stats.size] = 80.0f;
     stats[Stats.speed] = 2f;
     stats[Stats.health] = 10f;
+    stats[Stats.damageTaken] = 0.8f;
     stats[Stats.value] = 1f;
-    stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
   }
   // end of generated stats

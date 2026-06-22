@@ -29,16 +29,16 @@ public class TigerG extends TdMob {
     }
 
     // generated stats
-    @Override
-    public void clearStats() {
-        stats[Stats.size] = 44.0f;
-        stats[Stats.speed] = 4.5f;
-        stats[Stats.health] = 2f;
-        stats[Stats.value] = 1f;
-        stats[Stats.damageTaken] = 1f;
-        stats[Stats.spawns] = 1f;
-    }
-    // end of generated stats
+  @Override
+  public void clearStats() {
+    stats[Stats.size] = 80.0f;
+    stats[Stats.speed] = 6f;
+    stats[Stats.health] = 4f;
+    stats[Stats.value] = 1f;
+    stats[Stats.damageTaken] = 1f;
+    stats[Stats.spawns] = 1f;
+  }
+  // end of generated stats
 
     @Override
     public boolean isMoab() {

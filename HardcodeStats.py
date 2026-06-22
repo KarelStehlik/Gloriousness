@@ -25,7 +25,10 @@ def toClassText(input):
     extraStats = [refFloatify(x, "ExtraStats") for x in extraStats]
 
     if className.startswith("mobs/"):
-        baseStats += ["damageTaken = 1", "spawns = 1"]
+        if not ("damageTaken" in parts[1]):
+            baseStats += ["damageTaken = 1"]
+        if not ("spawns" in parts[1]):
+            baseStats += ["spawns = 1"]
 
     baseStats = [refFloatify(x, "Stats") for x in baseStats]
 
@@ -63,7 +66,7 @@ def replaceStats(input, newStats):
 
 def findAndUpdate(statsText):
     className, stats = toClassText(statsText)
-    path = "src\main\java\Game\\" + className + ".java"
+    path = "src\\main\\java\\Game\\" + className + ".java"
     if not os.path.exists(path):
         return -1
 
@@ -82,24 +85,35 @@ def findAndUpdate(statsText):
     return 1
 
 
-def handleStatsText(statsText):
+def handleStatsText(statsText,errorLog):
     re = findAndUpdate(statsText)
     if re < 0:
         print("failed task for stats: " + statsText.split("|")[0], end=": ")
         if re == -1:
             print("file not found")
+            errorLog+="failed task for stats: " + statsText.split("|")[0]+"file not found"
         if re == -2:
             print("stats preset not found")
-        return
+            errorLog+="failed task for stats: " + statsText.split("|")[0]+"stats preset not found"
+        errorLog+="\n"
+        return errorLog
 
     print("stats handled successfully: " + statsText)
+    return errorLog
 
 
 def main():
+    errorLog=""
     for filename in os.listdir("stats"):
         with open("stats\\" + filename, "r") as file:
             for line in file.read().split("\n---\n"):
-                handleStatsText(line.strip())
+                errorLog=handleStatsText(line.strip(),errorLog)
+    print("\n\n\n")
+    if(errorLog==""):
+        print("SUCCESS")
+    else:
+        print("FAILIURE")
+        print(errorLog)
 
 
 # handleStatsText("Player|speed=1|health=100|cd=5|projSize=100|projSpeed=30|projPierce=100|projDuration=3|projPower=100")

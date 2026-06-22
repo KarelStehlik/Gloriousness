@@ -1,66 +1,66 @@
-Mobs/Red
-    size=50.0 | speed=3 | health=1 | value=1
+Mobs/SpecificMobs/basicaf/Red
+    size=50.0 | speed=3 | health=2 |damageTaken=0| value=1
 ---
-Mobs/Blue
+Mobs/SpecificMobs/basicaf/Blue
     size=60.0 | speed=3.2 | health=1 | value=1
 ---
-Mobs/Green
+Mobs/SpecificMobs/basicaf/Green
     size=68.0 | speed=3.7 | health=1 | value=1
 ---
-Mobs/Yellow
+Mobs/SpecificMobs/basicaf/Yellow
     size=68.0 | speed=7 | health=1 | value=1
 ---
-Mobs/Pink
+Mobs/SpecificMobs/basicaf/Pink
     size=76.0 | speed=8 | health=1 | value=1
 ---
-Mobs/Purple
+Mobs/SpecificMobs/Purple
     size=76.0 | speed=6.5 | health=2 | value=1
 ---
-Mobs/Black
+Mobs/SpecificMobs/Black
     size=44.0 | speed=4.5 | health=2 | value=1
 ---
-Mobs/TigerG
+Mobs/SpecificMobs/TigerG
     size=80.0 | speed=6 | health=4 | value=1
 ---
-Mobs/TigerP
+Mobs/SpecificMobs/TigerP
     size=80.0 | speed=7 | health=2 | value=1
 ---
-Mobs/Lead
+Mobs/SpecificMobs/Lead
     size=80.0 | speed=2 | health=10 |damageTaken=0.8| value=1
 ---
-Mobs/Ceramic
+Mobs/SpecificMobs/Ceramic
     size=78.0 | speed=5.8 | health=30 | value=0
 ---
-Mobs/SmallMoab
+Mobs/SpecificMobs/moabs/SmallMoab
     size=300.0 | speed=1.3 | health=400 | value=200
 ---
-Mobs/Moab
+Mobs/SpecificMobs/moabs/Moab
     size=300.0 | speed=5 | health=1200 |damageTaken=0.8| value=100
 ---
-Player  
+Misc/Player
     speed=10 | health=100 | aspd=1 | projSize=18 | projSpeed=20 | projPierce=2 | projDuration=2 | projPower=1
 ---
-Mobs/GoldenBloon
+Mobs/SpecificMobs/GoldenBloon
     size=68.0 | speed=7 | health=200000 | value=0
     moneyPerDamage=1
 ---
-Mobs/ShieldBloon
+Mobs/SpecificMobs/ShieldBloon
     size=400.0 | speed=1 | health=60 | value=100
 ---
-mobs/MultiMoabCore
+Mobs/SpecificMobs/moabs/MultiMoabCore
     size=100 | speed=1.3 | health=13500 |damageTaken=0.8| value=200
 ---
-mobs/MultiMoabHead
+Mobs/SpecificMobs/moabs/MultiMoabHead
     size=150 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
-mobs/MultiMoabTail
+Mobs/SpecificMobs/moabs/MultiMoabTail
     size=175 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
-mobs/MultiMoabBridge
+Mobs/SpecificMobs/moabs/MultiMoabBridge
     size=200 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
-mobs/MultiMoabLowerFin
+Mobs/SpecificMobs/moabs/MultiMoabLowerFin
     size=300 | speed=1.3 | health=10000 |damageTaken=0.8| value=200
 ---
-mobs/MultiMoabUpperFin
+Mobs/SpecificMobs/moabs/MultiMoabUpperFin
     size=300 | speed=1.3 | health=10000 |damageTaken=0.8| value=200

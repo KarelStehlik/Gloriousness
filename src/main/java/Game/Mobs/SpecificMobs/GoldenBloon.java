@@ -76,7 +76,7 @@ public class GoldenBloon extends TdMob {
     stats[Stats.size] = 68.0f;
     stats[Stats.speed] = 7f;
     stats[Stats.health] = 200000f;
-    stats[Stats.value] = 1f;
+    stats[Stats.value] = 0f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
     stats[ExtraStats.moneyPerDamage] = 1f;
