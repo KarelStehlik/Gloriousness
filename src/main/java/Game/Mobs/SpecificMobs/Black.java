@@ -10,13 +10,18 @@ public class Black extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Pink::new, Pink::new);
 
-  public Black(TdWorld world, int wave) {
-    super(world, "BloonBlack", wave);
-  }
+    public Black(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public Black(TdMob parent) {
-    super(parent.world, "BloonBlack", parent, parent.getChildrenSpread());
-  }
+    public Black(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "BloonBlack");
+    }
 
   // generated stats
   @Override

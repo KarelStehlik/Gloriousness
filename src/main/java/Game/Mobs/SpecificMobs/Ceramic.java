@@ -9,13 +9,18 @@ public class Ceramic extends TdMob {
 
   private static final List<TdMob.ChildSpawner> spawns = List.of(Lead::new, Lead::new);
 
-  public Ceramic(TdWorld world, int wave) {
-    super(world, "BloonCeramic", wave);
-  }
+    public Ceramic(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public Ceramic(TdMob parent) {
-    super(parent.world, "BloonCeramic", parent, parent.getChildrenSpread());
-  }
+    public Ceramic(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "BloonCeramic");
+    }
 
   // generated stats
   @Override

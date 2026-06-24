@@ -54,7 +54,7 @@ public class TurretGenerator {
   }
 
   public Button makeButton() {
-    return new Button(world.getBs(), new Sprite(image, 10).setPosition(100, 100).setSize(200, 200),
+    return new Button(world.getBs(), new Sprite(image, 50).setPosition(100, 100).setSize(200, 200),
         (int button, int action) -> {
           if (button == 0 && action == 1) {
             this.select();

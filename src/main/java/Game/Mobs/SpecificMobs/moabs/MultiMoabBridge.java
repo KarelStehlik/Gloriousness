@@ -13,13 +13,17 @@ public class MultiMoabBridge extends TdMob {
       Lead::new, Lead::new);
 
 
-  public MultiMoabBridge(TdWorld world, int wave) {
-    super(world, "SmBridge", wave);
-    initComponents();
+    public MultiMoabBridge(TdWorld world, int wave) {
+    super(world, wave);
   }
 
   public MultiMoabBridge(TdMob parent) {
-    super(parent.world, "SmBridge", parent, parent.getChildrenSpread());
+    super(parent);
+  }
+
+  @Override
+  public void init(){
+    createImage( "SmBridge");
     initComponents();
   }
 

@@ -15,13 +15,18 @@ public class MultiMoabHead extends TdMob {
 
   private final List<TdMob> components = new ArrayList<>();
 
-  public MultiMoabHead(TdWorld world, int wave) {
-    super(world, "SmHead", wave);
-  }
+    public MultiMoabHead(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public MultiMoabHead(TdMob parent) {
-    super(parent.world, "SmHead", parent, parent.getChildrenSpread());
-  }
+    public MultiMoabHead(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "SmHead");
+    }
 
 
   // generated stats

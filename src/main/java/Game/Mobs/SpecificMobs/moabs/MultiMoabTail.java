@@ -12,13 +12,18 @@ public class MultiMoabTail extends TdMob {
   private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
       Lead::new, Lead::new);
 
-  public MultiMoabTail(TdWorld world, int wave) {
-    super(world, "SmTail", wave);
-  }
+    public MultiMoabTail(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public MultiMoabTail(TdMob parent) {
-    super(parent.world, "SmTail", parent, parent.getChildrenSpread());
-  }
+    public MultiMoabTail(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "SmTail");
+    }
 
   // generated stats
   @Override

@@ -12,13 +12,18 @@ public class MultiMoabUpperFin extends TdMob {
   private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
       Lead::new, Lead::new);
 
-  public MultiMoabUpperFin(TdWorld world, int wave) {
-    super(world, "SmUpFin", wave);
-  }
+    public MultiMoabUpperFin(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public MultiMoabUpperFin(TdMob parent) {
-    super(parent.world, "SmUpFin", parent, parent.getChildrenSpread());
-  }
+    public MultiMoabUpperFin(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "SmUpFin");
+    }
 
   // generated stats
   @Override

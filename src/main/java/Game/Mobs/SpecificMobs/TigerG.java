@@ -1,7 +1,6 @@
 package Game.Mobs.SpecificMobs;
 
 import Game.Mobs.SpecificMobs.basicaf.Green;
-import Game.Mobs.SpecificMobs.basicaf.Pink;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 
@@ -14,14 +13,19 @@ public class TigerG extends TdMob {
     private static final List<ChildSpawner> spawns=new ArrayList<>(spawnCount);;
 
     public TigerG(TdWorld world, int wave) {
-        super(world, "TigerG", wave);
-        populateSpawns();
-    }
+    super(world, wave);
+  }
 
-    public TigerG(TdMob parent) {
-        super(parent.world, "TigerG", parent, parent.getChildrenSpread());
-        populateSpawns();
-    }
+  public TigerG(TdMob parent) {
+    super(parent);
+  }
+
+  @Override
+  public void init(){
+    createImage( "TigerG");
+    populateSpawns();
+  }
+
     private void populateSpawns(){
             spawns.add(Black::new);
             while(spawns.size()<spawnCount)

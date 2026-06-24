@@ -9,13 +9,18 @@ public class Red extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of();
 
-  public Red(TdWorld world, int wave) {
-    super(world, "BloonRed", wave);
-  }
+    public Red(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public Red(TdMob parent) {
-    super(parent.world, "BloonRed", parent, parent.getChildrenSpread());
-  }
+    public Red(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "BloonRed");
+    }
 
   // generated stats
   @Override

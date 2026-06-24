@@ -16,13 +16,17 @@ public class MultiMoabCore extends TdMob {
       Lead::new, Lead::new);
 
 
-  public MultiMoabCore(TdWorld world, int wave) {
-    super(world, "SmCore", wave);
-    initComponents();
+    public MultiMoabCore(TdWorld world, int wave) {
+    super(world, wave);
   }
 
   public MultiMoabCore(TdMob parent) {
-    super(parent.world, "SmCore", parent, parent.getChildrenSpread());
+    super(parent);
+  }
+
+  @Override
+  public void init(){
+    createImage( "SmCore");
     initComponents();
   }
 

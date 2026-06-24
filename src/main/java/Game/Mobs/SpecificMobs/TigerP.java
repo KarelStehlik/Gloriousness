@@ -11,11 +11,16 @@ public class TigerP extends TdMob {
     private static final List<ChildSpawner> spawns = List.of(Pink::new);
 
     public TigerP(TdWorld world, int wave) {
-        super(world, "TigerP", wave);
+        super(world, wave);
     }
 
     public TigerP(TdMob parent) {
-        super(parent.world, "TigerP", parent, parent.getChildrenSpread());
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "TigerP");
     }
 
     // generated stats

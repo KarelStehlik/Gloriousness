@@ -10,14 +10,18 @@ public class Lead extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Black::new, Black::new);
 
-  public Lead(TdWorld world, int wave) {
-    super(world, "BloonLead", wave);
-  }
+    public Lead(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
+    public Lead(TdMob parent) {
+        super(parent);
+    }
 
-  public Lead(TdMob parent) {
-    super(parent.world, "BloonLead", parent, parent.getChildrenSpread());
-  }
+    @Override
+    protected void init() {
+        createImage( "BloonLead");
+    }
 
   @Override
   public void takeDamage(float amount, DamageType type) {

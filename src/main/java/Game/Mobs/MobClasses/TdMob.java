@@ -11,6 +11,7 @@ import Game.Misc.TickDetect;
 import Game.Mobs.MobGeneration.Wave;
 import GlobalUse.Constants;
 import GlobalUse.Data;
+import GlobalUse.Log;
 import GlobalUse.Util;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -19,56 +20,59 @@ import windowStuff.GraphicsOnly.Sprite.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  public final Sprite sprite;
+  public Sprite sprite;
   protected final SquareGrid<TdMob> grid;
-  private final BuffHandler<TdMob> buffHandler;
+  private final BuffHandler<TdMob> buffHandler=new BuffHandler<>(this);
   public MovementAi<TdMob> movement;
   protected double healthPart;
   protected boolean exists;
   protected float vx, vy;
   protected final int waveNum;
 
-  public TdMob(TdWorld world, String image, int wave) {
-    super(world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-            Constants.MobSpread),
-        world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-            Constants.MobSpread), 0, 0, world);
+  public TdMob(TdWorld world, int wave,float x,float y) {
+    super(x, y, 0, 0, world);
     waveNum = wave;
     Wave.increaseMobsInWave(waveNum);
     clearStats();
     healthPart = 1;
     setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
-    sprite = new Sprite(image, isMoab() ? 2 : 1, "basic").setSize(width, height).setPosition(x, y);
-    sprite.addToBs(world.getBs());
-    sprite.setNaturalHeight();
     exists = true;
-    buffHandler = new BuffHandler<>(this);
+    init();
+  }
+
+  public TdMob(TdWorld world, int wave) {
+    this(world,wave,world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+            Constants.MobSpread),world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+            Constants.MobSpread));
+    Wave.buff(this, wave);
     movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
         new Point((int) x - world.getMapData().get(0).x,
             (int) y - world.getMapData().get(0).y), stats, Stats.speed, TdMob::passed);
-    Wave.buff(this, wave);
   }
 
-  public TdMob(TdWorld world, String image, TdMob parent, int spread) {
-    super(parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),
-        parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),
-        0, 0, world);
-    waveNum = parent.waveNum;
-    Wave.increaseMobsInWave(waveNum);
-    clearStats();
-    healthPart = 1;
-    setSize((int) stats[Stats.size], (int) stats[Stats.size]);
-    grid = world.getMobsGrid();
-    sprite = new Sprite(image, isMoab() ? 2 : 1, "basic").setSize(width, height).setPosition(x, y);
-    sprite.addToBs(world.getBs());
-    sprite.setNaturalHeight();
-    exists = true;
-    buffHandler = parent.buffHandler.copyForChild(this);
+  public TdMob(TdWorld world, TdMob parent, int spread) {
+    this(world,parent.waveNum,
+            parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),parent.y + Data.gameMechanicsRng.nextInt(-spread, spread));
+    parent.buffHandler.addAll(buffHandler,this);
     movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
         new Point((int) (x - parent.x + parent.movement.getOffsetX()),
             (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
         parent.movement.getProgress());
+  }
+
+  public TdMob(TdMob parent) {
+    this(parent.world,parent,parent.getChildrenSpread());
+  }
+
+  protected void init(){
+    Log.write("Warning, a bloon has no INIT method "+this.getClass());
+  }
+
+  protected void createImage(String image){
+    sprite = new Sprite(image, isMoab() ? 20 : 10, "basic").setSize(width, height).setPosition(x, y);
+    sprite.addToBs(world.getBs());
+    sprite.setNaturalHeight();
   }
 
   @Override

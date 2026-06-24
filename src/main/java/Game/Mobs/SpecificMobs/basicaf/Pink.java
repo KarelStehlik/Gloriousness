@@ -9,13 +9,18 @@ public class Pink extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Yellow::new);
 
-  public Pink(TdWorld world, int wave) {
-    super(world, "BloonPink", wave);
-  }
+    public Pink(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public Pink(TdMob parent) {
-    super(parent.world, "BloonPink", parent, 50);
-  }
+    public Pink(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "BloonPink");
+    }
 
   // generated stats
   @Override

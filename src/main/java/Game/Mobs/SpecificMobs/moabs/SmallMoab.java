@@ -12,17 +12,18 @@ public class SmallMoab extends TdMob {
       Ceramic::new, Ceramic::new,
       Ceramic::new, Ceramic::new, Ceramic::new, Ceramic::new);
 
-  public SmallMoab(TdWorld world, int wave) {
-    super(world, "BloonSmallMoab", wave);
-    sprite.setSize(getStats()[Stats.size] * 1.1f, getStats()[Stats.size] * 0.8f);
-    sprite.setLayer(20);
-  }
+    public SmallMoab(TdWorld world, int wave) {
+        super(world, wave);
+    }
 
-  public SmallMoab(TdMob parent) {
-    super(parent.world, "BloonSmallMoab", parent, parent.getChildrenSpread());
-    sprite.setSize(getStats()[Stats.size] * 1.1f, getStats()[Stats.size] * 0.8f);
-    sprite.setLayer(20);
-  }
+    public SmallMoab(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "BloonSmallMoab");
+    }
 
   // generated stats
   @Override

@@ -26,19 +26,27 @@ public class GoldenBloon extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of();
 
-  public GoldenBloon(TdWorld world, int wave) {
-    super(world, "Buff", wave);
-  }
+    public GoldenBloon(TdWorld world, int wave) {
+        super(world, wave);
+    }
+
+    public GoldenBloon(TdMob parent) {
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage("Buff");
+    }
+
+
   public GoldenBloon(TdWorld world, int wave,float incomePerDamage,float baseValue) {
-    super(world, "Buff", wave);
+    super(world, wave);
     this.originalValue=baseValue;
     addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, TdMob.Stats.value,
             baseValue));
     addBuff(new StatBuff<TdMob>(Type.FINALLY_ADDED, ExtraStats.moneyPerDamage,
-             incomePerDamage- stats[ExtraStats.moneyPerDamage]));
-  }
-  public GoldenBloon(TdMob parent) {
-    super(parent.world, "Buff", parent, 50);
+            incomePerDamage- stats[ExtraStats.moneyPerDamage]));
   }
 
   @Override

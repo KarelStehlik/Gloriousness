@@ -13,12 +13,20 @@ public class BuffHandler<T extends GameObject> {
     this.target = target;
   }
 
-  public BuffHandler<T> copyForChild(T newTarget) {
+  public BuffHandler<T> createCopy(T newTarget) {
     var copy = new BuffHandler<>(newTarget);
     for (var kvp : buffTypes.entrySet()) {
       copy.buffTypes.put(kvp.getKey(), kvp.getValue().copyForChild(newTarget));
     }
     return copy;
+  }
+
+
+  public BuffHandler<T> addAll(BuffHandler<T> buffHandler, T target) {
+    for (var kvp : buffTypes.entrySet()) {
+      buffHandler.buffTypes.put(kvp.getKey(), kvp.getValue().copyForChild(target));
+    }
+    return buffHandler;
   }
 
   public boolean add(Buff<T> newBuff) {

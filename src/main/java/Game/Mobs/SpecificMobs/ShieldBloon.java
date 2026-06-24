@@ -13,13 +13,17 @@ public class ShieldBloon extends TdMob {
 
   private static final List<ChildSpawner> spawns = List.of(Blue::new);
 
-  public ShieldBloon(TdWorld world, int wave) {
-    super(world, "BloonShield", wave);
-    sprite.setLayer(3);
+    public ShieldBloon(TdWorld world, int wave) {
+    super(world, wave);
   }
 
   public ShieldBloon(TdMob parent) {
-    super(parent.world, "BloonShield", parent, parent.getChildrenSpread());
+    super(parent);
+  }
+
+  @Override
+  public void init(){
+    createImage( "BloonShield");
     sprite.setLayer(3);
   }
 

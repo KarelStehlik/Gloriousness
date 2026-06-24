@@ -163,7 +163,7 @@ public class TdWorld implements World {
 
     turretBar = new ButtonArray(2,
         turretButtons,
-        new Sprite("Button", 4).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
+        new Sprite("Button", 40).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
         1, 1);
     game.addMouseDetect(turretBar);
 
@@ -253,7 +253,7 @@ public class TdWorld implements World {
   public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
     Game game = Game.get();
     if (shockwave) {
-      new Sprite("Shockwave", 3, "basic").setPosition(x, y).setSize(size, size).
+      new Sprite("Shockwave", 30, "basic").setPosition(x, y).setSize(size, size).
           addToBs(bs).setOpacity(0.7f).playAnimation(new TransformAnimation(2).
               setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f));
     }

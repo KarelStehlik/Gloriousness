@@ -11,11 +11,16 @@ public class Purple extends TdMob {
     private static final List<ChildSpawner> spawns = List.of(Pink::new);
 
     public Purple(TdWorld world, int wave) {
-        super(world, "BloonPurple", wave);
+        super(world, wave);
     }
 
     public Purple(TdMob parent) {
-        super(parent.world, "BloonPurple", parent, parent.getChildrenSpread());
+        super(parent);
+    }
+
+    @Override
+    protected void init() {
+        createImage( "BloonPurple");
     }
 
     // generated stats
