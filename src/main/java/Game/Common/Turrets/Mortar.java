@@ -81,18 +81,18 @@ public class Mortar extends Turret {
     private SoundToPlay sound = new SoundToPlay("pop",0.7f);
 
     private ImageData trailIm = Graphics.getImage("fire");
-    private Trail trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(30,30).setRotation(r).
+    private Trail trail=new Trail(world.getBs(), r ->new Sprite(trailIm,43).setSize(30,30).setRotation(r).
         playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),60f, 50);
 
     private int physicalLen=100;
     public Mortar(TdWorld world, int X, int Y) {
         super(world, X, Y, new BulletLauncher(world, "coconut"));
-        badgeSprite = new Sprite("turretBase", 22).setSize(sprite.getWidth() * 2 * 0.75f,
+        badgeSprite = new Sprite("turretBase", 29).setSize(sprite.getWidth() * 2 * 0.75f,
                 sprite.getWidth() * 2 * 0.75f);
         world.getBs().addSprite(badgeSprite);
         badgeSprite.setShader("basic");
 
-        monkeySprite = new Sprite("turretBase", 22).setSize(sprite.getWidth() * 1.75f,
+        monkeySprite = new Sprite("turretBase", 29).setSize(sprite.getWidth() * 1.75f,
                 0);
         monkeySprite.setNaturalHeight();
 
@@ -277,7 +277,7 @@ public class Mortar extends Turret {
                     }
                     addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.3f));
                     if(path3Tier<3) {
-                        trail = new Trail(world.getBs(), r -> new Sprite(trailIm, 3).setSize(50, 50).setRotation(r).
+                        trail = new Trail(world.getBs(), r -> new Sprite(trailIm, 43).setSize(50, 50).setRotation(r).
                                 playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true), 1f, 50);
                     }
                     sound=new SoundToPlay(sound.name, sound.volume+0.1f);
@@ -320,7 +320,7 @@ public class Mortar extends Turret {
 
                     if(path3Tier<3) {
                         bulletLauncher.setImage("spikeball");
-                        trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(50,10).setRotation(r).
+                        trail=new Trail(world.getBs(), r ->new Sprite(trailIm,43).setSize(50,10).setRotation(r).
                                 playAnimation(new TransformAnimation(1).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),3f, 50);
                         trailIm=Graphics.getImage("bluRay");
                     }
@@ -350,7 +350,7 @@ public class Mortar extends Turret {
             addBuff(new StatBuff<>(StatBuff.Type.MORE, ExtraStats.radius, 2));
 
           trailIm=Graphics.getImage("Explosion1-0");
-          trail=new Trail(world.getBs(), r ->new Sprite(trailIm,3).setSize(250,250).setRotation(r-90).
+          trail=new Trail(world.getBs(), r ->new Sprite(trailIm,43).setSize(250,250).setRotation(r-90).
               playAnimation(new FrameAnimation("Explosion1",1).and(
                   new TransformAnimation(1).setOpacityScaling(-0.03f)))
               .setDeleteOnAnimationEnd(true),
@@ -456,7 +456,7 @@ public class Mortar extends Turret {
           convertFire=true;
           addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.9f));
           addBuff(new StatBuff<>(Type.MORE, Stats.projectileDuration, 0.3f));
-          trail=new Trail(world.getBs(), r -> new Sprite(trailIm,3).setSize(60,30).setRotation(r-90).
+          trail=new Trail(world.getBs(), r -> new Sprite(trailIm,43).setSize(60,30).setRotation(r-90).
               playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),30f, 0);
         }, 777);
   }

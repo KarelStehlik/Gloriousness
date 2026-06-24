@@ -20,8 +20,8 @@ public class Purpcart extends TdMob {
     @Override
     protected void init() {
         createImage( "BloonMoab");
-        //default moab is at 20
-        sprite.setLayer(16);
+        //default moab is at 25
+        sprite.setLayer(22);
     }
 
     // generated stats

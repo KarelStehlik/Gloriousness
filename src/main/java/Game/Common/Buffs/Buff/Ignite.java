@@ -63,7 +63,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
 
     protected Aggregator() {
       var bs = Game.get().getSpriteBatching("main");
-      Sprite fs = new Sprite("Fireball-0", 3).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
+      Sprite fs = new Sprite("Fireball-0", 58).setPosition(-1000, -1000).addToBs(bs).setSize(50, 50);
       fs.setRotation(180);
       fs.playAnimation(new FrameAnimation("Fireball", 1.1f).loop());
       fs.setHidden(true);
@@ -77,6 +77,7 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
       ignites.add(buff);
       dpTick += buff.damagePerTick;
       //fireSprite.setPosition(target.getX(), target.getY());
+      fireSprite.setLayer(target.sprite.getLayer()+1);
       fireSprite.setHidden(false);
       return true;
     }

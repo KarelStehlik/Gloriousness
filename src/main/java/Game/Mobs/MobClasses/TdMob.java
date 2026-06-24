@@ -70,7 +70,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   protected void createImage(String image){
-    sprite = new Sprite(image, isMoab() ? 20 : 10, "basic").setSize(width, height).setPosition(x, y);
+    sprite = new Sprite(image, isMoab() ? Constants.layerInterval.flyingMoab.defalt : Constants.layerInterval.bloon.defalt, "basic").setSize(width, height).setPosition(x, y);
     sprite.addToBs(world.getBs());
     sprite.setNaturalHeight();
   }

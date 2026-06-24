@@ -10,6 +10,7 @@ import Game.WorldStuff.Game;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.*;
 import Game.Mobs.MobClasses.TdMob;
+import GlobalUse.Constants;
 import GlobalUse.Util;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class Projectile extends GameObject implements TickDetect {
                     int width, float aspectRatio, int pierce, float size, float duration, float power) {
     super(X, Y, (int) size, (int) size, world);
     this.aspectRatio = aspectRatio;
-    sprite = new Sprite(image, 5, "basic").setPosition(X, Y).setSize(width, width * aspectRatio);
+    sprite = new Sprite(image, Constants.layerInterval.projectile.defalt, "basic").setPosition(X, Y).setSize(width, width * aspectRatio);
     sprite.setRotation(rotation - 90);
     world.getBs().addSprite(sprite);
     stats[Stats.pierce] = pierce;

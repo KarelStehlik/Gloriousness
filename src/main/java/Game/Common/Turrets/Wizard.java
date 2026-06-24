@@ -196,7 +196,7 @@ public class Wizard extends Turret {
           fstorm.addProjectileModifier(p->{
             BulletLauncher fireRain = new BulletLauncher(dbreath);
             fireRain.setCooldown(fireRain.getCooldown()*0.3f);
-            p.getSprite().setLayer(2);
+            p.getSprite().setLayer(47);
             p.getSprite().playAnimation(new TransformAnimation(999).setSpinning(1.8f));
             p.addBuff(new OnTickBuff<Projectile>(storm->{
             fireRain.move(storm.getX(),storm.getY());

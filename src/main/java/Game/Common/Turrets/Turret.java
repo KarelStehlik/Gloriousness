@@ -14,6 +14,7 @@ import Game.Misc.GameObject;
 import Game.Mobs.MobClasses.TdMob;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.TickDetect;
+import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Description;
 import GlobalUse.Util;
@@ -53,7 +54,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     clearStats();
     originalStats = getStats().clone();
 
-    sprite = new Sprite(getImageUpdate(), 20).setSize(stats[Turret.Stats.spritesize],
+    sprite = new Sprite(getImageUpdate(), Constants.layerInterval.monkey.defalt).setSize(stats[Turret.Stats.spritesize],
         stats[Turret.Stats.spritesize]);
     sprite.setNaturalHeight();
     sprite.setPosition(x, y);
@@ -351,18 +352,18 @@ public abstract class Turret extends GameObject implements TickDetect {
       float X = Util.clamp(x, 110, 1810), Y = Util.clamp(y, 190, 870);
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
-      sprites.add(new Sprite("Button", sprite.getLayer() + 5).
+      sprites.add(new Sprite("Button", Constants.layerInterval.ui.min + 5).
           setSize(220, 420).
           setPosition(X, Y).
           addToBs(bs)
       );
       buttons.add(new Button(
-          new NoSprite().setLayer(sprite.getLayer() + 6).setSize(5000, 5000).setPosition(X, Y - 150),
+          new NoSprite().setLayer(Constants.layerInterval.ui.min + 6).setSize(5000, 5000).setPosition(X, Y - 150),
           (x, y) -> close()));
 
       buttons.add(new Button(
           world.getBs(),
-          new Sprite("Sell", sprite.getLayer() + 9).setSize(190, 40).setPosition(X, Y - 180),
+          new Sprite("Sell", Constants.layerInterval.ui.min + 9).setSize(190, 40).setPosition(X, Y - 180),
           (x, y) -> {
             close();
             sell();
@@ -371,7 +372,7 @@ public abstract class Turret extends GameObject implements TickDetect {
 
       buttons.add(new Button(
           world.getBs(),
-          new Sprite("Radar", sprite.getLayer() + 10).setSize(170, 40).setPosition(X, Y - 135),
+          new Sprite("Radar", Constants.layerInterval.ui.min + 10).setSize(170, 40).setPosition(X, Y - 135),
           (x, y) -> {
             targeting = switch (targeting) {
               case FIRST -> LAST;
@@ -418,14 +419,14 @@ public abstract class Turret extends GameObject implements TickDetect {
       Upgrade u3 = path3Tier < maxTier3 ? p3.get(path3Tier) : maxUpgrades;
 
       buttons.add(
-          new Button(bs, u1.makeSprite(sprite.getLayer()+10).setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
-              u1.description.getAsTextBox(sprite.getLayer() + 11, bs, u1.cost)));
+          new Button(bs, u1.makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
+              u1.description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, u1.cost)));
       buttons.add(
-          new Button(bs, u2.makeSprite(sprite.getLayer()+10).setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
-              u2.description.getAsTextBox(sprite.getLayer() + 11, bs, u2.cost)));
+          new Button(bs, u2.makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
+              u2.description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, u2.cost)));
       buttons.add(
-          new Button(bs, u3.makeSprite(sprite.getLayer()+10).setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
-              u3.description.getAsTextBox(sprite.getLayer() + 11, bs, u3.cost)));
+          new Button(bs, u3.makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
+              u3.description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, u3.cost)));
 
       buttons.forEach(Game.get()::addMouseDetect);
       buttons.forEach(Game.get()::addTickable);

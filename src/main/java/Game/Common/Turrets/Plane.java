@@ -11,6 +11,7 @@ import Game.Common.Projectile;
 import Game.Common.Projectile.Guided;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
+import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Description;
 import GlobalUse.Util;
@@ -85,7 +86,7 @@ public class Plane extends Turret {
   public Plane(TdWorld world, int X, int Y) {
     super(world, X, Y, new BulletLauncher(world, "Dart"));
     onStatsUpdate();
-    sprite.setLayer(30);
+    sprite.setLayer(Constants.layerInterval.flyingMonkey.defalt);
     bulletLauncher.addMobCollide(BasicCollides.damage);
     pineappleLauncher.addProjectileModifier(p -> p.addBeforeDeath(pineapple -> {
       world.aoeDamage(

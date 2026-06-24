@@ -28,6 +28,15 @@ public class Sprite implements AbstractSprite {
     }
   };
 
+  // Constants.layerInterval.somethingsomething
+  // ???-3 map features 4-9 low animaions, ground effects etc
+  // 10-18 for bloons (default 15), 21-25 (ground moabs),
+  // 27-40 monkeys (default 30, engi turret may be lower etc)
+  // 41-49 most projectiles
+  // 50-57 flying moabs
+  // 61-67 (flying monkeys)
+  // 67-69 (screenwide effects maybe some projectiles idk)
+  // and 70+ for ui elements.
   protected int layer;
   protected Shader shader;
   protected boolean deleted = false;
@@ -218,6 +227,15 @@ public class Sprite implements AbstractSprite {
     return layer;
   }
 
+  // Constants.layerInterval.somethingsomething
+  // ???-3 map features 4-9 low animaions, ground effects etc
+  // 10-18 for bloons (default 15), 21-25 (ground moabs),
+  // 27-40 monkeys (default 30, engi turret may be lower etc)
+  // 41-49 most projectiles
+  // 50-57 flying moabs
+  // 61-67 (flying monkeys)
+  // 67-69 (screenwide effects maybe some projectiles idk)
+  // and 70+ for ui elements.
   @Override
   public AbstractSprite setLayer(int layer) {
     mustBeRebatched = true;

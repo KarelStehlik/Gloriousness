@@ -24,7 +24,7 @@ public class ShieldBloon extends TdMob {
   @Override
   public void init(){
     createImage( "BloonShield");
-    sprite.setLayer(3);
+    sprite.setLayer(24);
   }
 
   @Override

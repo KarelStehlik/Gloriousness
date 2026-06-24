@@ -8,6 +8,7 @@ import Game.Common.BulletLauncher;
 import Game.WorldStuff.Game;
 import Game.Mobs.MobClasses.TdMob;
 import Game.WorldStuff.TdWorld;
+import GlobalUse.Constants;
 import GlobalUse.Util;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageData;
@@ -42,7 +43,8 @@ public class EngiTurret8 extends Turret {
     super(world, X, Y,
             new BulletLauncher(templateLauncher));
     resaleValue=0;
-    baseSprite = new Sprite("turretBase", 1).setSize(sprite.getWidth()*1.5f*2,
+    sprite.setLayer(8);
+    baseSprite = new Sprite("turretBase", sprite.getLayer()-1).setSize(sprite.getWidth()*1.5f*2,
             sprite.getHeight()*0.8f*2);
     baseSprite.setPosition(sprite.getX(),sprite.getY()-baseSprite.getHeight());
     world.getBs().addSprite(baseSprite);
