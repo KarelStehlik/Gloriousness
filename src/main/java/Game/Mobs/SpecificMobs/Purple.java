@@ -26,7 +26,7 @@ public class Purple extends TdMob {
     // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 76.0f;
+    stats[Stats.size] = 72.0f;
     stats[Stats.speed] = 7f;
     stats[Stats.health] = 2f;
     stats[Stats.value] = 1f;

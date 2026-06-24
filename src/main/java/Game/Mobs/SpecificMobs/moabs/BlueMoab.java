@@ -6,8 +6,8 @@ import Game.WorldStuff.TdWorld;
 import java.util.List;
 
 public class BlueMoab extends TdMob {
-    private static final List<TdMob.ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,
-            SmallMoab::new, SmallMoab::new);
+    private static final List<TdMob.ChildSpawner> spawns = List.of(Capsule::new, Capsule::new,
+            Capsule::new, Capsule::new);
 
     public BlueMoab(TdWorld world, int wave) {
         super(world, wave);
@@ -19,20 +19,20 @@ public class BlueMoab extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "BloonMoab");
+        createImage( "Blnboss");
     }
 
     // generated stats
-    @Override
-    public void clearStats() {
-        stats[TdMob.Stats.size] = 300.0f;
-        stats[TdMob.Stats.speed] = 5f;
-        stats[TdMob.Stats.health] = 1200f;
-        stats[TdMob.Stats.damageTaken] = 0.7f;
-        stats[TdMob.Stats.value] = 100f;
-        stats[TdMob.Stats.spawns] = 1f;
-    }
-    // end of generated stats
+  @Override
+  public void clearStats() {
+    stats[Stats.size] = 325.0f;
+    stats[Stats.speed] = 1.5f;
+    stats[Stats.health] = 350f;
+    stats[Stats.value] = 100f;
+    stats[Stats.damageTaken] = 1f;
+    stats[Stats.spawns] = 1f;
+  }
+  // end of generated stats
 
     @Override
     public boolean isMoab() {

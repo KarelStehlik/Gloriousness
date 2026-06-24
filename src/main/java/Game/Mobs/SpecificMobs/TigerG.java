@@ -8,34 +8,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TigerG extends TdMob {
-    private static final int spawnCount=6;
+    private static final int spawnCount = 6;
 
-    private static final List<ChildSpawner> spawns=new ArrayList<>(spawnCount);;
+    private static final List<ChildSpawner> spawns = getSpawns();
 
     public TigerG(TdWorld world, int wave) {
-    super(world, wave);
-  }
+        super(world, wave);
+    }
 
-  public TigerG(TdMob parent) {
-    super(parent);
-  }
+    public TigerG(TdMob parent) {
+        super(parent);
+    }
 
-  @Override
-  public void init(){
-    createImage( "TigerG");
-    populateSpawns();
-  }
+    @Override
+    public void init() {
+        createImage("TigerG");
+    }
 
-    private void populateSpawns(){
-            spawns.add(Black::new);
-            while(spawns.size()<spawnCount)
-                spawns.add(Green::new);
+
+    private static List<ChildSpawner> getSpawns() {
+        List<ChildSpawner> spawn = new ArrayList<>(spawnCount);
+        spawn.add(Black::new);
+        while (spawn.size() < spawnCount)
+            spawn.add(Green::new);
+        return spawn;
     }
 
     // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 80.0f;
+    stats[Stats.size] = 72.0f;
     stats[Stats.speed] = 6f;
     stats[Stats.health] = 4f;
     stats[Stats.value] = 1f;

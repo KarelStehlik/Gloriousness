@@ -19,13 +19,13 @@ public class Ceramic extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "BloonCeramic");
+        createImage( "blackrockbloon");
     }
 
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 78.0f;
+    stats[Stats.size] = 85.0f;
     stats[Stats.speed] = 5.8f;
     stats[Stats.health] = 30f;
     stats[Stats.value] = 0f;

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TigerP extends TdMob {
 
-    private static final List<ChildSpawner> spawns = List.of(Pink::new);
+    private static final List<ChildSpawner> spawns = List.of(Purple::new,Black::new);
 
     public TigerP(TdWorld world, int wave) {
         super(world, wave);
@@ -26,7 +26,7 @@ public class TigerP extends TdMob {
     // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 80.0f;
+    stats[Stats.size] = 72.0f;
     stats[Stats.speed] = 7f;
     stats[Stats.health] = 2f;
     stats[Stats.value] = 1f;

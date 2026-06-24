@@ -20,7 +20,7 @@ public class Lead extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "BloonLead");
+        createImage( "platebloon");
     }
 
   @Override
@@ -39,7 +39,7 @@ public class Lead extends TdMob {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 80.0f;
+    stats[Stats.size] = 109.0f;
     stats[Stats.speed] = 2f;
     stats[Stats.health] = 10f;
     stats[Stats.damageTaken] = 0.4f;

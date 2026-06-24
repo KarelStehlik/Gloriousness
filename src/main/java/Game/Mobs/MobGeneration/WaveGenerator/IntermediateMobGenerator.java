@@ -83,11 +83,11 @@ public class IntermediateMobGenerator implements WaveGenerator {
             strongest = bloonStrengthList[bloonStrengthList.length-1];
         } else{
             //strongest is sharply lower than the strength of the strongest bloon, so strongest 10 means at least tiger bloon
-            strongest=Data.gameMechanicsRng.nextInt(temp, bloonStrengthList[bloonStrengthList.length-1]);
+            strongest=Data.gameMechanicsRng.nextInt(temp, Math.min(bloonStrengthList[bloonStrengthList.length-1],temp+6));
         }
         SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
         for (int i = bloonStrengthList.length-1; bloonkindcount>0; i--) {
-            if(bloonStrengthList[i-1]<=strongest) {
+            if(i==0||bloonStrengthList[i-1]<=strongest) {
                 sequence[bloonkindcount-1] = genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 150);
                 bloonkindcount--;
             }

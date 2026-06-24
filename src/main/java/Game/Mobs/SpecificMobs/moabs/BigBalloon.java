@@ -1,34 +1,34 @@
 package Game.Mobs.SpecificMobs.moabs;
 
 import Game.Mobs.MobClasses.TdMob;
+import Game.Mobs.SpecificMobs.BigBlue;
 import Game.WorldStuff.TdWorld;
 
 import java.util.List;
 
-public class Bombarder extends TdMob {
-    private static final List<TdMob.ChildSpawner> spawns = List.of(BlueMoab::new, BlueMoab::new,
-            OrkShip::new, OrkShip::new);
+public class BigBalloon extends TdMob {
+    private static final List<ChildSpawner> spawns = List.of(BigBlue::new);
 
-    public Bombarder(TdWorld world, int wave) {
+    public BigBalloon(TdWorld world, int wave) {
         super(world, wave);
     }
 
-    public Bombarder(TdMob parent) {
+    public BigBalloon(TdMob parent) {
         super(parent);
     }
 
     @Override
     protected void init() {
-        createImage( "Bombarder");
+        createImage("bigballoon");
     }
 
     // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 650.0f;
-    stats[Stats.speed] = 1.2f;
-    stats[Stats.health] = 1500f;
-    stats[Stats.damageTaken] = 0.7f;
+    stats[Stats.size] = 330.0f;
+    stats[Stats.speed] = 1f;
+    stats[Stats.health] = 2000f;
+    stats[Stats.damageTaken] = 2f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
   }
@@ -50,3 +50,4 @@ public class Bombarder extends TdMob {
         return 150;
     }
 }
+

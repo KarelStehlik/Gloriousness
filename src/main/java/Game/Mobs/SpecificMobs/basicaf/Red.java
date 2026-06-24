@@ -27,7 +27,7 @@ public class Red extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 50.0f;
     stats[Stats.speed] = 3f;
-    stats[Stats.health] = 2f;
+    stats[Stats.health] = 1f;
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;

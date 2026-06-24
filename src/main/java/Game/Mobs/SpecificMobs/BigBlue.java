@@ -7,7 +7,7 @@ import java.util.List;
 
 public class BigBlue extends TdMob {
 
-    private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new);
+    private static final List<ChildSpawner> spawns = List.of();
 
     public BigBlue(TdWorld world, int wave) {
         super(world, wave);
@@ -23,16 +23,16 @@ public class BigBlue extends TdMob {
     }
 
     // generated stats
-    @Override
-    public void clearStats() {
-        stats[Stats.size] = 78.0f;
-        stats[Stats.speed] = 5.8f;
-        stats[Stats.health] = 30f;
-        stats[Stats.value] = 0f;
-        stats[Stats.damageTaken] = 1f;
-        stats[Stats.spawns] = 1f;
-    }
-    // end of generated stats
+  @Override
+  public void clearStats() {
+    stats[Stats.size] = 75.0f;
+    stats[Stats.speed] = 1.5f;
+    stats[Stats.health] = 200f;
+    stats[Stats.damageTaken] = 2f;
+    stats[Stats.value] = 100f;
+    stats[Stats.spawns] = 1f;
+  }
+  // end of generated stats
 
     @Override
     public boolean isMoab() {
@@ -47,6 +47,6 @@ public class BigBlue extends TdMob {
 
     @Override
     public int getChildrenSpread() {
-        return 60;
+        return 0;
     }
 }

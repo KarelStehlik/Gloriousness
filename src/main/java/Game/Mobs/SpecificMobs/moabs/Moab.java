@@ -7,8 +7,8 @@ import java.util.List;
 
 public class Moab extends TdMob {
 
-  private static final List<TdMob.ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,
-      SmallMoab::new, SmallMoab::new);
+  private static final List<TdMob.ChildSpawner> spawns = List.of(Capsule::new, Capsule::new,
+          Capsule::new, Capsule::new);
 
     public Moab(TdWorld world, int wave) {
         super(world, wave);
@@ -26,7 +26,7 @@ public class Moab extends TdMob {
   // generated stats
   @Override
   public void clearStats() {
-    stats[Stats.size] = 300.0f;
+    stats[Stats.size] = 600.0f;
     stats[Stats.speed] = 5f;
     stats[Stats.health] = 1200f;
     stats[Stats.damageTaken] = 0.7f;

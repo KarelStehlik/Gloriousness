@@ -1,13 +1,18 @@
 package Game.Mobs.SpecificMobs.moabs;
 
 import Game.Mobs.MobClasses.TdMob;
+import Game.Mobs.SpecificMobs.Ceramic;
+import Game.Mobs.SpecificMobs.Purple;
+import Game.Mobs.SpecificMobs.TigerG;
+import Game.Mobs.SpecificMobs.TigerP;
 import Game.WorldStuff.TdWorld;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Purpcart extends TdMob {
-    private static final List<ChildSpawner> spawns = List.of(SmallMoab::new, SmallMoab::new,
-            SmallMoab::new, SmallMoab::new);
+    private static final int spawnCount=5;
+    private static final List<ChildSpawner> spawns = getSpawns();
 
     public Purpcart(TdWorld world, int wave) {
         super(world, wave);
@@ -19,22 +24,31 @@ public class Purpcart extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "BloonMoab");
+        createImage("purpcart");
         //default moab is at 25
         sprite.setLayer(22);
     }
 
-    // generated stats
-    @Override
-    public void clearStats() {
-        stats[TdMob.Stats.size] = 300.0f;
-        stats[TdMob.Stats.speed] = 5f;
-        stats[TdMob.Stats.health] = 1200f;
-        stats[TdMob.Stats.damageTaken] = 0.7f;
-        stats[TdMob.Stats.value] = 100f;
-        stats[TdMob.Stats.spawns] = 1f;
+    private static List<ChildSpawner> getSpawns() {
+        List<ChildSpawner> spawn=new ArrayList<>(spawnCount);
+        for (int i = 0; i < spawnCount; i++) {
+            spawn.add(Purple::new);
+        }
+        return spawn;
     }
-    // end of generated stats
+
+
+    // generated stats
+  @Override
+  public void clearStats() {
+    stats[Stats.size] = 200.0f;
+    stats[Stats.speed] = 1.5f;
+    stats[Stats.health] = 20f;
+    stats[Stats.damageTaken] = 0.7f;
+    stats[Stats.value] = 100f;
+    stats[Stats.spawns] = 1f;
+  }
+  // end of generated stats
 
     @Override
     public boolean isMoab() {

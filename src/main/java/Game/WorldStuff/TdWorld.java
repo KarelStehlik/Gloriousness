@@ -38,6 +38,7 @@ import Game.Common.Turrets.SlowTurret;
 import Game.Common.Turrets.Turret;
 import Game.Common.Turrets.Wizard;
 import Game.Mobs.MobGeneration.WaveGenerator.IntermediateMobGenerator;
+import Game.Mobs.MobGeneration.WaveGenerator.MoabGenerator;
 import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Log;
@@ -121,6 +122,7 @@ public class TdWorld implements World {
   public TdWorld(int map) {
     mobSpawner.generators.add(new BasicMobGenerator());
     mobSpawner.generators.add(new IntermediateMobGenerator());
+    mobSpawner.generators.add(new MoabGenerator());
     mobSpawner.goldGenerators.add(new BasicGoldBloonGenerator());
     Game game = Game.get();
     game.addMouseDetect(this);
