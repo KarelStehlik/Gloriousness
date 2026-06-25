@@ -26,7 +26,7 @@ public class MoabGenerator implements WaveGenerator {
         return validToWave;
     }
     enum bloonStrength{
-        Balloon(10),BigBalloon(14),BlueMoab(12),Bombarder(20),Capsule(8),Moab(20),OrkShip(10),Purpcart(9),SmallMoab(12),MultiMoabCore(25);
+        Balloon(10),BigBalloon(15),BlueMoab(17),Bombarder(22),Capsule(8),Moab(20),OrkShip(10),Purpcart(9),SmallMoab(15),MultiMoabCore(25);
         public int str;
         bloonStrength(int str){
             this.str=str;
@@ -95,7 +95,7 @@ public class MoabGenerator implements WaveGenerator {
             strongest = bloonStrengthList[bloonStrengthList.length-1].str;
         } else{
             //strongest is sharply lower than the strength of the strongest bloon, so strongest 10 means at least tiger bloon
-            strongest=Data.gameMechanicsRng.nextInt(temp, Math.min(bloonStrengthList[bloonStrengthList.length-1].str,temp+5));
+            strongest=Data.gameMechanicsRng.nextInt(temp, Math.min(bloonStrengthList[bloonStrengthList.length-1].str,temp+3));
         }
         SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
         for (int i = bloonStrengthList.length-1; bloonkindcount>0; i--) {

@@ -33,7 +33,7 @@ public class IntermediateMobGenerator implements WaveGenerator {
         return validToWave;
     }
     enum bloonStrength{;
-        public static final int Purple=6,Black=7,TigerG=10,TigerP=12,Lead=15,Ceramic=20;
+        public static final int Purple=6,Black=7,TigerG=8,TigerP=9,Lead=10,Ceramic=13;
     }
     private SpawnSequence genPart(int strength, float wave, int beginTime){
         int interval;
@@ -44,7 +44,7 @@ public class IntermediateMobGenerator implements WaveGenerator {
             interval=1;
         }
         //I somehow fully bolieve this will yield best results
-        int blooncount=(int)Math.round((wave*wave*1.25f+30)/ Math.pow(strength,2));
+        int blooncount=(int)Math.round((wave*wave*1.25f+50)/ Math.pow(strength,2));
         switch(strength){
             case bloonStrength.Purple -> {
                 return new SpawnSequence(Purple::new, blooncount, beginTime, interval);

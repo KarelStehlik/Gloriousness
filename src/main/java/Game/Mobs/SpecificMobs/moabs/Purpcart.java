@@ -1,11 +1,18 @@
 package Game.Mobs.SpecificMobs.moabs;
 
+import Game.Common.Buffs.Buff.StatBuff;
+import Game.Common.Buffs.Buff.Trail;
+import Game.Misc.Player;
 import Game.Mobs.MobClasses.TdMob;
 import Game.Mobs.SpecificMobs.Ceramic;
 import Game.Mobs.SpecificMobs.Purple;
 import Game.Mobs.SpecificMobs.TigerG;
 import Game.Mobs.SpecificMobs.TigerP;
 import Game.WorldStuff.TdWorld;
+import windowStuff.GraphicsOnly.Graphics;
+import windowStuff.GraphicsOnly.ImageData;
+import windowStuff.GraphicsOnly.Sprite.Sprite;
+import windowStuff.GraphicsOnly.TransformAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +20,8 @@ import java.util.List;
 public class Purpcart extends TdMob {
     private static final int spawnCount=5;
     private static final List<ChildSpawner> spawns = getSpawns();
+    private final ImageData trailIm = Graphics.getImage("laserpurp");
+    private Trail trail;
 
     public Purpcart(TdWorld world, int wave) {
         super(world, wave);
@@ -27,6 +36,17 @@ public class Purpcart extends TdMob {
         createImage("purpcart");
         //default moab is at 25
         sprite.setLayer(22);
+        Trail parentTrail=new Trail(world.getBs(),r ->new Sprite(trailIm,sprite.getLayer()-1).setSize(30,30).setRotation(r+90).
+                playAnimation(new TransformAnimation(1f).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),30,40);
+        trail=new Trail(parentTrail,getX(),getY());
+    }
+
+    @Override
+    public void onGameTick(int tick){
+        super.onGameTick(tick);
+        trail.tick(this);
+        this.addBuff(new StatBuff<TdMob>(StatBuff.Type.INCREASED,
+                Stats.speed, 0.007f));
     }
 
     private static List<ChildSpawner> getSpawns() {
@@ -42,8 +62,8 @@ public class Purpcart extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 200.0f;
-    stats[Stats.speed] = 1.5f;
-    stats[Stats.health] = 20f;
+    stats[Stats.speed] = 1f;
+    stats[Stats.health] = 14f;
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
