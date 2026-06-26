@@ -4,6 +4,7 @@ import Game.Common.Turrets.Turret;
 import Game.Common.Turrets.Turret.Stats;
 import Game.WorldStuff.Game;
 import Game.WorldStuff.TdWorld;
+import GlobalUse.Constants;
 import windowStuff.Button;
 import windowStuff.GraphicsOnly.Sprite.NoSprite;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
@@ -54,7 +55,7 @@ public class TurretGenerator {
   }
 
   public Button makeButton() {
-    return new Button(world.getBs(), new Sprite(image, 50).setPosition(100, 100).setSize(200, 200),
+    return new Button(world.getBs(), new Sprite(image, Constants.layerInterval.ui.defalt+5).setPosition(100, 100).setSize(200, 200),
         (int button, int action) -> {
           if (button == 0 && action == 1) {
             this.select();

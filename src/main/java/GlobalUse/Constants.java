@@ -30,7 +30,7 @@ public final class Constants {
         public int min;
         public int defalt; //default is a keyword in java...
 
-        layerInterval(int max, int min) {
+        layerInterval(int min, int max) {
             this(max, min, (max + min) / 2);
         }
 

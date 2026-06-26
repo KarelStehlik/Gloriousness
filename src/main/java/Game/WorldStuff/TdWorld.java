@@ -162,7 +162,7 @@ public class TdWorld implements World {
 
     turretBar = new ButtonArray(2,
         turretButtons,
-        new Sprite("Button", 40).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
+        new Sprite("Button", Constants.layerInterval.ui.defalt).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
         1, 1);
     game.addMouseDetect(turretBar);
 
@@ -451,9 +451,10 @@ public class TdWorld implements World {
     }
   }
 
+  //this is only for mouse interactions
   @Override
   public int getLayer() {
-    return 5;
+    return Constants.layerInterval.ui.min-1;
   }
 
   @Override
