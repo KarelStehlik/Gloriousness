@@ -23,19 +23,6 @@ public class Lead extends TdMob {
         createImage( "platebloon");
     }
 
-  @Override
-  public void takeDamage(float amount, DamageType type) {
-    double resistance = stats[Stats.damageTaken];
-    amount -= 1;
-    amount = Math.max(0, amount);
-    double eDamage = amount * resistance / stats[Stats.health];
-    healthPart -= eDamage;
-    if (healthPart <= 0.0000001 && exists) {
-      die();
-    }
-  }
-
-
   // generated stats
   @Override
   public void clearStats() {

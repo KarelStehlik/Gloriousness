@@ -56,7 +56,7 @@ Mobs/SpecificMobs/moabs/Capsule
     size=160.0 | speed=3.75 | health=20 | value=100
 ---
 Mobs/SpecificMobs/moabs/PurpCart
-    size=200.0 | speed=1 | health=14 |damageTaken=0.7| value=100
+    size=200.0 | speed=3 | health=14 |damageTaken=0.7| value=100
 ---
 Mobs/SpecificMobs/BigBlue
     size=75.0 | speed=1.5 | health=200 |damageTaken=2| value=100

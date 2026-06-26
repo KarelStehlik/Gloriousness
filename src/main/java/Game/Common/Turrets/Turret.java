@@ -3,6 +3,7 @@ package Game.Common.Turrets;
 import static Game.Enums.TargetingOption.FIRST;
 import static Game.Enums.TargetingOption.LAST;
 import static Game.Enums.TargetingOption.STRONG;
+import static org.lwjgl.glfw.GLFW.*;
 
 import Game.Common.Buffs.Buff.Buff;
 import Game.Common.Buffs.Buff.BuffHandler;
@@ -19,9 +20,11 @@ import GlobalUse.Data;
 import GlobalUse.Description;
 import GlobalUse.Util;
 import java.awt.Point;
+import java.lang.invoke.SwitchPoint;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
+import windowStuff.Controls.KeyboardDetect;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageData;
 import windowStuff.GraphicsOnly.Sprite.NoSprite;
@@ -343,13 +346,17 @@ public abstract class Turret extends GameObject implements TickDetect {
     delete();
   }
 
-  private class UpgradeMenu {
+  private class UpgradeMenu implements KeyboardDetect {
 
     private final List<Sprite> sprites = new ArrayList<>(1);
     private final List<Button> buttons = new ArrayList<>(3);
-
+    private final Upgrade[] upgrades=getUpgrades();
+    private boolean deleted=false;
+    private Button sellButton;
+    private Button[] upgradeButtons=new Button[3];
     UpgradeMenu() {
       float X = Util.clamp(x, 110, 1810), Y = Util.clamp(y, 190, 870);
+      Game.get().addKeyDetect(this);
       SpriteBatching bs = Game.get().getSpriteBatching("main");
       rangeDisplay.setHidden(false);
       sprites.add(new Sprite("Button", Constants.layerInterval.ui.min + 5).
@@ -360,15 +367,15 @@ public abstract class Turret extends GameObject implements TickDetect {
       buttons.add(new Button(
           new NoSprite().setLayer(Constants.layerInterval.ui.min + 6).setSize(5000, 5000).setPosition(X, Y - 150),
           (x, y) -> close()));
-
-      buttons.add(new Button(
-          world.getBs(),
-          new Sprite("Sell", Constants.layerInterval.ui.min + 9).setSize(190, 40).setPosition(X, Y - 180),
-          (x, y) -> {
-            close();
-            sell();
-          },
-          () -> "Sell for: " + getSellprice()));
+      sellButton=new Button(
+              world.getBs(),
+              new Sprite("Sell", Constants.layerInterval.ui.min + 9).setSize(190, 40).setPosition(X, Y - 180),
+              (x, y) -> {
+                close();
+                sell();
+              },
+              () -> "Sell for: " + getSellprice());
+      buttons.add(sellButton);
 
       buttons.add(new Button(
           world.getBs(),
@@ -382,6 +389,20 @@ public abstract class Turret extends GameObject implements TickDetect {
           },
           () -> "" + targeting));
 
+      for(int i=0;i<3;i++) {
+        upgradeButtons[i] = makeUpgradeButton(X, Y, i, bs);
+        buttons.add(upgradeButtons[i]);
+      }
+
+      buttons.forEach(Game.get()::addMouseDetect);
+      buttons.forEach(Game.get()::addTickable);
+    }
+    private Button makeUpgradeButton(float X,float Y,int i,SpriteBatching bs){
+      return new Button(bs, upgrades[i].makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y -50+i*100), (mx, my) -> buttonClicked(upgrades[i], i+1),
+              upgrades[i].description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, upgrades[i].cost));
+    }
+
+    private Upgrade[] getUpgrades() {
       List<Upgrade> p1 = getUpgradePath1();
       List<Upgrade> p2 = getUpgradePath2();
       List<Upgrade> p3 = getUpgradePath3();
@@ -413,23 +434,37 @@ public abstract class Turret extends GameObject implements TickDetect {
           maxTier2 = 0;
         }
       }
-
       Upgrade u1 = path1Tier < maxTier1 ? p1.get(path1Tier) : maxUpgrades;
       Upgrade u2 = path2Tier < maxTier2 ? p2.get(path2Tier) : maxUpgrades;
       Upgrade u3 = path3Tier < maxTier3 ? p3.get(path3Tier) : maxUpgrades;
+      return new Upgrade[]{u1,u2,u3};
+    }
 
-      buttons.add(
-          new Button(bs, u1.makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y - 50), (mx, my) -> buttonClicked(u1, 1),
-              u1.description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, u1.cost)));
-      buttons.add(
-          new Button(bs, u2.makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y + 50), (mx, my) -> buttonClicked(u2, 2),
-              u2.description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, u2.cost)));
-      buttons.add(
-          new Button(bs, u3.makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y + 150), (mx, my) -> buttonClicked(u3, 3),
-              u3.description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, u3.cost)));
+    @Override
+    public void onKeyPress(int key, int action, int mods) {
+      if(key==GLFW_KEY_BACKSPACE){
+        close();
+        sell();
+      }
+      if(key==GLFW_KEY_E){
+        buttonClicked(upgrades[0],1);
+      }
+      if(key==GLFW_KEY_R){
+        buttonClicked(upgrades[1],2);
+      }
+      if(key==GLFW_KEY_T){
+        buttonClicked(upgrades[2],3);
+      }
+    }
 
-      buttons.forEach(Game.get()::addMouseDetect);
-      buttons.forEach(Game.get()::addTickable);
+    @Override
+    public void delete() {
+      deleted=true;
+    }
+
+    @Override
+    public boolean wasDeleted() {
+      return deleted;
     }
 
     private void buttonClicked(Upgrade u, int path) {
@@ -456,6 +491,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
 
     void close() {
+      delete();
       sprites.forEach(Sprite::delete);
       buttons.forEach(Button::delete);
       rangeDisplay.setHidden(true);

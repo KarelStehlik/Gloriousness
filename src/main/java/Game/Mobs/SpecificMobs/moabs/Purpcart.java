@@ -33,6 +33,9 @@ public class Purpcart extends TdMob {
 
     @Override
     protected void init() {
+        //the base speed of this bloon has to be bigger so that the childbloons don't yeet themselves as hard when they get this thing's buff
+        this.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE,
+                Stats.speed, 0.3f));
         createImage("purpcart");
         //default moab is at 25
         sprite.setLayer(22);
