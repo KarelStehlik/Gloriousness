@@ -125,13 +125,15 @@ public class Sprite implements AbstractSprite {
   }
 
   @Override
-  public void setNaturalHeight() {
+  public Sprite setNaturalHeight() {
     setSize(2 * width, 2 * width / (texCoords[4] - texCoords[2]) * (texCoords[3] - texCoords[1]));
+    return this;
   }
 
   @Override
-  public void setNaturalWidth() {
+  public Sprite setNaturalWidth() {
     setSize(2 * height * (texCoords[4] - texCoords[2]) / (texCoords[3] - texCoords[1]), 2 * height);
+    return this;
   }
 
   @Override

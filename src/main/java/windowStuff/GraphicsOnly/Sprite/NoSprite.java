@@ -49,12 +49,12 @@ public class NoSprite implements AbstractSprite {
   }
 
   @Override
-  public void setNaturalHeight() {
-
+  public AbstractSprite setNaturalHeight() {
+    return this;
   }
   @Override
-  public void setNaturalWidth() {
-
+  public AbstractSprite setNaturalWidth() {
+    return this;
   }
   @Override
   public NoSprite setPosition(float X, float Y) {

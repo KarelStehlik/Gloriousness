@@ -16,7 +16,7 @@ public class ButtonArray implements MouseDetect, TickDetect {
   boolean shown = true;
 
   public ButtonArray(int columns, Button[] buttons, AbstractSprite background, int buttonSize,
-      int x, int y, int buttonSpacing, int anchorX, int anchorY) {
+      int x, int y, int buttonSpacing, float anchorX, float anchorY) {
     this.columns = columns;
     this.buttons = buttons;
     this.background = background;
@@ -25,7 +25,7 @@ public class ButtonArray implements MouseDetect, TickDetect {
     move(x, y, anchorX, anchorY);
   }
 
-  private void move(int x, int y, int anchorX, int anchorY) {
+  private void move(int x, int y, float anchorX, float anchorY) {
     for (Button b : buttons) {
       b.getSprite().setSize(buttonSize, buttonSize);
     }

@@ -31,7 +31,7 @@ public class MapSelect {
         islands.add(makeIsland(islands.size()));
     }
 
-    private int[] lastIslandPos={(int)(Constants.screenSize.x*0.1),(int)(Constants.screenSize.y*0.65)};
+    private int[] lastIslandPos={(int)(Constants.screenSize.x*0.1),(int)(Constants.screenSize.y*0.5)};
     private Island makeIsland(int index){
         Island isl= new Island(lastIslandPos,index,this);
         lastIslandPos[0]+=(int)(Constants.screenSize.x*0.2);

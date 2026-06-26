@@ -16,21 +16,27 @@ public class Island {
     MapSelect mapSelect;
     int index;
     Sprite lockSprite;
+    Sprite image;
     private boolean locked=true;
+    private int size=120;
 
     public Island(int[] pos,int index,MapSelect mapSelect) {
         this.position= new int[]{pos[0], pos[1]};
         this.index=index;
         levels=makeLevels();
         lockSprite=new Sprite("lock", 2).
-            setPosition(pos[0], pos[1] ).
-            setSize(40, 40);
+            setPosition(pos[0], pos[1]+size ).
+            setSize(size/2, size/2);
         this.mapSelect = mapSelect;
+        this.image=new Sprite("island", 1).
+                setPosition(pos[0], pos[1]+size ).
+                setSize(size*2,size*2).setNaturalHeight();
     }
 
     public void activate(SpriteBatching bs) {
         levels.addAllToBs(bs);
         lockSprite.addToBs(bs);
+        image.addToBs(bs);
         Game.get().addMouseDetect(levels);
         levels.show();
     }
@@ -52,8 +58,8 @@ public class Island {
         }
         return new ButtonArray(2,
                 buttons,
-                new Sprite("Button", 4), 75, position[0], position[1], 10,
-                1, 1);
+                new Sprite("Button", 10), 75, position[0], position[1], 10,
+                0.5f, 0.5f);
     }
     private boolean mapAvailable(int index){
         return (!locked)&&(!mapDone[index]);
@@ -62,7 +68,7 @@ public class Island {
     private Button makeMapButton(int id,int index) {
 
         String mapName = Data.listMaps()[id];
-        Sprite sp = new Sprite(mapName, 1).setSize(10, 10);
+        Sprite sp = new Sprite(mapName, 9).setSize(10, 10);
         Button b = new Button(Game.get().getSpriteBatching("main"), sp, (x, y) -> {
             if(!mapAvailable(index))
                 return;
