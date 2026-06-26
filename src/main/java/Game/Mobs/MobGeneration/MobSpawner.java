@@ -36,7 +36,6 @@ public class MobSpawner {
         }
 
         if (waves.isEmpty()) {
-            world.beginWave();
             beginWave();
         }
     }

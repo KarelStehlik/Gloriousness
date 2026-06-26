@@ -631,10 +631,6 @@ public class TdWorld implements World {
     this.currentTool = currentTool;
   }
 
-  public void onBeginWave() {
-    resourceTracker.update();
-  }
-
   public boolean canFitTurret(int x, int y, float size) {
     for (Iterator<Turret> iterator = turrets.iterator(); iterator.hasNext(); ) {
       Turret t = iterator.next();
@@ -714,13 +710,10 @@ public class TdWorld implements World {
     private static final int ProjectileGridSquareSize = 7;
   }
 
-  public void beginWave() {
-    money+=income;
-    onBeginWave();
-  }
-
   public void endWave(int num) {
     turrets.forEach(Turret::endOfRound);
     upgrades.gib(num + 1);
+    money+=income;
+    resourceTracker.update();
   }
 }
