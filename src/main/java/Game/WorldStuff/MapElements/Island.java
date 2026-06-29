@@ -1,13 +1,20 @@
 package Game.WorldStuff.MapElements;
 
 import Game.WorldStuff.Game;
+import Game.WorldStuff.GameModifiers;
 import Game.WorldStuff.TdWorld;
 import Game.WorldStuff.WorldParameters;
+import GlobalUse.Constants;
 import GlobalUse.Data;
+import GlobalUse.Log;
 import windowStuff.Button;
 import windowStuff.ButtonArray;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
+import windowStuff.GraphicsOnly.Text.SimpleText;
+import windowStuff.GraphicsOnly.Text.TextBox;
+
+import java.util.ArrayList;
 
 public class Island {
     private ButtonArray levels;
@@ -16,9 +23,10 @@ public class Island {
     MapSelect mapSelect;
     int index;
     Sprite lockSprite;
-    Sprite image;
+    Button image;
     private boolean locked=true;
     private int size=120;
+    private GameModifiers mods=new GameModifiers();
 
     public Island(int[] pos,int index,MapSelect mapSelect) {
         this.position= new int[]{pos[0], pos[1]};
@@ -28,18 +36,28 @@ public class Island {
             setPosition(pos[0], pos[1]+size ).
             setSize(size/2, size/2);
         this.mapSelect = mapSelect;
-        this.image=new Sprite("island", 1).
-                setPosition(pos[0], pos[1]+size ).
-                setSize(size*2,size*2).setNaturalHeight();
     }
 
     public void activate(SpriteBatching bs) {
         levels.addAllToBs(bs);
         lockSprite.addToBs(bs);
-        image.addToBs(bs);
+
+        ArrayList<SimpleText> descs=new ArrayList<>();
+        for(String s:mods.texts){
+            descs.add(new SimpleText(s, "Calibri", 450, 0, 0, Constants.layerInterval.ui.min+10,
+                    35, bs, "basic", "textbox"));
+        }
+        Sprite textBackground=new Sprite("textbox",Constants.layerInterval.ui.min,"basic");
+        this.image=new Button(bs,new Sprite("island", 1).
+                setPosition(position[0], position[1]+size ).
+                setSize(size*2,size*2).setNaturalHeight(),(x,y)->{},new TextBox(0,0,500,true,descs,textBackground));
+
+
+        Game.get().addMouseDetect(image);
         Game.get().addMouseDetect(levels);
         levels.show();
     }
+
 
     private ButtonArray makeLevels() {
         int mapCount = Data.listMaps().length;
@@ -94,14 +112,10 @@ public class Island {
 
     //the pre random default for the next map - updated every map.
     //map gets overwritten
-    private WorldParameters defaultParams = new WorldParameters(0, 3, 0, 1);
+    private WorldParameters defaultParams = new WorldParameters(0, 10, 0, 1);
 
     private WorldParameters generateWorldParams(int id) {
-        WorldParameters worldParameters = new WorldParameters(id, defaultParams.maxRound, defaultParams.startDifficulty, defaultParams.roundScaling);
-        //TODO apply random modifiers and stuff, add stuff to world parameters for stuff like cash starve, list of favored monkeys, and other map specifics
-        if (defaultParams.maxRound < 10)
-            defaultParams.maxRound++;
-        defaultParams.roundScaling += 0.1f;
+        WorldParameters worldParameters = new WorldParameters(id, defaultParams.maxRound, defaultParams.startDifficulty, defaultParams.roundScaling,mods);
         return worldParameters;
     }
     public void unlock(){
@@ -120,6 +134,7 @@ public class Island {
     public void hideInBunkerFromNuke(){
         //prevents it from getting deleted by call to game.nuke()
         Game.get().removeMouseDetect(levels);
+        Game.get().removeMouseDetect(image);
     }
 
 }

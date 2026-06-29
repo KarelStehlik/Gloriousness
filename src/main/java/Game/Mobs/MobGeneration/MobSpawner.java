@@ -1,5 +1,6 @@
 package Game.Mobs.MobGeneration;
 
+import Game.Common.Buffs.Modifier.Modifier;
 import Game.WorldStuff.Game;
 import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobGeneration.WaveGenerator.WaveGenerator;
@@ -17,14 +18,21 @@ public class MobSpawner {
     public ArrayList<WaveGenerator> goldGenerators = new ArrayList();
     List<Wave> waves = new ArrayList<>(1);
     private TdWorld world;
+    private ArrayList<Modifier<Wave>> waveEffects=new ArrayList<>();
+
 
     public MobSpawner(TdWorld world) {
         this.world = world;
     }
 
-    public float difficultyMult=1;
-    public float difficultyAdd=0;
+    public float difficultyMult = 1;
+    public float difficultyAdd = 0;
     public int maxWave = Integer.MAX_VALUE;
+
+    public void addWaveEffect(Modifier<Wave> effect){
+        waveEffects.add(effect);
+    }
+
     public void run() {
         for (Iterator<Wave> iterator = waves.iterator(); iterator.hasNext(); ) {
             Wave x = iterator.next();
@@ -41,12 +49,21 @@ public class MobSpawner {
     }
 
     public void beginWave() {
-        if(waveNum>= maxWave){
+        if (waveNum >= maxWave) {
             Game.get().startIntroScreen();
             return;
         }
-        float waveDiff=waveNum*difficultyMult+difficultyAdd;
-        if((waveNum+1)%5==0){
+        Wave wave=CreateWave();
+        for(Modifier<Wave> mod:waveEffects){
+            mod.mod(wave);
+        }
+        waves.add(wave);
+        waveNum++;
+    }
+
+    public Wave CreateWave() {
+        float waveDiff = waveNum * difficultyMult + difficultyAdd;
+        if ((waveNum + 1) % 5 == 0) {
             Collections.shuffle(goldGenerators);
             for (WaveGenerator gen : goldGenerators) {
                 if (gen.validFromWave() <= waveDiff && gen.validToWave() >= waveDiff) {
@@ -58,13 +75,10 @@ public class MobSpawner {
         Collections.shuffle(generators);
         for (WaveGenerator gen : generators) {
             if (gen.validFromWave() <= waveDiff && gen.validToWave() >= waveDiff) {
-                waves.add(new Wave(world, waveNum, gen.generate(waveDiff)));
-                waveNum++;
-                return;
+                return new Wave(world, waveNum, gen.generate(waveDiff));
             }
         }
-        waves.add(Wave.get(world, (int) waveDiff));
         Log.write("generating wave using old system waves");
-        waveNum++;
+        return Wave.get(world, (int) waveDiff);
     }
 }

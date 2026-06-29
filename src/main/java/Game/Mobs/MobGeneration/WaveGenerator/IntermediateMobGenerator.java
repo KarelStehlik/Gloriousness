@@ -11,6 +11,7 @@ import GlobalUse.Data;
 import GlobalUse.Log;
 import windowStuff.Controls.MouseDetect;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -72,7 +73,7 @@ public class IntermediateMobGenerator implements WaveGenerator {
     }
 
     //float for potential difficulty setting
-    public SpawnSequence[] generate(float wave) {
+    public ArrayList<SpawnSequence> generate(float wave) {
         int [] bloonStrengthList={bloonStrength.Purple,bloonStrength.Black,bloonStrength.TigerG,bloonStrength.TigerP,bloonStrength.Lead,bloonStrength.Ceramic};
         bloonStrengthList= Arrays.stream(bloonStrengthList).sorted().toArray();
 
@@ -85,10 +86,10 @@ public class IntermediateMobGenerator implements WaveGenerator {
             //strongest is sharply lower than the strength of the strongest bloon, so strongest 10 means at least tiger bloon
             strongest=Data.gameMechanicsRng.nextInt(temp, Math.min(bloonStrengthList[bloonStrengthList.length-1],temp+6));
         }
-        SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
+        ArrayList<SpawnSequence> sequence=new ArrayList<SpawnSequence>(bloonkindcount);
         for (int i = bloonStrengthList.length-1; bloonkindcount>0; i--) {
             if(i==0||bloonStrengthList[i-1]<=strongest) {
-                sequence[bloonkindcount-1] = genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 150);
+                sequence.add( genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 150));
                 bloonkindcount--;
             }
         }

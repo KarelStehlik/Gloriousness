@@ -4,6 +4,7 @@ import Game.Mobs.MobGeneration.SpawnSequence;
 import Game.Mobs.SpecificMobs.moabs.*;
 import GlobalUse.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -84,7 +85,7 @@ public class MoabGenerator implements WaveGenerator {
     }
 
     //float for potential difficulty setting
-    public SpawnSequence[] generate(float wave) {
+    public ArrayList<SpawnSequence> generate(float wave) {
         bloonStrength[] bloonStrengthList=bloonStrength.values();
         Arrays.sort(bloonStrengthList, Comparator.comparingInt((bloonStrength a)->a.str));
 
@@ -97,10 +98,10 @@ public class MoabGenerator implements WaveGenerator {
             //strongest is sharply lower than the strength of the strongest bloon, so strongest 10 means at least tiger bloon
             strongest=Data.gameMechanicsRng.nextInt(temp, Math.min(bloonStrengthList[bloonStrengthList.length-1].str,temp+3));
         }
-        SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
+        ArrayList<SpawnSequence> sequence = new ArrayList<SpawnSequence>(bloonkindcount);
         for (int i = bloonStrengthList.length-1; bloonkindcount>0; i--) {
             if(i==0||bloonStrengthList[i-1].str<=strongest) {
-                sequence[bloonkindcount-1] = genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 150);
+                sequence.add( genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 150));
                 bloonkindcount--;
             }
         }

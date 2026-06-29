@@ -7,6 +7,8 @@ import Game.Mobs.MobGeneration.SpawnSequence;
 import Game.Mobs.SpecificMobs.GoldenBloon;
 import GlobalUse.Data;
 
+import java.util.ArrayList;
+
 public class BasicGoldBloonGenerator implements WaveGenerator {
 
 
@@ -26,13 +28,13 @@ public class BasicGoldBloonGenerator implements WaveGenerator {
 //        System.out.println(incomePerDamage+"   "+wave);
     }
     @Override
-    public SpawnSequence[] generate(float wave) {
-        SpawnSequence[] sequence=new SpawnSequence[1];
+    public ArrayList<SpawnSequence> generate(float wave) {
+        ArrayList<SpawnSequence> sequence=new ArrayList<SpawnSequence>(1);
         calcValue(wave);
-        sequence[0]=new SpawnSequence((TdWorld w, int round)->{
+        sequence.add(new SpawnSequence((TdWorld w, int round)->{
                     GoldenBloon gold=new GoldenBloon(w,round, incomePerDamage, (float) (Math.sqrt(wave)*2));
                     return gold;
-        }, 1, Data.gameMechanicsRng.nextInt(1,250), 50);
+        }, 1, Data.gameMechanicsRng.nextInt(1,250), 50));
         return sequence;
     }
 }

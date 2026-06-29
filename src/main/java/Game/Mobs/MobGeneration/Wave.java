@@ -2,6 +2,7 @@ package Game.Mobs.MobGeneration;
 
 import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
+import Game.Common.Buffs.Modifier.Modifier;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.TickDetect;
 import Game.Mobs.SpecificMobs.Black;
@@ -20,6 +21,8 @@ import Game.Mobs.SpecificMobs.moabs.SmallMoab;
 import Game.Mobs.MobClasses.TdMob.Stats;
 import Game.Mobs.SpecificMobs.basicaf.Yellow;
 import GlobalUse.Data;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,15 +44,16 @@ public class Wave implements TickDetect {
   public final TdWorld world;
   private final float scaling;
   private int elapsed = 0;
-  private final SpawnSequence[] spawns;
+  private ArrayList<SpawnSequence> spawns;
 
   public float getElapsedMillis() {
     return elapsedMillis;
   }
 
   private final float elapsedMillis = 0;
+  private static ArrayList<Modifier<TdMob>> mobMods=new ArrayList<>();
 
-  public Wave(TdWorld world, int n, SpawnSequence[] s) {
+  public Wave(TdWorld world, int n, ArrayList<SpawnSequence> s) {
     MobsAliveFromEachWave.put(n, 0);
     this.world = world;
     this.waveNum = n;
@@ -75,7 +79,7 @@ public class Wave implements TickDetect {
     if (!MobsAliveFromEachWave.containsKey(waveNum)) {
       return true;
     }
-    if (MobsAliveFromEachWave.get(waveNum) == 0 && Arrays.stream(spawns)
+    if (MobsAliveFromEachWave.get(waveNum) == 0 && spawns.stream()
         .allMatch(sp -> sp.done(elapsed))) {
       MobsAliveFromEachWave.remove(waveNum);
       return true;
@@ -93,18 +97,26 @@ public class Wave implements TickDetect {
     e.addBuff(
         new StatBuff<TdMob>(Type.MORE, Stats.speed,
             spdScaling));
-  }
+    for(Modifier<TdMob> mod:mobMods){
+        mod.mod(e);
+    }
 
+  }
+    public void add(SpawnSequence e) {
+        spawns.add(e);
+    }
   public void add(TdMob e) {
     world.addEnemy(e);
   }
 
   public static Wave get(TdWorld w, int num) {
-
+      ArrayList<SpawnSequence> spawnSequences=new ArrayList<>();
     if (num >= waves.length) {
-      return new Wave(w, num, waves[Data.gameMechanicsRng.nextInt(waves.length - 5, waves.length)]);
+        spawnSequences.addAll(Arrays.asList(waves[Data.gameMechanicsRng.nextInt(waves.length - 5, waves.length)]));
+    }else{
+        spawnSequences.addAll(Arrays.asList(waves[num]));
     }
-    return new Wave(w, num, waves[num]);
+    return new Wave(w, num, spawnSequences);
   }
 
   private static float getScaling(int wave) {
@@ -116,6 +128,14 @@ public class Wave implements TickDetect {
             Math.max(0, wave - 150) * .5f +
             Math.max(0, wave - 300) * 1f
         ;
+  }
+
+  public static void addMobMod(Modifier<TdMob> mod){
+      mobMods.add(mod);
+  }
+
+  public static void clearMods(){
+      mobMods.clear();
   }
 
   private static final SpawnSequence[][] waves = new SpawnSequence[][]{

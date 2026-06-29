@@ -1,5 +1,6 @@
 package Game.WorldStuff.MapElements;
 
+import Game.Common.Buffs.Modifier.Modifier;
 import Game.WorldStuff.Game;
 import Game.WorldStuff.TdWorld;
 import Game.WorldStuff.World;
@@ -57,12 +58,21 @@ public class MapSelect {
             i.hideInBunkerFromNuke();
         }
     }
-
+    private int moreMaxRound=0;
+    private float moreScaling=0;
     public void triggerLevel(WorldParameters baseLevelParams){
         hideInBunkerFromNuke();
 
         Game.get().getWorld().delete();
-        //TODO apply random modifiers and stuff, add stuff to world parameters for stuff like max monkeys, list of bonuses that carry over from map to map etc
+
+        if (moreMaxRound < 10)
+            moreMaxRound++;
+        baseLevelParams.maxRound += moreMaxRound;
+        baseLevelParams.roundScaling += moreScaling;
+        moreScaling+=0.1f;
+        for(Modifier<WorldParameters> mod:baseLevelParams.mods.parameterMods){
+            mod.mod(baseLevelParams);
+        }
         TdWorld baseLevel=new TdWorld(baseLevelParams);
         Game.get().setWorld(baseLevel);
 

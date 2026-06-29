@@ -6,6 +6,8 @@ import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengles.GLES20.GL_ONE;
 import static org.lwjgl.opengles.GLES20.GL_SRC_COLOR;
+
+import Game.Common.Buffs.Modifier.Modifier;
 import Game.Common.Projectile;
 import Game.Misc.*;
 import Game.Misc.Ability.AbilityGroup;
@@ -13,6 +15,7 @@ import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.Buffs.VoidFunc;
 import Game.Enums.DamageType;
+import Game.Mobs.MobGeneration.Wave;
 import Game.Mobs.MobGeneration.WaveGenerator.BasicGoldBloonGenerator;
 import Game.Mobs.MobGeneration.WaveGenerator.BasicMobGenerator;
 import Game.Mobs.MobGeneration.MobSpawner;
@@ -89,13 +92,12 @@ public class TdWorld implements World {
   private final Sprite mapSprite;
   private final List<Point> mapData;
   private final TextBox resourceTracker;
-  private final MobSpawner mobSpawner = new MobSpawner(this);
+  public final MobSpawner mobSpawner = new MobSpawner(this);
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
   private final List<Turret> turrets = new ArrayList<>(1);
   private final List<VoidFunc> queuedEvents = new ArrayList<>(1);
   private Tool currentTool;
   private final ButtonArray turretBar;
-
 
   @Override
   public int getTick() {
@@ -114,6 +116,9 @@ public class TdWorld implements World {
     mobSpawner.difficultyAdd=p.startDifficulty;
     mobSpawner.difficultyMult=p.roundScaling;
     mobSpawner.maxWave=p.maxRound;
+    for(Modifier<TdWorld> mod:p.mods.mods){
+      mod.mod(this);
+    }
   }
 
   public TdWorld(int map) {
@@ -559,6 +564,7 @@ public class TdWorld implements World {
 
   @Override
   public void delete() {
+    Wave.clearMods();
     isDeleted=true;
     mapSprite.delete();
     turretBar.delete();
@@ -608,6 +614,9 @@ public class TdWorld implements World {
   public void setMoney(double money) {
     this.money = money;
     resourceTracker.update();
+  }
+  public double getIncome() {
+    return income;
   }
   public void setIncome(double newIncome) {
     this.income = newIncome;

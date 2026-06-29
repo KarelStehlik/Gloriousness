@@ -2,6 +2,8 @@ package Game.Mobs.MobGeneration.WaveGenerator;
 
 import Game.Mobs.MobGeneration.SpawnSequence;
 
+import java.util.ArrayList;
+
 public interface WaveGenerator {
 
     int validFromWave();
@@ -9,6 +11,6 @@ public interface WaveGenerator {
 
 
     //float for potential difficulty setting
-    public SpawnSequence[] generate(float wave);
+    public ArrayList<SpawnSequence> generate(float wave);
 
 }

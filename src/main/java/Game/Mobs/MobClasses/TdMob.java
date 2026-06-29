@@ -35,10 +35,19 @@ public abstract class TdMob extends GameObject implements TickDetect {
     Wave.increaseMobsInWave(waveNum);
     clearStats();
     healthPart = 1;
-    setSize((int) stats[Stats.size], (int) stats[Stats.size]);
     grid = world.getMobsGrid();
     exists = true;
     init();
+    updateSize();
+  }
+
+  public void updateSize(){
+    if(wasDeleted()){
+      return;
+    }
+    setSize((int) stats[Stats.size], (int) stats[Stats.size]);
+    sprite.setSize(width, height);
+    sprite.setNaturalHeight();
   }
 
   public TdMob(TdWorld world, int wave) {

@@ -9,6 +9,8 @@ import Game.Mobs.SpecificMobs.basicaf.Red;
 import Game.Mobs.SpecificMobs.basicaf.Yellow;
 import GlobalUse.Data;
 
+import java.util.ArrayList;
+
 //sends purely basic bloons - red to pink
 public class BasicMobGenerator implements WaveGenerator {
     private static int validFromWave = 0;
@@ -66,7 +68,7 @@ public class BasicMobGenerator implements WaveGenerator {
     }
 
     //float for potential difficulty setting
-    public SpawnSequence[] generate(float wave) {
+    public ArrayList<SpawnSequence> generate(float wave) {
         int bloonkindcount = Math.min((int) wave / 5 + 1, 3);
         int strongest;
         int temp=(int)Math.ceil( (wave+1)/3);
@@ -83,9 +85,9 @@ public class BasicMobGenerator implements WaveGenerator {
                 }
             }
         }
-        SpawnSequence[] sequence = new SpawnSequence[bloonkindcount];
+        ArrayList<SpawnSequence> sequence=new ArrayList<SpawnSequence>(bloonkindcount);
         for (int i = 0; i < bloonkindcount; i++) {
-            sequence[i]=genPart(strongest-i,wave,(bloonkindcount-1-i)*150);
+            sequence.add(genPart(strongest-i,wave,(bloonkindcount-1-i)*150));
             if(strongest==7)
                 strongest--;
         }

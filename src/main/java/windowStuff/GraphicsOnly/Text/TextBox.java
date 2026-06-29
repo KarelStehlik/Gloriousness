@@ -32,7 +32,19 @@ public class TextBox implements Text { //not sure if imgonna use this,
       arrange();
     }
     borderSize = 0;
+  }
 
+  public TextBox(int x, int y, int maxWidth, boolean rearrange, ArrayList<SimpleText> texts,Sprite background) {
+    this.texts = texts;
+    this.maxWidth = maxWidth;
+    this.rearrange = rearrange;
+    this.x = x;
+    this.y = y;
+    this.background = background;
+    if (rearrange) {
+      arrange();
+    }
+    borderSize = 0;
   }
 
   public TextBox(int x, int y, int maxWidth, boolean rearrange, ArrayList<SimpleText> texts,
