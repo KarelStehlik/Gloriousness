@@ -2,6 +2,10 @@ package Game.Misc;
 
 import Game.WorldStuff.TdWorld;
 import GlobalUse.Util;
+import windowStuff.GraphicsOnly.Sprite.AbstractSprite;
+import windowStuff.GraphicsOnly.Sprite.NoSprite;
+import windowStuff.GraphicsOnly.Sprite.Sprite;
+
 import java.awt.Rectangle;
 
 public class GameObject {
@@ -50,6 +54,10 @@ public class GameObject {
   public void clearStats() {
   }
 
+  public AbstractSprite getSprite(){
+    return new NoSprite();
+  }
+
   public float getX() {
     return x;
   }
@@ -77,6 +85,9 @@ public class GameObject {
     height = _height;
     hitbox.setSize(width, height);
     hitbox.setLocation((int) (x - width / 2), (int) (y + height / 2));
+  }
+  public float getSize(){
+    return (float)(hitbox.getWidth()+hitbox.getHeight())/2f;
   }
 
   public void onStatsUpdate() {

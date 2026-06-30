@@ -1,9 +1,7 @@
 package Game.Common.Turrets;
 
+import Game.Common.Buffs.Buff.*;
 import Game.Misc.BasicCollides;
-import Game.Common.Buffs.Buff.DelayedTrigger;
-import Game.Common.Buffs.Buff.OnTickBuff;
-import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.BulletLauncher;
 import Game.Enums.DamageType;
@@ -13,6 +11,7 @@ import Game.WorldStuff.TdWorld;
 import Game.Misc.TurretGenerator;
 import GlobalUse.Data;
 import GlobalUse.Description;
+import GlobalUse.Log;
 import GlobalUse.RefFloat;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageData;
@@ -31,7 +30,7 @@ public class Druid8 extends Turret {
         (world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power) -> new DruidBall(
             world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power,
             getStats()[ExtraStats.regrowTime]));
-    originalStats[ExtraStats.regrowTime] = 0.5f * originalStats[Stats.speed];
+    originalStats[ExtraStats.regrowTime] = originalStats[ExtraStats.regrowTime] * originalStats[Stats.speed];
     stats[ExtraStats.regrowTime] = originalStats[ExtraStats.regrowTime];
     bulletLauncher.setImage("DruidBall");
     onStatsUpdate();
@@ -52,16 +51,27 @@ public class Druid8 extends Turret {
     float slow = 1 + 100 / mob.getStats()[TdMob.Stats.health];
     float durationMs = 3000;
     mob.addBuff(new StatBuff<TdMob>(Type.MORE, durationMs, TdMob.Stats.speed, 1 / slow));
-    mob.addBuff(new StatBuff<TdMob>(Type.ADDED, durationMs, TdMob.Stats.spawns, -1));
-    Sprite roots = new Sprite("thorns", 3).setSize(100, 100).setPosition(0,-500).addToBs(world.getBs());
-    mob.addBuff(new OnTickBuff<TdMob>(m -> roots.setPosition(mob.getX(), mob.getY())));
-    mob.addBuff(new DelayedTrigger<TdMob>(durationMs, m -> roots.delete(), true));
+    if(mob.getStats()[TdMob.Stats.spawns]>1){
+      mob.addBuff(new StatBuff<TdMob>(Type.ADDED, durationMs, TdMob.Stats.spawns, 1-mob.getStats()[TdMob.Stats.spawns]));
+    }
+
+
+    VisualEffect.Aggregator aggr= (VisualEffect.Aggregator) mob.getBuffHandler().find(VisualEffect.class);
+    if(aggr!=null && aggr.hasEffect("root")) {
+        aggr.
+        return true;
+    }
+    mob.addBuff(new VisualEffect<>("root",durationMs,this::getRootImg,true));
     return true;
   }
+  private Sprite getRootImg(){
+      return new Sprite("thorns", 3).setSize(100, 100).setPosition(0,-500).addToBs(world.getBs());
+  }
+
   @Override
   protected Upgrade up100() {
-    return new Upgrade("brambles", new Description("roots", "roots bloons. +3 damage and +1 pierce",
-        "rooted bloons are slowed and don't spawn children"),
+    return new Upgrade("brambles", new Description("Brambles", "roots bloons. +3 damage and +1 pierce",
+        "rooted bloons are slowed and spawn a maximum of 1 children"),
         () -> {
           sprite.setImage("Druid1");
           bulletLauncher.addMobCollide((p, m) -> root(m), 0);
@@ -69,9 +79,35 @@ public class Druid8 extends Turret {
           addBuff(new StatBuff<Turret>(Type.ADDED, Stats.pierce, 1));
         }, 50);
   }
-
+  private boolean doTree=false;
+  private void summonTree(Projectile proj){
+    treeCannon.setPower(proj.getPower()/5);
+    treeCannon.setSize(proj.getSize());
+    treeCannon.move(proj.x,proj.y);
+    treeCannon.attack(90);
+  }
+  BulletLauncher treeCannon;
   @Override
   protected Upgrade up200() {
+    return new Upgrade("Tree", new Description("Grovekeeper", "summons long lasting trees, trees deal damage to nearby bloons and expire quickly when doing so",
+            "summons at projectiles that regrow the maximum number of times"),
+            () -> {
+                treeCannon=new BulletLauncher(this.world,"TreeSummon");
+              treeCannon.setPierce(Integer.MAX_VALUE);
+              treeCannon.addMobCollide(BasicCollides.damage);
+                treeCannon.addMobCollide((p, m) -> root(m), 0);
+              treeCannon.setSpeed(0);
+              treeCannon.setDuration(45);
+              treeCannon.addProjectileModifier((p)->{
+                p.addBuff(new Intangiable(2,0.25f,9));
+
+              });
+              doTree=true;
+              
+            }, 50);
+  }
+  @Override
+  protected Upgrade up300() {
     return new Upgrade("bouncy", new Description("bounces from walls up to 4 times"),
         () -> {
           sprite.setImage("Druid2");
@@ -81,7 +117,7 @@ public class Druid8 extends Turret {
   }
 
   @Override
-  protected Upgrade up300() {
+  protected Upgrade up400() {
     return new Upgrade("demoncore",
         new Description("The Shadow Core", "does more damage to MOABs and less to regular bloons",
             "5 times damage to moabs and 5 times less to bloons. Also multiplies damage by pierce and sets it to one"),
@@ -117,9 +153,11 @@ public class Druid8 extends Turret {
           addBuff(new StatBuff<Turret>(Type.ADDED, ExtraStats.sizeScaling, 0.11f));
         }, 380);
   }
-
   private void regrow(RefFloat respawnsLeft, Projectile proj) {
     if (respawnsLeft.get() < 1) {
+      if(doTree){
+        summonTree(proj);
+      }
       return;
     }
     respawnsLeft.add(-1);
@@ -147,8 +185,8 @@ public class Druid8 extends Turret {
 
   @Override
   public void clearStats() {
-    stats[Stats.power] = 1f;
-    stats[Stats.range] = Data.gameMechanicsRng.nextFloat(200f, 350f);
+    stats[Stats.power] = 2f;
+    stats[Stats.range] = Data.gameMechanicsRng.nextFloat(150f, 350f);
     stats[Stats.pierce] = 2f;
     stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(.2f, .4f);
     stats[Stats.projectileDuration] = 999f;

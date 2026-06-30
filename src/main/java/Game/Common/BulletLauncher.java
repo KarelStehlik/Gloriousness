@@ -235,6 +235,7 @@ public class BulletLauncher {
     playerCollides.add(component);
   }
 
+  //returns true if it should change pierce
   public void addMobCollide(OnCollideComponent<TdMob> component) {
     mobCollides.add(component);
   }

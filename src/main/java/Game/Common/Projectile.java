@@ -21,6 +21,7 @@ import windowStuff.GraphicsOnly.Sprite.Sprite;
 
 public class Projectile extends GameObject implements TickDetect {
 
+  @Override
   public Sprite getSprite() {
     return sprite;
   }
@@ -411,7 +412,7 @@ public class Projectile extends GameObject implements TickDetect {
 
     }
   }
-
+  //returns true if it should change pierce
   @FunctionalInterface
   public interface OnCollideComponent<T extends GameObject> {
 

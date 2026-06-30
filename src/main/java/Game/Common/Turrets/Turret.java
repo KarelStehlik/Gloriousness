@@ -31,6 +31,8 @@ import windowStuff.GraphicsOnly.Sprite.NoSprite;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
 
+import javax.swing.*;
+
 public abstract class Turret extends GameObject implements TickDetect {
 
   private static final Upgrade maxUpgrades = new Upgrade("MaxUpgrades",
@@ -292,6 +294,11 @@ public abstract class Turret extends GameObject implements TickDetect {
   }
 
   protected void extraStatsUpdate() {
+  }
+
+  @Override
+  public Sprite getSprite(){
+    return sprite;
   }
 
   public boolean blocksPlacement() {

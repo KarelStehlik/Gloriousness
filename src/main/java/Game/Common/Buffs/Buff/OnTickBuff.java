@@ -11,9 +11,9 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
 
   private final long id;
 
-  private final float expiryTime;
-  private final Modifier<T> mod;
-  private final boolean spreads;
+  protected float expiryTime;
+  protected final Modifier<T> mod;
+  protected final boolean spreads;
 
   public OnTickBuff(Modifier<T> effect) {
     this(Float.POSITIVE_INFINITY, effect, true);
@@ -30,7 +30,7 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
     spreads = spreadsToChildren;
   }
 
-  private OnTickBuff(long id, float expiryTime, Modifier<T> mod, boolean spreads) {
+  protected OnTickBuff(long id, float expiryTime, Modifier<T> mod, boolean spreads) {
     this.id = id;
     this.expiryTime = expiryTime;
     this.mod = mod;

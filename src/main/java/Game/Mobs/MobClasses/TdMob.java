@@ -3,6 +3,7 @@ package Game.Mobs.MobClasses;
 import Game.Common.Buffs.Buff.Buff;
 import Game.Common.Buffs.Buff.BuffHandler;
 import Game.Common.Buffs.Modifier.Modifier;
+import Game.Common.Turrets.Druid8;
 import Game.Enums.DamageType;
 import Game.Misc.GameObject;
 import Game.Misc.SquareGrid;
@@ -37,6 +38,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     healthPart = 1;
     grid = world.getMobsGrid();
     exists = true;
+    stats[Stats.spawns]=children().size();
     init();
     updateSize();
   }
@@ -85,6 +87,11 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   @Override
+  public Sprite getSprite(){
+    return sprite;
+  }
+
+  @Override
   protected int getStatsCount() {
     return 6;
   }
@@ -129,10 +136,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   public void die() {
     onDeath();
-
-    if (stats[Stats.spawns] > 0.5f) {
-      spawnChildren(Math.max(0, (float) (-healthPart * stats[Stats.health])));
-    }
+    spawnChildren(Math.max(0, (float) (-healthPart * stats[Stats.health])));
 
     delete();
   }
@@ -156,7 +160,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
   protected abstract List<ChildSpawner> children();
 
   private void spawnChildren(float overkill) {
-    for (var spawner : children()) {
+    List<ChildSpawner> children=children();
+    for (int i=Math.min((int)stats[Stats.spawns],children.size());i>0;i--){
+      var spawner=children.get(i-1);
+
       TdMob newBloon = spawner.spawn(this);
       newBloon.takeDamage(overkill, DamageType.TRUE);
       world.addEnemy(newBloon);
