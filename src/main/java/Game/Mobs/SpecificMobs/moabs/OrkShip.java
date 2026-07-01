@@ -30,6 +30,7 @@ public class OrkShip extends TdMob {
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
+    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 

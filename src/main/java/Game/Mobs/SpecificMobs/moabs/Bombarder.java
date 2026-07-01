@@ -31,6 +31,7 @@ public class Bombarder extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
+    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 

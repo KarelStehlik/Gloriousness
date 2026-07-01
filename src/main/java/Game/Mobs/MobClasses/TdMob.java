@@ -94,7 +94,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
   @Override
   protected int getStatsCount() {
-    return 6;
+    return 7;
   }
 
   @Override

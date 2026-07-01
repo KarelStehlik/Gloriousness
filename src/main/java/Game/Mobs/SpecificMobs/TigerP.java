@@ -32,6 +32,7 @@ public class TigerP extends TdMob {
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
+    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 

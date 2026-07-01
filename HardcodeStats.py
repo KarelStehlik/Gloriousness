@@ -29,6 +29,8 @@ def toClassText(input):
             baseStats += ["damageTaken = 1"]
         if not ("spawns" in parts[1]):
             baseStats += ["spawns = 1"]
+        if not ("maxHealth" in parts[1]):
+            baseStats += ["maxHealth = 1"]
 
     baseStats = [refFloatify(x, "Stats") for x in baseStats]
 

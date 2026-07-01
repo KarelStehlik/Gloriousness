@@ -50,11 +50,12 @@ public class Druid8 extends Turret {
     public static TurretGenerator generator(TdWorld world) {
         return new TurretGenerator(world, "Druid", "Druid", () -> new Druid8(world, -1000, -1000));
     }
-    private float rootEffectIveAt=5;
+    private float rootEffectIveAt=10;
     private boolean root(TdMob mob, float strength) {
         float durationMs = 3000;
         if (mob.getStats()[TdMob.Stats.maxHealth] > rootEffectIveAt) {
-            strength /= mob.getStats()[TdMob.Stats.health] / 5;
+            strength /= mob.getStats()[TdMob.Stats.health] / (rootEffectIveAt/10);
+            durationMs/=15;
         }else if (mob.getStats()[TdMob.Stats.spawns] > 1) {
             mob.addBuff(new StatBuff<TdMob>(Type.ADDED, durationMs, TdMob.Stats.spawns, 1 - mob.getStats()[TdMob.Stats.spawns]));
         }
@@ -100,12 +101,12 @@ public class Druid8 extends Turret {
     @Override
     protected Upgrade up200() {
         return new Upgrade("Tree", new Description("Grovekeeper", "summons long lasting trees, trees deal damage to nearby bloons and expire quickly when doing so",
-                "summons at projectiles that regrow the maximum number of times"),
+                ""),
                 () -> {
                     treeCannon = new BulletLauncher(this.world, "TreeSummon");
                     treeCannon.setPierce(Integer.MAX_VALUE);
                     treeCannon.addMobCollide(BasicCollides.damage);
-                    treeCannon.addMobCollide((p, m) -> root(m, 0.1f), 0);
+                    treeCannon.addMobCollide((p, m) -> root(m, 0.01f), 0);
                     treeCannon.setSpeed(0);
                     treeCannon.setDuration(45);
                     treeCannon.addProjectileModifier((p) -> {
@@ -121,8 +122,9 @@ public class Druid8 extends Turret {
     protected Upgrade up300() {
         return new Upgrade("forestcore",
                 new Description("Heart of the forest", "summons 5 trees; trees deal more damage",
-                        ""),
+                        "increases effectivity of root against larger bloons"),
                 () -> {
+                    rootEffectIveAt=800;
                     treeCannon.addProjectileModifier(
                             (p) -> {
                                 p.addBuff(new StatBuff<>(Type.MORE, Projectile.Stats.power, 3));
@@ -172,7 +174,7 @@ public class Druid8 extends Turret {
             return;
         projectile.addBuff(new StatBuff<>(Type.INCREASED, Projectile.Stats.power, projectile.getSpeed() / distPerDamage));
         accumulator.add(projectile.getSpeed());
-        if (accumulator.get() > 300) {
+        if (accumulator.get()+projectile.getSpeed() > 300&&accumulator.get()<300) {
             projectile.getSprite().setColors(Util.getColors(250, 0, 0));
             projectile.addBuff(new StatBuff<>(Type.MORE, Projectile.Stats.power, 2));
             projectile.addBuff(new StatBuff<>(Type.MORE, Projectile.Stats.pierce, 2));
@@ -195,7 +197,7 @@ public class Druid8 extends Turret {
     @Override
     protected Upgrade up002() {
         return new Upgrade("flight",
-                new Description("Tome", "Increases attack speed, balls get bigger when they regrow", "atcspd*2 and balls get +1 pierce per regrow"),
+                new Description("Forest winds", "Projectiles that travel far deal more damage", "atcspd*2 and balls get +1 pierce per regrow"),
                 () -> {
                     bulletLauncher.addProjectileModifier((proj) -> {
                         RefFloat accumulator = new RefFloat(0);

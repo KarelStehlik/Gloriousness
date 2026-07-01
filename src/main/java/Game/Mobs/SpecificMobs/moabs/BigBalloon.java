@@ -31,6 +31,7 @@ public class BigBalloon extends TdMob {
     stats[Stats.damageTaken] = 2f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
+    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
