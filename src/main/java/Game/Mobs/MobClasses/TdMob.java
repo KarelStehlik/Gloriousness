@@ -39,6 +39,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     grid = world.getMobsGrid();
     exists = true;
     stats[Stats.spawns]=children().size();
+    stats[Stats.maxHealth]=stats[Stats.health];
     init();
     updateSize();
   }
@@ -369,6 +370,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     public static final int value = 3;
     public static final int damageTaken = 4;
     public static final int spawns = 5;
+    public static final int maxHealth = 6;
 
     private Stats() {
     }

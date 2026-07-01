@@ -66,7 +66,6 @@ public class VisualEffect<T extends GameObject> extends OnTickBuff<T> {
             for (VisualEffect<T> eff : effs) {
                 if (eff.idString.equals(_id)){
                     eff.expiryTime=Math.max(Game.get().getTicks() +duration / Game.tickIntervalMillis,eff.expiryTime);
-                    effs.sort(OnTickBuff::compareTo);
                     return true;
                 }
 

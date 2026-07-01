@@ -59,7 +59,7 @@ public class DruidBall extends Projectile {
       this.sprite =
           new Sprite(DruidBall.this.sprite).setSize(0, 0).setShader("colorCycle2").
               setOpacity(0.5f).addToBs(world.getBs()).
-              setColors(new Cycle2Colors().setStrength(0.8f).setSpeed(5).get()
+              setColors(new Cycle2Colors().setStrength(0.8f).setSpeed(3).get()
               ).playAnimation(new TransformAnimation(regrowTime)
               .setLinearScaling(new Vector2f(size * scaling, size * scaling))
               .setOpacityScaling(scaling)

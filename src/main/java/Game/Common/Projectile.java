@@ -275,6 +275,9 @@ public class Projectile extends GameObject implements TickDetect {
     active = a;
     sprite.setHidden(!a);
   }
+  public boolean isActive(){
+      return active;
+  }
 
   private void fly() {
     move(x + vx, y + vy);
