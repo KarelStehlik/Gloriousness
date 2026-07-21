@@ -20,7 +20,6 @@ import GlobalUse.Data;
 import GlobalUse.Description;
 import GlobalUse.Util;
 import java.awt.Point;
-import java.lang.invoke.SwitchPoint;
 import java.util.ArrayList;
 import java.util.List;
 import windowStuff.Button;
@@ -30,8 +29,6 @@ import windowStuff.GraphicsOnly.ImageData;
 import windowStuff.GraphicsOnly.Sprite.NoSprite;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 import windowStuff.GraphicsOnly.Sprite.SpriteBatching;
-
-import javax.swing.*;
 
 public abstract class Turret extends GameObject implements TickDetect {
 
@@ -46,6 +43,9 @@ public abstract class Turret extends GameObject implements TickDetect {
   protected final Sprite rangeDisplay;
   protected final BuffHandler<Turret> buffHandler;
   protected int path1Tier = 0, path2Tier = 0, path3Tier = 0;
+  protected float[] tierPenalty={0,0,0,0,0};
+  protected float[] costMult ={1,1,1,1,1};
+  protected float[] tierPenaltyMult ={0.5f,0.5f,0.5f,1f,1f};
   protected boolean notYetPlaced = true;
   protected float totalCost;
   public float resaleValue=1;
@@ -307,20 +307,34 @@ public abstract class Turret extends GameObject implements TickDetect {
 
   protected static class Upgrade {
 
-    protected final float cost;
+    private final float baseUpgradeCost;
     private final String image;
     protected Description description;
     protected VoidFunc apply;
+    private float costPenalty=0;
 
     public Upgrade(String image, Description description, VoidFunc apply, float cost) {
       this.image = image;
       this.description = description;
       this.apply = apply;
-      this.cost = cost;
+      this.baseUpgradeCost = cost;
+    }
+
+    public Upgrade setCostPenalty(float penalty){
+      costPenalty=penalty;
+      return this;
+    }
+
+    public Upgrade setCostPenalty(float addedPenalty,float costMultiplier){
+      costPenalty=(baseUpgradeCost+addedPenalty)*(costMultiplier-1);
+      return this;
     }
 
     public Sprite makeSprite(int layer) {
       return new Sprite(image, layer).setSize(200, 100).addToBs(Game.get().getSpriteBatching("main"));
+    }
+    private float getCost(){
+      return baseUpgradeCost+costPenalty;
     }
   }
 
@@ -406,7 +420,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
     private Button makeUpgradeButton(float X,float Y,int i,SpriteBatching bs){
       return new Button(bs, upgrades[i].makeSprite(Constants.layerInterval.ui.min+10).setPosition(X, Y -50+i*100), (mx, my) -> buttonClicked(upgrades[i], i+1),
-              upgrades[i].description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, upgrades[i].cost));
+              upgrades[i].description.getAsTextBox(Constants.layerInterval.ui.min + 11, bs, upgrades[i].getCost()));
     }
 
     private Upgrade[] getUpgrades() {
@@ -441,9 +455,9 @@ public abstract class Turret extends GameObject implements TickDetect {
           maxTier2 = 0;
         }
       }
-      Upgrade u1 = path1Tier < maxTier1 ? p1.get(path1Tier) : maxUpgrades;
-      Upgrade u2 = path2Tier < maxTier2 ? p2.get(path2Tier) : maxUpgrades;
-      Upgrade u3 = path3Tier < maxTier3 ? p3.get(path3Tier) : maxUpgrades;
+      Upgrade u1 = path1Tier < maxTier1 ? p1.get(path1Tier).setCostPenalty(tierPenalty[path1Tier], costMult[path1Tier]) : maxUpgrades;
+      Upgrade u2 = path2Tier < maxTier2 ? p2.get(path2Tier).setCostPenalty(tierPenalty[path2Tier], costMult[path2Tier]) : maxUpgrades;
+      Upgrade u3 = path3Tier < maxTier3 ? p3.get(path3Tier).setCostPenalty(tierPenalty[path3Tier], costMult[path3Tier]) : maxUpgrades;
       return new Upgrade[]{u1,u2,u3};
     }
 
@@ -475,12 +489,12 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
 
     private void buttonClicked(Upgrade u, int path) {
-      if (!world.tryPurchase(u.cost)) {
+      if (!world.tryPurchase(u.getCost())) {
         return;
       }
       u.apply.apply();
-      upgradePicked(path);
-      totalCost += u.cost;
+      upgradePicked(path,u.getCost());
+      totalCost += u.getCost();
       if(resaleValue==1){
         resaleValue=0.8f;
       }
@@ -489,11 +503,23 @@ public abstract class Turret extends GameObject implements TickDetect {
       openUpgradeMenu();
     }
 
-    private void upgradePicked(int path) {
+    private void upgradePicked(int path,float cost) {
       switch (path) {
-        case 1 -> path1Tier++;
-        case 2 -> path2Tier++;
-        case 3 -> path3Tier++;
+        case 1 -> {
+          tierPenalty[path1Tier]+=cost;
+          costMult[path1Tier]+= tierPenaltyMult[path1Tier];
+          path1Tier++;
+        }
+        case 2 -> {
+          tierPenalty[path2Tier]+=cost;
+          costMult[path2Tier]+= tierPenaltyMult[path2Tier];
+          path2Tier++;
+        }
+        case 3 -> {
+          tierPenalty[path3Tier]+=cost;
+          costMult[path3Tier]+= tierPenaltyMult[path3Tier];
+          path3Tier++;
+        }
       }
     }
 
