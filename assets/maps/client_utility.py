@@ -15,7 +15,7 @@ def sprite_with_scale(img, scale, scale_x, scale_y, *args, **kwargs) -> pyglet.s
     return a
 
 
-class TextureEnableGroup(pyglet.graphics.OrderedGroup):
+class TextureEnableGroup(pyglet.graphics.Group):
     def set_state(self):
         glEnable(GL_TEXTURE_2D)
 
@@ -23,7 +23,7 @@ class TextureEnableGroup(pyglet.graphics.OrderedGroup):
         glDisable(GL_TEXTURE_2D)
 
 
-texture_enable_groups = [TextureEnableGroup(i) for i in range(10)]
+texture_enable_groups = [TextureEnableGroup(order=i) for i in range(10)]
 
 
 class TextureBindGroup(pyglet.graphics.Group):
