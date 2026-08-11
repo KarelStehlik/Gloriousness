@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import GlobalUse.MapData.MapData;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageSet;
 import windowStuff.GraphicsOnly.Shader;
@@ -25,7 +27,7 @@ public final class Data {
   private static final String mapDataFile = "assets/maps/output.txt";
   private static final Map<String, Shader> shaders = new HashMap<>(1);
   private static final long startTime = System.nanoTime();
-  private static final Map<String, ArrayList<Point>> mapData = new HashMap<>(1);
+  private static String[] maps;
 
   private Data() {
   }
@@ -40,21 +42,18 @@ public final class Data {
     for (String shaderName : shaderNames) {
       loadShader(shaderName);
     }
-    loadMapData();
+    getMaps();
   }
 
-  private static void loadMapData() {
+  private static void getMaps() {
     try {
       List<String> data = Files.readAllLines(Paths.get(mapDataFile));
 
-      for (String map : data) {
-        String[] split = map.split(" ");
+      maps=new String[data.size()];
+      for (int i=0;i<data.size();i++) {
+        String[] split = data.get(i).split("\\|");
         String name = split[0];
-        mapData.put(name, new ArrayList<>(split.length - 1));
-        for (int i = 1; i < split.length; i++) {
-          String[] point = split[i].split(",");
-          mapData.get(name).add(new Point(Integer.parseInt(point[0]), Integer.parseInt(point[1])));
-        }
+        maps[i]=name;
       }
 
     } catch (IOException e) {
@@ -63,12 +62,31 @@ public final class Data {
     }
   }
 
-  public static String[] listMaps() {
-    return mapData.keySet().toArray(new String[0]);
+  public static MapData getMapData(String mapName) {
+    try {
+      List<String> data = Files.readAllLines(Paths.get(mapDataFile));
+      MapData mapData=new MapData();
+      for (String map : data) {
+        String[] split = map.split("\\|");
+        String name = split[0];
+        if(!name.equals(mapName)){
+          continue;
+        }
+        for(int i=1;i<split.length;i++) {
+          mapData.add(split[i].split(" "));
+        }
+      }
+      return mapData;
+
+    } catch (IOException e) {
+      System.out.println("failed to read " + mapDataFile);
+      e.printStackTrace();
+      return null;
+    }
   }
 
-  public static List<Point> getMapData(String name) {
-    return mapData.get(name);
+  public static String[] listMaps() {
+    return maps;
   }
 
   public static void loadShader(String name) {

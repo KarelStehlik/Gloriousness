@@ -3,7 +3,6 @@ package Game.Mobs.MobClasses;
 import Game.Common.Buffs.Buff.Buff;
 import Game.Common.Buffs.Buff.BuffHandler;
 import Game.Common.Buffs.Modifier.Modifier;
-import Game.Common.Turrets.Druid8;
 import Game.Enums.DamageType;
 import Game.Misc.GameObject;
 import Game.Misc.SquareGrid;
@@ -54,20 +53,20 @@ public abstract class TdMob extends GameObject implements TickDetect {
   }
 
   public TdMob(TdWorld world, int wave) {
-    this(world,wave,world.getMapData().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-            Constants.MobSpread),world.getMapData().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+    this(world,wave,world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+            Constants.MobSpread),world.getTrack().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
             Constants.MobSpread));
     Wave.buff(this, wave);
-    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
-        new Point((int) x - world.getMapData().get(0).x,
-            (int) y - world.getMapData().get(0).y), stats, Stats.speed, TdMob::passed);
+    movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
+        new Point((int) x - world.getTrack().get(0).x,
+            (int) y - world.getTrack().get(0).y), stats, Stats.speed, TdMob::passed);
   }
 
   public TdMob(TdWorld world, TdMob parent, int spread) {
     this(world,parent.waveNum,
             parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),parent.y + Data.gameMechanicsRng.nextInt(-spread, spread));
     parent.buffHandler.addAll(buffHandler,this);
-    movement = new MoveAlongTrack<TdMob>(false, world.getMapData(),
+    movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
         new Point((int) (x - parent.x + parent.movement.getOffsetX()),
             (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
         parent.movement.getProgress());

@@ -42,6 +42,8 @@ import Game.Mobs.MobGeneration.WaveGenerator.MoabGenerator;
 import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Log;
+import GlobalUse.MapData.Blocker;
+import GlobalUse.MapData.MapData;
 import GlobalUse.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
@@ -72,6 +74,7 @@ public class TdWorld implements World {
   public static final int WIDTH = 1920;
   public static final int HEIGHT = 1080;
   public final List<TrackPoint> spacPoints = new ArrayList<>(500);
+  public final List<Blocker> blockers = new ArrayList<>(10);
 
   public Options getOptions() {
     return options;
@@ -90,7 +93,7 @@ public class TdWorld implements World {
   private final ArrayList<Projectile> projectilesList;
   private final Player player;
   private final Sprite mapSprite;
-  private final List<Point> mapData;
+  private final List<Point> track;
   private final TextBox resourceTracker;
   public final MobSpawner mobSpawner = new MobSpawner(this);
   private final UpgradeGiver upgrades = new UpgradeGiver(this);
@@ -145,7 +148,11 @@ public class TdWorld implements World {
     mapSprite = new Sprite(mapName, 0).setPosition(Constants.screenSize.x / 2f,
         Constants.screenSize.y / 2f).setSize(Constants.screenSize.x, Constants.screenSize.y);
     bs.addSprite(mapSprite);
-    mapData = Data.getMapData(mapName);
+    MapData mapdata = Data.getMapData(mapName);
+    track = mapdata.mapPoints;
+    for(MapData.NewObjectFunction func:mapdata.mapObjects){
+      func.make(this);
+    }
 
     Button[] turretButtons = new Button[]{
         BasicTurret.generator(this).makeButton(),
@@ -221,10 +228,10 @@ public class TdWorld implements World {
   }
 
   private void calcSpacPoints() {
-    GameObject fakeBloon = new GameObject(mapData.get(0).x, mapData.get(0).y, 0, 0, this);
+    GameObject fakeBloon = new GameObject(track.get(0).x, track.get(0).y, 0, 0, this);
     float[] speed = new float[1];
     speed[0] = 1;
-    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<>(false, mapData,
+    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<>(false, track,
         new Point(0, 0), speed, 0, o -> {
     });
 
@@ -279,8 +286,8 @@ public class TdWorld implements World {
     resourceTracker.update();
   }
 
-  public List<Point> getMapData() {
-    return mapData;
+  public List<Point> getTrack() {
+    return track;
   }
 
   public Player getPlayer() {
@@ -647,6 +654,11 @@ public class TdWorld implements World {
           && Util.distanceSquared(x - t.x, y - t.y)
           < Util.square(size + t.stats[Turret.Stats.size])) {
         return false;
+      }
+    }
+    for(Blocker blocker:blockers){
+      if(blocker.intersects(x,y,size)){
+        return blocker.allowPlacement();
       }
     }
     for (TrackPoint p : spacPoints) {

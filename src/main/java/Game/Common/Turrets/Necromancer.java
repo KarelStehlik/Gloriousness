@@ -87,7 +87,7 @@ public class Necromancer extends Turret {
         return;
       }
       TdMob.MoveAlongTrack<Projectile> mover = new MoveAlongTrack<>(true,
-          world.getMapData(), offset, stats, Stats.speed, Projectile::delete,
+          world.getTrack(), offset, stats, Stats.speed, Projectile::delete,
           Math.max(initPoint.getNode() - 1, 0));
       p.addBuff(new OnTickBuff<Projectile>(mover::tick));
     });
