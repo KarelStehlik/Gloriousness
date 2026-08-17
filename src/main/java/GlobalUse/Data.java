@@ -1,18 +1,16 @@
 package GlobalUse;
 
-import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import GlobalUse.MapData.MapData;
+import Game.WorldStuff.MapElements.MapData.MapData;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageSet;
 import windowStuff.GraphicsOnly.Shader;

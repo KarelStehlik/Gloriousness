@@ -1,10 +1,8 @@
-package GlobalUse.MapData;
+package Game.WorldStuff.MapElements.MapData;
 
-import Game.Common.Projectile;
 import Game.Misc.GameObject;
 import Game.WorldStuff.TdWorld;
 import GlobalUse.Log;
-import windowStuff.GraphicsOnly.ImageData;
 
 import java.awt.*;
 import java.util.ArrayList;

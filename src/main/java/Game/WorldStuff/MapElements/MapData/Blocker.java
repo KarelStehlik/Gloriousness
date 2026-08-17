@@ -1,4 +1,4 @@
-package GlobalUse.MapData;
+package Game.WorldStuff.MapElements.MapData;
 
 public interface Blocker {
     public boolean allowPlacement();

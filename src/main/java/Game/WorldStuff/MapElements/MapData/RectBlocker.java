@@ -1,4 +1,4 @@
-package GlobalUse.MapData;
+package Game.WorldStuff.MapElements.MapData;
 
 import Game.WorldStuff.TdWorld;
 
