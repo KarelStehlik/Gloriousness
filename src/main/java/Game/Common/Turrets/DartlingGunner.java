@@ -164,7 +164,7 @@ public class DartlingGunner extends Turret {
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.4f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 1f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1f));
-        }, 400);
+        }, 350);
   }
 
   @Override

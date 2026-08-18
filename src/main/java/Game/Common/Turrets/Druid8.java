@@ -50,7 +50,7 @@ public class Druid8 extends Turret {
     public static TurretGenerator generator(TdWorld world) {
         return new TurretGenerator(world, "Druid", "Druid", () -> new Druid8(world, -1000, -1000));
     }
-    private float rootEffectIveAt=10;
+    private float rootEffectIveAt=45;
     private boolean root(TdMob mob, float strength) {
         float durationMs = 3000;
         if (mob.getStats()[TdMob.Stats.maxHealth] > rootEffectIveAt) {
@@ -152,7 +152,7 @@ public class Druid8 extends Turret {
                     sprite.setImage("Druid2");
                     bulletLauncher.addProjectileModifier(p -> p.addBuff(
                             new OnTickBuff<Projectile>(new Projectile.LimitedBounce(2))));
-                }, 100);
+                }, 90);
     }
 
     @Override

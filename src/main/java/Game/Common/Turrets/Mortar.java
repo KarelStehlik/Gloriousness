@@ -174,7 +174,7 @@ public class Mortar extends Turret {
                         bl.setRemainingCooldown(bl.getRemainingCooldown()-bl.getCooldown()*(1-volleyFireDuration/(bombsCount+extraBombsCount)));
                       }
                     });
-                },originalStats[Stats.bulletSize]<=45 ? ((int)(originalStats[Stats.bulletSize]*3f)):((int)(originalStats[Stats.bulletSize]*1.5f)));
+                },originalStats[Stats.bulletSize]<=45 ? ((int)(originalStats[Stats.bulletSize]*2.4f)):((int)(originalStats[Stats.bulletSize]*1.2f)));
     }
     int extraBombsCount=0;
     int nextExtraBombIn=12;
@@ -281,7 +281,7 @@ public class Mortar extends Turret {
                                 playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true), 1f, 50);
                     }
                     sound=new SoundToPlay(sound.name, sound.volume+0.1f);
-                }, 100);
+                }, 75);
     }
     private final float sizeIncrease020=1.8f;
     public boolean shatter(Projectile proj, TdMob mob){
@@ -381,7 +381,7 @@ public class Mortar extends Turret {
                     physicalEffects.add((Projectile target)-> target.addMobCollide((proj, mob)->
                         mob.addBuff(new Ignite<>(getFireDmg(), 2000)),0));
                     explosive.addPreEffect(mob -> mob.addBuff(new Ignite<>(getFireDmg(), 2000)));
-                }, 125);
+                }, 111);
     }
     private BulletLauncher clusterLauncher;
     private Explosive fireballExplod;

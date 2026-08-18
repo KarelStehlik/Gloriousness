@@ -200,7 +200,7 @@ public class Engineer8 extends Turret {
                     turretMods.add(t -> {
                         t.bulletLauncher.cannons.add(new BulletLauncher.Cannon(5,5));
                     });
-                }, 60);
+                }, 55);
     }
     @Override
     protected Upgrade up020() {

@@ -243,7 +243,7 @@ public class Wizard extends Turret {
   @Override
   protected Upgrade up001() {
     return new Upgrade("DoubleDart", new Description("Faster Casting","shoots 1.5x faster."),
-        () -> addBuff(new StatBuff<Turret>(MORE, Stats.aspd, 1.5f)), 100);
+        () -> addBuff(new StatBuff<Turret>(MORE, Stats.aspd, 1.5f)), 50);
   }
 
   @Override
@@ -253,7 +253,7 @@ public class Wizard extends Turret {
           bulletLauncher.cannons.add(new Cannon(0,0, 25));
           bulletLauncher.cannons.add(new Cannon(0,0, -25));
         }
-        , 100);
+        , 75);
   }
 
   @Override
@@ -269,7 +269,7 @@ public class Wizard extends Turret {
             }
           });
         }
-        , 777);
+        , 450);
   }
 
   @Override
@@ -280,7 +280,7 @@ public class Wizard extends Turret {
         () -> {
           bulletLauncher.addAttackEffect(mBolt -> mBolt.setRemainingCooldown(mBolt.getRemainingCooldown()- mBolt.getCooldown()*0.6f));
         }
-        , 2000);
+        , 1700);
   }
 
   private final Projectile.Guided guided = new Projectile.Guided(1000, 3);

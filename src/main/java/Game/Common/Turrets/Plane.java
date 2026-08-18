@@ -27,7 +27,7 @@ public class Plane extends Turret {
 
   @Override
   protected ImageData getImageUpdate(){
-    return Graphics.getImage("BasicTower");
+    return Graphics.getImage("plane");
   }
 
   private final float speed = 10;
@@ -88,14 +88,7 @@ public class Plane extends Turret {
     onStatsUpdate();
     sprite.setLayer(Constants.layerInterval.flyingMonkey.defalt);
     bulletLauncher.addMobCollide(BasicCollides.damage);
-    pineappleLauncher.addProjectileModifier(p -> p.addBeforeDeath(pineapple -> {
-      world.aoeDamage(
-          (int) pineapple.getX(), (int) pineapple.getY(), (int) stats[ExtraStats.PineRadius],
-          pineapple.getPower(),
-          DamageType.TRUE);
-      world.explosionVisual((int) pineapple.getX(), (int) pineapple.getY(),
-          (int) stats[ExtraStats.PineRadius], false, "Explosion2");
-    }));
+    pineappleLauncher.addProjectileModifier(p -> p.addBeforeDeath(this::explodePine));
 
     for (int i = 0; i < 4; i++) {
       Point loc = defaultFlyPoints.get(i);
@@ -147,7 +140,16 @@ public class Plane extends Turret {
   }
 
   public static TurretGenerator generator(TdWorld world) {
-    return new TurretGenerator(world, "BasicTower", "Basic", () -> new Plane(world, -1000, -1000));
+    return new TurretGenerator(world, "plane", "plane", () -> new Plane(world, -1000, -1000));
+  }
+
+  private void explodePine(Projectile pineapple){
+    world.aoeDamage(
+            (int) pineapple.getX(), (int) pineapple.getY(),,
+            pineapple.getPower(),
+            DamageType.TRUE);
+    world.explosionVisual((int) pineapple.getX(), (int) pineapple.getY(),
+            (int) stats[ExtraStats.PineRadius], false, "Explosion2");
   }
 
   @Override
@@ -355,15 +357,15 @@ public class Plane extends Turret {
   public void clearStats() {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 350f;
-    stats[Stats.pierce] = 8f;
-    stats[Stats.aspd] = 0.8f;
-    stats[Stats.projectileDuration] = 1.1f;
+    stats[Stats.pierce] = 2f;
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.3f, 0.5f);
+    stats[Stats.projectileDuration] = Data.gameMechanicsRng.nextFloat(0.2f, 3f);
     stats[Stats.bulletSize] = 50f;
-    stats[Stats.speed] = 25f;
-    stats[Stats.cost] = 700f;
+    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(25f, 75f);
+    stats[Stats.cost] = 125f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;
-    stats[ExtraStats.Radial] = 8f;
+    stats[ExtraStats.Radial] = Data.gameMechanicsRng.nextFloat(4f, 8f);
     stats[ExtraStats.PinePower] = 6f;
     stats[ExtraStats.PineDuration] = 3f;
     stats[ExtraStats.PineRadius] = 200f;

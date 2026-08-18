@@ -49,12 +49,16 @@ class mode_intro(mode):
         self.buttons = []
         with open("mapNames.txt", "r") as names:
             i=0
+            a=0
             for line in names.read().split("\n"):
                 self.buttons.append(
-                    client_utility.button(lambda l=line: self.join(l), i,constants.SCREEN_HEIGHT *.33,
+                    client_utility.button(lambda l=line: self.join(l), i,a,
                                           constants.SCREEN_WIDTH * .2, constants.SCREEN_HEIGHT *.3,
                                           image = images.__getattr__(line)))
                 i+=constants.SCREEN_WIDTH * .2
+                if(i==constants.SCREEN_WIDTH):
+                    i=0
+                    a+=constants.SCREEN_WIDTH * .2
         self.bg = pyglet.sprite.Sprite(images.Intro, x=constants.SCREEN_WIDTH/2, y=constants.SCREEN_HEIGHT/2, batch=groups.g[0])
         self.bg.scale_x, self.bg.scale_y = constants.SCREEN_WIDTH / self.bg.width, constants.SCREEN_HEIGHT / self.bg.height
         self.joined = False
