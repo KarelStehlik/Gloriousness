@@ -85,7 +85,7 @@ public class Plane extends Turret {
 
     private final List<DragableButton> flyPoints = new ArrayList<>(4);
     private int currentFlyPoint = 0;
-    private final BulletLauncher pineappleLauncher = new BulletLauncher(world, "Duck");
+    private final BulletLauncher pineappleLauncher = new BulletLauncher(world, "pineapple");
     private boolean dropsPineapples = false;
 
     public Plane(TdWorld world, int X, int Y) {
@@ -166,7 +166,7 @@ public class Plane extends Turret {
 
     @Override
     protected Upgrade up010() {
-        return new Upgrade("Duck", new Description("Pineapple", "Adds ability to drop pineapples and 3 extra pierce.",
+        return new Upgrade("pineapple", new Description("Pineapple", "Adds ability to drop pineapples and 3 extra pierce.",
                 "drops pineapples for 1sec and one big pineapple at the end, 1.75x radius and 3x damage"),
                 () -> {
                     addBuff(new StatBuff<>(Type.ADDED,Stats.pierce,3));
@@ -174,7 +174,7 @@ public class Plane extends Turret {
                     sizeBuff = new StatBuff<>(Type.MORE, ExtraStats.PineSize, 1.75f);
                     radiusbuff = new StatBuff<>(Type.MORE, ExtraStats.PineRadius, 1.75f);
                     this.dropsPineapples = true;
-                    Ability a = Ability.add("Duck", 15000,
+                    Ability a = Ability.add("pineapple", 15000,
                             () -> "Drops pineapples",
                             () -> {
                                 pineapplesActive = true;
@@ -400,20 +400,20 @@ public class Plane extends Turret {
   public void clearStats() {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 350f;
-    stats[Stats.pierce] = 5f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.6f, 1.2f);
+    stats[Stats.pierce] = 3f;
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.8f, 1.8f);
     stats[Stats.projectileDuration] = 3f;
     stats[Stats.bulletSize] = 50f;
     stats[Stats.speed] = 20f;
     stats[Stats.cost] = 125f;
-    stats[Stats.size] = 50f;
+    stats[Stats.size] = 75f;
     stats[Stats.spritesize] = 150f;
     stats[ExtraStats.Radial] = Data.gameMechanicsRng.nextFloat(4f, 8f);
     stats[ExtraStats.PinePower] = 6f;
     stats[ExtraStats.PineDuration] = 3f;
-    stats[ExtraStats.PineRadius] = 75f;
-    stats[ExtraStats.PineAspd] = 4f;
-    stats[ExtraStats.PineSize] = 65f;
+    stats[ExtraStats.PineRadius] = 85f;
+    stats[ExtraStats.PineAspd] = 5.5f;
+    stats[ExtraStats.PineSize] = 40f;
   }
 
   public static final class ExtraStats {
