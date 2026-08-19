@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TigerP extends TdMob {
 
-    private static final List<ChildSpawner> spawns = List.of(Purple::new,Black::new);
+    private static final List<ChildSpawner> spawns = List.of(Purple::new, Black::new);
 
     public TigerP(TdWorld world, int wave) {
         super(world, wave);
@@ -20,7 +20,7 @@ public class TigerP extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "TigerP");
+        createImage("TigerP");
     }
 
     // generated stats
@@ -32,9 +32,14 @@ public class TigerP extends TdMob {
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
+
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return TigerP::new;
+    }
 
     @Override
     public boolean isMoab() {

@@ -24,7 +24,7 @@ Common\Turrets\druid
     respawns=2|sizeScaling=0|powScaling=0|bonusPierce=5|pierceScaling=0|bonusDuration=0|regrowTime=1
 ---
 Common\Turrets\plane
-    power=1|range=350|pierce=2|aspd=0.3??0.5|projectileDuration=0.2??3|bulletSize=50|speed=25??75|cost=125|size=50|spritesize=150
+    power=1|range=350|pierce=5|aspd=0.6??1.2|projectileDuration=3|bulletSize=50|speed=20|cost=125|size=50|spritesize=150
     Radial=4??8|PinePower=6|PineDuration=3|PineRadius=200|PineAspd=0.76
 ---
 Common\Turrets\engineer

@@ -9,8 +9,8 @@ import java.util.List;
 
 public class MultiMoabTail extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
-      Lead::new, Lead::new);
+    private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
+            Lead::new, Lead::new);
 
     public MultiMoabTail(TdWorld world, int wave) {
         super(world, wave);
@@ -22,10 +22,10 @@ public class MultiMoabTail extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "SmTail");
+        createImage("SmTail");
     }
 
-  // generated stats
+    // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 175f;
@@ -34,23 +34,28 @@ public class MultiMoabTail extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 200f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return true;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return MultiMoabTail::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return true;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 150;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 150;
+    }
 }

@@ -145,7 +145,7 @@ public class Plane extends Turret {
 
   private void explodePine(Projectile pineapple){
     world.aoeDamage(
-            (int) pineapple.getX(), (int) pineapple.getY(),,
+            (int) pineapple.getX(), (int) pineapple.getY(),(int)stats[ExtraStats.PineRadius],
             pineapple.getPower(),
             DamageType.TRUE);
     world.explosionVisual((int) pineapple.getX(), (int) pineapple.getY(),
@@ -357,11 +357,11 @@ public class Plane extends Turret {
   public void clearStats() {
     stats[Stats.power] = 1f;
     stats[Stats.range] = 350f;
-    stats[Stats.pierce] = 2f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.3f, 0.5f);
-    stats[Stats.projectileDuration] = Data.gameMechanicsRng.nextFloat(0.2f, 3f);
+    stats[Stats.pierce] = 5f;
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(0.6f, 1.2f);
+    stats[Stats.projectileDuration] = 3f;
     stats[Stats.bulletSize] = 50f;
-    stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(25f, 75f);
+    stats[Stats.speed] = 20f;
     stats[Stats.cost] = 125f;
     stats[Stats.size] = 50f;
     stats[Stats.spritesize] = 150f;

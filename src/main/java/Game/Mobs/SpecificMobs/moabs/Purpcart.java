@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Purpcart extends TdMob {
-    private static final int spawnCount=5;
+    private static final int spawnCount = 5;
     private static final List<ChildSpawner> spawns = getSpawns();
     private final ImageData trailIm = Graphics.getImage("laserpurp");
     private Trail trail;
@@ -39,13 +39,13 @@ public class Purpcart extends TdMob {
         createImage("purpcart");
         //default moab is at 25
         sprite.setLayer(22);
-        Trail parentTrail=new Trail(world.getBs(),r ->new Sprite(trailIm,sprite.getLayer()-1).setSize(30,30).setRotation(r+90).
-                playAnimation(new TransformAnimation(1f).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),30,40);
-        trail=new Trail(parentTrail,getX(),getY());
+        Trail parentTrail = new Trail(world.getBs(), r -> new Sprite(trailIm, sprite.getLayer() - 1).setSize(30, 30).setRotation(r + 90).
+                playAnimation(new TransformAnimation(1f).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true), 30, 40);
+        trail = new Trail(parentTrail, getX(), getY());
     }
 
     @Override
-    public void onGameTick(int tick){
+    public void onGameTick(int tick) {
         super.onGameTick(tick);
         trail.tick(this);
         this.addBuff(new StatBuff<TdMob>(StatBuff.Type.INCREASED,
@@ -53,7 +53,7 @@ public class Purpcart extends TdMob {
     }
 
     private static List<ChildSpawner> getSpawns() {
-        List<ChildSpawner> spawn=new ArrayList<>(spawnCount);
+        List<ChildSpawner> spawn = new ArrayList<>(spawnCount);
         for (int i = 0; i < spawnCount; i++) {
             spawn.add(Purple::new);
         }
@@ -70,9 +70,14 @@ public class Purpcart extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
+
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return Purpcart::new;
+    }
 
     @Override
     public boolean isMoab() {

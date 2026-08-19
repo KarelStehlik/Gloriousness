@@ -13,9 +13,8 @@ import Game.Mobs.MobClasses.TdMob;
 import GlobalUse.Constants;
 import GlobalUse.Util;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+
 import windowStuff.GraphicsOnly.ImageData;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 
@@ -41,7 +40,7 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected final List<OnCollideComponent<Player>> playerCollides = new ArrayList<>(0);
-  protected final HashSet<TdMob> alreadyHitMobs;
+  protected final HashSet<Long> alreadyHitMobs;
   protected final List<OnCollideComponent<TdMob>> mobCollides = new ArrayList<>(0);
   protected final HashSet<Projectile> alreadyHitProjectiles;
   protected final List<OnCollideComponent<Projectile>> projectileCollides = new ArrayList<>(0);
@@ -318,11 +317,11 @@ public class Projectile extends GameObject implements TickDetect {
   }
 
   protected void collide(TdMob e) {
-    if (!active || wasDeleted || e.wasDeleted() || alreadyHitMobs.contains(e)) {
+    if (!active || wasDeleted || e.wasDeleted() || alreadyHitMobs.contains(e.mobId[0])|| alreadyHitMobs.contains(e.mobId[1])) {
       return;
     }
     if (!multihit) {
-      alreadyHitMobs.add(e);
+      alreadyHitMobs.add(e.mobId[0]);
     }
     boolean collided = false;
     for (var component : mobCollides) {
@@ -397,14 +396,15 @@ public class Projectile extends GameObject implements TickDetect {
     }
 
     public void tick(Projectile target) {
-      if (target.targetedMob == null || target.alreadyHitMobs.contains(target.targetedMob)
+      if (target.targetedMob == null || target.alreadyHitMobs.contains(target.targetedMob.mobId[0])
+              || target.alreadyHitMobs.contains(target.targetedMob.mobId[1])
           || target.targetedMob.wasDeleted()) {
         target.targetedMob = null;
       }
       if (target.targetedMob == null) {
         target.targetedMob = target.world.getMobsGrid()
             .search(new Point((int) target.x, (int) target.y), range, TargetingOption.FIRST,
-                mob -> !(target.alreadyHitMobs.contains(mob) || mob.wasDeleted()));
+                mob -> !(target.alreadyHitMobs.contains(mob.mobId[0])||target.alreadyHitMobs.contains(mob.mobId[1]) || mob.wasDeleted()));
       }
       if (target.targetedMob == null) {
         return;

@@ -19,7 +19,7 @@ public class Bombarder extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "Bombarder");
+        createImage("Bombarder");
     }
 
     // generated stats
@@ -31,9 +31,14 @@ public class Bombarder extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
+
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return Bombarder::new;
+    }
 
     @Override
     public boolean isMoab() {

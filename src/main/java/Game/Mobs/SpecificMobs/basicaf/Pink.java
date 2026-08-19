@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Pink extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of(Yellow::new);
+    private static final List<ChildSpawner> spawns = List.of(Yellow::new);
 
     public Pink(TdWorld world, int wave) {
         super(world, wave);
@@ -19,10 +19,10 @@ public class Pink extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "BloonPink");
+        createImage("BloonPink");
     }
 
-  // generated stats
+    // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 72.0f;
@@ -31,23 +31,28 @@ public class Pink extends TdMob {
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return false;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return Pink::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return false;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 1;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 1;
+    }
 }

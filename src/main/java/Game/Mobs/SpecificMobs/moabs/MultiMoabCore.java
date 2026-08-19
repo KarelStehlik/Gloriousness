@@ -12,60 +12,60 @@ import java.util.List;
 
 public class MultiMoabCore extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
-      Lead::new, Lead::new);
+    private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
+            Lead::new, Lead::new);
 
 
     public MultiMoabCore(TdWorld world, int wave) {
-    super(world, wave);
-  }
+        super(world, wave);
+    }
 
-  public MultiMoabCore(TdMob parent) {
-    super(parent);
-  }
+    public MultiMoabCore(TdMob parent) {
+        super(parent);
+    }
 
-  @Override
-  public void init(){
-    createImage( "SmCore");
-    initComponents();
-  }
+    @Override
+    public void init() {
+        createImage("SmCore");
+        initComponents();
+    }
 
-  private void initComponents() {
-    TdMob b = new MultiMoabBridge(world, waveNum);
-    b.movement = new HardFollow<>(this, sprite.getWidth() + b.sprite.getWidth(), 0);
-    world.addEnemy(b);
+    private void initComponents() {
+        TdMob b = new MultiMoabBridge(world, waveNum);
+        b.movement = new HardFollow<>(this, sprite.getWidth() + b.sprite.getWidth(), 0);
+        world.addEnemy(b);
 
-    TdMob tail = new MultiMoabTail(world, waveNum);
-    tail.movement = new HardFollow<>(this, -sprite.getWidth() - tail.sprite.getWidth(), 0);
-    world.addEnemy(tail);
-    tail.addBuff(new DelayedTrigger<TdMob>(
-        Float.POSITIVE_INFINITY,
-        m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
-        true, false
-    ));
+        TdMob tail = new MultiMoabTail(world, waveNum);
+        tail.movement = new HardFollow<>(this, -sprite.getWidth() - tail.sprite.getWidth(), 0);
+        world.addEnemy(tail);
+        tail.addBuff(new DelayedTrigger<TdMob>(
+                Float.POSITIVE_INFINITY,
+                m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
+                true, false
+        ));
 
-    TdMob uf = new MultiMoabUpperFin(world, waveNum);
-    uf.movement = new HardFollow<>(this, -sprite.getWidth(),
-        sprite.getHeight() + uf.sprite.getHeight());
-    world.addEnemy(uf);
-    uf.addBuff(new DelayedTrigger<TdMob>(
-        Float.POSITIVE_INFINITY,
-        m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
-        true, false
-    ));
+        TdMob uf = new MultiMoabUpperFin(world, waveNum);
+        uf.movement = new HardFollow<>(this, -sprite.getWidth(),
+                sprite.getHeight() + uf.sprite.getHeight());
+        world.addEnemy(uf);
+        uf.addBuff(new DelayedTrigger<TdMob>(
+                Float.POSITIVE_INFINITY,
+                m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
+                true, false
+        ));
 
-    TdMob lf = new MultiMoabLowerFin(world, waveNum);
-    lf.movement = new HardFollow<>(this, -sprite.getWidth(),
-        -sprite.getHeight() - lf.sprite.getHeight());
-    world.addEnemy(lf);
-    lf.addBuff(new DelayedTrigger<TdMob>(
-        Float.POSITIVE_INFINITY,
-        m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
-        true, false
-    ));
-  }
+        TdMob lf = new MultiMoabLowerFin(world, waveNum);
+        lf.movement = new HardFollow<>(this, -sprite.getWidth(),
+                -sprite.getHeight() - lf.sprite.getHeight());
+        world.addEnemy(lf);
+        lf.addBuff(new DelayedTrigger<TdMob>(
+                Float.POSITIVE_INFINITY,
+                m -> this.addBuff(new StatBuff<TdMob>(Type.INCREASED, Stats.speed, -.3f)),
+                true, false
+        ));
+    }
 
-  // generated stats
+    // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 100f;
@@ -74,23 +74,28 @@ public class MultiMoabCore extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 200f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return true;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return MultiMoabCore::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return true;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 150;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 150;
+    }
 }

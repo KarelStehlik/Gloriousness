@@ -9,22 +9,25 @@ import Game.WorldStuff.TdWorld;
 import Game.Mobs.MobClasses.TdMob;
 import GlobalUse.Constants;
 import GlobalUse.Util;
+
 import java.util.List;
+
 import windowStuff.GraphicsOnly.Text.SimpleText;
 import windowStuff.GraphicsOnly.Text.TextModifiers;
 
 public class GoldenBloon extends TdMob {
-  private float originalValue=0;
-  private void gainMoney(long amount, float duration) {
-    world.addIncome(amount);
-    var t = new SimpleText(TextModifiers.green + "+" + amount, "Calibri", 500, (int) x,
-        (int) y, 60, 50, world.getBs());
-    t.move((int) Util.clamp(t.getX(), 50, Constants.screenSize.x - 50),
-        (int) Util.clamp(t.getY(), 30, Constants.screenSize.y - 30));
-    Game.get().addTickable(new CallAfterDuration(t::delete, duration));
-  }
+    private float originalValue = 0;
 
-  private static final List<ChildSpawner> spawns = List.of();
+    private void gainMoney(long amount, float duration) {
+        world.addIncome(amount);
+        var t = new SimpleText(TextModifiers.green + "+" + amount, "Calibri", 500, (int) x,
+                (int) y, 60, 50, world.getBs());
+        t.move((int) Util.clamp(t.getX(), 50, Constants.screenSize.x - 50),
+                (int) Util.clamp(t.getY(), 30, Constants.screenSize.y - 30));
+        Game.get().addTickable(new CallAfterDuration(t::delete, duration));
+    }
+
+    private static final List<ChildSpawner> spawns = List.of();
 
     public GoldenBloon(TdWorld world, int wave) {
         super(world, wave);
@@ -40,43 +43,44 @@ public class GoldenBloon extends TdMob {
     }
 
 
-  public GoldenBloon(TdWorld world, int wave,float incomePerDamage,float baseValue) {
-    super(world, wave);
-    this.originalValue=baseValue;
-    addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, TdMob.Stats.value,
-            baseValue));
-    addBuff(new StatBuff<TdMob>(Type.FINALLY_ADDED, ExtraStats.moneyPerDamage,
-            incomePerDamage- stats[ExtraStats.moneyPerDamage]));
-  }
-
-  @Override
-  public void takeDamage(float amount, DamageType type) {
-    super.takeDamage(amount, type);
-    addBuff(new StatBuff<TdMob>(Type.ADDED, Stats.value,
-         stats[ExtraStats.moneyPerDamage] * amount));
-  }
-  @Override
-  public void addProgress(int addProgress){
-    return;
-  }
-
-  @Override
-  public void onDeath() {
-    float approxValue=(long) stats[Stats.value];
-    long finalValue;
-    if(originalValue!=0){
-      float valueGained=approxValue/originalValue;
-      finalValue=(long)(originalValue*Math.pow(valueGained,0.4));
-    }else{
-      finalValue=(long)approxValue;
+    public GoldenBloon(TdWorld world, int wave, float incomePerDamage, float baseValue) {
+        super(world, wave);
+        this.originalValue = baseValue;
+        addBuff(new StatBuff<TdMob>(StatBuff.Type.ADDED, TdMob.Stats.value,
+                baseValue));
+        addBuff(new StatBuff<TdMob>(Type.FINALLY_ADDED, ExtraStats.moneyPerDamage,
+                incomePerDamage - stats[ExtraStats.moneyPerDamage]));
     }
-    gainMoney(finalValue, 5000);
-  }
 
-  // generated stats
+    @Override
+    public void takeDamage(float amount, DamageType type) {
+        super.takeDamage(amount, type);
+        addBuff(new StatBuff<TdMob>(Type.ADDED, Stats.value,
+                stats[ExtraStats.moneyPerDamage] * amount));
+    }
+
+    @Override
+    public void addProgress(int addProgress) {
+        return;
+    }
+
+    @Override
+    public void onDeath() {
+        float approxValue = (long) stats[Stats.value];
+        long finalValue;
+        if (originalValue != 0) {
+            float valueGained = approxValue / originalValue;
+            finalValue = (long) (originalValue * Math.pow(valueGained, 0.4));
+        } else {
+            finalValue = (long) approxValue;
+        }
+        gainMoney(finalValue, 5000);
+    }
+
+    // generated stats
   @Override
   public int getStatsCount() {
-    return 8;
+    return 7;
   }
 
   @Override
@@ -87,32 +91,37 @@ public class GoldenBloon extends TdMob {
     stats[Stats.value] = 0f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
     stats[ExtraStats.moneyPerDamage] = 1f;
   }
 
   public static final class ExtraStats {
 
-    public static final int moneyPerDamage = 7;
+    public static final int moneyPerDamage = 6;
 
     private ExtraStats() {
     }
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return false;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return GoldenBloon::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return false;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 1;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 1;
+    }
 }

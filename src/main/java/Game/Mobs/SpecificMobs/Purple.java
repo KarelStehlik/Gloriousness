@@ -20,7 +20,7 @@ public class Purple extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "BloonPurple");
+        createImage("BloonPurple");
     }
 
     // generated stats
@@ -32,9 +32,14 @@ public class Purple extends TdMob {
     stats[Stats.value] = 1f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
+
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return Purple::new;
+    }
 
     @Override
     public boolean isMoab() {

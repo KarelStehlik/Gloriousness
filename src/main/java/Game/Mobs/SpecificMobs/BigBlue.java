@@ -19,7 +19,7 @@ public class BigBlue extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "bigblue");
+        createImage("bigblue");
     }
 
     // generated stats
@@ -31,9 +31,14 @@ public class BigBlue extends TdMob {
     stats[Stats.damageTaken] = 2f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
+
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return BigBlue::new;
+    }
 
     @Override
     public boolean isMoab() {

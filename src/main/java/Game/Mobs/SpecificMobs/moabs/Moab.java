@@ -7,8 +7,8 @@ import java.util.List;
 
 public class Moab extends TdMob {
 
-  private static final List<TdMob.ChildSpawner> spawns = List.of(Capsule::new, Capsule::new,
-          Capsule::new, Capsule::new);
+    private static final List<TdMob.ChildSpawner> spawns = List.of(Capsule::new, Capsule::new,
+            Capsule::new, Capsule::new);
 
     public Moab(TdWorld world, int wave) {
         super(world, wave);
@@ -20,10 +20,10 @@ public class Moab extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "BloonMoab");
+        createImage("BloonMoab");
     }
 
-  // generated stats
+    // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 600.0f;
@@ -32,23 +32,28 @@ public class Moab extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return true;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return Moab::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return true;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 150;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 150;
+    }
 }

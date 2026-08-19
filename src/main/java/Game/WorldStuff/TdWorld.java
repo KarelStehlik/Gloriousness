@@ -281,7 +281,7 @@ public class TdWorld implements World {
     return health;
   }
 
-  public void changeHealth(int change) {
+  public void changeHealth(float change) {
     health += change;
     resourceTracker.update();
   }

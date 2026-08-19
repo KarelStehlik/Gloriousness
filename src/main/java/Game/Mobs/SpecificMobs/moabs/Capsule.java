@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Capsule extends TdMob {
-    private static final int spawnCount=5;
+    private static final int spawnCount = 5;
     private static final List<ChildSpawner> spawns = getSpawns();
     private final ImageData trailIm = Graphics.getImage("fire");
     private Trail trail;
@@ -30,21 +30,21 @@ public class Capsule extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "Capsule");
-        Trail parentTrail=new Trail(world.getBs(), r ->new Sprite(trailIm,sprite.getLayer()-1).setSize(30,30).setRotation(r+90).
-                playAnimation(new TransformAnimation(1f).setOpacityScaling(-0.01f)).setDeleteOnAnimationEnd(true),30,55);
-        trail=new Trail(parentTrail,getX(),getY());
+        createImage("Capsule");
+        Trail parentTrail = new Trail(world.getBs(), r -> new Sprite(trailIm, sprite.getLayer() - 1).setSize(30, 30).setRotation(r + 90).
+                playAnimation(new TransformAnimation(1f).setOpacityScaling(-0.01f)).setDeleteOnAnimationEnd(true), 30, 55);
+        trail = new Trail(parentTrail, getX(), getY());
     }
 
-    public void onGameTick(int tick){
+    public void onGameTick(int tick) {
         super.onGameTick(tick);
         trail.tick(this);
     }
 
     private static List<ChildSpawner> getSpawns() {
-        List<ChildSpawner> spawn=new ArrayList<>(spawnCount);
+        List<ChildSpawner> spawn = new ArrayList<>(spawnCount);
         for (int i = 0; i < spawnCount; i++) {
-            if (i<4) {
+            if (i < 4) {
                 spawn.add(TigerG::new);
             } else {
                 spawn.add(TigerP::new);
@@ -62,9 +62,14 @@ public class Capsule extends TdMob {
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
+
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return Capsule::new;
+    }
 
     @Override
     public boolean isMoab() {

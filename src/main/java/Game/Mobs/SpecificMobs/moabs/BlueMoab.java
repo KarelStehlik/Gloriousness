@@ -19,7 +19,7 @@ public class BlueMoab extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "Blnboss");
+        createImage("Blnboss");
     }
 
     // generated stats
@@ -31,9 +31,14 @@ public class BlueMoab extends TdMob {
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
+
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return BlueMoab::new;
+    }
 
     @Override
     public boolean isMoab() {

@@ -6,6 +6,7 @@ import Game.Common.Buffs.Modifier.Modifier;
 import Game.Enums.DamageType;
 import Game.Misc.GameObject;
 import Game.Misc.SquareGrid;
+import Game.Mobs.MobGeneration.BloonNew;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.TickDetect;
 import Game.Mobs.MobGeneration.Wave;
@@ -13,404 +14,441 @@ import GlobalUse.Constants;
 import GlobalUse.Data;
 import GlobalUse.Log;
 import GlobalUse.Util;
+
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
+
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 
 public abstract class TdMob extends GameObject implements TickDetect {
 
-  public Sprite sprite;
-  protected final SquareGrid<TdMob> grid;
-  private final BuffHandler<TdMob> buffHandler=new BuffHandler<>(this);
-  public MovementAi<TdMob> movement;
-  protected double healthPart;
-  protected boolean exists;
-  protected float vx, vy;
-  protected final int waveNum;
+    public Sprite sprite;
+    protected final SquareGrid<TdMob> grid;
+    private final BuffHandler<TdMob> buffHandler = new BuffHandler<>(this);
+    public MovementAi<TdMob> movement;
+    protected double healthPart;
+    protected boolean exists;
+    protected float vx, vy;
+    protected final int waveNum;
+    //this, parent
+    public Long[] mobId;
 
-  public TdMob(TdWorld world, int wave,float x,float y) {
-    super(x, y, 0, 0, world);
-    waveNum = wave;
-    Wave.increaseMobsInWave(waveNum);
-    clearStats();
-    healthPart = 1;
-    grid = world.getMobsGrid();
-    exists = true;
-    stats[Stats.spawns]=children().size();
-    stats[Stats.maxHealth]=stats[Stats.health];
-    init();
-    updateSize();
-  }
+    protected final Deque<ChildSpawner> lineage = new ArrayDeque<>();
 
-  public void updateSize(){
-    if(wasDeleted()){
-      return;
-    }
-    setSize((int) stats[Stats.size], (int) stats[Stats.size]);
-    sprite.setSize(width, height);
-    sprite.setNaturalHeight();
-  }
-
-  public TdMob(TdWorld world, int wave) {
-    this(world,wave,world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-            Constants.MobSpread),world.getTrack().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-            Constants.MobSpread));
-    Wave.buff(this, wave);
-    movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
-        new Point((int) x - world.getTrack().get(0).x,
-            (int) y - world.getTrack().get(0).y), stats, Stats.speed, TdMob::passed);
-  }
-
-  public TdMob(TdWorld world, TdMob parent, int spread) {
-    this(world,parent.waveNum,
-            parent.x + Data.gameMechanicsRng.nextInt(-spread, spread),parent.y + Data.gameMechanicsRng.nextInt(-spread, spread));
-    parent.buffHandler.addAll(buffHandler,this);
-    movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
-        new Point((int) (x - parent.x + parent.movement.getOffsetX()),
-            (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
-        parent.movement.getProgress());
-  }
-
-  public TdMob(TdMob parent) {
-    this(parent.world,parent,parent.getChildrenSpread());
-  }
-
-  protected void init(){
-    Log.write("Warning, a bloon has no INIT method "+this.getClass());
-  }
-
-  protected void createImage(String image){
-    sprite = new Sprite(image, isMoab() ? Constants.layerInterval.flyingMoab.defalt : Constants.layerInterval.bloon.defalt, "basic").setSize(width, height).setPosition(x, y);
-    sprite.addToBs(world.getBs());
-    sprite.setNaturalHeight();
-  }
-
-  @Override
-  public Sprite getSprite(){
-    return sprite;
-  }
-
-  @Override
-  protected int getStatsCount() {
-    return 7;
-  }
-
-  @Override
-  public abstract void clearStats();
-
-  @Override
-  public Rectangle getHitbox() {
-    return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
-        height);
-  }
-
-  public abstract boolean isMoab();
-
-  @Override
-  public void setRotation(float f) {
-    super.setRotation(f);
-    sprite.setRotation(f + 90);
-  }
-
-  public TrackProgress getProgress() {
-    return movement.getProgress();
-  }
-
-  public boolean addBuff(Buff<TdMob> eff) {
-    return buffHandler.add(eff);
-  }
-
-  public BuffHandler<TdMob> getBuffHandler() {
-    return buffHandler;
-  }
-
-  public void takeDamage(float amount, DamageType type) {
-    double resistance = stats[Stats.damageTaken];
-    double eDamage = amount * resistance / stats[Stats.health];
-    healthPart -= eDamage;
-    if (healthPart <= 0.0000001 && exists) {
-      die();
-    }
-  }
-
-  public void die() {
-    onDeath();
-    spawnChildren(Math.max(0, (float) (-healthPart * stats[Stats.health])));
-
-    delete();
-  }
-
-  public void onDeath() {
-  }
-
-  @Override
-  public void delete() {
-    sprite.delete();
-    exists = false;
-    buffHandler.delete();
-    Wave.decreaseMobsInWave(waveNum);
-  }
-
-  @Override
-  public boolean wasDeleted() {
-    return !exists;
-  }
-
-  protected abstract List<ChildSpawner> children();
-
-  private void spawnChildren(float overkill) {
-    List<ChildSpawner> children=children();
-    for (int i=Math.min((int)stats[Stats.spawns],children.size());i>0;i--){
-      var spawner=children.get(i-1);
-
-      TdMob newBloon = spawner.spawn(this);
-      newBloon.takeDamage(overkill, DamageType.TRUE);
-      world.addEnemy(newBloon);
-    }
-  }
-
-  @Override
-  public void onGameTick(int tick) {
-    movement.tick(this);
-    grid.add(this);
-    sprite.setPosition(x, y);
-  }
-  public void addProgress(int addProgress){
-    movement.addProgress(this,addProgress);
-  }
-
-  public void onGameTickP2(int tick) {
-    buffHandler.tick();
-    miscTickActions(tick);
-  }
-
-  protected void miscTickActions(int tick) {
-  }
-
-  private void passed() {
-    die();
-    world.changeHealth(-1);
-  }
-
-  public abstract int getChildrenSpread();
-
-  @FunctionalInterface
-  public interface ChildSpawner {
-
-    TdMob spawn(TdMob parent);
-  }
-
-  public interface MovementAi<T extends GameObject> {
-
-    TrackProgress getProgress();
-
-    boolean isDone();
-
-    void tick(T target);
-    void addProgress(T target,int a);
-
-    float getOffsetX();
-
-    float getOffsetY();
-  }
-
-  public static class HardFollow<T extends TdMob> implements MovementAi<T> {
-
-    private final TdMob master;
-    private final float offX, offY;
-
-    public HardFollow(TdMob master, float offX, float offY) {
-      this.master = master;
-      this.offX = -offY * .99f;
-      this.offY = offX * .99f;
+    public TdMob(TdWorld world, int wave, float x, float y) {
+        super(x, y, 0, 0, world);
+        mobId= new Long[]{id,-1L};
+        waveNum = wave;
+        Wave.increaseMobsInWave(waveNum);
+        clearStats();
+        healthPart = 1;
+        grid = world.getMobsGrid();
+        exists = true;
+        stats[Stats.spawns] = children().size();
+        init();
+        updateSize();
     }
 
-    @Override
-    public TrackProgress getProgress() {
-      return master.getProgress();
-    }
-
-    @Override
-    public boolean isDone() {
-      return master.movement.isDone();
-    }
-
-    @Override
-    public void tick(T target) {
-      target.setRotation(master.rotation);
-      float sin = Util.sin(master.rotation), cos = Util.cos(master.rotation);
-      target.move(master.getX() + offX * cos - offY * sin,
-          master.getY() + offX * sin + offY * cos);
-      if (master.wasDeleted()) {
-        target.die();
-      }
-    }
-
-    @Override
-    public void addProgress(T target, int a) {
-    }
-
-    @Override
-    public float getOffsetX() {
-      return master.movement.getOffsetX() + offX * Util.cos(master.rotation) + offY * Util.sin(
-          master.rotation);
-    }
-
-    @Override
-    public float getOffsetY() {
-      return master.movement.getOffsetX() + offX * Util.sin(master.rotation) + offY * Util.cos(
-          master.rotation);
-    }
-  }
-
-  public static class MoveAlongTrack<T extends GameObject> implements MovementAi<T> {
-
-    private final boolean reverse;
-    private final List<? extends Point> mapData;
-    private final Point offset;
-    private final float[] stats;
-    private final int speedStat;
-    private final Modifier<T> onFinish;
-    private int nextMapPoint;
-    private TrackProgress progress = new TrackProgress(1, 9999);
-
-    public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
-        float[] stats, int speedStat, Modifier<T> end) {
-      this.reverse = reverse;
-      this.nextMapPoint = reverse ? mapData.size() - 1 : 0;
-      this.mapData = mapData;
-      this.offset = new Point((int) Util.clamp(offset.x, -Constants.MobSpread, Constants.MobSpread),
-          (int) Util.clamp(offset.y, -Constants.MobSpread, Constants.MobSpread));
-      this.speedStat = speedStat;
-      this.stats = stats;
-      onFinish = end;
-    }
-
-    public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
-        float[] stats, int speedStat, Modifier<T> end, int nextMapPoint) {
-      this(reverse, mapData, offset, stats, speedStat, end);
-      this.nextMapPoint = nextMapPoint;
-    }
-
-    public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
-        float[] stats, int speedStat, Modifier<T> end, TrackProgress progress) {
-      this(reverse, mapData, offset, stats, speedStat, end);
-      this.progress = progress;
-      nextMapPoint = progress.checkpoint;
-    }
-
-    @Override
-    public TrackProgress getProgress() {
-      return progress;
-    }
-
-    @Override
-    public boolean isDone() {
-      return reverse ? nextMapPoint < 0 : nextMapPoint >= mapData.size();
-    }
-
-    @Override
-    public void tick(T target) {
-      if (isDone()) {
-        return;
-      }
-      //Log.write(stats[speedStat]);
-      Point nextPoint = mapData.get(nextMapPoint);
-      int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.getX()) + Math.abs(
-          nextPoint.y + offset.y - target.getY()));
-      progress = new TrackProgress(nextMapPoint, approxDistance);
-      if (approxDistance < stats[speedStat]) {
-        target.move(nextPoint.x + offset.x, nextPoint.y + offset.y);
-        addProgressUnsafe(target,reverse ? -1 : 1);
-      } else {
-        float rotationToNextPoint = Util.get_rotation(nextPoint.x + offset.x - target.getX(),
-            nextPoint.y + offset.y - target.getY());
-        float vx = stats[speedStat] * Util.cos(rotationToNextPoint);
-        float vy = stats[speedStat] * Util.sin(rotationToNextPoint);
-        target.move(target.getX() + vx, target.getY() + vy);
-        if (target instanceof TdMob mob && mob.isMoab()) {
-          target.setRotation(rotationToNextPoint - 90f);
+    public void updateSize() {
+        if (wasDeleted()) {
+            return;
         }
-      }
-    }
-    public void addProgressUnsafe(T target,int a){
-      nextMapPoint += a;
-      if (isDone()) {
-        onFinish.mod(target);
-      }
-    }
-    @Override
-    public void addProgress(T target,int a){
-      a=Math.min(Math.max(-nextMapPoint,a),mapData.size()-nextMapPoint-1);
-      addProgressUnsafe(target,a);
-      Point nextPoint = mapData.get(nextMapPoint);
-      int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.getX()) + Math.abs(
-              nextPoint.y + offset.y - target.getY()));
-      progress = new TrackProgress(nextMapPoint, approxDistance);
+        setSize((int) stats[Stats.size], (int) stats[Stats.size]);
+        sprite.setSize(width, height);
+        sprite.setNaturalHeight();
     }
 
-    @Override
-    public float getOffsetX() {
-      return offset.x;
+    public TdMob(TdWorld world, int wave) {
+        this(world, wave, world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+                Constants.MobSpread), world.getTrack().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+                Constants.MobSpread));
+        Wave.buff(this, wave);
+        movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
+                new Point((int) x - world.getTrack().get(0).x,
+                        (int) y - world.getTrack().get(0).y), stats, Stats.speed, TdMob::passed);
     }
 
-    @Override
-    public float getOffsetY() {
-      return offset.y;
-    }
-  }
-
-  public static final class Stats {
-
-    public static final int size = 0;
-    public static final int speed = 1;
-    public static final int health = 2;
-    public static final int value = 3;
-    public static final int damageTaken = 4;
-    public static final int spawns = 5;
-    public static final int maxHealth = 6;
-
-    private Stats() {
-    }
-  }
-
-  public static class TrackProgress implements Comparable<TrackProgress> {
-
-    private final int checkpoint;
-    private final int distanceToNext;
-
-    public TrackProgress(int newCheckpoint, int newDistance) {
-      checkpoint = newCheckpoint;
-      distanceToNext = newDistance;
+    public TdMob(TdWorld world, TdMob parent, int spread) {
+        this(world, parent.waveNum,
+                parent.x + Data.gameMechanicsRng.nextInt(-spread, spread), parent.y + Data.gameMechanicsRng.nextInt(-spread, spread));
+        parent.buffHandler.addAll(buffHandler, this);
+        movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
+                new Point((int) (x - parent.x + parent.movement.getOffsetX()),
+                        (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
+                parent.movement.getProgress());
     }
 
-    public int getCheckpoint() {
-      return checkpoint;
+    public TdMob(TdMob parent) {
+        this(parent.world, parent, parent.getChildrenSpread());
     }
 
-    public int getDistanceToNext() {
-      return distanceToNext;
+    protected void init() {
+        Log.write("Warning, a bloon has no INIT method " + this.getClass());
+    }
+
+    protected void createImage(String image) {
+        sprite = new Sprite(image, isMoab() ? Constants.layerInterval.flyingMoab.defalt : Constants.layerInterval.bloon.defalt, "basic").setSize(width, height).setPosition(x, y);
+        sprite.addToBs(world.getBs());
+        sprite.setNaturalHeight();
     }
 
     @Override
-    public int compareTo(TrackProgress o) {
-      if (checkpoint == o.checkpoint) {
-        return o.distanceToNext - distanceToNext;
-      }
-      return checkpoint - o.checkpoint;
+    public Sprite getSprite() {
+        return sprite;
     }
 
     @Override
-    public boolean equals(Object o) {
-      return o instanceof TrackProgress && compareTo((TrackProgress) o) == 0;
+    protected int getStatsCount() {
+        return 7;
     }
 
     @Override
-    public int hashCode() {
-      int result = checkpoint;
-      result = 31 * result + distanceToNext;
-      return result;
+    public abstract void clearStats();
+
+    @Override
+    public Rectangle getHitbox() {
+        return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
+                height);
     }
-  }
+
+    public abstract boolean isMoab();
+
+    @Override
+    public void setRotation(float f) {
+        super.setRotation(f);
+        sprite.setRotation(f + 90);
+    }
+
+    public TrackProgress getProgress() {
+        return movement.getProgress();
+    }
+
+    public boolean addBuff(Buff<TdMob> eff) {
+        return buffHandler.add(eff);
+    }
+
+    public BuffHandler<TdMob> getBuffHandler() {
+        return buffHandler;
+    }
+
+    public void takeDamage(float amount, DamageType type) {
+        double resistance = stats[Stats.damageTaken];
+        double eDamage = amount * resistance / stats[Stats.health];
+        healthPart -= eDamage;
+        if (healthPart <= 0.0000001 && exists) {
+            die();
+        }
+    }
+
+    public void die() {
+        onDeath();
+        spawnChildren(Math.max(0, (float) (-healthPart * stats[Stats.health])));
+
+        delete();
+    }
+
+    public void heal(float amount){
+        this.healthPart+=amount/stats[Stats.health];
+        if(healthPart>1){
+            healthPart=1;
+            if(!lineage.isEmpty()){
+                ChildSpawner parent=lineage.pop();
+                TdMob newBloon=parent.spawn(this);
+                world.addEnemy(newBloon);
+                delete();
+            }
+        }
+    }
+
+    public void onDeath() {
+    }
+
+    @Override
+    public void delete() {
+        sprite.delete();
+        exists = false;
+        buffHandler.delete();
+        Wave.decreaseMobsInWave(waveNum);
+    }
+
+    @Override
+    public boolean wasDeleted() {
+        return !exists;
+    }
+
+    protected abstract List<ChildSpawner> children();
+
+    private void spawnChildren(float overkill) {
+        List<ChildSpawner> children = children();
+        for (int i = Math.min((int) stats[Stats.spawns], children.size()); i > 0; i--) {
+            var spawner = children.get(i - 1);
+
+            TdMob newBloon = spawner.spawn(this);
+            if (getAsChildSpawner() != null)
+                newBloon.lineage.add(getAsChildSpawner());
+            //if the mob is overkilled and dies we want to pass this as parent
+            Long temp=newBloon.mobId[0];
+            newBloon.mobId[0]=this.mobId[0];
+            newBloon.takeDamage(overkill, DamageType.TRUE);
+            newBloon.mobId[0]=temp;
+            newBloon.mobId[1]=this.mobId[0];
+            world.addEnemy(newBloon);
+        }
+    }
+
+    public ChildSpawner getAsChildSpawner() {
+        return null;
+    }
+
+
+    @Override
+    public void onGameTick(int tick) {
+        movement.tick(this);
+        grid.add(this);
+        sprite.setPosition(x, y);
+    }
+
+    public void addProgress(int addProgress) {
+        movement.addProgress(this, addProgress);
+    }
+
+    public void onGameTickP2(int tick) {
+        buffHandler.tick();
+        miscTickActions(tick);
+    }
+
+    protected void miscTickActions(int tick) {
+    }
+
+    private void passed() {
+        die();
+        world.changeHealth(Math.min((float)-healthPart*stats[Stats.health],0));
+    }
+
+    public abstract int getChildrenSpread();
+
+    @FunctionalInterface
+    public interface ChildSpawner {
+
+        TdMob spawn(TdMob parent);
+    }
+
+    public interface MovementAi<T extends GameObject> {
+
+        TrackProgress getProgress();
+
+        boolean isDone();
+
+        void tick(T target);
+
+        void addProgress(T target, int a);
+
+        float getOffsetX();
+
+        float getOffsetY();
+    }
+
+    public static class HardFollow<T extends TdMob> implements MovementAi<T> {
+
+        private final TdMob master;
+        private final float offX, offY;
+
+        public HardFollow(TdMob master, float offX, float offY) {
+            this.master = master;
+            this.offX = -offY * .99f;
+            this.offY = offX * .99f;
+        }
+
+        @Override
+        public TrackProgress getProgress() {
+            return master.getProgress();
+        }
+
+        @Override
+        public boolean isDone() {
+            return master.movement.isDone();
+        }
+
+        @Override
+        public void tick(T target) {
+            target.setRotation(master.rotation);
+            float sin = Util.sin(master.rotation), cos = Util.cos(master.rotation);
+            target.move(master.getX() + offX * cos - offY * sin,
+                    master.getY() + offX * sin + offY * cos);
+            if (master.wasDeleted()) {
+                target.die();
+            }
+        }
+
+        @Override
+        public void addProgress(T target, int a) {
+        }
+
+        @Override
+        public float getOffsetX() {
+            return master.movement.getOffsetX() + offX * Util.cos(master.rotation) + offY * Util.sin(
+                    master.rotation);
+        }
+
+        @Override
+        public float getOffsetY() {
+            return master.movement.getOffsetX() + offX * Util.sin(master.rotation) + offY * Util.cos(
+                    master.rotation);
+        }
+    }
+
+    public static class MoveAlongTrack<T extends GameObject> implements MovementAi<T> {
+
+        private final boolean reverse;
+        private final List<? extends Point> mapData;
+        private final Point offset;
+        private final float[] stats;
+        private final int speedStat;
+        private final Modifier<T> onFinish;
+        private int nextMapPoint;
+        private TrackProgress progress = new TrackProgress(1, 9999);
+
+        public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
+                              float[] stats, int speedStat, Modifier<T> end) {
+            this.reverse = reverse;
+            this.nextMapPoint = reverse ? mapData.size() - 1 : 0;
+            this.mapData = mapData;
+            this.offset = new Point((int) Util.clamp(offset.x, -Constants.MobSpread, Constants.MobSpread),
+                    (int) Util.clamp(offset.y, -Constants.MobSpread, Constants.MobSpread));
+            this.speedStat = speedStat;
+            this.stats = stats;
+            onFinish = end;
+        }
+
+        public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
+                              float[] stats, int speedStat, Modifier<T> end, int nextMapPoint) {
+            this(reverse, mapData, offset, stats, speedStat, end);
+            this.nextMapPoint = nextMapPoint;
+        }
+
+        public MoveAlongTrack(boolean reverse, List<? extends Point> mapData, Point offset,
+                              float[] stats, int speedStat, Modifier<T> end, TrackProgress progress) {
+            this(reverse, mapData, offset, stats, speedStat, end);
+            this.progress = progress;
+            nextMapPoint = progress.checkpoint;
+        }
+
+        @Override
+        public TrackProgress getProgress() {
+            return progress;
+        }
+
+        @Override
+        public boolean isDone() {
+            return reverse ? nextMapPoint < 0 : nextMapPoint >= mapData.size();
+        }
+
+        @Override
+        public void tick(T target) {
+            if (isDone()) {
+                return;
+            }
+            //Log.write(stats[speedStat]);
+            Point nextPoint = mapData.get(nextMapPoint);
+            int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.getX()) + Math.abs(
+                    nextPoint.y + offset.y - target.getY()));
+            progress = new TrackProgress(nextMapPoint, approxDistance);
+            if (approxDistance < stats[speedStat]) {
+                target.move(nextPoint.x + offset.x, nextPoint.y + offset.y);
+                addProgressUnsafe(target, reverse ? -1 : 1);
+            } else {
+                float rotationToNextPoint = Util.get_rotation(nextPoint.x + offset.x - target.getX(),
+                        nextPoint.y + offset.y - target.getY());
+                float vx = stats[speedStat] * Util.cos(rotationToNextPoint);
+                float vy = stats[speedStat] * Util.sin(rotationToNextPoint);
+                target.move(target.getX() + vx, target.getY() + vy);
+                if (target instanceof TdMob mob && mob.isMoab()) {
+                    target.setRotation(rotationToNextPoint - 90f);
+                }
+            }
+        }
+
+        public void addProgressUnsafe(T target, int a) {
+            nextMapPoint += a;
+            if (isDone()) {
+                onFinish.mod(target);
+            }
+        }
+
+        @Override
+        public void addProgress(T target, int a) {
+            a = Math.min(Math.max(-nextMapPoint, a), mapData.size() - nextMapPoint - 1);
+            addProgressUnsafe(target, a);
+            Point nextPoint = mapData.get(nextMapPoint);
+            int approxDistance = (int) (Math.abs(nextPoint.x + offset.x - target.getX()) + Math.abs(
+                    nextPoint.y + offset.y - target.getY()));
+            progress = new TrackProgress(nextMapPoint, approxDistance);
+        }
+
+        @Override
+        public float getOffsetX() {
+            return offset.x;
+        }
+
+        @Override
+        public float getOffsetY() {
+            return offset.y;
+        }
+    }
+
+    public static final class Stats {
+
+        public static final int size = 0;
+        public static final int speed = 1;
+        public static final int health = 2;
+        public static final int value = 3;
+        public static final int damageTaken = 4;
+        public static final int spawns = 5;
+
+        private Stats() {
+        }
+    }
+
+    public static class TrackProgress implements Comparable<TrackProgress> {
+
+        private final int checkpoint;
+        private final int distanceToNext;
+
+        public TrackProgress(int newCheckpoint, int newDistance) {
+            checkpoint = newCheckpoint;
+            distanceToNext = newDistance;
+        }
+
+        public int getCheckpoint() {
+            return checkpoint;
+        }
+
+        public int getDistanceToNext() {
+            return distanceToNext;
+        }
+
+        @Override
+        public int compareTo(TrackProgress o) {
+            if (checkpoint == o.checkpoint) {
+                return o.distanceToNext - distanceToNext;
+            }
+            return checkpoint - o.checkpoint;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof TrackProgress && compareTo((TrackProgress) o) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = checkpoint;
+            result = 31 * result + distanceToNext;
+            return result;
+        }
+    }
 }

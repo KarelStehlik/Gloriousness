@@ -9,31 +9,31 @@ import java.util.List;
 
 public class MultiMoabBridge extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
-      Lead::new, Lead::new);
+    private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
+            Lead::new, Lead::new);
 
 
     public MultiMoabBridge(TdWorld world, int wave) {
-    super(world, wave);
-  }
+        super(world, wave);
+    }
 
-  public MultiMoabBridge(TdMob parent) {
-    super(parent);
-  }
+    public MultiMoabBridge(TdMob parent) {
+        super(parent);
+    }
 
-  @Override
-  public void init(){
-    createImage( "SmBridge");
-    initComponents();
-  }
+    @Override
+    public void init() {
+        createImage("SmBridge");
+        initComponents();
+    }
 
-  private void initComponents() {
-    TdMob b = new MultiMoabHead(world, waveNum);
-    b.movement = new HardFollow<>(this, sprite.getWidth() + b.sprite.getWidth(), 0);
-    world.addEnemy(b);
-  }
+    private void initComponents() {
+        TdMob b = new MultiMoabHead(world, waveNum);
+        b.movement = new HardFollow<>(this, sprite.getWidth() + b.sprite.getWidth(), 0);
+        world.addEnemy(b);
+    }
 
-  // generated stats
+    // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 200f;
@@ -42,23 +42,28 @@ public class MultiMoabBridge extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 200f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return true;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return MultiMoabBridge::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return true;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 150;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 150;
+    }
 }

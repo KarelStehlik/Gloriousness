@@ -10,10 +10,10 @@ import java.util.List;
 
 public class MultiMoabHead extends TdMob {
 
-  private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
-      Lead::new, Lead::new);
+    private static final List<ChildSpawner> spawns = List.of(Lead::new, Lead::new,
+            Lead::new, Lead::new);
 
-  private final List<TdMob> components = new ArrayList<>();
+    private final List<TdMob> components = new ArrayList<>();
 
     public MultiMoabHead(TdWorld world, int wave) {
         super(world, wave);
@@ -25,11 +25,11 @@ public class MultiMoabHead extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "SmHead");
+        createImage("SmHead");
     }
 
 
-  // generated stats
+    // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 150f;
@@ -38,23 +38,28 @@ public class MultiMoabHead extends TdMob {
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 200f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return true;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return MultiMoabHead::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return true;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 150;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 150;
+    }
 }

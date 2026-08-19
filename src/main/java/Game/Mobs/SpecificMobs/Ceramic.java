@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Ceramic extends TdMob {
 
-  private static final List<TdMob.ChildSpawner> spawns = List.of(Lead::new, Lead::new);
+    private static final List<TdMob.ChildSpawner> spawns = List.of(Lead::new, Lead::new);
 
     public Ceramic(TdWorld world, int wave) {
         super(world, wave);
@@ -19,10 +19,10 @@ public class Ceramic extends TdMob {
 
     @Override
     protected void init() {
-        createImage( "blackrockbloon");
+        createImage("blackrockbloon");
     }
 
-  // generated stats
+    // generated stats
   @Override
   public void clearStats() {
     stats[Stats.size] = 85.0f;
@@ -31,23 +31,28 @@ public class Ceramic extends TdMob {
     stats[Stats.value] = 0f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;
-    stats[Stats.maxHealth] = 1f;
   }
   // end of generated stats
 
-  @Override
-  public boolean isMoab() {
-    return false;
-  }
+
+    @Override
+    public ChildSpawner getAsChildSpawner() {
+        return Ceramic::new;
+    }
+
+    @Override
+    public boolean isMoab() {
+        return false;
+    }
 
 
-  @Override
-  protected List<ChildSpawner> children() {
-    return spawns;
-  }
+    @Override
+    protected List<ChildSpawner> children() {
+        return spawns;
+    }
 
-  @Override
-  public int getChildrenSpread() {
-    return 60;
-  }
+    @Override
+    public int getChildrenSpread() {
+        return 60;
+    }
 }

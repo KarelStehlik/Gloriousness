@@ -53,7 +53,7 @@ public class Druid8 extends Turret {
     private float rootEffectIveAt=45;
     private boolean root(TdMob mob, float strength) {
         float durationMs = 3000;
-        if (mob.getStats()[TdMob.Stats.maxHealth] > rootEffectIveAt) {
+        if (mob.getStats()[TdMob.Stats.health] > rootEffectIveAt) {
             strength /= mob.getStats()[TdMob.Stats.health] / (rootEffectIveAt/10);
             durationMs/=15;
         }else if (mob.getStats()[TdMob.Stats.spawns] > 1) {
