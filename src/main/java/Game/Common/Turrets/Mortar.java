@@ -97,6 +97,7 @@ public class Mortar extends Turret {
         monkeySprite.setNaturalHeight();
 
         bulletLauncher.addProjectileModifier(p -> p.addBeforeDeath(this.explosive));
+        bulletLauncher.addProjectileModifier(p->p.setMultihit(true));
         addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, getStats()[Stats.bulletSize]/40f));
         originalStats[ExtraStats.radius]=stats[ExtraStats.radius];
 
