@@ -224,7 +224,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     protected void miscTickActions(int tick) {
     }
 
-    private void passed() {
+    protected void passed() {
         die();
         world.changeHealth(Math.min((float)-healthPart*stats[Stats.health],0));
     }

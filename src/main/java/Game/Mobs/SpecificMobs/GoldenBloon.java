@@ -124,4 +124,8 @@ public class GoldenBloon extends TdMob {
     public int getChildrenSpread() {
         return 1;
     }
+    @Override
+    protected void passed() {
+        die();
+    }
 }
