@@ -15,10 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import static Game.Mobs.MobGeneration.BloonNew.BloonNewRegrow;
+
 //sends purely basic bloons - red to pink
 public class IntermediateMobGenerator implements WaveGenerator {
     private static int validFromWave = 9;
     private static int validToWave = 40;
+    public float regrowChance=1/4f;
 
     public IntermediateMobGenerator() {
 
@@ -38,6 +41,11 @@ public class IntermediateMobGenerator implements WaveGenerator {
     }
     private SpawnSequence genPart(int strength, float wave, int beginTime){
         int interval;
+        boolean regrow=Data.gameMechanicsRng.nextFloat()<=regrowChance;
+        float bloonCountMod=1;
+        if(regrow){
+            bloonCountMod=0.8f;
+        }
         //technically this shouldn't really happen because it's not valid at that wave but validity is more of a suggestion than a hard rule
         if (wave<40){
             interval = (int) Data.gameMechanicsRng.nextFloat(1, 15 * strength / (wave));
@@ -45,25 +53,25 @@ public class IntermediateMobGenerator implements WaveGenerator {
             interval=1;
         }
         //I somehow fully bolieve this will yield best results
-        int blooncount=(int)Math.round((wave*wave*1.25f+50)/ Math.pow(strength,2));
+        int blooncount=(int)Math.round((wave*wave*1.25f+70)/ Math.pow(strength,2)*bloonCountMod);
         switch(strength){
             case bloonStrength.Purple -> {
-                return new SpawnSequence(Purple::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Purple::new,regrow), blooncount, beginTime, interval);
             }
             case bloonStrength.Black ->{
-                return new SpawnSequence(Black::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Black::new,regrow), blooncount, beginTime, interval);
             }
             case bloonStrength.TigerG ->{
-                return new SpawnSequence(TigerG::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(TigerG::new,regrow), blooncount, beginTime, interval);
             }
             case bloonStrength.TigerP ->{
-                return new SpawnSequence(TigerP::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(TigerP::new,regrow), blooncount, beginTime, interval);
             }
             case bloonStrength.Lead ->{
-                return new SpawnSequence(Lead::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Lead::new,regrow), blooncount, beginTime, interval);
             }
             case bloonStrength.Ceramic ->{
-                return new SpawnSequence(Ceramic::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Ceramic::new,regrow), blooncount, beginTime, interval);
             }
             default -> {
                 System.exit(556);

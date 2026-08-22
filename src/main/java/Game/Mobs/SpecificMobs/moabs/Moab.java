@@ -19,7 +19,7 @@ public class Moab extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("BloonMoab");
     }
 

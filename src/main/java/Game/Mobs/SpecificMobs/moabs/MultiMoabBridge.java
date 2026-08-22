@@ -22,9 +22,14 @@ public class MultiMoabBridge extends TdMob {
     }
 
     @Override
-    public void init() {
-        createImage("SmBridge");
+    protected void init() {
+        super.init();
         initComponents();
+    }
+
+    @Override
+    protected void initSprite() {
+        createImage("SmBridge");
     }
 
     private void initComponents() {

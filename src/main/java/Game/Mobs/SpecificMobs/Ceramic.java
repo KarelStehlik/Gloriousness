@@ -12,14 +12,20 @@ public class Ceramic extends TdMob {
     public Ceramic(TdWorld world, int wave) {
         super(world, wave);
     }
-
+    public Ceramic(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
     public Ceramic(TdMob parent) {
         super(parent);
     }
 
     @Override
-    protected void init() {
-        createImage("blackrockbloon");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("regblackrockbloon");
+        }else{
+            createImage("blackrockbloon");
+        }
     }
 
     // generated stats

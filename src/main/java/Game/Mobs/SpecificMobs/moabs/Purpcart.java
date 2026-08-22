@@ -32,10 +32,7 @@ public class Purpcart extends TdMob {
     }
 
     @Override
-    protected void init() {
-        //the base speed of this bloon has to be bigger so that the childbloons don't yeet themselves as hard when they get this thing's buff
-        this.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE,
-                Stats.speed, 0.3f));
+    protected void initSprite() {
         createImage("purpcart");
         //default moab is at 25
         sprite.setLayer(22);
@@ -43,7 +40,13 @@ public class Purpcart extends TdMob {
                 playAnimation(new TransformAnimation(1f).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true), 30, 40);
         trail = new Trail(parentTrail, getX(), getY());
     }
-
+    @Override
+    protected void init() {
+        super.init();
+        //the base speed of this bloon has to be bigger so that the childbloons don't yeet themselves as hard when they get this thing's buff
+        this.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE,
+                Stats.speed, 0.3f));
+    }
     @Override
     public void onGameTick(int tick) {
         super.onGameTick(tick);
@@ -66,7 +69,7 @@ public class Purpcart extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 200.0f;
     stats[Stats.speed] = 3f;
-    stats[Stats.health] = 14f;
+    stats[Stats.health] = 35f;
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;

@@ -21,7 +21,7 @@ public class SmallMoab extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("BloonSmallMoab");
     }
 

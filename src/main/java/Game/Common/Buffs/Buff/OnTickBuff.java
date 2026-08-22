@@ -102,7 +102,7 @@ public class OnTickBuff<T extends GameObject> implements Buff<T>, Comparable<OnT
     public BuffAggregator<T> copyForChild(T newTarget) {
       Aggregator copy = new Aggregator();
       for (var eff : effs) {
-        copy.add(eff.copy(), newTarget);
+        if(eff.spreads) copy.add(eff.copy(), newTarget);
       }
       return copy;
     }

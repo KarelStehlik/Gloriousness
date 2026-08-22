@@ -2,23 +2,19 @@ package Game.Mobs.MobClasses;
 
 import Game.Common.Buffs.Buff.Buff;
 import Game.Common.Buffs.Buff.BuffHandler;
+import Game.Common.Buffs.Buff.RegrowBuff;
 import Game.Common.Buffs.Modifier.Modifier;
 import Game.Enums.DamageType;
 import Game.Misc.GameObject;
 import Game.Misc.SquareGrid;
-import Game.Mobs.MobGeneration.BloonNew;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.TickDetect;
 import Game.Mobs.MobGeneration.Wave;
-import GlobalUse.Constants;
-import GlobalUse.Data;
-import GlobalUse.Log;
-import GlobalUse.Util;
+import GlobalUse.*;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
@@ -36,11 +32,14 @@ public abstract class TdMob extends GameObject implements TickDetect {
     protected final int waveNum;
     //this, parent
     public Long[] mobId;
+    protected boolean isRegrow;
+    private Buff<TdMob> regrowBuff =null;
+    protected RegrowParams regrowParams=null;
 
     protected final Deque<ChildSpawner> lineage = new ArrayDeque<>();
-
-    public TdMob(TdWorld world, int wave, float x, float y) {
+    public TdMob(TdWorld world, int wave, float x, float y,boolean regrow,boolean delayInit) {
         super(x, y, 0, 0, world);
+        isRegrow=regrow;
         mobId= new Long[]{id,-1L};
         waveNum = wave;
         Wave.increaseMobsInWave(waveNum);
@@ -49,8 +48,80 @@ public abstract class TdMob extends GameObject implements TickDetect {
         grid = world.getMobsGrid();
         exists = true;
         stats[Stats.spawns] = children().size();
+        //this is so that parent can give buffs to the child first before any potential buffs from init
+        // because copying buffs from parent erases all current buffs
+        if(!delayInit) init();
+    }
+    public TdMob(TdWorld world, int wave, float x, float y) {
+        this(world,wave,x,y,false,false);
+    }
+    public TdMob(TdWorld world, int wave) {
+        this(world, wave, world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+                Constants.MobSpread), world.getTrack().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+                Constants.MobSpread));
+        Wave.buff(this, wave);
+        movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
+                new Point((int) x - world.getTrack().get(0).x,
+                        (int) y - world.getTrack().get(0).y), stats, Stats.speed, TdMob::passed);
+    }
+    public TdMob(TdWorld world, int wave,boolean regrow) {
+        this(world, wave, world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+                Constants.MobSpread), world.getTrack().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
+                Constants.MobSpread),regrow,false);
+        Wave.buff(this, wave);
+        movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
+                new Point((int) x - world.getTrack().get(0).x,
+                        (int) y - world.getTrack().get(0).y), stats, Stats.speed, TdMob::passed);
+    }
+
+    public TdMob(TdWorld world, TdMob parent, int spread,boolean regrow) {
+        this(world, parent.waveNum,
+                parent.x + Data.gameMechanicsRng.nextInt(-spread, spread), parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),regrow,true);
+        lineage.addAll(parent.lineage);
+        parent.buffHandler.addAll(buffHandler, this);
+        movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
+                new Point((int) (x - parent.x + parent.movement.getOffsetX()),
+                        (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
+                parent.movement.getProgress());
         init();
+    }
+
+    public TdMob(TdMob parent) {
+        this(parent.world, parent, parent.getChildrenSpread(),parent.isRegrow);
+    }
+
+    protected void init() {
+        initSprite();
         updateSize();
+        if(isRegrow){
+            regrowBuff();
+        }
+    }
+    protected void regrowBuff(){
+        this.regrowParams=new RegrowParams(new RefFloat(2000),new RefFloat(1));
+        this.regrowBuff = RegrowBuff.getBuff(regrowParams.interval,regrowParams.amount);
+        addBuff(regrowBuff);
+    }
+    protected void initSprite(){
+        Log.write("TdMob has no initSptite method "+this.getClass());
+    }
+    public boolean isUndamaged(){
+        return healthPart == 1 && lineage.isEmpty();
+    }
+
+    public TdMob setRegrow(boolean newval){
+        if(isRegrow==newval){
+            return this;
+        }
+        isRegrow=newval;
+        if(isRegrow){
+            regrowBuff();
+        } else{
+          buffHandler.remove(regrowBuff);
+          regrowBuff=null;
+        }
+        initSprite();
+        return this;
     }
 
     public void updateSize() {
@@ -61,35 +132,6 @@ public abstract class TdMob extends GameObject implements TickDetect {
         sprite.setSize(width, height);
         sprite.setNaturalHeight();
     }
-
-    public TdMob(TdWorld world, int wave) {
-        this(world, wave, world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-                Constants.MobSpread), world.getTrack().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-                Constants.MobSpread));
-        Wave.buff(this, wave);
-        movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
-                new Point((int) x - world.getTrack().get(0).x,
-                        (int) y - world.getTrack().get(0).y), stats, Stats.speed, TdMob::passed);
-    }
-
-    public TdMob(TdWorld world, TdMob parent, int spread) {
-        this(world, parent.waveNum,
-                parent.x + Data.gameMechanicsRng.nextInt(-spread, spread), parent.y + Data.gameMechanicsRng.nextInt(-spread, spread));
-        parent.buffHandler.addAll(buffHandler, this);
-        movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
-                new Point((int) (x - parent.x + parent.movement.getOffsetX()),
-                        (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
-                parent.movement.getProgress());
-    }
-
-    public TdMob(TdMob parent) {
-        this(parent.world, parent, parent.getChildrenSpread());
-    }
-
-    protected void init() {
-        Log.write("Warning, a bloon has no INIT method " + this.getClass());
-    }
-
     protected void createImage(String image) {
         sprite = new Sprite(image, isMoab() ? Constants.layerInterval.flyingMoab.defalt : Constants.layerInterval.bloon.defalt, "basic").setSize(width, height).setPosition(x, y);
         sprite.addToBs(world.getBs());
@@ -108,7 +150,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
     @Override
     public abstract void clearStats();
-
+    public boolean isRegrow(){
+        return isRegrow;
+    }
     @Override
     public Rectangle getHitbox() {
         return new Rectangle((int) x - width / 2, (int) y + height / 2, width,
@@ -156,8 +200,9 @@ public abstract class TdMob extends GameObject implements TickDetect {
         if(healthPart>1){
             healthPart=1;
             if(!lineage.isEmpty()){
-                ChildSpawner parent=lineage.pop();
+                ChildSpawner parent=lineage.removeLast();
                 TdMob newBloon=parent.spawn(this);
+                newBloon.mobId[1]=this.mobId[0];
                 world.addEnemy(newBloon);
                 delete();
             }

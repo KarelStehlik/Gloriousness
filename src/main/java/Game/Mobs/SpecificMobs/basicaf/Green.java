@@ -12,14 +12,21 @@ public class Green extends TdMob {
     public Green(TdWorld world, int wave) {
         super(world, wave);
     }
+    public Green(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
 
     public Green(TdMob parent) {
         super(parent);
     }
 
     @Override
-    protected void init() {
-        createImage("BloonGreen");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("reggrn");
+        }else{
+            createImage("BloonGreen");
+        }
     }
 
     // generated stats

@@ -29,7 +29,7 @@ public class Capsule extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("Capsule");
         Trail parentTrail = new Trail(world.getBs(), r -> new Sprite(trailIm, sprite.getLayer() - 1).setSize(30, 30).setRotation(r + 90).
                 playAnimation(new TransformAnimation(1f).setOpacityScaling(-0.01f)).setDeleteOnAnimationEnd(true), 30, 55);
@@ -58,7 +58,7 @@ public class Capsule extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 160.0f;
     stats[Stats.speed] = 3.75f;
-    stats[Stats.health] = 20f;
+    stats[Stats.health] = 45f;
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;

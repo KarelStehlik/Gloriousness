@@ -38,7 +38,7 @@ public class GoldenBloon extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("Buff");
     }
 

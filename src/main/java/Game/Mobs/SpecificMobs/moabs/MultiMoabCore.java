@@ -25,9 +25,13 @@ public class MultiMoabCore extends TdMob {
     }
 
     @Override
-    public void init() {
-        createImage("SmCore");
+    protected void init() {
+        super.init();
         initComponents();
+    }
+    @Override
+    protected void initSprite() {
+        createImage("SmCore");
     }
 
     private void initComponents() {

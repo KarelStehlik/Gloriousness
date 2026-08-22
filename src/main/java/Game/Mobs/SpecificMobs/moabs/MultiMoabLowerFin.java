@@ -21,7 +21,7 @@ public class MultiMoabLowerFin extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("SmDownFin");
     }
 

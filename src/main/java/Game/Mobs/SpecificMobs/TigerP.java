@@ -13,14 +13,20 @@ public class TigerP extends TdMob {
     public TigerP(TdWorld world, int wave) {
         super(world, wave);
     }
-
+    public TigerP(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
     public TigerP(TdMob parent) {
         super(parent);
     }
 
     @Override
-    protected void init() {
-        createImage("TigerP");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("regpu2");
+        }else{
+            createImage("TigerP");
+        }
     }
 
     // generated stats

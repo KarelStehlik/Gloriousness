@@ -13,14 +13,21 @@ public class Black extends TdMob {
     public Black(TdWorld world, int wave) {
         super(world, wave);
     }
+    public Black(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
 
     public Black(TdMob parent) {
         super(parent);
     }
 
     @Override
-    protected void init() {
-        createImage("BloonBlack");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("regbla");
+        }else{
+            createImage("BloonBlack");
+        }
     }
 
     // generated stats

@@ -13,14 +13,20 @@ public class Purple extends TdMob {
     public Purple(TdWorld world, int wave) {
         super(world, wave);
     }
-
+    public Purple(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
     public Purple(TdMob parent) {
         super(parent);
     }
 
     @Override
-    protected void init() {
-        createImage("BloonPurple");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("regpur");
+        }else{
+            createImage("BloonPurple");
+        }
     }
 
     // generated stats

@@ -13,14 +13,20 @@ public class Lead extends TdMob {
     public Lead(TdWorld world, int wave) {
         super(world, wave);
     }
-
+    public Lead(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
     public Lead(TdMob parent) {
         super(parent);
     }
 
     @Override
-    protected void init() {
-        createImage("platebloon");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("regplate");
+        }else{
+            createImage("plate");
+        }
     }
 
     // generated stats

@@ -24,7 +24,7 @@ public class MultiMoabHead extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("SmHead");
     }
 

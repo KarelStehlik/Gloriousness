@@ -18,7 +18,7 @@ public class Balloon extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("balloon");
     }
 

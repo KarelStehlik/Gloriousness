@@ -17,7 +17,7 @@ public class OrkShip extends TdMob {
     }
 
     @Override
-    protected void init() {
+    protected void initSprite() {
         createImage("orkship");
     }
 

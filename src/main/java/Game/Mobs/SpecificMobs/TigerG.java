@@ -10,19 +10,23 @@ import java.util.List;
 public class TigerG extends TdMob {
     private static final int spawnCount = 6;
 
-    private static final List<ChildSpawner> spawns = getSpawns();
-
     public TigerG(TdWorld world, int wave) {
         super(world, wave);
     }
-
+    public TigerG(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
     public TigerG(TdMob parent) {
         super(parent);
     }
 
     @Override
-    public void init() {
-        createImage("TigerG");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("reggr2");
+        }else{
+            createImage("TigerG");
+        }
     }
 
 
@@ -60,7 +64,7 @@ public class TigerG extends TdMob {
 
     @Override
     protected List<ChildSpawner> children() {
-        return spawns;
+        return getSpawns();
     }
 
     @Override

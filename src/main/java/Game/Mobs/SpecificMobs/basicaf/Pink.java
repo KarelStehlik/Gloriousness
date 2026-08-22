@@ -12,14 +12,21 @@ public class Pink extends TdMob {
     public Pink(TdWorld world, int wave) {
         super(world, wave);
     }
+    public Pink(TdWorld world, int wave,boolean regrow) {
+        super(world, wave,regrow);
+    }
 
     public Pink(TdMob parent) {
         super(parent);
     }
 
     @Override
-    protected void init() {
-        createImage("BloonPink");
+    protected void initSprite() {
+        if(isRegrow) {
+            createImage("regpin");
+        }else{
+            createImage("BloonPink");
+        }
     }
 
     // generated stats

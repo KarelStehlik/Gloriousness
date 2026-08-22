@@ -244,7 +244,10 @@ public class Wave implements TickDetect {
       new SpawnSequence[]{
           new SpawnSequence(Lead::new, 50, 0, 1),
           new SpawnSequence(Red::new, 50, 40, 1),
-          new SpawnSequence(Blue::new, 50, 80, 1),
+          new SpawnSequence((TdWorld world, int wave)->{
+              var blue=new Blue(world,wave,true);
+              return blue;
+          }, 50, 80, 1),
           new SpawnSequence(Green::new, 50, 120, 1),
           new SpawnSequence(Black::new, 50, 160, 1),
           new SpawnSequence(Ceramic::new, 50, 200, 1),

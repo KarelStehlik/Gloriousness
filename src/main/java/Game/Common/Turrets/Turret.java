@@ -326,6 +326,9 @@ public abstract class Turret extends GameObject implements TickDetect {
     }
 
     public Upgrade setCostPenalty(float addedPenalty,float costMultiplier){
+      if(baseUpgradeCost==Float.POSITIVE_INFINITY){
+        return this;
+      }
       costPenalty=(baseUpgradeCost+addedPenalty)*(costMultiplier-1);
       return this;
     }

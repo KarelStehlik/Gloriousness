@@ -11,10 +11,13 @@ import GlobalUse.Data;
 
 import java.util.ArrayList;
 
+import static Game.Mobs.MobGeneration.BloonNew.BloonNewRegrow;
+
 //sends purely basic bloons - red to pink
 public class BasicMobGenerator implements WaveGenerator {
     private static int validFromWave = 0;
     private static int validToWave = 16;
+    public float regrowChance=1/4f;
 
     public BasicMobGenerator() {
 
@@ -32,6 +35,17 @@ public class BasicMobGenerator implements WaveGenerator {
 
     private SpawnSequence genPart(int strength, float wave, int beginTime){
         int interval;
+        boolean regrow=Data.gameMechanicsRng.nextFloat()<=regrowChance;
+        float bloonCountMod=1;
+        if(regrow){
+            if(strength>3&&wave<4){
+                strength--;
+                if(strength==6){
+                    strength--;
+                }
+            }
+            if(strength!=1) bloonCountMod=0.8f;
+        }
         //technically this shouldn't really happen because it's not valid at that wave but validity is more of a suggestion than a hard rule
         if(wave==0){
             interval=15;
@@ -41,25 +55,28 @@ public class BasicMobGenerator implements WaveGenerator {
             interval=1;
         }
         //I somehow fully bolieve this will yield best results
-        int blooncount=(int)Math.round((wave*wave*1.25f+30)/ Math.pow(strength,2));
+        int blooncount=(int)Math.round((wave*wave*3.25f+90)/ Math.pow(strength,2.5)*bloonCountMod);
+        if(interval>1200/blooncount){
+            interval=Math.max(1,1200/blooncount);
+        }
         switch(strength){
             case 1 -> {
-                return new SpawnSequence(Red::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Red::new,regrow), blooncount, beginTime, interval);
             }
             case 2 ->{
-                return new SpawnSequence(Blue::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Blue::new,regrow), blooncount, beginTime, interval);
             }
             case 3 ->{
-                return new SpawnSequence(Green::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Green::new,regrow), blooncount, beginTime, interval);
             }
             case 4 ->{
-                return new SpawnSequence(Yellow::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Yellow::new,regrow), blooncount, beginTime, interval);
             }
             case 5 ->{
-                return new SpawnSequence(Pink::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Pink::new,regrow), blooncount, beginTime, interval);
             }
             case 7 ->{
-                return new SpawnSequence(Purple::new, blooncount, beginTime, interval);
+                return new SpawnSequence(BloonNewRegrow(Purple::new,regrow), blooncount, beginTime, interval);
             }
             default -> {
                 return null;
