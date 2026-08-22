@@ -48,12 +48,14 @@ import GlobalUse.Util;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
 import imgui.type.ImInt;
+
 import java.awt.Point;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
+
 import org.joml.Vector2f;
 import windowStuff.Audio;
 import windowStuff.Audio.AudioGroup;
@@ -71,668 +73,675 @@ import windowStuff.GraphicsOnly.TransformAnimation;
 
 public class TdWorld implements World {
 
-  public static final int WIDTH = 1920;
-  public static final int HEIGHT = 1080;
-  public final List<TrackPoint> spacPoints = new ArrayList<>(500);
-  public final List<Blocker> blockers = new ArrayList<>(10);
+    public static final int WIDTH = 1920;
+    public static final int HEIGHT = 1080;
+    public final List<TrackPoint> spacPoints = new ArrayList<>(500);
+    public final List<Blocker> blockers = new ArrayList<>(10);
 
-  public Options getOptions() {
-    return options;
-  }
-
-  private final Options options = new Options();
-  private final SpriteBatching bs;
-  private final SquareGridMobs mobsGrid;
-
-  public ArrayList<TdMob> getMobsList() {
-    return mobsList;
-  }
-
-  private final ArrayList<TdMob> mobsList;
-  private final SquareGrid<Projectile> projectilesGrid;
-  private final ArrayList<Projectile> projectilesList;
-  private final Player player;
-  private final Sprite mapSprite;
-  private final List<Point> track;
-  private final TextBox resourceTracker;
-  public final MobSpawner mobSpawner = new MobSpawner(this);
-  private final UpgradeGiver upgrades = new UpgradeGiver(this);
-  private final List<Turret> turrets = new ArrayList<>(1);
-  private final List<VoidFunc> queuedEvents = new ArrayList<>(1);
-  private Tool currentTool;
-  private final ButtonArray turretBar;
-
-  @Override
-  public int getTick() {
-    return tick;
-  }
-
-  private int tick = 0;
-  private int health = Constants.StartingHealth;
-  private double money = 100;
-  private double income = 25;
-  public TurretGenerator lastTurret;
-  private boolean isDeleted=false;
-
-  public TdWorld(WorldParameters p){
-    this(p.map);
-    mobSpawner.difficultyAdd=p.startDifficulty;
-    mobSpawner.difficultyMult=p.roundScaling;
-    mobSpawner.maxWave=p.maxRound;
-    for(Modifier<TdWorld> mod:p.mods.mods){
-      mod.mod(this);
-    }
-  }
-
-  public TdWorld(int map) {
-    mobSpawner.generators.add(new BasicMobGenerator());
-    mobSpawner.generators.add(new IntermediateMobGenerator());
-    mobSpawner.generators.add(new MoabGenerator());
-    mobSpawner.goldGenerators.add(new BasicGoldBloonGenerator());
-    Game game = Game.get();
-    game.addMouseDetect(this);
-    game.addKeyDetect(this);
-    BasicCollides.init(this);
-    mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000,
-        Optimization.MobGridSquareSize);
-    mobsList = new ArrayList<>(1024);
-    projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000,
-        Optimization.ProjectileGridSquareSize);
-    projectilesList = new ArrayList<>(128);
-    bs = game.getSpriteBatching("main");
-    getBs().getCamera().moveTo(0, -0, 20);
-    player = new Player(this);
-
-    String mapName = Data.listMaps()[map];
-
-    mapSprite = new Sprite(mapName, 0).setPosition(Constants.screenSize.x / 2f,
-        Constants.screenSize.y / 2f).setSize(Constants.screenSize.x, Constants.screenSize.y);
-    bs.addSprite(mapSprite);
-    MapData mapdata = Data.getMapData(mapName);
-    track = mapdata.mapPoints;
-    for(MapData.NewObjectFunction func:mapdata.mapObjects){
-      func.make(this);
+    public Options getOptions() {
+        return options;
     }
 
-    Button[] turretButtons = new Button[]{
-        BasicTurret.generator(this).makeButton(),
-        DartMonkey.generator(this).makeButton(),
-        DartlingGunner.generator(this).makeButton(),
-        Mortar.generator(this).makeButton(),
-        IgniteTurret.generator(this).makeButton(),
-        SlowTurret.generator(this).makeButton(),
-        EmpoweringTurret.generator(this).makeButton(),
-        EatingTurret.generator(this).makeButton(),
-        Necromancer.generator(this).makeButton(),
-        Druid.generator(this).makeButton(),
-        Plane.generator(this).makeButton(),
-        Engineer.generator(this).makeButton(),
-        Engineer8.generator(this).makeButton(),
-        Wizard.generator(this).makeButton(),
-        Druid8.generator(this).makeButton(),
-    };
+    private final Options options = new Options();
+    private final SpriteBatching bs;
+    private final SquareGridMobs mobsGrid;
 
-    turretBar = new ButtonArray(2,
-        turretButtons,
-        new Sprite("Button", Constants.layerInterval.ui.defalt).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
-        1, 1);
-    game.addMouseDetect(turretBar);
-
-    game.addMouseDetect(new Button(bs, new NoSprite().setSize(80, 40).setPosition(1103, 1020)
-        , (button, action) -> {
-      if (action == 0) {
-        return;
-      }
-      float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
-      for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
-        explosionVisual(x, y, 100, true, "Explosion1");
-        Audio.play(new SoundToPlay("ting",1, "sfx"));
-      }
-    }));
-    Audio.getGroup("music").setVolumeMultiplier(0.5f);
-
-    ArrayList<SimpleText> texts = new ArrayList<>();
-    SimpleText text = new SimpleText(() -> TextModifiers.livesRed +"Lives: " + health, "Calibri", 500,
-        0, 1050, 100, 40, bs);
-    texts.add(text);
-    SimpleText text2 = new SimpleText(() ->  TextModifiers.moneyYellow+"Cash: " + (long) getMoney(), "Calibri", 500,
-        0, 1550, 100, 40, bs);
-    texts.add(text2);
-    SimpleText text3 = new SimpleText(() -> TextModifiers.green+"Income: " + ((long) income*100)/100f, "Calibri", 500,
-            0, 1550, 100, 40, bs);
-    texts.add(text3);
-    SimpleText text4 = new SimpleText(() -> "Wave " + mobSpawner.waveNum, "Calibri", 500,
-        0, 900, 100, 40, bs);
-    text4.setColors(Util.getColors(1, 1, 1));
-    texts.add(text4);
-    resourceTracker = new TextBox(250, 940, 500, true, texts);
-
-    currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
-    currentTool.delete();
-    mobSpawner.beginWave();
-    calcSpacPoints();
-
-    Audio.play(new SoundToPlay("sotw",1f, "music", true));
-  }
-
-  public void addEvent(VoidFunc e) {
-    queuedEvents.add(e);
-  }
-
-  public boolean tryPurchase(float cost) {
-    if (money < cost) {
-      return false;
-    }
-    setMoney(money - cost);
-    return true;
-  }
-
-  private void calcSpacPoints() {
-    GameObject fakeBloon = new GameObject(track.get(0).x, track.get(0).y, 0, 0, this);
-    float[] speed = new float[1];
-    speed[0] = 1;
-    TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<>(false, track,
-        new Point(0, 0), speed, 0, o -> {
-    });
-
-    while (!mover.isDone()) {
-      spacPoints.add(new TrackPoint((int) fakeBloon.x, (int) fakeBloon.y,
-          mover.getProgress().getCheckpoint()));
-      mover.tick(fakeBloon);
-    }
-  }
-
-  private final Queue<Integer> recentExplosions = new ArrayDeque<>(50);
-  public Sprite lesserExplosionVisual(float x, float y, float size) {
-    float duration = .2f;
-
-    while(!recentExplosions.isEmpty() && recentExplosions.peek()<tick-(duration*1000/Game.tickIntervalMillis)){
-      recentExplosions.remove();
-    }
-    float opacity = Math.min(1, 20/ Math.max(1f,recentExplosions.size()));
-    if(opacity>0){
-      recentExplosions.add(tick);
+    public ArrayList<TdMob> getMobsList() {
+        return mobsList;
     }
 
-    float scaling = size * 2 / 1000 * Game.tickIntervalMillis / duration;
-    Sprite sp = new Sprite("Shockwave", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
-        .setColors(Util.getColors(2.4f, .6f, 0)).setOpacity(opacity);
-    sp.playAnimation(new TransformAnimation(duration).setLinearScaling(new Vector2f(scaling, scaling)));
-    return sp;
-  }
+    private final ArrayList<TdMob> mobsList;
+    private final SquareGrid<Projectile> projectilesGrid;
+    private final ArrayList<Projectile> projectilesList;
+    private final Player player;
+    private final Sprite mapSprite;
+    private final List<Point> track;
+    private final TextBox resourceTracker;
+    public final MobSpawner mobSpawner = new MobSpawner(this);
+    private final UpgradeGiver upgrades = new UpgradeGiver(this);
+    private final List<Turret> turrets = new ArrayList<>(1);
+    private final List<VoidFunc> queuedEvents = new ArrayList<>(1);
+    private Tool currentTool;
+    private final ButtonArray turretBar;
 
-  public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
-    Game game = Game.get();
-    if (shockwave) {
-      new Sprite("Shockwave", 30, "basic").setPosition(x, y).setSize(size, size).
-          addToBs(bs).setOpacity(0.7f).playAnimation(new TransformAnimation(2).
-              setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f));
-    }
-    Sprite sp = new SingleAnimationSprite(image, .4f, 4, "basic").setPosition(x, y)
-        .setSize(size * 2, size * 2).
-        addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
-  }
-
-  public void aoeDamage(int x, int y, int size, float damage, DamageType type) {
-    mobsGrid.callForEachCircle(x, y, size, mob -> mob.takeDamage(damage, type));
-  }
-
-  public int getHealth() {
-    return health;
-  }
-
-  public void changeHealth(float change) {
-    health += change;
-    resourceTracker.update();
-  }
-
-  public List<Point> getTrack() {
-    return track;
-  }
-
-  public Player getPlayer() {
-    return player;
-  }
-
-  public List<Projectile> getProjectilesList() {
-    return projectilesList;
-  }
-
-  public void endGame() {
-    Log.write("gjghjghjg");
-  }
-
-  public void addEnemy(TdMob e) {
-    mobsList.add(e);
-  }
-
-  private final CustomBuffCheat customBuffCheat = new CustomBuffCheat();
-
-  public List<Turret> getTurrets() {
-    return turrets;
-  }
-
-  private class CustomBuffCheat {
-
-    private static final String[] types = new String[]{"MORE", "INCREASED", "ADDED",
-        "FINALLY_ADDED"};
-    private static final String[] stats = new String[]{"speed", "aspd", "projSize", "projSpeed",
-        "projPierce", "projDuration", "projPower"};
-    private final ImInt buffType = new ImInt(0);
-    private final ImInt buffStat = new ImInt(0);
-    private final float[] value = new float[]{0};
-
-    void imGui() {
-
-      ImGui.combo("type", buffType, types);
-      ImGui.combo("stat", buffStat, stats);
-      ImGui.dragFloat("amount", value, 1);
-      if (ImGui.button("apply")) {
-        apply();
-      }
+    @Override
+    public int getTick() {
+        return tick;
     }
 
-    void apply() {
-      addEvent(() -> {
-        String btString = types[buffType.get()];
-        StatBuff.Type type = switch (btString) {
-          case "INCREASED" -> Type.INCREASED;
-          case "ADDED" -> Type.ADDED;
-          case "FINALLY_ADDED" -> Type.FINALLY_ADDED;
-          default -> Type.MORE;
-        };
-        String bsString = stats[buffStat.get()];
-        int stat = switch (bsString) {
-          case "aspd" -> 2;
-          case "projSize" -> 3;
-          case "projSpeed" -> 4;
-          case "projPierce" -> 5;
-          case "projDuration" -> 6;
-          case "projPower" -> 7;
-          default -> 0;
+    private int tick = 0;
+    private int health = Constants.StartingHealth;
+    private double money = 100;
+    private double income = 25;
+    public TurretGenerator lastTurret;
+    private boolean isDeleted = false;
+
+    public TdWorld(WorldParameters p) {
+        this(p.map);
+        mobSpawner.difficultyAdd = p.startDifficulty;
+        mobSpawner.difficultyMult = p.roundScaling;
+        mobSpawner.maxWave = p.maxRound;
+        for (Modifier<TdWorld> mod : p.mods.mods) {
+            mod.mod(this);
+        }
+    }
+
+    public TdWorld(int map) {
+        mobSpawner.generators.add(new BasicMobGenerator());
+        mobSpawner.generators.add(new IntermediateMobGenerator());
+        mobSpawner.generators.add(new MoabGenerator());
+        mobSpawner.goldGenerators.add(new BasicGoldBloonGenerator());
+        Game game = Game.get();
+        game.addMouseDetect(this);
+        game.addKeyDetect(this);
+        BasicCollides.init(this);
+        mobsGrid = new SquareGridMobs(-500, -500, WIDTH + 1000, HEIGHT + 1000,
+                Optimization.MobGridSquareSize);
+        mobsList = new ArrayList<>(1024);
+        projectilesGrid = new SquareGrid<Projectile>(-500, -500, WIDTH + 1000, HEIGHT + 1000,
+                Optimization.ProjectileGridSquareSize);
+        projectilesList = new ArrayList<>(128);
+        bs = game.getSpriteBatching("main");
+        getBs().getCamera().moveTo(0, -0, 20);
+        player = new Player(this);
+
+        String mapName = Data.listMaps()[map];
+
+        mapSprite = new Sprite(mapName, 0).setPosition(Constants.screenSize.x / 2f,
+                Constants.screenSize.y / 2f).setSize(Constants.screenSize.x, Constants.screenSize.y);
+        bs.addSprite(mapSprite);
+        MapData mapdata = Data.getMapData(mapName);
+        track = mapdata.mapPoints;
+        for (MapData.NewObjectFunction func : mapdata.mapObjects) {
+            func.make(this);
+        }
+
+        Button[] turretButtons = new Button[]{
+                DartMonkey.generator(this).makeButton(),
+                DartlingGunner.generator(this).makeButton(),
+                Mortar.generator(this).makeButton(),
+                Plane.generator(this).makeButton(),
+                Engineer8.generator(this).makeButton(),
+                Wizard.generator(this).makeButton(),
+                Druid8.generator(this).makeButton(),
+
+                EmpoweringTurret.generator(this).makeButton(),
+                EatingTurret.generator(this).makeButton(),
+                Necromancer.generator(this).makeButton(),
+                Engineer.generator(this).makeButton(),
+                Druid.generator(this).makeButton(),
+                BasicTurret.generator(this).makeButton(),
+                IgniteTurret.generator(this).makeButton(),
+                SlowTurret.generator(this).makeButton(),
         };
 
-        player.addBuff(new StatBuff<Player>(type, stat, value[0]));
+        turretBar = new ButtonArray(2,
+                turretButtons,
+                new Sprite("Button", Constants.layerInterval.ui.defalt).addToBs(bs), 75, Constants.screenSize.x, Constants.screenSize.y, 10,
+                1, 1);
+        game.addMouseDetect(turretBar);
 
-      });
+        game.addMouseDetect(new Button(bs, new NoSprite().setSize(80, 40).setPosition(1103, 1020)
+                , (button, action) -> {
+            if (action == 0) {
+                return;
+            }
+            float x = game.getUserInputListener().getX(), y = game.getUserInputListener().getY();
+            for (int i = 0; i < (options.laggyGong ? 2000 : 1); i++) {
+                explosionVisual(x, y, 100, true, "Explosion1");
+                Audio.play(new SoundToPlay("ting", 1, "sfx"));
+            }
+        }));
+        Audio.getGroup("music").setVolumeMultiplier(0.5f);
+
+        ArrayList<SimpleText> texts = new ArrayList<>();
+        SimpleText text = new SimpleText(() -> TextModifiers.livesRed + "Lives: " + health, "Calibri", 500,
+                0, 1050, 100, 40, bs);
+        texts.add(text);
+        SimpleText text2 = new SimpleText(() -> TextModifiers.moneyYellow + "Cash: " + (long) getMoney(), "Calibri", 500,
+                0, 1550, 100, 40, bs);
+        texts.add(text2);
+        SimpleText text3 = new SimpleText(() -> TextModifiers.green + "Income: " + ((long) income * 100) / 100f, "Calibri", 500,
+                0, 1550, 100, 40, bs);
+        texts.add(text3);
+        SimpleText text4 = new SimpleText(() -> "Wave " + mobSpawner.waveNum, "Calibri", 500,
+                0, 900, 100, 40, bs);
+        text4.setColors(Util.getColors(1, 1, 1));
+        texts.add(text4);
+        resourceTracker = new TextBox(250, 940, 500, true, texts);
+
+        currentTool = new PlaceObjectTool(this, new NoSprite(), (x, y) -> false);
+        currentTool.delete();
+        mobSpawner.beginWave();
+        calcSpacPoints();
+
+        Audio.play(new SoundToPlay("sotw", 1f, "music", true));
     }
-  }
 
-  // TODO: imgui runs in the graphics thread, careful changing game variables
-  @Override
-  public void showPauseMenu() {
-    //ImGui.showDemoWindow();
-    ImGui.begin("Options");
-    if (ImGui.collapsingHeader("Some placeholder options")) {
-      ImBoolean fuck = new ImBoolean(options.fuckified);
-      if (ImGui.checkbox("Some bullshit setting", fuck)) {
-        options.fuckified = fuck.get();
-        if (options.fuckified) {
-          glBlendFunc(GL_SRC_COLOR, GL_ONE);
-        } else {
-          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    public void addEvent(VoidFunc e) {
+        queuedEvents.add(e);
+    }
+
+    public boolean tryPurchase(float cost) {
+        if (money < cost) {
+            return false;
         }
-      }
+        setMoney(money - cost);
+        return true;
+    }
 
-      ImBoolean gong = new ImBoolean(options.laggyGong);
-      if (ImGui.checkbox("Gong lag", gong)) {
-        options.laggyGong = gong.get();
-      }
-      for(String g : Audio.getGroups()) {
-        AudioGroup ag = Audio.getGroup(g);
-        ImBoolean sound = new ImBoolean(ag.isActive());
-        if (ImGui.checkbox(g, sound)) {
-          ag.setActive(sound.get());
-          if(g=="music" && sound.get()){
-            Audio.play(new SoundToPlay("sotw",1f, "music", true));
-          }
+    private void calcSpacPoints() {
+        GameObject fakeBloon = new GameObject(track.get(0).x, track.get(0).y, 0, 0, this);
+        float[] speed = new float[1];
+        speed[0] = 1;
+        TdMob.MoveAlongTrack<GameObject> mover = new MoveAlongTrack<>(false, track,
+                new Point(0, 0), speed, 0, o -> {
+        });
+
+        while (!mover.isDone()) {
+            spacPoints.add(new TrackPoint((int) fakeBloon.x, (int) fakeBloon.y,
+                    mover.getProgress().getCheckpoint()));
+            mover.tick(fakeBloon);
         }
-        float[] volume = new float[]{ag.getVolumeMultiplier()};
-        if(ImGui.sliderFloat(g+" volume",volume,0,1)){
-          ag.setVolumeMultiplier(volume[0]);
+    }
+
+    private final Queue<Integer> recentExplosions = new ArrayDeque<>(50);
+
+    public Sprite lesserExplosionVisual(float x, float y, float size) {
+        float duration = .2f;
+
+        while (!recentExplosions.isEmpty() && recentExplosions.peek() < tick - (duration * 1000 / Game.tickIntervalMillis)) {
+            recentExplosions.remove();
         }
-      }
+        float opacity = Math.min(1, 20 / Math.max(1f, recentExplosions.size()));
+        if (opacity > 0) {
+            recentExplosions.add(tick);
+        }
 
-      if (ImGui.button("surrender")) {
-        Game.get().addTickable(new CallAfterDuration(()->{Game.get().startIntroScreen();}, 1));
-        Game.get().unpause();
-      }
-    }
-    if (ImGui.collapsingHeader("Well, fuck you too")) {
-      ImBoolean path = new ImBoolean(options.ultimateCrosspathing);
-
-      if (ImGui.button("give cash")) {
-        setMoney(money + 999999);
-      }
-      if (ImGui.button("yeet projectiles (" + projectilesList.size() + ")")) {
-        addEvent(() -> {
-          projectilesList.forEach(Projectile::delete);
-          projectilesList.clear();
-        });
-      }
-      if (ImGui.button("yeet mobs (" + mobsList.size() + ")")) {
-        addEvent(() -> {
-          mobsList.forEach(TdMob::delete);
-          mobsList.clear();
-        });
-      }
-      if (ImGui.checkbox("5-5-5 allowed", path)) {
-        options.ultimateCrosspathing = path.get();
-      }
-
-      ImBoolean cheat = new ImBoolean(options.cheat);
-      if (ImGui.checkbox("Waves go brr", cheat)) {
-        options.cheat = cheat.get();
-      }
-
-      ImBoolean ff = new ImBoolean(options.fastForward);
-      if (ImGui.checkbox("vzoom", ff)) {
-        options.fastForward = ff.get();
-        Game.get().fastForward = ff.get();
-      }
-
-      int[] currWave = new int[]{mobSpawner.waveNum};
-      if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
-        addEvent(() -> {
-          mobSpawner.waveNum = currWave[0] - 1;
-          resourceTracker.update();
-        });
-      }
-      if (ImGui.collapsingHeader("Add buff to player")) {
-        customBuffCheat.imGui();
-      }
-    }
-    ImGui.end();
-  }
-
-  @Override
-  public void onKeyPress(int key, int action, int mods) {
-    if (!currentTool.wasDeleted()) {
-      currentTool.onKeyPress(key, action, mods);
-    }
-    if (key == GLFW_KEY_SPACE && action == 0) {
-      mobSpawner.beginWave();
-      return;
-    }
-    if(GLFW_KEY_0 <= key && key<= GLFW_KEY_9 && action==1){
-      turretBar.trigger((key-GLFW_KEY_0+9)%10);
-      return;
-    }
-    if(key==GLFW_KEY_R && lastTurret!=null){
-      lastTurret.select();
-    }
-  }
-
-  //this is only for mouse interactions
-  @Override
-  public int getLayer() {
-    return Constants.layerInterval.ui.min-1;
-  }
-
-  @Override
-  public boolean onMouseButton(int button, double x, double y, int action, int mods) {
-    if (!currentTool.wasDeleted()) {
-      return currentTool.onMouseButton(button, x, y, action, mods);
-    }
-    return false;
-  }
-
-  @Override
-  public boolean onScroll(double scroll) {
-    if (!currentTool.wasDeleted()) {
-      return currentTool.onScroll(scroll);
-    }
-    return false;
-  }
-
-  @Override
-  public boolean onMouseMove(float newX, float newY) {
-    if (!currentTool.wasDeleted()) {
-      return currentTool.onMouseMove(newX, newY);
-    }
-    return false;
-  }
-
-  //private Timer timer = new Log.Timer();
-  @Override
-  public void onGameTick(int tick) {
-    //Log.write("start: "+timer.elapsedNano(true)/1000000);
-    if (options.cheat) {
-      //noinspection ForLoopReplaceableByForEach
-      for (int i = 0; i < mobsList.size(); i++) {
-        mobsList.get(i).takeDamage(1000, DamageType.TRUE);
-      }
-    }
-    tickEntities(mobsGrid, mobsList);
-    mobsGrid.filled();
-
-    int undeletedM = 0;
-    for (int current = 0; current < mobsList.size(); current++) {
-      if (current != undeletedM) {
-        mobsList.set(undeletedM, mobsList.get(current));
-      }
-      if (!mobsList.get(current).wasDeleted()) {
-        mobsList.get(current).onGameTickP2(tick);
-        undeletedM++;
-      }
-    }
-    if (mobsList.size() > undeletedM) {
-      mobsList.subList(undeletedM, mobsList.size()).clear();
+        float scaling = size * 2 / 1000 * Game.tickIntervalMillis / duration;
+        Sprite sp = new Sprite("Shockwave", 4).setPosition(x, y).setSize(0, 0).addToBs(bs)
+                .setColors(Util.getColors(2.4f, .6f, 0)).setOpacity(opacity);
+        sp.playAnimation(new TransformAnimation(duration).setLinearScaling(new Vector2f(scaling, scaling)));
+        return sp;
     }
 
-    List<VoidFunc> appliedEvents = new ArrayList<>(queuedEvents.size());
-    appliedEvents.addAll(queuedEvents);
-    queuedEvents.clear();
-    for (var e : appliedEvents) {
-      e.apply();
+    public void explosionVisual(float x, float y, float size, boolean shockwave, String image) {
+        Game game = Game.get();
+        if (shockwave) {
+            new Sprite("Shockwave", 30, "basic").setPosition(x, y).setSize(size, size).
+                    addToBs(bs).setOpacity(0.7f).playAnimation(new TransformAnimation(2).
+                            setLinearScaling(new Vector2f(size / 3, size / 3)).setOpacityScaling(-0.01f));
+        }
+        Sprite sp = new SingleAnimationSprite(image, .4f, 4, "basic").setPosition(x, y)
+                .setSize(size * 2, size * 2).
+                addToBs(bs).setRotation(Data.unstableRng.nextFloat(360));
     }
 
-    //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
-    AbilityGroup.instances.removeIf(AbilityGroup::wasDeleted);
-
-    this.tick++;
-    player.onGameTick(tick);
-    AbilityGroup.instances.forEach(g -> g.onGameTick(tick));
-    int undeleted = 0;
-    for (int current = 0; current < turrets.size(); current++) {
-      if (current != undeleted) {
-        turrets.set(undeleted, turrets.get(current));
-      }
-      if (!turrets.get(current).wasDeleted()) {
-        turrets.get(current).onGameTick(tick);
-        undeleted++;
-      }
-    }
-    if (turrets.size() > undeleted) {
-      turrets.subList(undeleted, turrets.size()).clear();
+    public void aoeDamage(int x, int y, int size, float damage, DamageType type) {
+        mobsGrid.callForEachCircle(x, y, size, mob -> mob.takeDamage(damage, type));
     }
 
-    tickEntities(projectilesGrid, projectilesList);
-
-    int undeletedP = 0;
-    for (int current = 0; current < projectilesList.size(); current++) {
-      if (current != undeletedP) {
-        projectilesList.set(undeletedP, projectilesList.get(current));
-      }
-      if (!projectilesList.get(current).wasDeleted()) {
-        projectilesList.get(current).onGameTickP2();
-        undeletedP++;
-      }
-    }
-    if (projectilesList.size() > undeletedP) {
-      projectilesList.subList(undeletedP, projectilesList.size()).clear();
+    public int getHealth() {
+        return health;
     }
 
-    //Log.write("projs: "+timer.elapsedNano(true)/1000000);
-    mobSpawner.run();
-
-    //Log.write("other: "+timer.elapsedNano(true)/1000000);
-  }
-
-  @Override
-  public void delete() {
-    Wave.clearMods();
-    isDeleted=true;
-    mapSprite.delete();
-    turretBar.delete();
-    Audio.getGroup("music").clear();
-  }
-
-  @Override
-  public boolean wasDeleted() {
-    return isDeleted;
-  }
-
-  private <T extends GameObject & TickDetect> void tickEntities(SpacePartitioning<T> grid,
-      final ArrayList<T> list) {
-    grid.clear();
-
-    int undeleted = 0;
-    for (int current = 0; current < list.size(); current++) {
-      if (current != undeleted) {
-        list.set(undeleted, list.get(current));
-      }
-      if (!list.get(current).wasDeleted()) {
-        list.get(current).onGameTick(tick);
-        undeleted++;
-      }
+    public void changeHealth(float change) {
+        health += change;
+        resourceTracker.update();
     }
-    if (list.size() > undeleted) {
-      list.subList(undeleted, list.size()).clear();
+
+    public List<Point> getTrack() {
+        return track;
     }
-  }
 
-  public SpriteBatching getBs() {
-    return bs;
-  }
-
-  public SquareGridMobs getMobsGrid() {
-    return mobsGrid;
-  }
-
-  public SquareGrid<Projectile> getProjectilesGrid() {
-    return projectilesGrid;
-  }
-
-  public double getMoney() {
-    return money;
-  }
-
-  public void setMoney(double money) {
-    this.money = money;
-    resourceTracker.update();
-  }
-  public double getIncome() {
-    return income;
-  }
-  public void setIncome(double newIncome) {
-    this.income = newIncome;
-    resourceTracker.update();
-  }
-  public void addIncome(double addIncome) {
-    this.income += addIncome;
-    resourceTracker.update();
-  }
-
-  public Tool getCurrentTool() {
-    return currentTool;
-  }
-
-  public void setCurrentTool(Tool currentTool) {
-    if (this.currentTool != null) {
-      this.currentTool.delete();
+    public Player getPlayer() {
+        return player;
     }
-    this.currentTool = currentTool;
-  }
 
-  public boolean canFitTurret(int x, int y, float size) {
-    for (Iterator<Turret> iterator = turrets.iterator(); iterator.hasNext(); ) {
-      Turret t = iterator.next();
-      if (t.wasDeleted()) {
-        iterator.remove();
-      } else if (!t.isNotYetPlaced() && t.blocksPlacement()
-          && Util.distanceSquared(x - t.x, y - t.y)
-          < Util.square(size + t.stats[Turret.Stats.size])) {
+    public List<Projectile> getProjectilesList() {
+        return projectilesList;
+    }
+
+    public void endGame() {
+        Log.write("gjghjghjg");
+    }
+
+    public void addEnemy(TdMob e) {
+        mobsList.add(e);
+    }
+
+    private final CustomBuffCheat customBuffCheat = new CustomBuffCheat();
+
+    public List<Turret> getTurrets() {
+        return turrets;
+    }
+
+    private class CustomBuffCheat {
+
+        private static final String[] types = new String[]{"MORE", "INCREASED", "ADDED",
+                "FINALLY_ADDED"};
+        private static final String[] stats = new String[]{"speed", "aspd", "projSize", "projSpeed",
+                "projPierce", "projDuration", "projPower"};
+        private final ImInt buffType = new ImInt(0);
+        private final ImInt buffStat = new ImInt(0);
+        private final float[] value = new float[]{0};
+
+        void imGui() {
+
+            ImGui.combo("type", buffType, types);
+            ImGui.combo("stat", buffStat, stats);
+            ImGui.dragFloat("amount", value, 1);
+            if (ImGui.button("apply")) {
+                apply();
+            }
+        }
+
+        void apply() {
+            addEvent(() -> {
+                String btString = types[buffType.get()];
+                StatBuff.Type type = switch (btString) {
+                    case "INCREASED" -> Type.INCREASED;
+                    case "ADDED" -> Type.ADDED;
+                    case "FINALLY_ADDED" -> Type.FINALLY_ADDED;
+                    default -> Type.MORE;
+                };
+                String bsString = stats[buffStat.get()];
+                int stat = switch (bsString) {
+                    case "aspd" -> 2;
+                    case "projSize" -> 3;
+                    case "projSpeed" -> 4;
+                    case "projPierce" -> 5;
+                    case "projDuration" -> 6;
+                    case "projPower" -> 7;
+                    default -> 0;
+                };
+
+                player.addBuff(new StatBuff<Player>(type, stat, value[0]));
+
+            });
+        }
+    }
+
+    // TODO: imgui runs in the graphics thread, careful changing game variables
+    @Override
+    public void showPauseMenu() {
+        //ImGui.showDemoWindow();
+        ImGui.begin("Options");
+        if (ImGui.collapsingHeader("Some placeholder options")) {
+            ImBoolean fuck = new ImBoolean(options.fuckified);
+            if (ImGui.checkbox("Some bullshit setting", fuck)) {
+                options.fuckified = fuck.get();
+                if (options.fuckified) {
+                    glBlendFunc(GL_SRC_COLOR, GL_ONE);
+                } else {
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                }
+            }
+
+            ImBoolean gong = new ImBoolean(options.laggyGong);
+            if (ImGui.checkbox("Gong lag", gong)) {
+                options.laggyGong = gong.get();
+            }
+            for (String g : Audio.getGroups()) {
+                AudioGroup ag = Audio.getGroup(g);
+                ImBoolean sound = new ImBoolean(ag.isActive());
+                if (ImGui.checkbox(g, sound)) {
+                    ag.setActive(sound.get());
+                    if (g == "music" && sound.get()) {
+                        Audio.play(new SoundToPlay("sotw", 1f, "music", true));
+                    }
+                }
+                float[] volume = new float[]{ag.getVolumeMultiplier()};
+                if (ImGui.sliderFloat(g + " volume", volume, 0, 1)) {
+                    ag.setVolumeMultiplier(volume[0]);
+                }
+            }
+
+            if (ImGui.button("surrender")) {
+                Game.get().addTickable(new CallAfterDuration(() -> {
+                    Game.get().startIntroScreen();
+                }, 1));
+                Game.get().unpause();
+            }
+        }
+        if (ImGui.collapsingHeader("Well, fuck you too")) {
+            ImBoolean path = new ImBoolean(options.ultimateCrosspathing);
+
+            if (ImGui.button("give cash")) {
+                setMoney(money + 999999);
+            }
+            if (ImGui.button("yeet projectiles (" + projectilesList.size() + ")")) {
+                addEvent(() -> {
+                    projectilesList.forEach(Projectile::delete);
+                    projectilesList.clear();
+                });
+            }
+            if (ImGui.button("yeet mobs (" + mobsList.size() + ")")) {
+                addEvent(() -> {
+                    mobsList.forEach(TdMob::delete);
+                    mobsList.clear();
+                });
+            }
+            if (ImGui.checkbox("5-5-5 allowed", path)) {
+                options.ultimateCrosspathing = path.get();
+            }
+
+            ImBoolean cheat = new ImBoolean(options.cheat);
+            if (ImGui.checkbox("Waves go brr", cheat)) {
+                options.cheat = cheat.get();
+            }
+
+            ImBoolean ff = new ImBoolean(options.fastForward);
+            if (ImGui.checkbox("vzoom", ff)) {
+                options.fastForward = ff.get();
+                Game.get().fastForward = ff.get();
+            }
+
+            int[] currWave = new int[]{mobSpawner.waveNum};
+            if (ImGui.dragInt("Wave", currWave, 1, 0, 1000000)) {
+                addEvent(() -> {
+                    mobSpawner.waveNum = currWave[0] - 1;
+                    resourceTracker.update();
+                });
+            }
+            if (ImGui.collapsingHeader("Add buff to player")) {
+                customBuffCheat.imGui();
+            }
+        }
+        ImGui.end();
+    }
+
+    @Override
+    public void onKeyPress(int key, int action, int mods) {
+        if (!currentTool.wasDeleted()) {
+            currentTool.onKeyPress(key, action, mods);
+        }
+        if (key == GLFW_KEY_SPACE && action == 0) {
+            mobSpawner.beginWave();
+            return;
+        }
+        if (GLFW_KEY_0 <= key && key <= GLFW_KEY_9 && action == 1) {
+            turretBar.trigger((key - GLFW_KEY_0 + 9) % 10);
+            return;
+        }
+        if (key == GLFW_KEY_R && lastTurret != null) {
+            lastTurret.select();
+        }
+    }
+
+    //this is only for mouse interactions
+    @Override
+    public int getLayer() {
+        return Constants.layerInterval.ui.min - 1;
+    }
+
+    @Override
+    public boolean onMouseButton(int button, double x, double y, int action, int mods) {
+        if (!currentTool.wasDeleted()) {
+            return currentTool.onMouseButton(button, x, y, action, mods);
+        }
         return false;
-      }
     }
-    for(Blocker blocker:blockers){
-      if(blocker.intersects(x,y,size)){
-        return blocker.allowPlacement();
-      }
-    }
-    for (TrackPoint p : spacPoints) {
-      if (Util.distanceSquared(p.x - x, p.y - y) < size * size) {
+
+    @Override
+    public boolean onScroll(double scroll) {
+        if (!currentTool.wasDeleted()) {
+            return currentTool.onScroll(scroll);
+        }
         return false;
-      }
-    }
-    return true;
-  }
-
-  public void addTurret(Turret turret) {
-    turrets.add(turret);
-  }
-
-  public static class TrackPoint {
-
-    private final float x;
-    private final float y;
-    private final int node;
-
-    public TrackPoint(float x, float y, int node) {
-      this.x = x;
-      this.y = y;
-      this.node = node;
     }
 
-    public float getX() {
-      return x;
+    @Override
+    public boolean onMouseMove(float newX, float newY) {
+        if (!currentTool.wasDeleted()) {
+            return currentTool.onMouseMove(newX, newY);
+        }
+        return false;
     }
 
-    public float getY() {
-      return y;
+    //private Timer timer = new Log.Timer();
+    @Override
+    public void onGameTick(int tick) {
+        //Log.write("start: "+timer.elapsedNano(true)/1000000);
+        if (options.cheat) {
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < mobsList.size(); i++) {
+                mobsList.get(i).takeDamage(1000, DamageType.TRUE);
+            }
+        }
+        tickEntities(mobsGrid, mobsList);
+        mobsGrid.filled();
+
+        int undeletedM = 0;
+        for (int current = 0; current < mobsList.size(); current++) {
+            if (current != undeletedM) {
+                mobsList.set(undeletedM, mobsList.get(current));
+            }
+            if (!mobsList.get(current).wasDeleted()) {
+                mobsList.get(current).onGameTickP2(tick);
+                undeletedM++;
+            }
+        }
+        if (mobsList.size() > undeletedM) {
+            mobsList.subList(undeletedM, mobsList.size()).clear();
+        }
+
+        List<VoidFunc> appliedEvents = new ArrayList<>(queuedEvents.size());
+        appliedEvents.addAll(queuedEvents);
+        queuedEvents.clear();
+        for (var e : appliedEvents) {
+            e.apply();
+        }
+
+        //Log.write("mobs: "+timer.elapsedNano(true)/1000000);
+        AbilityGroup.instances.removeIf(AbilityGroup::wasDeleted);
+
+        this.tick++;
+        player.onGameTick(tick);
+        AbilityGroup.instances.forEach(g -> g.onGameTick(tick));
+        int undeleted = 0;
+        for (int current = 0; current < turrets.size(); current++) {
+            if (current != undeleted) {
+                turrets.set(undeleted, turrets.get(current));
+            }
+            if (!turrets.get(current).wasDeleted()) {
+                turrets.get(current).onGameTick(tick);
+                undeleted++;
+            }
+        }
+        if (turrets.size() > undeleted) {
+            turrets.subList(undeleted, turrets.size()).clear();
+        }
+
+        tickEntities(projectilesGrid, projectilesList);
+
+        int undeletedP = 0;
+        for (int current = 0; current < projectilesList.size(); current++) {
+            if (current != undeletedP) {
+                projectilesList.set(undeletedP, projectilesList.get(current));
+            }
+            if (!projectilesList.get(current).wasDeleted()) {
+                projectilesList.get(current).onGameTickP2();
+                undeletedP++;
+            }
+        }
+        if (projectilesList.size() > undeletedP) {
+            projectilesList.subList(undeletedP, projectilesList.size()).clear();
+        }
+
+        //Log.write("projs: "+timer.elapsedNano(true)/1000000);
+        mobSpawner.run();
+
+        //Log.write("other: "+timer.elapsedNano(true)/1000000);
     }
 
-    public int getNode() {
-      return node;
-    }
-  }
-
-  public static class Options {
-
-    public boolean isFuckified() {
-      return fuckified;
+    @Override
+    public void delete() {
+        Wave.clearMods();
+        isDeleted = true;
+        mapSprite.delete();
+        turretBar.delete();
+        Audio.getGroup("music").clear();
     }
 
-    public boolean isLaggyGong() {
-      return laggyGong;
+    @Override
+    public boolean wasDeleted() {
+        return isDeleted;
     }
 
-    public boolean isUltimateCrosspathing() {
-      return ultimateCrosspathing;
+    private <T extends GameObject & TickDetect> void tickEntities(SpacePartitioning<T> grid,
+                                                                  final ArrayList<T> list) {
+        grid.clear();
+
+        int undeleted = 0;
+        for (int current = 0; current < list.size(); current++) {
+            if (current != undeleted) {
+                list.set(undeleted, list.get(current));
+            }
+            if (!list.get(current).wasDeleted()) {
+                list.get(current).onGameTick(tick);
+                undeleted++;
+            }
+        }
+        if (list.size() > undeleted) {
+            list.subList(undeleted, list.size()).clear();
+        }
     }
 
-    public boolean isFastForward() {
-      return fastForward;
+    public SpriteBatching getBs() {
+        return bs;
     }
 
-    private boolean fuckified = false;
-    private boolean laggyGong = false;
-    private boolean ultimateCrosspathing = false;
-    private boolean cheat = false;
-    private boolean fastForward = false;
-  }
+    public SquareGridMobs getMobsGrid() {
+        return mobsGrid;
+    }
 
-  private static class Optimization {
+    public SquareGrid<Projectile> getProjectilesGrid() {
+        return projectilesGrid;
+    }
 
-    private static final int MobGridSquareSize = 6;
-    private static final int ProjectileGridSquareSize = 7;
-  }
+    public double getMoney() {
+        return money;
+    }
 
-  public void endWave(int num) {
-    turrets.forEach(Turret::endOfRound);
-    upgrades.gib(num + 1);
-    money+=income;
-    resourceTracker.update();
-  }
+    public void setMoney(double money) {
+        this.money = money;
+        resourceTracker.update();
+    }
+
+    public double getIncome() {
+        return income;
+    }
+
+    public void setIncome(double newIncome) {
+        this.income = newIncome;
+        resourceTracker.update();
+    }
+
+    public void addIncome(double addIncome) {
+        this.income += addIncome;
+        resourceTracker.update();
+    }
+
+    public Tool getCurrentTool() {
+        return currentTool;
+    }
+
+    public void setCurrentTool(Tool currentTool) {
+        if (this.currentTool != null) {
+            this.currentTool.delete();
+        }
+        this.currentTool = currentTool;
+    }
+
+    public boolean canFitTurret(int x, int y, float size) {
+        for (Iterator<Turret> iterator = turrets.iterator(); iterator.hasNext(); ) {
+            Turret t = iterator.next();
+            if (t.wasDeleted()) {
+                iterator.remove();
+            } else if (!t.isNotYetPlaced() && t.blocksPlacement()
+                    && Util.distanceSquared(x - t.x, y - t.y)
+                    < Util.square(size + t.stats[Turret.Stats.size])) {
+                return false;
+            }
+        }
+        for (Blocker blocker : blockers) {
+            if (blocker.intersects(x, y, size)) {
+                return blocker.allowPlacement();
+            }
+        }
+        for (TrackPoint p : spacPoints) {
+            if (Util.distanceSquared(p.x - x, p.y - y) < size * size) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void addTurret(Turret turret) {
+        turrets.add(turret);
+    }
+
+    public static class TrackPoint {
+
+        private final float x;
+        private final float y;
+        private final int node;
+
+        public TrackPoint(float x, float y, int node) {
+            this.x = x;
+            this.y = y;
+            this.node = node;
+        }
+
+        public float getX() {
+            return x;
+        }
+
+        public float getY() {
+            return y;
+        }
+
+        public int getNode() {
+            return node;
+        }
+    }
+
+    public static class Options {
+
+        public boolean isFuckified() {
+            return fuckified;
+        }
+
+        public boolean isLaggyGong() {
+            return laggyGong;
+        }
+
+        public boolean isUltimateCrosspathing() {
+            return ultimateCrosspathing;
+        }
+
+        public boolean isFastForward() {
+            return fastForward;
+        }
+
+        private boolean fuckified = false;
+        private boolean laggyGong = false;
+        private boolean ultimateCrosspathing = false;
+        private boolean cheat = false;
+        private boolean fastForward = false;
+    }
+
+    private static class Optimization {
+
+        private static final int MobGridSquareSize = 6;
+        private static final int ProjectileGridSquareSize = 7;
+    }
+
+    public void endWave(int num) {
+        turrets.forEach(Turret::endOfRound);
+        upgrades.gib(num + 1);
+        money += income;
+        resourceTracker.update();
+    }
 }
