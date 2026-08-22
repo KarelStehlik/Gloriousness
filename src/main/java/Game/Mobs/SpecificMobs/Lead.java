@@ -25,7 +25,7 @@ public class Lead extends TdMob {
         if(isRegrow) {
             createImage("regplate");
         }else{
-            createImage("plate");
+            createImage("platebloon");
         }
     }
 
