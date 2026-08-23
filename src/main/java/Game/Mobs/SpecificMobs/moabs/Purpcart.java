@@ -45,14 +45,14 @@ public class Purpcart extends TdMob {
         super.init();
         //the base speed of this bloon has to be bigger so that the childbloons don't yeet themselves as hard when they get this thing's buff
         this.addBuff(new StatBuff<TdMob>(StatBuff.Type.MORE,
-                Stats.speed, 0.3f));
+                Stats.speed, 0.2f));
     }
     @Override
     public void onGameTick(int tick) {
         super.onGameTick(tick);
         trail.tick(this);
         this.addBuff(new StatBuff<TdMob>(StatBuff.Type.INCREASED,
-                Stats.speed, 0.007f));
+                Stats.speed, 0.02f));
     }
 
     private static List<ChildSpawner> getSpawns() {

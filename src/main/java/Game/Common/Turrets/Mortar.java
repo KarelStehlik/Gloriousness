@@ -82,7 +82,7 @@ public class Mortar extends Turret {
 
     private ImageData trailIm = Graphics.getImage("fire");
     private Trail trail=new Trail(world.getBs(), r ->new Sprite(trailIm,43).setSize(30,30).setRotation(r).
-        playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true),60f, 50);
+        playAnimation(new TransformAnimation(1).setOpacityScaling(-0.05f)).setDeleteOnAnimationEnd(true),60f, 50);
 
     private int physicalLen=100;
     public Mortar(TdWorld world, int X, int Y) {
@@ -279,7 +279,7 @@ public class Mortar extends Turret {
                     addBuff(new StatBuff<>(Type.MORE, Stats.speed, 1.3f));
                     if(path3Tier<3) {
                         trail = new Trail(world.getBs(), r -> new Sprite(trailIm, 43).setSize(50, 50).setRotation(r).
-                                playAnimation(new TransformAnimation(1).setOpacityScaling(-0.03f)).setDeleteOnAnimationEnd(true), 1f, 50);
+                                playAnimation(new TransformAnimation(1).setOpacityScaling(-0.05f)).setDeleteOnAnimationEnd(true), 20f, 50);
                     }
                     sound=new SoundToPlay(sound.name, sound.volume+0.1f);
                 }, 75);
@@ -306,8 +306,9 @@ public class Mortar extends Turret {
                 new Description("Heavy Shells"
                         ,
                         "Shoots juggernauts, shatters enemy armor and speed with direct hits",
-                        "more size, radius by "+(int)((sizeIncrease020-1)*100)+"% and spread by "+(int)((sizeIncrease020-1)*100/2)+"%, increase. pierce is up to 2x and damage up +4 \n" +
-                                "Up to 30% speed redution, less for very healthy boyz"),
+                        "more size, radius by "+(int)((sizeIncrease020-1)*100)+"% and spread by "+(int)((sizeIncrease020-1)*100/2)+"%, increase. " +
+                                "pierce is up to 2x (projectile size) and damage up +4 (projectile speed) \n" +
+                                "Up to 30% speed redution, less for very healthy bloons"),
                 () -> {
                     addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, sizeIncrease020));
                     addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, sizeIncrease020));
@@ -321,8 +322,8 @@ public class Mortar extends Turret {
 
                     if(path3Tier<3) {
                         bulletLauncher.setImage("spikeball");
-                        trail=new Trail(world.getBs(), r ->new Sprite(trailIm,43).setSize(50,10).setRotation(r).
-                                playAnimation(new TransformAnimation(1).setOpacityScaling(-0.02f)).setDeleteOnAnimationEnd(true),3f, 50);
+                        trail=new Trail(world.getBs(), r ->new Sprite(trailIm,43).setSize(50,10).setRotation(r).setOpacity(0.5f).
+                                playAnimation(new TransformAnimation(1).setOpacityScaling(-0.04f)).setDeleteOnAnimationEnd(true),5f, 50);
                         trailIm=Graphics.getImage("bluRay");
                     }
                     bulletLauncher.addProjectileModifier(

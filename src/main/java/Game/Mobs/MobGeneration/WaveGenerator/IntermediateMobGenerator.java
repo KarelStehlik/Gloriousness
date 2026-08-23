@@ -102,7 +102,7 @@ public class IntermediateMobGenerator implements WaveGenerator {
         ArrayList<SpawnSequence> sequence=new ArrayList<SpawnSequence>(bloonkindcount);
         for (int i = bloonStrengthList.length-1; bloonkindcount>0; i--) {
             if(i==0||bloonStrengthList[i]<=strongest) {
-                sequence.add( genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 350));
+                sequence.add( genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 150));
                 bloonkindcount--;
             }
         }

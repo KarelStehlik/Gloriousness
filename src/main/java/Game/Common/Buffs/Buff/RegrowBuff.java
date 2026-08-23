@@ -20,6 +20,7 @@ public class RegrowBuff {
         cooldown-= Game.tickIntervalMillis;
         if(cooldown<=0){
             mob.heal(healamount.get());
+            this.cooldown=interval.get();
         }
     }
     public static OnTickBuff<TdMob> getBuff(RefFloat interval, RefFloat healamount){

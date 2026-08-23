@@ -85,7 +85,7 @@ public class StatBuff<T extends GameObject> extends DefaultBuff<T> {
       targetMods.addFinallyAdded(finallyAdded);
       targetMods.increase(increased-1);
       targetMods.moreModifiers.putAll(moreModifiers);
-      recalcMore();
+      targetMods.recalcMore();
       targetMods.apply(newTarget);
       return targetMods;
     }
