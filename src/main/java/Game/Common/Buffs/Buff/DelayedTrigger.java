@@ -113,8 +113,8 @@ public class DelayedTrigger<T extends GameObject> implements Buff<T>,
     }
 
     @Override
-    public BuffAggregator<T> copyForChild(T newTarget) {
-      Aggregator copy = new Aggregator();
+    public BuffAggregator<T> copyForChild(BuffAggregator<T> destination,T newTarget) {
+      Aggregator copy = destination==null? new Aggregator():(Aggregator) destination;
       for (var eff : effs) {
         if (eff.spreads) {
           copy.add(eff.copy(), newTarget);

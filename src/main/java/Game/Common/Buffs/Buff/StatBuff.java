@@ -2,6 +2,7 @@ package Game.Common.Buffs.Buff;
 
 import Game.WorldStuff.Game;
 import Game.Misc.GameObject;
+import GlobalUse.Log;
 import GlobalUse.Util;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,7 +61,7 @@ public class StatBuff<T extends GameObject> extends DefaultBuff<T> {
     final float ogValue;
     public final int target;
     float added = 0, increased = 1, finallyAdded = 0;
-    double more = 1;
+    float more = 1;
     Map<Float, Integer> moreModifiers = new HashMap<>(1);
     private int multipliersWithoutRecalc = 0;
 
@@ -69,7 +70,7 @@ public class StatBuff<T extends GameObject> extends DefaultBuff<T> {
       ogValue = stats[target];
     }
 
-    TotalModifier(float ogValue, int target, float added, float increased, double more,
+    TotalModifier(float ogValue, int target, float added, float increased, float more,
         float finallyAdded) {
       this.ogValue = ogValue;
       this.target = target;
@@ -79,12 +80,14 @@ public class StatBuff<T extends GameObject> extends DefaultBuff<T> {
       this.finallyAdded = finallyAdded;
     }
 
-    TotalModifier copy(GameObject newTarget) {
-      var co = new TotalModifier(newTarget.getStats()[target], target, added, increased, more,
-          finallyAdded);
-      co.apply(newTarget);
-      co.moreModifiers.putAll(moreModifiers);
-      return co;
+    TotalModifier copy(TotalModifier targetMods,GameObject newTarget) {
+      targetMods.addAdded(added);
+      targetMods.addFinallyAdded(finallyAdded);
+      targetMods.increase(increased-1);
+      targetMods.moreModifiers.putAll(moreModifiers);
+      recalcMore();
+      targetMods.apply(newTarget);
+      return targetMods;
     }
 
     void apply(GameObject tar) {
@@ -162,7 +165,7 @@ public class StatBuff<T extends GameObject> extends DefaultBuff<T> {
 
     SortedSet<StatBuff<T>> buffsByExpiration = new TreeSet<>(StatBuff.this::compareByexpiryTime);
 
-    Map<Integer, TotalModifier> modifiers = new HashMap<>(2);
+    public Map<Integer, TotalModifier> modifiers = new HashMap<>(2);
 
     @Override
     public boolean add(Buff<T> b, T target) {
@@ -211,13 +214,14 @@ public class StatBuff<T extends GameObject> extends DefaultBuff<T> {
     }
 
     @Override
-    public BuffAggregator<T> copyForChild(T newTarget) {
-      Aggregator copy = new Aggregator();
+    public BuffAggregator<T> copyForChild(BuffAggregator<T> destination,T newTarget) {
+      Aggregator copy =destination==null? new Aggregator():(Aggregator)destination;
       for (var eff : buffsByExpiration) {
         copy.buffsByExpiration.add(eff.copy());
       }
-      for (var eff : modifiers.entrySet()) {
-        copy.modifiers.put(eff.getKey(), eff.getValue().copy(newTarget));
+      for (var eff : modifiers.keySet()) {
+        var existing=copy.modifiers.get(eff)==null?new TotalModifier(newTarget.getStats(), eff):copy.modifiers.get(eff);
+        copy.modifiers.put(eff, modifiers.get(eff).copy(existing,newTarget));
       }
       return copy;
     }

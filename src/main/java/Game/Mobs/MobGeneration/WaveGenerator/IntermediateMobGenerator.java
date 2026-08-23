@@ -37,23 +37,28 @@ public class IntermediateMobGenerator implements WaveGenerator {
         return validToWave;
     }
     enum bloonStrength{;
-        public static final int Purple=6,Black=7,TigerG=8,TigerP=9,Lead=10,Ceramic=13;
+        public static final int Purple=6,Black=7,TigerG=9,TigerP=10,Lead=15,Ceramic=19;
     }
     private SpawnSequence genPart(int strength, float wave, int beginTime){
         int interval;
         boolean regrow=Data.gameMechanicsRng.nextFloat()<=regrowChance;
         float bloonCountMod=1;
-        if(regrow){
-            bloonCountMod=0.8f;
-        }
         //technically this shouldn't really happen because it's not valid at that wave but validity is more of a suggestion than a hard rule
         if (wave<40){
             interval = (int) Data.gameMechanicsRng.nextFloat(1, 15 * strength / (wave));
+            bloonCountMod*=1+interval/(15 * strength / (wave)+wave-9);
         }else{
             interval=1;
         }
+        if(regrow){
+            bloonCountMod*=0.8f;
+        }
         //I somehow fully bolieve this will yield best results
-        int blooncount=(int)Math.round((wave*wave*1.25f+70)/ Math.pow(strength,2)*bloonCountMod);
+        int blooncount=(int)Math.round((wave*wave*3.25+90)/ Math.pow(strength,2.5)*bloonCountMod);
+        if(interval>1500/blooncount){
+            interval=Math.max(1,1500/blooncount);
+        }
+        blooncount*=1+interval/(3*strength);
         switch(strength){
             case bloonStrength.Purple -> {
                 return new SpawnSequence(BloonNewRegrow(Purple::new,regrow), blooncount, beginTime, interval);
@@ -91,13 +96,13 @@ public class IntermediateMobGenerator implements WaveGenerator {
         if (temp >= bloonStrengthList[bloonStrengthList.length-1]) {
             strongest = bloonStrengthList[bloonStrengthList.length-1];
         } else{
-            //strongest is sharply lower than the strength of the strongest bloon, so strongest 10 means at least tiger bloon
-            strongest=Data.gameMechanicsRng.nextInt(temp, Math.min(bloonStrengthList[bloonStrengthList.length-1],temp+6));
+            //strongest at least the strength of the strongest bloon
+            strongest=Data.gameMechanicsRng.nextInt(temp, Math.min(bloonStrengthList[bloonStrengthList.length-1],(int)(temp*1.5)));
         }
         ArrayList<SpawnSequence> sequence=new ArrayList<SpawnSequence>(bloonkindcount);
         for (int i = bloonStrengthList.length-1; bloonkindcount>0; i--) {
-            if(i==0||bloonStrengthList[i-1]<=strongest) {
-                sequence.add( genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 150));
+            if(i==0||bloonStrengthList[i]<=strongest) {
+                sequence.add( genPart(bloonStrengthList[i], wave, (bloonkindcount-1) * 350));
                 bloonkindcount--;
             }
         }

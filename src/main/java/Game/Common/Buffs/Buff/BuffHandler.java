@@ -7,24 +7,16 @@ import java.util.Map;
 public class BuffHandler<T extends GameObject> {
 
   private final T target;
-  private final Map<Class<? extends Buff>, BuffAggregator<T>> buffTypes = new HashMap<>(1);
+  public final Map<Class<? extends Buff>, BuffAggregator<T>> buffTypes = new HashMap<>(1);
 
   public BuffHandler(T target) {
     this.target = target;
   }
 
-  public BuffHandler<T> createCopy(T newTarget) {
-    var copy = new BuffHandler<>(newTarget);
-    for (var kvp : buffTypes.entrySet()) {
-      copy.buffTypes.put(kvp.getKey(), kvp.getValue().copyForChild(newTarget));
-    }
-    return copy;
-  }
-
-
   public BuffHandler<T> addAll(BuffHandler<T> buffHandler, T target) {
-    for (var kvp : buffTypes.entrySet()) {
-      buffHandler.buffTypes.put(kvp.getKey(), kvp.getValue().copyForChild(target));
+    for (var key : buffTypes.keySet()) {
+      BuffAggregator<T> existing=buffHandler.buffTypes.get(key);
+      buffHandler.buffTypes.put(key, buffTypes.get(key).copyForChild(existing,target));
     }
     return buffHandler;
   }

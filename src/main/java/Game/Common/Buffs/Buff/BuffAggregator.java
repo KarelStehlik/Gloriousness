@@ -10,5 +10,5 @@ public interface BuffAggregator<T> {
 
   // to make a new aggregator for child bloons when popped.
   // Spreads stuff like scaling, maybe throws away some other stuff.
-  BuffAggregator<T> copyForChild(T newTarget);
+  BuffAggregator<T> copyForChild(BuffAggregator<T> copy,T newTarget);
 }

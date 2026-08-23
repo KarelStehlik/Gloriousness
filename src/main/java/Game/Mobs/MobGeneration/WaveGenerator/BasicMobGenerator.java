@@ -51,6 +51,7 @@ public class BasicMobGenerator implements WaveGenerator {
             interval=15;
         }else if (wave<20){
             interval = (int) Data.gameMechanicsRng.nextFloat(1, 15 * strength / (wave / 3.0f));
+            bloonCountMod*=1+interval/(15 * strength / (wave / 3.0f)+wave);
         }else{
             interval=1;
         }
@@ -104,7 +105,7 @@ public class BasicMobGenerator implements WaveGenerator {
         }
         ArrayList<SpawnSequence> sequence=new ArrayList<SpawnSequence>(bloonkindcount);
         for (int i = 0; i < bloonkindcount; i++) {
-            sequence.add(genPart(strongest-i,wave,(bloonkindcount-1-i)*150));
+            sequence.add(genPart(strongest-i,wave,(bloonkindcount-1-i)*350));
             if(strongest==7)
                 strongest--;
         }

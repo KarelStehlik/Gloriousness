@@ -62,7 +62,7 @@ public class DefaultAggregator<T extends GameObject> implements BuffAggregator<T
         return null;
     }
     @Override
-    public BuffAggregator<T> copyForChild(T newTarget) {
+    public BuffAggregator<T> copyForChild(BuffAggregator<T> destination,T newTarget) {
         for (DefaultBuff<T> buff : effs) {
             if (buff.spreads) {
                 return copy();

@@ -121,8 +121,8 @@ public class VisualEffect<T extends GameObject> extends OnTickBuff<T> {
         }
 
         @Override
-        public BuffAggregator<T> copyForChild(T newTarget) {
-            Aggregator copy = new VisualEffect.Aggregator();
+        public BuffAggregator<T> copyForChild(BuffAggregator<T> destination,T newTarget) {
+            Aggregator copy = destination==null? new Aggregator():(Aggregator) destination;
             for (var eff : effs) {
                 copy.add(eff.copy(), newTarget);
             }

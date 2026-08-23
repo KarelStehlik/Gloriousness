@@ -27,7 +27,7 @@ public class MoabGenerator implements WaveGenerator {
         return validToWave;
     }
     enum bloonStrength{
-        Balloon(10),BigBalloon(15),BlueMoab(17),Bombarder(22),Capsule(8),Moab(20),OrkShip(10),Purpcart(9),SmallMoab(15),MultiMoabCore(25);
+        Balloon(12),BigBalloon(15),BlueMoab(17),Bombarder(22),Capsule(8),Moab(20),OrkShip(12),Purpcart(9),SmallMoab(15),MultiMoabCore(25);
         public int str;
         bloonStrength(int str){
             this.str=str;

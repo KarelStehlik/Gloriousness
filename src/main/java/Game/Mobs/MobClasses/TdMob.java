@@ -37,7 +37,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     protected RegrowParams regrowParams=null;
 
     protected final Deque<ChildSpawner> lineage = new ArrayDeque<>();
-    public TdMob(TdWorld world, int wave, float x, float y,boolean regrow,boolean delayInit) {
+    public TdMob(TdWorld world, int wave, float x, float y,boolean regrow) {
         super(x, y, 0, 0, world);
         isRegrow=regrow;
         mobId= new Long[]{id,-1L};
@@ -50,10 +50,10 @@ public abstract class TdMob extends GameObject implements TickDetect {
         stats[Stats.spawns] = children().size();
         //this is so that parent can give buffs to the child first before any potential buffs from init
         // because copying buffs from parent erases all current buffs
-        if(!delayInit) init();
+        init();
     }
     public TdMob(TdWorld world, int wave, float x, float y) {
-        this(world,wave,x,y,false,false);
+        this(world,wave,x,y,false);
     }
     public TdMob(TdWorld world, int wave) {
         this(world, wave, world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
@@ -67,7 +67,7 @@ public abstract class TdMob extends GameObject implements TickDetect {
     public TdMob(TdWorld world, int wave,boolean regrow) {
         this(world, wave, world.getTrack().get(0).x + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
                 Constants.MobSpread), world.getTrack().get(0).y + Data.gameMechanicsRng.nextInt(-Constants.MobSpread,
-                Constants.MobSpread),regrow,false);
+                Constants.MobSpread),regrow);
         Wave.buff(this, wave);
         movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
                 new Point((int) x - world.getTrack().get(0).x,
@@ -76,14 +76,13 @@ public abstract class TdMob extends GameObject implements TickDetect {
 
     public TdMob(TdWorld world, TdMob parent, int spread,boolean regrow) {
         this(world, parent.waveNum,
-                parent.x + Data.gameMechanicsRng.nextInt(-spread, spread), parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),regrow,true);
+                parent.x + Data.gameMechanicsRng.nextInt(-spread, spread), parent.y + Data.gameMechanicsRng.nextInt(-spread, spread),regrow);
         lineage.addAll(parent.lineage);
         parent.buffHandler.addAll(buffHandler, this);
         movement = new MoveAlongTrack<TdMob>(false, world.getTrack(),
                 new Point((int) (x - parent.x + parent.movement.getOffsetX()),
                         (int) (y - parent.y + parent.movement.getOffsetY())), stats, Stats.speed, TdMob::passed,
                 parent.movement.getProgress());
-        init();
     }
 
     public TdMob(TdMob parent) {

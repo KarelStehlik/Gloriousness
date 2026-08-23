@@ -66,10 +66,6 @@ public class Tag<T extends GameObject> implements Buff<T> {
 
     private final Map<AppliedTag, AppliedTag> alreadyApplied = new HashMap<>(1);
 
-    Aggregator(Aggregator og) {
-      alreadyApplied.putAll(og.alreadyApplied);
-    }
-
     Aggregator() {
     }
 
@@ -108,8 +104,10 @@ public class Tag<T extends GameObject> implements Buff<T> {
     }
 
     @Override
-    public BuffAggregator<T> copyForChild(T newTarget) {
-      return new Aggregator(this);
+    public BuffAggregator<T> copyForChild(BuffAggregator<T> destination,T newTarget) {
+      Aggregator copy =destination==null? new Aggregator():(Aggregator)destination;
+      copy.alreadyApplied.putAll(this.alreadyApplied);
+      return copy;
     }
   }
 }

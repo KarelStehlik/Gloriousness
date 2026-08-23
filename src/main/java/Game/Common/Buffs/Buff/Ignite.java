@@ -131,8 +131,8 @@ public class Ignite<T extends TdMob> implements Buff<T>, Comparable<Ignite<T>> {
     }
 
     @Override
-    public BuffAggregator<T> copyForChild(T newTarget) {
-      Aggregator copy = new Aggregator();
+    public BuffAggregator<T> copyForChild(BuffAggregator<T> destination,T newTarget) {
+      Aggregator copy = destination==null? new Aggregator():(Aggregator) destination;
       copy.parentIgnites = this;
       return copy;
     }
