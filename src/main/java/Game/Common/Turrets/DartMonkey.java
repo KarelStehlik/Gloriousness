@@ -205,7 +205,7 @@ public class DartMonkey extends Turret {
     return new Upgrade("doubleshot", new Description("Doubleshot",
         "We've had one dart yes, but what about second dart?",
         "I don't think he knows about second dart"),
-        () -> addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.maxTargets, 1)), 100);
+        () -> addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, ExtraStats.maxTargets, 1)), 75);
   }
 
   private boolean upgraded = false;

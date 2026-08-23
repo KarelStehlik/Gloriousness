@@ -3,6 +3,7 @@ package Game.Common.Buffs.Buff;
 import Game.Common.Buffs.Modifier.Modifier;
 import Game.Misc.GameObject;
 import Game.WorldStuff.Game;
+import GlobalUse.Constants;
 import GlobalUse.Util;
 import windowStuff.GraphicsOnly.Sprite.Sprite;
 
@@ -78,7 +79,8 @@ public class VisualEffect<T extends GameObject> extends OnTickBuff<T> {
             assert b instanceof VisualEffect<T>;
             var buff = (VisualEffect<T>) b;
             effs.add(buff);
-            buff.image.setLayer(target.getSprite().getLayer() + 2);
+            int layer=target.getSprite()==null?Constants.layerInterval.bloon.max:target.getSprite().getLayer() + 2;
+            buff.image.setLayer(layer);
             effs.sort(OnTickBuff::compareTo);
             return true;
         }
