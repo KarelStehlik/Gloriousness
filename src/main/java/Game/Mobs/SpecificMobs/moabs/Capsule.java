@@ -58,7 +58,7 @@ public class Capsule extends TdMob {
   public void clearStats() {
     stats[Stats.size] = 160.0f;
     stats[Stats.speed] = 3.75f;
-    stats[Stats.health] = 45f;
+    stats[Stats.health] = 30f;
     stats[Stats.value] = 100f;
     stats[Stats.damageTaken] = 1f;
     stats[Stats.spawns] = 1f;

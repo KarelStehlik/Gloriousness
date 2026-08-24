@@ -168,7 +168,7 @@ public class Engineer8 extends Turret {
                             }
                         }));
                     });
-                }, 40);
+                }, 50);
     }
     @Override
     protected Upgrade up002() {
@@ -191,7 +191,7 @@ public class Engineer8 extends Turret {
                             ,0.69f));
                     minTurrets.set(5);
 
-                }, 120);
+                }, 135);
     }
     @Override
     protected Upgrade up010() {
@@ -200,7 +200,7 @@ public class Engineer8 extends Turret {
                     turretMods.add(t -> {
                         t.bulletLauncher.cannons.add(new BulletLauncher.Cannon(5,5));
                     });
-                }, 55);
+                }, 60);
     }
     @Override
     protected Upgrade up020() {
@@ -227,7 +227,7 @@ public class Engineer8 extends Turret {
     }
     @Override
     protected Upgrade up030() {
-        return new Upgrade("gears",  new Description("Gears", "turrets shoot faster and their projectiles explude (in a smol area), " +
+        return new Upgrade("gears",  new Description("Gears", "turrets shoot faster and their projectiles explode (in a smol area), " +
                 "spanner damage is tripled",
                 "increases turret attack speed by 25%; Explosion radius is smol. increases dartspeed by 80%"),
                 () -> {
@@ -329,7 +329,7 @@ public class Engineer8 extends Turret {
                             }
 
                     );
-                }, 80);
+                }, 130);
     }
     @Override
     protected Upgrade up300() {
@@ -343,7 +343,7 @@ public class Engineer8 extends Turret {
                         t.addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1));
                         t.addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 3));
                     });
-                }, 300);
+                }, 450);
     }
     @Override
     protected void sell() {

@@ -30,9 +30,13 @@ public class Druid8 extends Turret {
                 (world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power) -> new DruidBall(
                         world1, image1, x1, y1, speed, rotation1, w, ar, pierce, size, duration, power,
                         getStats()[ExtraStats.regrowTime]));
+        if(originalStats[Stats.speed]>2.5f){
+            originalStats[Stats.speed]*=1.5f;
+            stats[Stats.speed]*=1.5f;
+        }
         originalStats[ExtraStats.regrowTime] = originalStats[ExtraStats.regrowTime] * originalStats[Stats.speed];
         stats[ExtraStats.regrowTime] = originalStats[ExtraStats.regrowTime];
-        originalStats[Stats.range] += 75 * originalStats[Stats.speed];
+        originalStats[Stats.range] += 65 * originalStats[Stats.speed];
         stats[Stats.range] = originalStats[Stats.range];
 
         bulletLauncher.setImage("DruidBall");
@@ -184,12 +188,14 @@ public class Druid8 extends Turret {
 
     @Override
     protected Upgrade up001() {
-        return new Upgrade("birdsong", new Description("attacks faster with higher range, adds range"),
+        return new Upgrade("birdsong", new Description("attacks faster with higher range, adds range and projectile speed (without affecting regrow time)"),
                 () -> {
                     // rtange goes up with projectile speed
+                    //max range is currently like 587.5 so it's .587 or 1 attack every 2 seconds, atcspeed is .2 to .6 so it doubles potentially
                     float buffAmount = (originalStats[Stats.range]) / 1000 + 0.1f;
                     addBuff(new StatBuff<>(Type.ADDED, Stats.aspd, buffAmount));
                     addBuff(new StatBuff<>(Type.ADDED, Stats.range, 100));
+                    addBuff(new StatBuff<>(Type.MORE, Stats.speed, 2));
                 },
                 40);
     }
@@ -267,7 +273,7 @@ public class Druid8 extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 100f;
     stats[Stats.pierce] = 1f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(.2f, .4f);
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(.2f, .6f);
     stats[Stats.projectileDuration] = 999f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(160f, 260f);
     stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(1f, 5f);

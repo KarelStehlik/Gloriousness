@@ -137,12 +137,12 @@ public class DartlingGunner extends Turret {
             "Shoots extra large extra powerful darts that deal extra damage, but shoots slightly slower (and slower projectiles)."
                 +
                 "Better if dartspeed is at least mediocre.",
-            "dartspeed is 2-25. pierce is +1 or +2 (if dartspeed is above 9), damage is +1. " +
-                "Attacks and dartspeeds 20% slower or 10% if dartspeed is decent."),
+            "dartspeed is 2-25. pierce is +2 or +4 (if dartspeed is above 9), damage is +1. " +
+                "Attacks and dartspeeds 25% slower or 10% if dartspeed is decent."),
         () -> {
           sound = new SoundToPlay("gunshot", 0.6f);
-          int extraPierce = originalStats[Stats.aspd] > 9 ? 2 : 1;
-          float atcSpeedDebuff = originalStats[Stats.aspd] > 9 ? 0.9f : 0.8f;
+          int extraPierce = originalStats[Stats.aspd] > 9 ? 4 : 2;
+          float atcSpeedDebuff = originalStats[Stats.aspd] > 9 ? 0.9f : 0.75f;
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.bulletSize, 1.2f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.aspd, atcSpeedDebuff));
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, atcSpeedDebuff));
@@ -164,7 +164,7 @@ public class DartlingGunner extends Turret {
           addBuff(new StatBuff<Turret>(StatBuff.Type.MORE, Stats.speed, 1.4f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.pierce, 1f));
           addBuff(new StatBuff<Turret>(StatBuff.Type.ADDED, Stats.power, 1f));
-        }, 350);
+        }, 450);
   }
 
   @Override
@@ -281,7 +281,7 @@ public class DartlingGunner extends Turret {
     stats[Stats.power] = 2f;
     stats[Stats.range] = 15f;
     stats[Stats.pierce] = 2f;
-    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(1.5f, 6f);
+    stats[Stats.aspd] = Data.gameMechanicsRng.nextFloat(1.5f, 7f);
     stats[Stats.projectileDuration] = 4f;
     stats[Stats.bulletSize] = Data.gameMechanicsRng.nextFloat(15f, 45f);
     stats[Stats.speed] = Data.gameMechanicsRng.nextFloat(2f, 25f);

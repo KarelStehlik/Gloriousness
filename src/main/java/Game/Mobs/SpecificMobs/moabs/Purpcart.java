@@ -68,8 +68,8 @@ public class Purpcart extends TdMob {
   @Override
   public void clearStats() {
     stats[Stats.size] = 200.0f;
-    stats[Stats.speed] = 3f;
-    stats[Stats.health] = 35f;
+    stats[Stats.speed] = 6f;
+    stats[Stats.health] = 25f;
     stats[Stats.damageTaken] = 0.7f;
     stats[Stats.value] = 100f;
     stats[Stats.spawns] = 1f;
