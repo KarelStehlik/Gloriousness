@@ -1,13 +1,8 @@
 package Game.Common.Turrets;
 
-import Game.Common.Buffs.Buff.DelayedTrigger;
-import Game.Common.Buffs.Buff.OnTickBuff;
-import Game.Common.Buffs.Buff.SkyShot;
-import Game.Common.Buffs.Buff.Trail;
+import Game.Common.Buffs.Buff.*;
 import Game.Common.Buffs.Modifier.Accuracy;
 import Game.Common.Buffs.Modifier.Explosive;
-import Game.Common.Buffs.Buff.Ignite;
-import Game.Common.Buffs.Buff.StatBuff;
 import Game.Common.Buffs.Buff.StatBuff.Type;
 import Game.Common.Buffs.Modifier.Modifier;
 import Game.Common.BulletLauncher;
@@ -140,7 +135,7 @@ public class Mortar extends Turret {
         badgeSprite.setPosition(sprite.getX(), sprite.getY() - sprite.getHeight() * 0.2f);
         monkeySprite.setPosition(sprite.getX() + sprite.getWidth() + monkeySprite.getWidth(), sprite.getY() - sprite.getHeight() + monkeySprite.getHeight());
         rangeDisplay.setPosition(_x, _y);
-        if (world.canFitTurret((int) x, (int) y, stats[Stats.size])) {
+        if (world.canFitTurret((int) x, (int) y, stats[Stats.size],this.getClass())) {
             rangeDisplay.setColors(Util.getColors(0, 0, 0));
         } else {
             rangeDisplay.setColors(Util.getColors(9, 0, 0));
@@ -293,6 +288,7 @@ public class Mortar extends Turret {
         return true;
     }
     public boolean slowPoison(Projectile proj, TdMob mob){
+        if(!mob.addBuff(new Tag<>(1499472312,1000 * 3))) return false;
         double reducedEffect=proj.getStats()[Stats.power]* 9 / Math.sqrt(mob.getStats()[TdMob.Stats.health]);
         if(reducedEffect>1){
             reducedEffect=1;
@@ -308,7 +304,7 @@ public class Mortar extends Turret {
                         "Shoots juggernauts, shatters enemy armor and speed with direct hits",
                         "more size, radius by "+(int)((sizeIncrease020-1)*100)+"% and spread by "+(int)((sizeIncrease020-1)*100/2)+"%, increase. " +
                                 "pierce is up to 2x (projectile size) and damage up +4 (projectile speed) \n" +
-                                "Up to 30% speed redution, less for very healthy bloons"),
+                                "Up to 30% speed reduction (based on projectile damage), less for very healthy bloons"),
                 () -> {
                     addBuff(new StatBuff<>(StatBuff.Type.MORE, Stats.bulletSize, sizeIncrease020));
                     addBuff(new StatBuff<>(Type.MORE, ExtraStats.radius, sizeIncrease020));

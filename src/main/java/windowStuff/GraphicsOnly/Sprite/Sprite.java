@@ -38,6 +38,7 @@ public class Sprite implements AbstractSprite {
   // 67-69 (screenwide effects maybe some projectiles idk)
   // and 70+ for ui elements.
   protected int layer;
+  private boolean flipped=false;
   protected Shader shader;
   protected boolean deleted = false;
   protected boolean mustBeRebatched = false;
@@ -107,6 +108,13 @@ public class Sprite implements AbstractSprite {
 
   public ImageData getImage() {
     return image;
+  }
+
+  public boolean getFlipped(){
+    return flipped;
+  }
+  public void setFlipped(boolean newval){
+    this.flipped=newval;
   }
 
   @Override
@@ -350,7 +358,7 @@ public class Sprite implements AbstractSprite {
     vertices[20] = texCoords[2];
     vertices[21] = texCoords[3];
 
-    vertices[22] = width;
+    vertices[22] = flipped?-width:width;
     vertices[23] = height;
 
     vertices[24] = rotation * (float)Math.PI/180;
@@ -479,12 +487,13 @@ public class Sprite implements AbstractSprite {
       }
       //Log.write(length);
       if (frame >= length) {
-        sprite.image = images.get(length - 1);
+        if(lifetime==1){
+          sprite.setImage(images.get(length - 1));
+        }
         end(sprite);
       } else {
-        sprite.image = images.get(frame);
+        sprite.setImage(images.get(frame));
       }
-      sprite.setUV();
     }
   }
 }

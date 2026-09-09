@@ -25,7 +25,7 @@ public class TurretGenerator {
   }
 
   public boolean generate(int x, int y) {
-    if (!world.canFitTurret(x, y, pending.stats[Stats.size]) || !world.tryPurchase(
+    if (!world.canFitTurret(x, y, pending.stats[Stats.size],pending.getClass()) || !world.tryPurchase(
         pending.stats[Stats.cost])) {
       return false;
     }

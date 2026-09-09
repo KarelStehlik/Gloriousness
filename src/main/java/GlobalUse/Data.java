@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import Game.Common.Turrets.DartMonkey;
+import Game.WorldStuff.MapElements.MapData.Horse;
 import Game.WorldStuff.MapElements.MapData.MapData;
+import Game.WorldStuff.TdWorld;
 import windowStuff.GraphicsOnly.Graphics;
 import windowStuff.GraphicsOnly.ImageSet;
 import windowStuff.GraphicsOnly.Shader;
@@ -73,6 +76,11 @@ public final class Data {
         for(int i=1;i<split.length;i++) {
           mapData.add(split[i].split(" "));
         }
+      }
+      if ("racetrack".equals(mapName)){
+        mapData.addObject((TdWorld world)-> {
+          return new Horse(-500,-500,300,world);
+        });
       }
       return mapData;
 

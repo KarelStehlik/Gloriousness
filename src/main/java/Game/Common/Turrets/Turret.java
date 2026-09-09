@@ -13,6 +13,7 @@ import Game.Enums.TargetingOption;
 import Game.WorldStuff.Game;
 import Game.Misc.GameObject;
 import Game.Mobs.MobClasses.TdMob;
+import Game.WorldStuff.MapElements.MapData.Blocker;
 import Game.WorldStuff.TdWorld;
 import Game.Misc.TickDetect;
 import GlobalUse.Constants;
@@ -83,6 +84,11 @@ public abstract class Turret extends GameObject implements TickDetect {
   public void place() {
     notYetPlaced = false;
     rangeDisplay.setHidden(true);
+    for (Blocker blocker : world.blockers) {
+      if (blocker.intersects((int)x, (int)y, this.getSize())) {
+        blocker.place(this);
+      }
+    }
     Game.get().addMouseDetect(new Button(this.sprite, (mouseX, mouseY) -> {
       if (!notYetPlaced) {
         openUpgradeMenu();
@@ -278,7 +284,7 @@ public abstract class Turret extends GameObject implements TickDetect {
     super.move(_x, _y);
     sprite.setPosition(_x, _y);
     rangeDisplay.setPosition(_x, _y);
-    if (world.canFitTurret((int) x, (int) y, stats[Stats.size])) {
+    if (world.canFitTurret((int) x, (int) y, stats[Stats.size],this.getClass())) {
       rangeDisplay.setColors(Util.getColors(0, 0, 0));
     } else {
       rangeDisplay.setColors(Util.getColors(9, 0, 0));

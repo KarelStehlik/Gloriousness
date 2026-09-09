@@ -654,7 +654,7 @@ public class TdWorld implements World {
         this.currentTool = currentTool;
     }
 
-    public boolean canFitTurret(int x, int y, float size) {
+    public boolean canFitTurret(int x, int y, float size,Class monkeyType) {
         for (Iterator<Turret> iterator = turrets.iterator(); iterator.hasNext(); ) {
             Turret t = iterator.next();
             if (t.wasDeleted()) {
@@ -667,7 +667,7 @@ public class TdWorld implements World {
         }
         for (Blocker blocker : blockers) {
             if (blocker.intersects(x, y, size)) {
-                return blocker.allowPlacement();
+                return blocker.allowPlacement(monkeyType);
             }
         }
         for (TrackPoint p : spacPoints) {
@@ -677,6 +677,7 @@ public class TdWorld implements World {
         }
         return true;
     }
+
 
     public void addTurret(Turret turret) {
         turrets.add(turret);

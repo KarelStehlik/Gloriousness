@@ -34,7 +34,7 @@ public final class Constants {
             this(max, min, (max + min) / 2);
         }
 
-        layerInterval(int max, int min, int def) {
+        layerInterval(int min, int max, int def) {
             this.max = max;
             this.min = min;
             this.defalt = def;
